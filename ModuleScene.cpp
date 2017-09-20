@@ -2,6 +2,12 @@
 #include "Application.h"
 #include "ModuleScene.h"
 
+#include <gl/GL.h>
+#include <gl/GLU.h>
+#include "glut/glut.h"
+
+#pragma comment (lib, "glut/glut32.lib")
+
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -24,10 +30,10 @@ bool ModuleScene::Start()
 	pl.constant = 0;
 	pl.axis = true;
 
-	ball1.pos = { 0,0,0 };
-	ball1.r = 30;
-	ball2.pos = { 0,0,0 };
-	ball2.r = 30;
+	ball1.pos = { 50,0,0 };
+	ball1.r = 10;
+	ball2.pos = { -50,0,0 };
+	ball2.r = 10;
 
 	return ret;
 }
@@ -43,15 +49,17 @@ bool ModuleScene::CleanUp()
 // Update
 update_status ModuleScene::Update(float dt)
 {
-	/*float ball1_pos = ball1.pos.x - 0.01f;
-	ball1.Translate({ball1_pos,0,0});
+	ball1.Translate({-0.1f,0,0});
+	ball2.Translate({ 0.1f,0,0 });
 
-	float ball2_pos = ball2.pos.x + 0.01f;
-	ball2.Translate({ ball2_pos,0,0 });*/
-
+	float distance = ball1.Distance(ball2);
+	
 	if (ball1.Intersects(ball2)) {
-		CONSOLE_LOG("Ball 1 and ball 2 are intersecting");
 		App->imgui->AddLogToConsole("Ball 1 and ball 2 are intersecting");
+	}
+	else {
+		std::string str = std::to_string(distance);
+		App->imgui->AddLogToConsole(("Distance between both speheres: " + str).c_str());
 	}
 	pl.Render();
 

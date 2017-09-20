@@ -107,7 +107,8 @@ update_status ModuleImGui::PreUpdate(float dt)
 
 	ImGui::ShowTestWindow(&show_test_window);
 
-	ShowConsole(console, &show_console);
+	/*ShowConsole(console, &show_console);*/
+	console->Draw("Console", &show_console);
 
 	return UPDATE_CONTINUE;
 }
