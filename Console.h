@@ -282,8 +282,7 @@ struct Console
 	}
 };
 
-static void ShowConsole(bool* p_open)
+static void ShowConsole(Console* console,bool* p_open)
 {
-	static Console console;
-	console.Draw("Console", p_open);
+	console->Draw("Console", p_open);
 }
