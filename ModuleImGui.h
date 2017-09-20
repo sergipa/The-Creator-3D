@@ -14,5 +14,5 @@ public:
 
 private:
 	bool show_test_window;
-	
+	bool show_console;
 };

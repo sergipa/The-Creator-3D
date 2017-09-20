@@ -22,6 +22,9 @@
     <Filter Include="Sources\imGui">
       <UniqueIdentifier>{5c04e8b6-3161-4a8a-a2cc-80ab474eb7b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\UI">
+      <UniqueIdentifier>{0bfd2c1a-fc3d-45fa-b15a-22d09dc1e801}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -104,6 +107,9 @@
     </ClInclude>
     <ClInclude Include="imgui\stb_truetype.h">
       <Filter>Sources\imGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Sources\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

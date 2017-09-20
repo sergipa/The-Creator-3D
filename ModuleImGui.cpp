@@ -1,6 +1,7 @@
 #include "ModuleImGui.h"
 #include "imgui\imgui.h"
 #include "imgui_impl_sdl.h"
+#include "Console.h"
 #include "SDL\include\SDL.h"
 #include "SDL\include\SDL_opengl.h"
 #include "Application.h"
@@ -18,6 +19,7 @@ bool ModuleImGui::Start()
 	bool ret = false;
 
 	show_test_window = true;
+	show_console = true;
 
 	//Style
 	ImGuiStyle * style = &ImGui::GetStyle();
@@ -103,7 +105,7 @@ update_status ModuleImGui::PreUpdate(float dt)
 
 	ImGui::ShowTestWindow(&show_test_window);
 
-	
+	ShowConsole(&show_console);
 
 	return UPDATE_CONTINUE;
 }
