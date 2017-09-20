@@ -8,10 +8,12 @@
 
 ModuleImGui::ModuleImGui(Application * app, bool start_enabled) : Module(app, start_enabled)
 {
+	console = new Console();
 }
 
 ModuleImGui::~ModuleImGui()
 {
+	delete console;
 }
 
 bool ModuleImGui::Start()
@@ -121,4 +123,9 @@ bool ModuleImGui::CleanUp()
 {
 	ImGui_ImplSdl_Shutdown();
 	return true;
+}
+
+void ModuleImGui::AddLogToConsole(const char * log)
+{
+	console->AddLog(log);
 }

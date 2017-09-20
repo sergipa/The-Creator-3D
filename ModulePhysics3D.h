@@ -25,9 +25,9 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
-	PhysBody3D* AddBody(const Sphere& sphere, Module* listener, float mass = 1.0f);
-	PhysBody3D* AddBody(const Cube& cube, Module* listener, float mass = 1.0f);
-	PhysBody3D* AddBody(const Cylinder& cylinder, Module* listener, float mass = 1.0f);
+	PhysBody3D* AddBody(const pSphere& sphere, Module* listener, float mass = 1.0f);
+	PhysBody3D* AddBody(const pCube& cube, Module* listener, float mass = 1.0f);
+	PhysBody3D* AddBody(const pCylinder& cylinder, Module* listener, float mass = 1.0f);
 
 	void AddConstraintP2P(PhysBody3D& bodyA, PhysBody3D& bodyB, const vec3& anchorA, const vec3& anchorB);
 	void AddConstraintP2P(PhysBody3D& bodyA, const vec3& anchorB);
@@ -67,6 +67,6 @@ public:
 	int	 getDebugMode() const;
 
 	DebugDrawModes mode;
-	Line line;
+	pLine line;
 	Primitive point;
 };

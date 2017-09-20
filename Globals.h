@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <stdio.h>
 
-#define LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
+#define CONSOLE_LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 
 void log(const char file[], int line, const char* format, ...);
 
@@ -26,6 +26,31 @@ enum update_status
 	UPDATE_STOP,
 	UPDATE_ERROR
 };
+
+// Align 16, use if you have math elemtns in your class like float4x4 or AABB
+#define ALIGN_CLASS_TO_16 \
+	void* operator new(size_t i) { return _aligned_malloc(i,16); }\
+    void operator delete(void* p) { _aligned_free(p); }
+
+// Deletes a buffer
+#define RELEASE( x )\
+    {\
+       if( x != nullptr )\
+       {\
+         delete x;\
+	     x = nullptr;\
+       }\
+    }
+
+// Deletes an array of buffers
+#define RELEASE_ARRAY( x )\
+	{\
+       if( x != nullptr )\
+       {\
+           delete[] x;\
+	       x = nullptr;\
+		 }\
+	 }
 
 // Configuration -----------
 #define SCREEN_WIDTH 1600

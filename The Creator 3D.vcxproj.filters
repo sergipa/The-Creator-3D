@@ -16,9 +16,6 @@
     <Filter Include="Sources\Helpers">
       <UniqueIdentifier>{121f8e6b-df36-4ab0-be0d-601ddfc9e503}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Modules\Game">
-      <UniqueIdentifier>{83f46af7-e02f-40c0-9e56-41d76082527b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\imGui">
       <UniqueIdentifier>{5c04e8b6-3161-4a8a-a2cc-80ab474eb7b8}</UniqueIdentifier>
     </Filter>
@@ -86,9 +83,6 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Sources\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleSceneIntro.h">
-      <Filter>Sources\Modules\Game</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Sources\Tools</Filter>
@@ -300,6 +294,9 @@
     <ClInclude Include="MathGeoLib\Time\Clock.h">
       <Filter>Sources\MathGeoLib\Time</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleScene.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -340,9 +337,6 @@
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Sources\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleSceneIntro.cpp">
-      <Filter>Sources\Modules\Game</Filter>
     </ClCompile>
     <ClCompile Include="ModulePhysics3D.cpp">
       <Filter>Sources\Modules</Filter>
@@ -454,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="MathGeoLib\Time\Clock.cpp">
       <Filter>Sources\MathGeoLib\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleScene.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

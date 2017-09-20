@@ -5,7 +5,7 @@ Application::Application()
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
 	audio = new ModuleAudio(this, true);
-	scene_intro = new ModuleSceneIntro(this);
+	scene_intro = new ModuleScene(this);
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
 	physics = new ModulePhysics3D(this);
@@ -27,6 +27,8 @@ Application::Application()
 
 	// Renderer last!
 	AddModule(renderer3D);
+
+	random = new math::LCG();
 }
 
 Application::~Application()
@@ -38,6 +40,8 @@ Application::~Application()
 		delete item->data;
 		item = item->prev;
 	}
+
+	RELEASE(random);
 }
 
 bool Application::Init()
@@ -54,7 +58,7 @@ bool Application::Init()
 	}
 
 	// After all Init calls we call Start() in all modules
-	LOG("Application Start --------------");
+	CONSOLE_LOG("Application Start --------------");
 	item = list_modules.getFirst();
 
 	while(item != NULL && ret == true)
@@ -124,6 +128,11 @@ bool Application::CleanUp()
 		item = item->prev;
 	}
 	return ret;
+}
+
+LCG & Application::RandomNumber()
+{
+	return *random;
 }
 
 void Application::AddModule(Module* mod)
