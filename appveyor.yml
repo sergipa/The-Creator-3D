@@ -7,7 +7,7 @@ build:
   project: The Creator.sln
   verbosity: normal
 before_package:
-- ps: Copy-Item C:\projects\the-creator-3d\$env:CONFIGURATION\The Creator.exe C:\projects\the-creator-3d\EngineResources\.
+- ps: Copy-Item C:\projects\the-creator-3d\$env:CONFIGURATION\The-Creator.exe C:\projects\the-creator-3d\EngineResources\.
 artifacts:
 - path: EngineResources
   name: Engine
