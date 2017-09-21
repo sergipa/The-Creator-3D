@@ -1,0 +1,20 @@
+version: 1.0.{build}
+skip_tags: true
+configuration:
+- Debug
+- Release
+build:
+  project: The Creator.sln
+  verbosity: normal
+before_package:
+- ps: Copy-Item C:\projects\the-creator-3d\$env:CONFIGURATION\The Creator.exe C:\projects\the-creator-3d\EngineResources\.
+artifacts:
+- path: EngineResources
+  name: Engine
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: 8g535l10Nl6OGyUThbOD9ocDxqCF7OraHuKmVNd4oSEP8y/PbiTb8cj3mBXUUxpB
+  artifact: Engine
+  on:
+    CONFIGURATION: Release
