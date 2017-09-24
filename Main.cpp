@@ -3,8 +3,8 @@
 #include "Globals.h"
 
 #include "SDL/include/SDL.h"
-#pragma comment( lib, "SDL/libx86/SDL2.lib" )
-#pragma comment( lib, "SDL/libx86/SDL2main.lib" )
+#pragma comment( lib, "SDL/lib/x86/SDL2.lib" )
+#pragma comment( lib, "SDL/lib/x86/SDL2main.lib" )
 
 enum main_states
 {
@@ -15,13 +15,14 @@ enum main_states
 	MAIN_EXIT
 };
 
+Application* App = NULL;
+
 int main(int argc, char ** argv)
 {
 	CONSOLE_LOG("Starting game '%s'...", TITLE);
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
-	Application* App = NULL;
 
 	while (state != MAIN_EXIT)
 	{

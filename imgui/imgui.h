@@ -624,6 +624,8 @@ enum ImGuiCol_
     ImGuiCol_CheckMark,
     ImGuiCol_SliderGrab,
     ImGuiCol_SliderGrabActive,
+	ImGuiCol_PanelLines,
+	ImGuiCol_PanelLinesHovered,
     ImGuiCol_Button,
     ImGuiCol_ButtonHovered,
     ImGuiCol_ButtonActive,

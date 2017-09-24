@@ -55,11 +55,11 @@ update_status ModuleScene::Update(float dt)
 	float distance = ball1.Distance(ball2);
 	
 	if (ball1.Intersects(ball2)) {
-		App->imgui->AddLogToConsole("Ball 1 and ball 2 are intersecting");
+		//App->imgui->AddLogToConsole("Ball 1 and ball 2 are intersecting");
 	}
 	else {
 		std::string str = std::to_string(distance);
-		App->imgui->AddLogToConsole(("Distance between both speheres: " + str).c_str());
+		//App->imgui->AddLogToConsole(("Distance between both speheres: " + str).c_str());
 	}
 	pl.Render();
 

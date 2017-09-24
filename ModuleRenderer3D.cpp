@@ -1,12 +1,14 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
-#include "SDL\include\SDL_opengl.h"
-#include <gl/GL.h>
-#include <gl/GLU.h>
+#include "ModuleWindow.h"
+#include "OpenGL.h"
+#include "ModuleEditor.h"
+#include "Primitive.h"
 
-#pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
+#pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
+#pragma comment (lib, "Glew/libx86/glew32.lib")
 
 ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -29,12 +31,17 @@ bool ModuleRenderer3D::Init()
 		CONSOLE_LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
+
+	glewInit();
 	
 	if(ret == true)
 	{
 		//Use Vsync
 		if(VSYNC && SDL_GL_SetSwapInterval(1) < 0)
 			CONSOLE_LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+
+		texture = new RenderTexture();
+		texture->Create(App->window->GetWidth(), App->window->GetHeight());
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -105,6 +112,8 @@ bool ModuleRenderer3D::Init()
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
+	texture->Bind();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
@@ -123,6 +132,19 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+	//Test. This should be removed in the future
+	pCube cube(1, 1, 1);
+	cube.color = Red;
+	cube.SetPos(-2, 0, 0);
+	cube.Render();
+
+	pSphere sphere(1);
+	sphere.color = Green;
+	sphere.SetPos(2, 0, 0);
+	sphere.Render();
+
+	texture->Unbind();
+	App->editor->DrawEditor();
 	SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
 }
@@ -140,13 +162,9 @@ bool ModuleRenderer3D::CleanUp()
 
 void ModuleRenderer3D::OnResize(int width, int height)
 {
-	glViewport(0, 0, width, height);
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
 	glLoadMatrixf(&ProjectionMatrix);
-
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 }

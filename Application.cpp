@@ -9,7 +9,8 @@ Application::Application()
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
 	physics = new ModulePhysics3D(this);
-	imgui = new ModuleImGui(this);
+	//imgui = new ModuleImGui(this);
+	editor = new ModuleEditor(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -21,12 +22,17 @@ Application::Application()
 	AddModule(input);
 	AddModule(audio);
 	AddModule(physics);
-	AddModule(imgui);
-	// Scenes
-	AddModule(scene_intro);
+	//AddModule(imgui);
+	
+	
 
 	// Renderer last!
 	AddModule(renderer3D);
+
+	AddModule(editor);
+
+	// Scenes
+	AddModule(scene_intro);
 
 	random = new math::LCG();
 }
