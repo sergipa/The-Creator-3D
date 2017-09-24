@@ -348,7 +348,9 @@
     <ClInclude Include="HardwareWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
-    <ClInclude Include="AboutWindow.h" />
+    <ClInclude Include="AboutWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -540,7 +542,9 @@
     <ClCompile Include="HardwareWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
-    <ClCompile Include="AboutWindow.cpp" />
+    <ClCompile Include="AboutWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">
