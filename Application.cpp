@@ -103,14 +103,15 @@ void Application::FinishUpdate()
 		last_fps = num_fps;
 		num_fps = 0;
 	}
+
+	last_frame_ms = ms_timer.Read();
 	
 	if (capped_ms > 0 && last_frame_ms < capped_ms)
 	{
 		SDL_Delay(capped_ms - last_frame_ms);
 	}
-	float last_ms = ms_timer.Read();
 
-	App->editor->AddData_Editor(last_ms, last_fps);
+	App->editor->AddData_Editor(last_frame_ms, last_fps);
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules

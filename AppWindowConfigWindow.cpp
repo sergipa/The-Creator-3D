@@ -43,20 +43,20 @@ void AppWindowConfigWindow::DrawWindow()
 	//}
 
 
-	if (ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f));
+	ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f);
 	if (ImGui::Button("Apply Brightness"))
 	{
 		SDL_SetWindowBrightness(App->window->window, brightness);
 	}
 
-	if (ImGui::SliderFloat("Width", &width, 100.0f, 1920.0f,"%.0f"));
-	if (ImGui::SliderFloat("Height", &height, 100.0f, 1080.0f,"%.0f"));
+	ImGui::SliderFloat("Width", &width, 100.0f, 1920.0f,"%.0f");
+	ImGui::SliderFloat("Height", &height, 100.0f, 1080.0f,"%.0f");
 	if (ImGui::Button("Apply Size"))
 	{
 		SDL_SetWindowSize(App->window->window, width, height);
 	}
 
-	if (ImGui::SliderFloat("FPS Limit", &fps_cap, 1.0f, 144.0f, "%.0f"));
+	ImGui::SliderFloat("FPS Limit", &fps_cap, 1.0f, 144.0f, "%.0f");
 	if (ImGui::Button("Apply FPS Cap"))
 	{
 		App->CapFPS(fps_cap);
