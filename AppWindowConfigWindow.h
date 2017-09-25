@@ -15,4 +15,5 @@ private:
 
 	float width;
 	float height;
+	float fps_cap;
 };

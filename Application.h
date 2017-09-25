@@ -40,6 +40,7 @@ private:
 	int	last_frame_ms;
 	int	last_fps;
 	int frames;
+	int capped_ms;
 public:
 
 	Application();
@@ -49,7 +50,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 	LCG& RandomNumber();
-
+	void CapFPS(int max_fps);
 private:
 
 	void AddModule(Module* mod);

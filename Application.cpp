@@ -6,6 +6,7 @@ Application::Application()
 	last_frame_ms = -1;
 	last_fps = 0;
 	num_fps = 0;
+	capped_ms = 1000 / 60;
 
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
@@ -98,13 +99,17 @@ void Application::FinishUpdate()
 
 	if (fps_timer.Read() >= 1000)//in ms
 	{
+		fps_timer.Start();
 		last_fps = num_fps;
 		num_fps = 0;
-		fps_timer.Start();
 	}
-
-	float last_ms = ms_timer.Read();
 	
+	if (capped_ms > 0 && last_frame_ms < capped_ms)
+	{
+		SDL_Delay(capped_ms - last_frame_ms);
+	}
+	float last_ms = ms_timer.Read();
+
 	App->editor->AddData_Editor(last_ms, last_fps);
 }
 
@@ -158,6 +163,14 @@ bool Application::CleanUp()
 LCG & Application::RandomNumber()
 {
 	return *random;
+}
+
+void Application::CapFPS(int max_fps)
+{
+	if (max_fps > 0) capped_ms = 1000 / max_fps;
+		
+	else capped_ms = 0;
+		
 }
 
 void Application::AddModule(Module* mod)

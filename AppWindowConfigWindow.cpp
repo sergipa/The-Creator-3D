@@ -10,6 +10,7 @@ AppWindowConfigWindow::AppWindowConfigWindow()
 	brightness = 1.0f;
 	width = 1280;
 	height = 1024;
+	fps_cap = 60;
 }
 AppWindowConfigWindow::~AppWindowConfigWindow()
 {
@@ -53,6 +54,12 @@ void AppWindowConfigWindow::DrawWindow()
 	if (ImGui::Button("Apply Size"))
 	{
 		SDL_SetWindowSize(App->window->window, width, height);
+	}
+
+	if (ImGui::SliderFloat("FPS Limit", &fps_cap, 1.0f, 144.0f, "%.0f"));
+	if (ImGui::Button("Apply FPS Cap"))
+	{
+		App->CapFPS(fps_cap);
 	}
 
 	ImGui::End();
