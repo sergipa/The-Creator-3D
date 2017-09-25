@@ -30,10 +30,16 @@ public:
 private:
 
 	Timer	ms_timer;
+	Timer	fps_timer;
 	float	dt;
 	p2List<Module*> list_modules;
 	LCG*	random = nullptr;
 	
+	//Variables needed to show ms and fps graphs
+	int	num_fps;
+	int	last_frame_ms;
+	int	last_fps;
+	int frames;
 public:
 
 	Application();

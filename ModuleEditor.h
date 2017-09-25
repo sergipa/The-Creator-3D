@@ -13,7 +13,9 @@ class AssetsWindow;
 class ConsoleWindow;
 class SceneWindow;
 class HardwareWindow;
+class PerformanceWindow;
 class AboutWindow;
+class AppWindowConfigWindow;
 
 struct DragObjectData {
 	std::string from_panel;
@@ -48,6 +50,7 @@ public:
 	void HandleInput(SDL_Event* event);
 	void OpenBrowserPage(const char* url);
 
+	void AddData_Editor(float ms, float fps);
 private:
 	ImFont* font = nullptr;
 	std::vector<Window*> editor_windows;
@@ -57,7 +60,9 @@ private:
 	SceneWindow* scene_window = nullptr;
 	ConsoleWindow* console_window = nullptr;
 	HardwareWindow* hardware_window = nullptr;
+	PerformanceWindow* performance_window = nullptr;
 	AboutWindow* about_window = nullptr;
+	AppWindowConfigWindow* config_window = nullptr;
 	//AnimatorWindow* animator_window = nullptr;
 	//ParticleEditorWindow* particle_editor_window = nullptr;
 

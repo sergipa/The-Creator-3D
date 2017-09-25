@@ -2,6 +2,11 @@
 
 Application::Application()
 {
+	frames = 0;
+	last_frame_ms = -1;
+	last_fps = 0;
+	num_fps = 0;
+
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
 	audio = new ModuleAudio(this, true);
@@ -74,6 +79,7 @@ bool Application::Init()
 	}
 	
 	ms_timer.Start();
+	fps_timer.Start();
 	return ret;
 }
 
@@ -87,6 +93,19 @@ void Application::PrepareUpdate()
 // ---------------------------------------------
 void Application::FinishUpdate()
 {
+	frames++;
+	num_fps++;
+
+	if (fps_timer.Read() >= 1000)//in ms
+	{
+		last_fps = num_fps;
+		num_fps = 0;
+		fps_timer.Start();
+	}
+
+	float last_ms = ms_timer.Read();
+	
+	App->editor->AddData_Editor(last_ms, last_fps);
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules

@@ -9,7 +9,9 @@
 #include "SceneWindow.h"
 #include "ModuleWindow.h"
 #include "HardwareWindow.h"
+#include "PerformanceWindow.h"
 #include "AboutWindow.h"
+#include "AppWindowConfigWindow.h"
 
 ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -38,7 +40,9 @@ bool ModuleEditor::Init()
 	editor_windows.push_back(properties_window = new PropertiesWindow());
 	editor_windows.push_back(console_window = new ConsoleWindow());
 	editor_windows.push_back(hardware_window = new HardwareWindow());
+	editor_windows.push_back(performance_window = new PerformanceWindow());
 	editor_windows.push_back(about_window = new AboutWindow());
+	editor_windows.push_back(config_window = new AppWindowConfigWindow());
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());
 	ImGui::LoadDocks();
@@ -98,7 +102,7 @@ update_status ModuleEditor::Update(float deltaTime)
 			//	}*/
 			//}
 			if (ImGui::MenuItem("Exit")) {
-				//App->QuitEngine();
+				return UPDATE_STOP;
 			}
 
 			ImGui::EndMenu();
@@ -111,6 +115,14 @@ update_status ModuleEditor::Update(float deltaTime)
 			if (ImGui::MenuItem("Hardware"))
 			{
 				hardware_window->active = !hardware_window->active;
+			}
+			if (ImGui::MenuItem("Performance"))
+			{
+				performance_window->active = !performance_window->active;
+			}
+			if (ImGui::MenuItem("WindowConfig"))
+			{
+				config_window->active = !config_window->active;
 			}
 			ImGui::EndMenu();
 			style.Colors[ImGuiCol_Text] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
@@ -205,5 +217,10 @@ void ModuleEditor::HandleInput(SDL_Event * event)
 void ModuleEditor::OpenBrowserPage(const char * url)
 {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+
+void ModuleEditor::AddData_Editor(float ms, float fps)
+{
+	performance_window->AddData(ms, fps);
 }
 

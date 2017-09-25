@@ -351,6 +351,12 @@
     <ClInclude Include="AboutWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
+    <ClInclude Include="PerformanceWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
+    <ClInclude Include="AppWindowConfigWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -543,6 +549,12 @@
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
     <ClCompile Include="AboutWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
+    </ClCompile>
+    <ClCompile Include="AppWindowConfigWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
   </ItemGroup>
