@@ -1,6 +1,7 @@
 #include "SceneWindow.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
 
 SceneWindow::SceneWindow()
 {
@@ -22,6 +23,18 @@ void SceneWindow::DrawWindow()
 			App->renderer3D->OnResize(size.x, size.y);
 		}
 		ImGui::Image((void*)App->renderer3D->texture->GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
+
+		if (ImGui::IsMouseDown(1) || ImGui::IsMouseDown(2))
+		{
+			if (ImGui::IsMouseHoveringWindow())
+			{
+				App->camera->can_update = true;
+			}
+		}
+		if (ImGui::IsMouseReleased(1) || ImGui::IsMouseReleased(2))
+		{
+			App->camera->can_update = false;
+		}
 	}
 
 	ImGui::EndDock();

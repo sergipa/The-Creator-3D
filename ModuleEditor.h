@@ -18,14 +18,14 @@ class AboutWindow;
 class AppWindowConfigWindow;
 
 struct DragObjectData {
-	std::string from_panel;
+	std::string from_window;
 	std::string path;
 	std::string extension;
 	std::string name;
 	bool has_data = false;
 	SDL_Texture* drag_sprite;
 	void clearData() {
-		from_panel.clear();
+		from_window.clear();
 		path.clear();
 		extension.clear();
 		name.clear();

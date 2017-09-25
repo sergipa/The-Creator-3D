@@ -26,13 +26,13 @@ bool ModuleEditor::Init()
 	ImGui_ImplSdl_Init(App->window->window);
 
 	// (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)
-	//ImGuiIO& io = ImGui::GetIO();
-	//io.Fonts->AddFontDefault();
-	//io.Fonts->AddFontFromFileTTF("../Source/imgui-1.51/extra_fonts/Cousine-Regular.ttf", 15.0f);
-	//io.Fonts->AddFontFromFileTTF("../Source/imgui-1.51/extra_fonts/DroidSans.ttf", 16.0f);
-	//io.Fonts->AddFontFromFileTTF("../Source/imgui-1.51/extra_fonts/ProggyClean.ttf", 13.0f);
-	//io.Fonts->AddFontFromFileTTF("../Source/imgui-1.51/extra_fonts/ProggyTiny.ttf", 10.0f);
-	//font = io.Fonts->AddFontFromFileTTF("../Data/OpenSans-Semibold.ttf", 16);
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/Cousine-Regular.ttf", 15.0f);
+	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/DroidSans.ttf", 16.0f);
+	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/ProggyClean.ttf", 13.0f);
+	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/ProggyTiny.ttf", 10.0f);
+	font = io.Fonts->AddFontFromFileTTF("../imgui/extra_fonts/OpenSans-Semibold.ttf", 16.0f);
 	
 	editor_windows.push_back(scene_window = new SceneWindow());
 	editor_windows.push_back(assets_window = new AssetsWindow());

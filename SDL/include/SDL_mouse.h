@@ -240,6 +240,18 @@ extern DECLSPEC SDL_Cursor *SDLCALL SDL_CreateSystemCursor(SDL_SystemCursor id);
 
 /**
  *  \brief Set the active cursor.
+ *	\SDL_SYSTEM_CURSOR_ARROW:		arrow
+ *	\SDL_SYSTEM_CURSOR_IBEAM:		i-beam
+ *	\SDL_SYSTEM_CURSOR_WAIT:		wait
+ *	\SDL_SYSTEM_CURSOR_CROSSHAIR:	crosshair
+ *	\SDL_SYSTEM_CURSOR_WAITARROW:	small wait cursor (or wait if not available)
+ *	\SDL_SYSTEM_CURSOR_SIZENWSE:	double arrow pointing northwest and southeast
+ *	\SDL_SYSTEM_CURSOR_SIZENESW:	double arrow pointing northeast and southwest
+ *	\SDL_SYSTEM_CURSOR_SIZEWE:		double arrow pointing west and east
+ *	\SDL_SYSTEM_CURSOR_SIZENS:		double arrow pointing north and south
+ *	\SDL_SYSTEM_CURSOR_SIZEALL:		four pointed arrow pointing north, south, east, and west
+ *	\SDL_SYSTEM_CURSOR_NO:			slashed circle or crossbones
+ *	\SDL_SYSTEM_CURSOR_HAND:		hand
  */
 extern DECLSPEC void SDLCALL SDL_SetCursor(SDL_Cursor * cursor);
 

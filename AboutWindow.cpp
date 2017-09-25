@@ -17,8 +17,9 @@ void AboutWindow::DrawWindow()
 		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_ShowBorders);
-
-	ImGui::Text("The Creator 0.2");
+	ImGui::SetWindowFontScale(1.1f);
+	ImGui::Text("The Creator v0.2");
+	ImGui::SetWindowFontScale(1);
 	ImGui::Text("The next generation 3D Game Engine");
 	ImGui::Text("By Adria Martin & Sergi Perez");
 	ImGui::Spacing();
@@ -33,7 +34,33 @@ void AboutWindow::DrawWindow()
 	ImGui::BulletText("OpenGL 2.1");
 	ImGui::Spacing();
 	ImGui::Spacing();
-	ImGui::Text("License: MIT");
+	ImGui::Text("License:");
+	ImGui::Spacing();
+	ImGui::Text("MIT License");
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Text("Copyright (c) 2017 Sergi Perez & Adria Martin");
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Text("Permission is hereby granted, free of charge, to any person obtaining a copy");
+	ImGui::Text("of this software and associated documentation files(the 'Software'), to deal");
+	ImGui::Text("in the Software without restriction, including without limitation the rights");
+	ImGui::Text("to use, copy, modify, merge, publish, distribute, sublicense, and/or sell");
+	ImGui::Text("copies of the Software, and to permit persons to whom the Software is");
+	ImGui::Text("furnished to do so, subject to the following conditions :");
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Text("The above copyright notice and this permission notice shall be included in all");
+	ImGui::Text("copies or substantial portions of the Software.");
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Text("THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR");
+	ImGui::Text("IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,");
+	ImGui::Text("FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE");
+	ImGui::Text("AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER");
+	ImGui::Text("LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,");
+	ImGui::Text("OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE");
+	ImGui::Text("SOFTWARE.");
 
 	ImGui::End();
 }

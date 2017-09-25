@@ -780,8 +780,8 @@ ImGuiStyle::ImGuiStyle()
 	Colors[ImGuiCol_CloseButtonActive]			= ImVec4(0.40f, 0.39f, 0.38f, 1.00f);
 	Colors[ImGuiCol_PlotLines]					= ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
 	Colors[ImGuiCol_PlotLinesHovered]			= ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
-	Colors[ImGuiCol_PlotHistogram]				= ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
-	Colors[ImGuiCol_PlotHistogramHovered]		= ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
+	Colors[ImGuiCol_PlotHistogram]				= ImVec4(0.80f, 0.80f, 0.80f, 0.90f);
+	Colors[ImGuiCol_PlotHistogramHovered]		= ImVec4(0.05f, 1.00f, 0.20f, 1.00f);
 	Colors[ImGuiCol_TextSelectedBg]				= ImVec4(0.25f, 1.00f, 0.00f, 0.43f);
 	Colors[ImGuiCol_ModalWindowDarkening]		= ImVec4(1.00f, 0.98f, 0.95f, 0.73f);
 

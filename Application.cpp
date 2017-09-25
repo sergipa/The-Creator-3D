@@ -41,6 +41,7 @@ Application::Application()
 	AddModule(scene_intro);
 
 	random = new math::LCG();
+	cursor = nullptr;
 }
 
 Application::~Application()
@@ -54,6 +55,7 @@ Application::~Application()
 	}
 
 	RELEASE(random);
+	SDL_FreeCursor(cursor);
 }
 
 bool Application::Init()
@@ -172,6 +174,12 @@ void Application::CapFPS(int max_fps)
 		
 	else capped_ms = 0;
 		
+}
+
+void Application::SetCursor(SDL_SystemCursor id)
+{
+	cursor = SDL_CreateSystemCursor(id);
+	SDL_SetCursor(cursor);
 }
 
 void Application::AddModule(Module* mod)

@@ -41,6 +41,7 @@ private:
 	int	last_fps;
 	int frames;
 	int capped_ms;
+	SDL_Cursor* cursor;
 public:
 
 	Application();
@@ -51,6 +52,7 @@ public:
 	bool CleanUp();
 	LCG& RandomNumber();
 	void CapFPS(int max_fps);
+	void SetCursor(SDL_SystemCursor id);
 private:
 
 	void AddModule(Module* mod);

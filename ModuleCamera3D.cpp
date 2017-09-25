@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "PhysBody3D.h"
 #include "ModuleCamera3D.h"
+#include "SceneWindow.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -13,6 +14,8 @@ ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(ap
 
 	Position = vec3(0.0f, 0.0f, 5.0f);
 	Reference = vec3(0.0f, 0.0f, 0.0f);
+
+	can_update = false;
 }
 
 ModuleCamera3D::~ModuleCamera3D()
@@ -38,6 +41,8 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
+	if (can_update)
+	{
 		// Implement a debug camera with keys and mouse
 		// Now we can make this movememnt frame rate independant!
 
@@ -96,10 +101,11 @@ update_status ModuleCamera3D::Update(float dt)
 
 			Position = Reference + Z * length(Position);
 		}
-
-	// Recalculate matrix -------------
-	CalculateViewMatrix();
-
+		
+		// Recalculate matrix -------------
+		CalculateViewMatrix();
+	}
+		
 	return UPDATE_CONTINUE;
 }
 
