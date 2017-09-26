@@ -81,6 +81,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Data.h" />
+    <ClInclude Include="EditorStyleWindow.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="HardwareWindow.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="AppWindowConfigWindow.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Data.cpp" />
+    <ClCompile Include="EditorStyleWindow.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="HardwareWindow.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />

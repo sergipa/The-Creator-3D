@@ -100,6 +100,13 @@ struct ImVec2
 #endif
 };
 
+struct ImVec3
+{
+	float x, y, z;
+	ImVec3() { x = y = z = 0.0f; }
+	ImVec3(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
+};
+
 struct ImVec4
 {
     float x, y, z, w;

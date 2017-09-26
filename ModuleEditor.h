@@ -16,6 +16,7 @@ class HardwareWindow;
 class PerformanceWindow;
 class AboutWindow;
 class AppWindowConfigWindow;
+class EditorStyleWindow;
 
 struct DragObjectData {
 	std::string from_window;
@@ -51,6 +52,9 @@ public:
 	void OpenBrowserPage(const char* url);
 
 	void AddData_Editor(float ms, float fps);
+
+	void LoadEditorStyle();
+
 private:
 	ImFont* font = nullptr;
 	std::vector<Window*> editor_windows;
@@ -63,6 +67,7 @@ private:
 	PerformanceWindow* performance_window = nullptr;
 	AboutWindow* about_window = nullptr;
 	AppWindowConfigWindow* config_window = nullptr;
+	EditorStyleWindow* style_editor_window = nullptr;
 	//AnimatorWindow* animator_window = nullptr;
 	//ParticleEditorWindow* particle_editor_window = nullptr;
 

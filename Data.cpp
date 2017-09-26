@@ -449,9 +449,9 @@ std::string Data::GetString(std::string valueName)
 	return "value not found";
 }
 
-Vector2f Data::GetVector2Float(std::string valueName)
+ImVec2 Data::GetVector2(std::string valueName)
 {
-	Vector2f ret;
+	ImVec2 ret;
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 
 	std::vector<std::string> vec_names;
@@ -479,9 +479,9 @@ Vector2f Data::GetVector2Float(std::string valueName)
 	return ret;
 }
 
-Vector3f Data::GetVector3Float(std::string valueName)
+ImVec3 Data::GetVector3(std::string valueName)
 {
-	Vector3f ret;
+	ImVec3 ret;
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 
 	std::vector<std::string> vec_names;
@@ -511,9 +511,9 @@ Vector3f Data::GetVector3Float(std::string valueName)
 	return ret;
 }
 
-Vector2i Data::GetVector2Int(std::string valueName)
+ImVec4 Data::GetVector4(std::string valueName)
 {
-	Vector2i ret;
+	ImVec4 ret;
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 
 	std::vector<std::string> vec_names;
@@ -531,44 +531,16 @@ Vector2i Data::GetVector2Int(std::string valueName)
 	std::vector<std::string>::iterator it = find(vec_names.begin(), vec_names.end(), valueName);
 	if (it != vec_names.end()) {
 		int index = it - vec_names.begin();
-		ret.x = stoi(vec_values[index + 1]);
-		ret.y = stoi(vec_values[index + 2]);
+		ret.x = stof(vec_values[index + 1]);
+		ret.y = stof(vec_values[index + 2]);
+		ret.z = stof(vec_values[index + 3]);
+		ret.w = stof(vec_values[index + 4]);
 	}
 	else {
-		ret.x = -1;
-		ret.y = -1;
-	}
-	return ret;
-}
-
-Vector3i Data::GetVector3Int(std::string valueName)
-{
-	Vector3i ret;
-	std::replace(valueName.begin(), valueName.end(), ' ', '_');
-
-	std::vector<std::string> vec_names;
-	std::vector<std::string> vec_values;
-
-	if (getting_from_section) {
-		vec_names = in_section_names;
-		vec_values = in_section_values;
-	}
-	else {
-		vec_names = out_section_names;
-		vec_values = out_section_values;
-	}
-
-	std::vector<std::string>::iterator it = find(vec_names.begin(), vec_names.end(), valueName);
-	if (it != vec_names.end()) {
-		int index = it - vec_names.begin();
-		ret.x = stoi(vec_values[index + 1]);
-		ret.y = stoi(vec_values[index + 2]);
-		ret.z = stoi(vec_values[index + 3]);
-	}
-	else {
-		ret.x = -1;
-		ret.y = -1;
-		ret.z = -1;
+		ret.x = -1.0f;
+		ret.y = -1.0f;
+		ret.z = -1.0f;
+		ret.w = -1.0f;
 	}
 	return ret;
 }
@@ -615,7 +587,7 @@ void Data::AddString(std::string valueName, std::string value)
 	data_names.push_back(valueName);
 }
 
-void Data::AddVector2Float(std::string valueName, Vector2f value)
+void Data::AddVector2(std::string valueName, ImVec2 value)
 {
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 	CreateSection(valueName);
@@ -626,7 +598,7 @@ void Data::AddVector2Float(std::string valueName, Vector2f value)
 	CloseSection();
 }
 
-void Data::AddVector3Float(std::string valueName, Vector3f value)
+void Data::AddVector3(std::string valueName, ImVec3 value)
 {
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 	CreateSection(valueName);
@@ -639,18 +611,7 @@ void Data::AddVector3Float(std::string valueName, Vector3f value)
 	CloseSection();
 }
 
-void Data::AddVector2Int(std::string valueName, Vector2i value)
-{
-	std::replace(valueName.begin(), valueName.end(), ' ', '_');
-	CreateSection(valueName);
-	data_values.push_back(std::to_string(value.x));
-	data_names.push_back("value_X");
-	data_values.push_back(std::to_string(value.y));
-	data_names.push_back("value_Y");
-	CloseSection();
-}
-
-void Data::AddVector3Int(std::string valueName, Vector3i value)
+void Data::AddVector4(std::string valueName, ImVec4 value)
 {
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 	CreateSection(valueName);
@@ -660,5 +621,7 @@ void Data::AddVector3Int(std::string valueName, Vector3i value)
 	data_names.push_back("value_Y");
 	data_values.push_back(std::to_string(value.z));
 	data_names.push_back("value_Z");
+	data_values.push_back(std::to_string(value.w));
+	data_names.push_back("value_W");
 	CloseSection();
 }

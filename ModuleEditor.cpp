@@ -12,6 +12,8 @@
 #include "PerformanceWindow.h"
 #include "AboutWindow.h"
 #include "AppWindowConfigWindow.h"
+#include "EditorStyleWindow.h"
+#include "Data.h"
 
 ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -28,11 +30,13 @@ bool ModuleEditor::Init()
 	// (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
-	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/Cousine-Regular.ttf", 15.0f);
-	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/DroidSans.ttf", 16.0f);
-	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/ProggyClean.ttf", 13.0f);
-	//io.Fonts->AddFontFromFileTTF("imgui/extra_fonts/ProggyTiny.ttf", 10.0f);
+	io.Fonts->AddFontFromFileTTF("../imgui/extra_fonts/Cousine-Regular.ttf", 15.0f);
+	io.Fonts->AddFontFromFileTTF("../imgui/extra_fonts/DroidSans.ttf", 16.0f);
+	io.Fonts->AddFontFromFileTTF("../imgui/extra_fonts/ProggyClean.ttf", 13.0f);
+	io.Fonts->AddFontFromFileTTF("../imgui/extra_fonts/ProggyTiny.ttf", 10.0f);
 	font = io.Fonts->AddFontFromFileTTF("../imgui/extra_fonts/OpenSans-Semibold.ttf", 16.0f);
+
+	LoadEditorStyle();
 	
 	editor_windows.push_back(scene_window = new SceneWindow());
 	editor_windows.push_back(assets_window = new AssetsWindow());
@@ -43,6 +47,7 @@ bool ModuleEditor::Init()
 	editor_windows.push_back(performance_window = new PerformanceWindow());
 	editor_windows.push_back(about_window = new AboutWindow());
 	editor_windows.push_back(config_window = new AppWindowConfigWindow());
+	editor_windows.push_back(style_editor_window = new EditorStyleWindow());
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());
 	ImGui::LoadDocks();
@@ -123,6 +128,10 @@ update_status ModuleEditor::Update(float deltaTime)
 			if (ImGui::MenuItem("WindowConfig"))
 			{
 				config_window->active = !config_window->active;
+			}
+			if (ImGui::MenuItem("Editor Style"))
+			{
+				style_editor_window->active = !style_editor_window->active;
 			}
 			ImGui::EndMenu();
 			style.Colors[ImGuiCol_Text] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
@@ -222,5 +231,45 @@ void ModuleEditor::OpenBrowserPage(const char * url)
 void ModuleEditor::AddData_Editor(float ms, float fps)
 {
 	performance_window->AddData(ms, fps);
+}
+
+void ModuleEditor::LoadEditorStyle()
+{
+	Data data;
+
+	if (data.LoadJSON("../EngineResources/Editor_Style.json"))
+	{
+		ImGuiStyle * style = &ImGui::GetStyle();
+		data.EnterSection("Editor_Style");
+		style->Alpha = data.GetFloat("Alpha");
+		style->WindowPadding = data.GetVector2("WindowPadding");
+		style->WindowMinSize = data.GetVector2("WindowMinSize");
+		style->WindowRounding = data.GetFloat("WindowRounding");
+		style->WindowTitleAlign = data.GetVector2("WindowTitleAlign");
+		style->ChildWindowRounding = data.GetFloat("ChildWindowRounding");
+		style->FramePadding = data.GetVector2("FramePadding");
+		style->FrameRounding = data.GetFloat("FrameRounding");
+		style->ItemSpacing = data.GetVector2("ItemSpacing");
+		style->ItemInnerSpacing = data.GetVector2("ItemInnerSpacing");
+		style->TouchExtraPadding = data.GetVector2("TouchExtraPadding");
+		style->IndentSpacing = data.GetFloat("IndentSpacing");
+		style->ColumnsMinSpacing = data.GetFloat("ColumnsMinSpacing");
+		style->ScrollbarSize = data.GetFloat("ScrollbarSize");
+		style->ScrollbarRounding = data.GetFloat("ScrollbarRounding");
+		style->GrabMinSize = data.GetFloat("GrabMinSize");
+		style->GrabRounding = data.GetFloat("GrabRounding");
+		style->ButtonTextAlign = data.GetVector2("ButtonTextAlign");
+		style->DisplayWindowPadding = data.GetVector2("DisplayWindowPadding");
+		style->DisplaySafeAreaPadding = data.GetVector2("DisplaySafeAreaPadding");
+		style->AntiAliasedLines = data.GetBool("AntiAliasedLines");             
+		style->AntiAliasedShapes = data.GetBool("AntiAliasedShapes");
+		style->CurveTessellationTol = data.GetFloat("CurveTessellationTol");
+
+		for (int i = 0; i < ImGuiCol_COUNT; i++)
+		{
+			style->Colors[i] = data.GetVector4(ImGui::GetStyleColorName(i));
+		}
+		data.LeaveSection();
+	}
 }
 

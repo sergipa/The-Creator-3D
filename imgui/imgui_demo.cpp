@@ -32,6 +32,7 @@
 #else
 #include <stdint.h>         // intptr_t
 #endif
+#include "../Data.h"
 
 #ifdef _MSC_VER
 #pragma warning (disable: 4996) // 'This function or variable may be unsafe': strcpy, strdup, sprintf, vsnprintf, sscanf, fopen
@@ -1795,12 +1796,48 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
     if (ImGui::Button("Revert Style"))
         style = ref ? *ref : default_style;
 
-    if (ref)
+    /*if (ref)
     {
         ImGui::SameLine();
         if (ImGui::Button("Save Style"))
             *ref = style;
-    }
+    }*/
+
+	ImGui::SameLine();
+	if (ImGui::Button("Save Style"))
+	{
+		Data data;
+		data.CreateSection("Editor_Style");
+		data.AddFloat("Alpha", style.Alpha);
+		data.AddVector2("WindowPadding", style.WindowPadding);
+		data.AddVector2("WindowMinSize", style.WindowMinSize);
+		data.AddFloat("WindowRounding", style.WindowRounding);
+		data.AddVector2("WindowTitleAlign", style.WindowTitleAlign);
+		data.AddFloat("ChildWindowRounding", style.ChildWindowRounding);
+		data.AddVector2("FramePadding", style.FramePadding);
+		data.AddFloat("FrameRounding", style.FrameRounding);
+		data.AddVector2("ItemSpacing", style.ItemSpacing);
+		data.AddVector2("ItemInnerSpacing", style.ItemInnerSpacing);
+		data.AddVector2("TouchExtraPadding", style.TouchExtraPadding);
+		data.AddFloat("IndentSpacing", style.IndentSpacing);
+		data.AddFloat("ColumnsMinSpacing", style.ColumnsMinSpacing);
+		data.AddFloat("ScrollbarSize", style.ScrollbarSize);
+		data.AddFloat("ScrollbarRounding", style.ScrollbarRounding);
+		data.AddFloat("GrabMinSize", style.GrabMinSize);
+		data.AddFloat("GrabRounding", style.GrabRounding);
+		data.AddVector2("ButtonTextAlign", style.ButtonTextAlign);
+		data.AddVector2("DisplayWindowPadding", style.DisplayWindowPadding);
+		data.AddVector2("DisplaySafeAreaPadding", style.DisplaySafeAreaPadding);
+		data.AddBool("Anti-aliased lines", style.AntiAliasedLines);
+		data.AddBool("Anti-aliased shapes", style.AntiAliasedShapes);
+		data.AddFloat("CurveTessellationTol", style.CurveTessellationTol);
+		for (int i = 0; i < ImGuiCol_COUNT; i++) 
+		{
+			data.AddVector4(GetStyleColorName(i), style.Colors[i]);
+		}
+		data.CloseSection();
+		data.SaveAsJSON("../EngineResources/Editor_Style");
+	}
 
     ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.55f);
 

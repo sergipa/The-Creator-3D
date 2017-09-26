@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Globals.h"
-#include "Vector2.h"
-#include "Vector3.h"
+#include "imgui\imgui.h"
 #include <fstream>
 #include <iostream>
 #include "cereal-1.2.2\include\cereal\archives\xml.hpp"
@@ -37,10 +36,9 @@ public:
 	double GetDouble(std::string valueName);
 	float GetFloat(std::string valueName);
 	std::string GetString(std::string valueName);
-	Vector2f GetVector2Float(std::string valueName);
-	Vector3f GetVector3Float(std::string valueName);
-	Vector2i GetVector2Int(std::string valueName);
-	Vector3i GetVector3Int(std::string valueName);
+	ImVec2 GetVector2(std::string valueName);
+	ImVec3 GetVector3(std::string valueName);
+	ImVec4 GetVector4(std::string valueName);
 
 	void AddBool(std::string valueName, bool value);
 	void AddInt(std::string valueName, int value);
@@ -48,10 +46,9 @@ public:
 	void AddDouble(std::string valueName, double value);
 	void AddFloat(std::string valueName, float value);
 	void AddString(std::string valueName, std::string value);
-	void AddVector2Float(std::string valueName, Vector2f value);
-	void AddVector3Float(std::string valueName, Vector3f value);
-	void AddVector2Int(std::string valueName, Vector2i value);
-	void AddVector3Int(std::string valueName, Vector3i);
+	void AddVector2(std::string valueName, ImVec2 value);
+	void AddVector3(std::string valueName, ImVec3 value);
+	void AddVector4(std::string valueName, ImVec4 value);
 
 private:
 
