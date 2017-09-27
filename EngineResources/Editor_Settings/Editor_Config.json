@@ -1,0 +1,15 @@
+{
+    "Engine_Settings": {
+        "Window_Config": {
+            "screen_width": "1280",
+            "screen_height": "950",
+            "Fullscreen": "0",
+            "Window_Resizable": "1",
+            "Window_Borderless": "0",
+            "Window_Full_Desktop": "0"
+        },
+        "Renderer_Config": {
+            "Vsync": "1"
+        }
+    }
+}
