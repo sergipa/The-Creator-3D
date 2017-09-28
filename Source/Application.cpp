@@ -146,7 +146,6 @@ update_status Application::Update()
 		ret = (*item)->PostUpdate(dt);
 		++item;
 	}
-
 	FinishUpdate();
 	return ret;
 }

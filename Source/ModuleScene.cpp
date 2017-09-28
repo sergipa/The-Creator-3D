@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleScene.h"
+#include "ModuleEditor.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>
@@ -8,8 +9,9 @@
 
 #pragma comment (lib, "glut/glut32.lib")
 
-ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled, "Scene")
+ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
+	name = "Scene";
 }
 
 ModuleScene::~ModuleScene()
@@ -63,7 +65,7 @@ update_status ModuleScene::Update(float dt)
 		//App->imgui->AddLogToConsole(("Distance between both speheres: " + str).c_str());
 	}
 	pl.Render();
-	ms_timer.Read();
+	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
 	return UPDATE_CONTINUE;
 }
 

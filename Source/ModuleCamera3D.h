@@ -2,6 +2,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "glmath.h"
+#include "ModuleEditor.h"
 
 class btRigidBody;
 

@@ -10,12 +10,12 @@ class Module
 {
 private :
 	bool enabled;
-	std::string name;
 public:
+	std::string name;
 	Timer ms_timer;
 	Application* App;
 
-	Module(Application* parent, bool start_enabled = true, std::string name = "") : App(parent)
+	Module(Application* parent, bool start_enabled = true) : App(parent)
 	{}
 
 	virtual ~Module()

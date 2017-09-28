@@ -3,7 +3,7 @@
 #include "ModuleWindow.h"
 #include "Data.h"
 
-ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, start_enabled, "Window")
+ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	window = NULL;
 	screen_surface = NULL;
@@ -13,6 +13,8 @@ ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, s
 	is_resizable = true;
 	is_borderless = false;
 	is_full_desktop = false;
+
+	name = "Window";
 }
 
 // Destructor

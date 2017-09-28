@@ -11,7 +11,7 @@
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "Glew/libx86/glew32.lib")
 
-ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled, "Renderer3D")
+ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	use_vsync = true;
 	is_using_lightning = false;
@@ -20,6 +20,7 @@ ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Modul
 	is_using_color_material = false;
 	is_using_texture2D = false;
 	is_using_fog = false;
+	name = "Renderer";
 }
 
 // Destructor
@@ -164,8 +165,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	App->editor->DrawEditor();
 
+	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+
 	SDL_GL_SwapWindow(App->window->window);
-	ms_timer.Read();
 	return UPDATE_CONTINUE;
 }
 

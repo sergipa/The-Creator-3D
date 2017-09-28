@@ -16,8 +16,9 @@
 #include "Data.h"
 #include "RendererConfigWindow.h"
 
-ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled, "Editor")
+ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled)
 {
+	name = "Editor";
 }
 
 ModuleEditor::~ModuleEditor()
@@ -205,7 +206,7 @@ update_status ModuleEditor::Update(float deltaTime)
 	ImGui::EndDockspace();
 	ImGui::End();
 	ImGui::PopFont();
-	ms_timer.Read();
+	SendDataToPerformance(this->name, ms_timer.Read());
 	return UPDATE_CONTINUE;
 }
 
@@ -279,5 +280,10 @@ void ModuleEditor::LoadEditorStyle()
 		}
 		data.LeaveSection();
 	}
+}
+
+void ModuleEditor::SendDataToPerformance(std::string name, float ms)
+{
+	performance_window->AddModuleData(name, ms);
 }
 

@@ -11,7 +11,7 @@ PerformanceWindow::PerformanceWindow()
 
 PerformanceWindow::~PerformanceWindow()
 {
-	
+
 }
 
 void PerformanceWindow::DrawWindow()
@@ -26,7 +26,10 @@ void PerformanceWindow::DrawWindow()
 
 	std::map<std::string, std::vector<float>>::iterator it;
 	it = module_data.begin();
-
+	for (; it != module_data.end(); ++it)
+	{
+		ImGui::PlotHistogram(it->first.c_str() , &it->second[0], it->second.size(), 0, NULL, 0.0f, 5.0f, ImVec2(0, 100));
+	}
 	ImGui::End();
 }
 
@@ -57,6 +60,16 @@ void PerformanceWindow::AddModuleData(std::string name, float ms)
 
 	if (it != module_data.end())
 	{
+		if (it->second.size() > FPS_MS_SIZE)
+		{
+			for (int i = 0; i < FPS_MS_SIZE - 1; i++)
+			{
+				it->second[i] = it->second[i + 1];
+			}
+			it->second[FPS_MS_SIZE - 1] = ms;
+		}
+
+		else
 		it->second.push_back(ms);
 	}
 	else

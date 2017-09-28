@@ -4,7 +4,7 @@
 #include "ModuleCamera3D.h"
 #include "SceneWindow.h"
 
-ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled, "Camera")
+ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	CalculateViewMatrix();
 
@@ -15,6 +15,7 @@ ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(ap
 	Position = vec3(0.0f, 0.0f, 5.0f);
 	Reference = vec3(0.0f, 0.0f, 0.0f);
 
+	name = "Camera";
 	can_update = false;
 }
 
@@ -106,7 +107,8 @@ update_status ModuleCamera3D::Update(float dt)
 		// Recalculate matrix -------------
 		CalculateViewMatrix();
 	}
-	ms_timer.Read();
+	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+	
 	return UPDATE_CONTINUE;
 }
 
