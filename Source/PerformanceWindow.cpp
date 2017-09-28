@@ -24,6 +24,9 @@ void PerformanceWindow::DrawWindow()
 	ImGui::PlotHistogram("Frames", &fpsvector[0], fpsvector.size(), 0, NULL, 0.0f, 90.0f, ImVec2(0, 100));
 	ImGui::PlotHistogram("Ms", &msvector[0], msvector.size(), 0, NULL, 0.0f, 30.0f, ImVec2(0, 100));
 
+	std::map<std::string, std::vector<float>>::iterator it;
+	it = module_data.begin();
+
 	ImGui::End();
 }
 
@@ -45,4 +48,22 @@ void PerformanceWindow::AddData(float ms, float fps)
 
 	fpsvector[data_num - 1] = fps;
 	msvector[data_num - 1] = ms;
+}
+
+void PerformanceWindow::AddModuleData(std::string name, float ms)
+{
+	std::map<std::string, std::vector<float>>::iterator it;
+	it = module_data.find(name);
+
+	if (it != module_data.end())
+	{
+		it->second.push_back(ms);
+	}
+	else
+	{
+		std::vector<float> temp;
+		temp.push_back(ms);
+		module_data.insert(std::pair<std::string, std::vector<float>>(name, temp));
+	}
+
 }

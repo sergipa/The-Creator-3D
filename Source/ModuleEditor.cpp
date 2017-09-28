@@ -15,7 +15,7 @@
 #include "EditorStyleWindow.h"
 #include "Data.h"
 
-ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled)
+ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled, "Editor")
 {
 }
 
@@ -62,6 +62,7 @@ update_status ModuleEditor::PreUpdate(float delta_time)
 
 update_status ModuleEditor::Update(float deltaTime)
 {
+	ms_timer.Start();
 	bool ret = true;
 	ImGui::PushFont(font);
 	if (ImGui::BeginMainMenuBar())
@@ -198,6 +199,7 @@ update_status ModuleEditor::Update(float deltaTime)
 	ImGui::EndDockspace();
 	ImGui::End();
 	ImGui::PopFont();
+	ms_timer.Read();
 	return UPDATE_CONTINUE;
 }
 

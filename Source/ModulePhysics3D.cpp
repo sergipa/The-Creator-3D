@@ -14,7 +14,7 @@
 	#pragma comment (lib, "Bullet/libx86/LinearMath.lib")
 #endif
 
-ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(app, start_enabled, "Physics")
 {
 	debug = false;
 	
@@ -71,6 +71,7 @@ bool ModulePhysics3D::Start()
 // ---------------------------------------------------------
 update_status ModulePhysics3D::PreUpdate(float dt)
 {
+	ms_timer.Start();
 	world->stepSimulation(dt, 15);
 
 	int numManifolds = world->getDispatcher()->getNumManifolds();
@@ -104,7 +105,7 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 			}
 		}
 	}
-
+	ms_timer.Read();
 	return UPDATE_CONTINUE;
 }
 

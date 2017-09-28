@@ -6,7 +6,7 @@
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleInput::ModuleInput(Application* app, bool start_enabled) : Module(app, start_enabled, "Input")
 {
 	keyboard = new KEY_STATE[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KEY_STATE) * MAX_KEYS);
@@ -38,6 +38,7 @@ bool ModuleInput::Init(Data* editor_config)
 // Called every draw update
 update_status ModuleInput::PreUpdate(float dt)
 {
+	ms_timer.Start();
 	SDL_PumpEvents();
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
@@ -124,7 +125,7 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
 		return UPDATE_STOP;
-
+	ms_timer.Read();
 	return UPDATE_CONTINUE;
 }
 

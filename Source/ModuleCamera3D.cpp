@@ -4,7 +4,7 @@
 #include "ModuleCamera3D.h"
 #include "SceneWindow.h"
 
-ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled, "Camera")
 {
 	CalculateViewMatrix();
 
@@ -41,6 +41,7 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
+	ms_timer.Start();
 	if (can_update)
 	{
 		// Implement a debug camera with keys and mouse
@@ -105,7 +106,7 @@ update_status ModuleCamera3D::Update(float dt)
 		// Recalculate matrix -------------
 		CalculateViewMatrix();
 	}
-		
+	ms_timer.Read();
 	return UPDATE_CONTINUE;
 }
 

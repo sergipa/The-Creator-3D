@@ -8,7 +8,7 @@
 
 #pragma comment (lib, "glut/glut32.lib")
 
-ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled, "Scene")
 {
 }
 
@@ -49,6 +49,7 @@ bool ModuleScene::CleanUp()
 // Update
 update_status ModuleScene::Update(float dt)
 {
+	ms_timer.Start();
 	ball1.Translate({-0.1f,0,0});
 	ball2.Translate({ 0.1f,0,0 });
 
@@ -62,7 +63,7 @@ update_status ModuleScene::Update(float dt)
 		//App->imgui->AddLogToConsole(("Distance between both speheres: " + str).c_str());
 	}
 	pl.Render();
-
+	ms_timer.Read();
 	return UPDATE_CONTINUE;
 }
 
