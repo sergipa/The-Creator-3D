@@ -17,6 +17,7 @@ class PerformanceWindow;
 class AboutWindow;
 class AppWindowConfigWindow;
 class EditorStyleWindow;
+class RendererConfigWindow;
 
 struct DragObjectData {
 	std::string from_window;
@@ -68,6 +69,7 @@ private:
 	AboutWindow* about_window = nullptr;
 	AppWindowConfigWindow* config_window = nullptr;
 	EditorStyleWindow* style_editor_window = nullptr;
+	RendererConfigWindow* renderer_config_window = nullptr;
 	//AnimatorWindow* animator_window = nullptr;
 	//ParticleEditorWindow* particle_editor_window = nullptr;
 

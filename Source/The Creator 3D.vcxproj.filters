@@ -357,6 +357,9 @@
     <ClInclude Include="EditorStyleWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
+    <ClInclude Include="RendererConfigWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -555,6 +558,9 @@
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
     <ClCompile Include="EditorStyleWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererConfigWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
   </ItemGroup>

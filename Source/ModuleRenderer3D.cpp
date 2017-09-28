@@ -14,6 +14,12 @@
 ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled, "Renderer3D")
 {
 	use_vsync = true;
+	is_using_lightning = false;
+	is_using_depth_test = false;
+	is_using_cull_test = false;
+	is_using_color_material = false;
+	is_using_texture2D = false;
+	is_using_fog = false;
 }
 
 // Destructor
@@ -108,6 +114,10 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		lights[0].Active(true);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+		is_using_lightning = true;
+		is_using_depth_test = true;
+		is_using_cull_test = true;
+		is_using_color_material = true;
 	}
 
 	return ret;
@@ -190,3 +200,119 @@ void ModuleRenderer3D::SaveData(Data * data)
 	data->AddBool("Vsync", use_vsync);
 	data->CloseSection();
 }
+
+void ModuleRenderer3D::SetActiveLighting(bool active)
+{
+	is_using_lightning = active;
+
+	if (active)
+	{
+		glEnable(GL_LIGHTING);
+	}
+	else 
+	{
+		glDisable(GL_LIGHTING);
+	}
+}
+
+void ModuleRenderer3D::SetActiveDepthTest(bool active)
+{
+	is_using_depth_test = active;
+
+	if (active)
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	else
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+}
+
+void ModuleRenderer3D::SetActiveCullTest(bool active)
+{
+	is_using_cull_test = active;
+
+	if (active)
+	{
+		glEnable(GL_CULL_FACE);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
+}
+
+void ModuleRenderer3D::SetActiveColorMaterial(bool active)
+{
+	is_using_color_material = active;
+
+	if (active)
+	{
+		glEnable(GL_COLOR_MATERIAL);
+	}
+	else
+	{
+		glDisable(GL_COLOR_MATERIAL);
+	}
+}
+
+void ModuleRenderer3D::SetActiveTexture2D(bool active)
+{
+	is_using_texture2D = active;
+
+	if (active)
+	{
+		glEnable(GL_TEXTURE_2D);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
+	}
+}
+
+void ModuleRenderer3D::SetActiveFog(bool active)
+{
+	is_using_fog = active;
+
+	if (active)
+	{
+		glEnable(GL_FOG);
+	}
+	else
+	{
+		glDisable(GL_FOG);
+	}
+}
+
+bool ModuleRenderer3D::GetActiveLighting() const
+{
+	return is_using_lightning;
+}
+
+bool ModuleRenderer3D::GetActiveDepthTest() const
+{
+	return is_using_depth_test;
+}
+
+bool ModuleRenderer3D::GetActiveCullTest() const
+{
+	return is_using_cull_test;
+}
+
+bool ModuleRenderer3D::GetActiveColorMaterial() const
+{
+	return is_using_color_material;
+}
+
+bool ModuleRenderer3D::GetActiveTexture2D() const
+{
+	return is_using_texture2D;
+}
+
+bool ModuleRenderer3D::GetActiveFog() const
+{
+	return is_using_fog;
+}
+
+

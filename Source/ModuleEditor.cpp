@@ -14,6 +14,7 @@
 #include "AppWindowConfigWindow.h"
 #include "EditorStyleWindow.h"
 #include "Data.h"
+#include "RendererConfigWindow.h"
 
 ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled, "Editor")
 {
@@ -48,6 +49,7 @@ bool ModuleEditor::Init(Data* editor_config)
 	editor_windows.push_back(about_window = new AboutWindow());
 	editor_windows.push_back(config_window = new AppWindowConfigWindow());
 	editor_windows.push_back(style_editor_window = new EditorStyleWindow());
+	editor_windows.push_back(renderer_config_window = new RendererConfigWindow());
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());
 	ImGui::LoadDocks();
@@ -126,9 +128,13 @@ update_status ModuleEditor::Update(float deltaTime)
 			{
 				performance_window->active = !performance_window->active;
 			}
-			if (ImGui::MenuItem("WindowConfig"))
+			if (ImGui::MenuItem("Window Config"))
 			{
 				config_window->active = !config_window->active;
+			}
+			if (ImGui::MenuItem("Renderer Config"))
+			{
+				renderer_config_window->active = !renderer_config_window->active;
 			}
 			if (ImGui::MenuItem("Editor Style"))
 			{

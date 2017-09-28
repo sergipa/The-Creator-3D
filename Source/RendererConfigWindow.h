@@ -9,5 +9,6 @@ public:
 	~RendererConfigWindow();
 
 	void DrawWindow();
+
 };
 
