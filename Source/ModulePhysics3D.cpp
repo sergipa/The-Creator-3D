@@ -3,6 +3,7 @@
 #include "ModulePhysics3D.h"
 #include "PhysBody3D.h"
 #include "Primitive.h"
+#include "ModuleEditor.h"
 
 #ifdef _DEBUG
 	#pragma comment (lib, "Bullet/libx86/BulletDynamics_debug.lib")
@@ -14,7 +15,7 @@
 	#pragma comment (lib, "Bullet/libx86/LinearMath.lib")
 #endif
 
-ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(app, start_enabled, "Physics")
+ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	debug = false;
 	
@@ -23,6 +24,8 @@ ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(
 	broad_phase = new btDbvtBroadphase();
 	solver = new btSequentialImpulseConstraintSolver();
 	debug_draw = new DebugDrawer();
+
+	name = "Physics";
 }
 
 // Destructor
@@ -105,7 +108,7 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 			}
 		}
 	}
-	ms_timer.Read();
+	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
 	return UPDATE_CONTINUE;
 }
 

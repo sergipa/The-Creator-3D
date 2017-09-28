@@ -11,9 +11,10 @@
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "Glew/libx86/glew32.lib")
 
-ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled, "Renderer3D")
+ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	use_vsync = true;
+	name = "Renderer3D";
 }
 
 // Destructor
@@ -154,8 +155,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	App->editor->DrawEditor();
 
+	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+
 	SDL_GL_SwapWindow(App->window->window);
-	ms_timer.Read();
 	return UPDATE_CONTINUE;
 }
 

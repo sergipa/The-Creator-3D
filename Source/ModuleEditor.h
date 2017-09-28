@@ -3,7 +3,7 @@
 #include "Module.h"
 #include "Window.h"
 #include <vector>
-
+#include <string>
 union SDL_Event;
 struct SDL_Texture;
 
@@ -55,6 +55,7 @@ public:
 
 	void LoadEditorStyle();
 
+	void SendDataToPerformance(std::string name, float ms);
 private:
 	ImFont* font = nullptr;
 	std::vector<Window*> editor_windows;

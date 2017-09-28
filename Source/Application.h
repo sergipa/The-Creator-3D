@@ -31,6 +31,7 @@ private:
 
 	Timer	ms_timer;
 	Timer	fps_timer;
+	Timer	module_ms_timer;
 	float	dt;
 	std::list<Module*> list_modules;
 	LCG*	random = nullptr;
