@@ -26,11 +26,7 @@ bool ModuleScene::Start()
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
 
-	pl.normal.x = 0;
-	pl.normal.y = 1;
-	pl.normal.z = 0;
-	pl.constant = 0;
-	pl.axis = true;
+	
 
 	ball1.pos = { 50,0,0 };
 	ball1.r = 10;
@@ -64,8 +60,8 @@ update_status ModuleScene::Update(float dt)
 		std::string str = std::to_string(distance);
 		//App->imgui->AddLogToConsole(("Distance between both speheres: " + str).c_str());
 	}
-	pl.Render();
-	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+	//pl.Render();
+	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 

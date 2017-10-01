@@ -126,7 +126,7 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
 		return UPDATE_STOP;
-	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 

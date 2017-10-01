@@ -43,6 +43,9 @@
     <Filter Include="Sources\3d Party\MathGeoLib\Time">
       <UniqueIdentifier>{ca39a620-ba40-4a18-bded-efddc2df7fd1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\EditorUI\Modules Config">
+      <UniqueIdentifier>{6f45ec32-a330-4d3b-b8d8-f82869ed3da9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -62,15 +65,6 @@
     </ClInclude>
     <ClInclude Include="ModuleWindow.h">
       <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="p2DynArray.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="p2List.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="p2Point.h">
-      <Filter>Sources\Containers</Filter>
     </ClInclude>
     <ClInclude Include="glmath.h">
       <Filter>Sources\Containers</Filter>
@@ -312,12 +306,6 @@
     <ClInclude Include="RenderTexture.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
@@ -351,14 +339,23 @@
     <ClInclude Include="PerformanceWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
-    <ClInclude Include="AppWindowConfigWindow.h">
-      <Filter>Sources\EditorUI</Filter>
-    </ClInclude>
     <ClInclude Include="EditorStyleWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
+    <ClInclude Include="AppWindowConfigWindow.h">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClInclude>
     <ClInclude Include="RendererConfigWindow.h">
-      <Filter>Sources\EditorUI</Filter>
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClInclude>
+    <ClInclude Include="PerfTimer.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="teapot.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTextureMSAA.h">
+      <Filter>Sources\Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -554,14 +551,20 @@
     <ClCompile Include="PerformanceWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
-    <ClCompile Include="AppWindowConfigWindow.cpp">
-      <Filter>Sources\EditorUI</Filter>
-    </ClCompile>
     <ClCompile Include="EditorStyleWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
+    <ClCompile Include="AppWindowConfigWindow.cpp">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClCompile>
     <ClCompile Include="RendererConfigWindow.cpp">
-      <Filter>Sources\EditorUI</Filter>
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClCompile>
+    <ClCompile Include="PerfTimer.cpp">
+      <Filter>Sources\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTextureMSAA.cpp">
+      <Filter>Sources\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -48,7 +48,8 @@ bool ModuleWindow::Init(Data* editor_config)
 		//Create window
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-		//Use OpenGL 3.2
+		//Use OpenGL 3.1
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -132,6 +133,71 @@ void ModuleWindow::SetWidth(uint width)
 void ModuleWindow::SetHeight(uint height)
 {
 	screen_height = height;
+}
+
+void ModuleWindow::SetSize(uint width, uint height)
+{
+	SDL_SetWindowSize(window, width, height);
+}
+
+float ModuleWindow::GetBrightness() const
+{
+	return SDL_GetWindowBrightness(window);
+}
+
+void ModuleWindow::SetBrightness(float brightness)
+{
+	SDL_SetWindowBrightness(window, brightness);
+}
+
+bool ModuleWindow::IsFullScreen() const
+{
+	return is_fullscreen;
+}
+
+void ModuleWindow::SetFullScreen(bool fullscreen)
+{
+	if (fullscreen)
+	{
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+	}
+	else
+	{
+		SDL_SetWindowFullscreen(window, 0);
+	}
+	is_fullscreen = fullscreen;
+}
+
+bool ModuleWindow::IsFullScreenDesktop() const
+{
+	return is_full_desktop;
+}
+
+void ModuleWindow::SetFullScreenDesktop(bool full_desktop)
+{
+	if (full_desktop)
+	{
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	}
+	else
+	{
+		SDL_SetWindowFullscreen(window, 0);
+	}
+	is_full_desktop = full_desktop;
+}
+
+bool ModuleWindow::IsBorderless() const
+{
+	return is_borderless;
+}
+
+void ModuleWindow::SetBorderless(bool borderless)
+{
+	if (borderless && !is_fullscreen && !is_full_desktop)
+	{
+		SDL_SetWindowBordered(window, (SDL_bool)borderless);
+	}
+	is_borderless = borderless;
 }
 
 void ModuleWindow::SetIcon(const char * path)

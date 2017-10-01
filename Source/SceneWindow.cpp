@@ -21,46 +21,76 @@ void SceneWindow::DrawWindow()
 	if (ImGui::BeginDock(window_name.c_str(), false, false, false, 
 		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_MenuBar)) {
 
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("Shading Mode"))
-			{
-				if (ImGui::MenuItem("Shaded"))
-				{
-					wireframe_mode = false;
-				}
-				if (ImGui::MenuItem("Wireframe"))
-				{
-					wireframe_mode = true;
-				}
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-
-		if (wireframe_mode)
-		{
-			App->renderer3D->SetWireframeMode();
-		}
 
 		ImVec2 size = ImGui::GetContentRegionAvail();
 		if (scene_width != size.x && scene_height != size.y) {
 			App->renderer3D->OnResize(size.x, size.y);
 		}
-		ImGui::Image((void*)App->renderer3D->texture->GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
 
-		if (ImGui::IsMouseDown(1))
-		{
-			if (ImGui::IsMouseHoveringWindow())
-			{
-				App->camera->can_update = true;
-			}
-		}
-		if (ImGui::IsMouseReleased(1))
-		{
-			App->camera->can_update = false;
-		}
+		DrawMenuBar();
+
+		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
+
+		HandleInput();
 	}
 
 	ImGui::EndDock();
+}
+
+void SceneWindow::DrawMenuBar()
+{
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("Shading Mode"))
+		{
+			if (ImGui::MenuItem("Shaded"))
+			{
+				wireframe_mode = false;
+			}
+			if (ImGui::MenuItem("Wireframe"))
+			{
+				wireframe_mode = true;
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Anti Aliasing level"))
+		{
+			int max_msaa_level = App->renderer3D->textureMSAA->GetMaxMSAALevel();
+			if (ImGui::MenuItem("Off"))
+			{
+				App->renderer3D->textureMSAA->ChangeMSAALevel(0);
+			}
+			for (int i = 2; i <= max_msaa_level; i *= 2)
+			{
+				char msaa_level[5];
+				sprintf(msaa_level, "x%d", i);
+				if (ImGui::MenuItem(msaa_level))
+				{
+					App->renderer3D->textureMSAA->ChangeMSAALevel(i);
+				}
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+
+	if (wireframe_mode)
+	{
+		App->renderer3D->SetWireframeMode();
+	}
+}
+
+void SceneWindow::HandleInput()
+{
+	if (ImGui::IsMouseDown(1) || App->input->GetMouseZ() > 0 || App->input->GetMouseZ() < 0)
+	{
+		if (ImGui::IsMouseHoveringWindow())
+		{
+			App->camera->can_update = true;
+		}
+	}
+	if (ImGui::IsMouseReleased(1))
+	{
+		App->camera->can_update = false;
+	}
 }

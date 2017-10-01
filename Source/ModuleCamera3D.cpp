@@ -12,7 +12,7 @@ ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(ap
 	Y = vec3(0.0f, 1.0f, 0.0f);
 	Z = vec3(0.0f, 0.0f, 1.0f);
 
-	Position = vec3(0.0f, 0.0f, 5.0f);
+	Position = vec3(0.0f, 3.5f, 10.0f);
 	Reference = vec3(0.0f, 0.0f, 0.0f);
 
 	name = "Camera";
@@ -49,7 +49,7 @@ update_status ModuleCamera3D::Update(float dt)
 		// Now we can make this movememnt frame rate independant!
 
 		vec3 newPos(0, 0, 0);
-		float speed = 30.0f * dt;
+		float speed = 20.0f * dt;
 		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 			speed = 70.0f * dt;
 
@@ -107,7 +107,7 @@ update_status ModuleCamera3D::Update(float dt)
 		// Recalculate matrix -------------
 		CalculateViewMatrix();
 	}
-	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
 	
 	return UPDATE_CONTINUE;
 }

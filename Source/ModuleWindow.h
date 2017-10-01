@@ -23,6 +23,16 @@ public:
 	uint GetHeight() const;
 	void SetWidth(uint width);
 	void SetHeight(uint height);
+	void SetSize(uint width, uint height);
+	float GetBrightness() const;
+	void SetBrightness(float brightness);
+	bool IsFullScreen() const;
+	void SetFullScreen(bool fullscreen);
+	bool IsFullScreenDesktop() const;
+	void SetFullScreenDesktop(bool full_desktop);
+	bool IsBorderless() const;
+	void SetBorderless(bool borderless);
+
 	void SetIcon(const char* path);
 
 	void SaveData(Data* data);

@@ -1,6 +1,6 @@
 #pragma once
 #include "Globals.h"
-#include "Timer.h"
+#include "PerfTimer.h"
 #include <string>
 class Application;
 struct PhysBody3D;
@@ -12,7 +12,7 @@ private :
 	bool enabled;
 public:
 	std::string name;
-	Timer ms_timer;
+	PerfTimer ms_timer;
 	Application* App;
 
 	Module(Application* parent, bool start_enabled = true) : App(parent)

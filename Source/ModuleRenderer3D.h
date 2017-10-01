@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "glmath.h"
 #include "Light.h"
-#include "RenderTexture.h"
+#include "RenderTextureMSAA.h"
 
 #define MAX_LIGHTS 8
 
@@ -36,6 +36,9 @@ public:
 	bool GetActiveTexture2D() const;
 	bool GetActiveFog() const;
 
+	void EnableTestLight();
+	void DisableTestLight();
+
 
 public:
 
@@ -43,7 +46,7 @@ public:
 	SDL_GLContext context;
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
-	RenderTexture* texture;
+	RenderTextureMSAA* textureMSAA;
 
 private:
 	bool use_vsync;

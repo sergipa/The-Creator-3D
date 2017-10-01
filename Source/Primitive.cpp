@@ -268,7 +268,7 @@ pPlane::pPlane(float x, float y, float z, float d) : Primitive(), normal(x, y, z
 
 void pPlane::InnerRender() const
 {
-	glLineWidth(1.0f);
+	glLineWidth(2.0f);
 
 	glBegin(GL_LINES);
 

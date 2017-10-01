@@ -121,6 +121,18 @@ update_status ModuleEditor::Update(float deltaTime)
 		if (ImGui::BeginMenu("Windows"))
 		{
 			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+			if (ImGui::BeginMenu("Configuration"))
+			{
+				if (ImGui::MenuItem("Window Config"))
+				{
+					config_window->active = !config_window->active;
+				}
+				if (ImGui::MenuItem("Renderer Config"))
+				{
+					renderer_config_window->active = !renderer_config_window->active;
+				}
+				ImGui::EndMenu();
+			}
 			if (ImGui::MenuItem("Hardware"))
 			{
 				hardware_window->active = !hardware_window->active;
@@ -128,14 +140,6 @@ update_status ModuleEditor::Update(float deltaTime)
 			if (ImGui::MenuItem("Performance"))
 			{
 				performance_window->active = !performance_window->active;
-			}
-			if (ImGui::MenuItem("Window Config"))
-			{
-				config_window->active = !config_window->active;
-			}
-			if (ImGui::MenuItem("Renderer Config"))
-			{
-				renderer_config_window->active = !renderer_config_window->active;
 			}
 			if (ImGui::MenuItem("Editor Style"))
 			{
@@ -206,7 +210,7 @@ update_status ModuleEditor::Update(float deltaTime)
 	ImGui::EndDockspace();
 	ImGui::End();
 	ImGui::PopFont();
-	SendDataToPerformance(this->name, ms_timer.Read());
+	SendDataToPerformance(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 

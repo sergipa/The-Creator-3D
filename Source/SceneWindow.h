@@ -10,6 +10,8 @@ public:
 	virtual ~SceneWindow();
 
 	void DrawWindow();
+	void DrawMenuBar();
+	void HandleInput();
 
 private:
 	float scene_width;

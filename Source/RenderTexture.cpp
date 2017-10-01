@@ -22,7 +22,7 @@ bool RenderTexture::Create(uint width, uint height)
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-	//Creates Color texture
+	//Create Color texture
 	glGenTextures(1, &color_texture);
 	glBindTexture(GL_TEXTURE_2D, color_texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -31,7 +31,7 @@ bool RenderTexture::Create(uint width, uint height)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-	//Creates Depth Texture
+	//Create Depth Texture
 	glGenTextures(1, &depth_texture);
 	glBindTexture(GL_TEXTURE_2D, depth_texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -42,14 +42,14 @@ bool RenderTexture::Create(uint width, uint height)
 
 	//Attach both textures to fbo
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_texture, 0); //This is optional
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_texture, 0);
 
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	this->width = width;
 	this->height = height;
 
-	//If the fbo is not created returns false
+	//If the fbo is not created return false
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		return false;
 	}

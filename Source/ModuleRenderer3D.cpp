@@ -6,6 +6,7 @@
 #include "ModuleEditor.h"
 #include "Primitive.h"
 #include "Data.h"
+#include "teapot.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -54,8 +55,8 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		if(use_vsync && SDL_GL_SetSwapInterval(1) < 0)
 			CONSOLE_LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
-		texture = new RenderTexture();
-		texture->Create(App->window->GetWidth(), App->window->GetHeight());
+		textureMSAA = new RenderTextureMSAA();
+		textureMSAA->Create(App->window->GetWidth(), App->window->GetHeight(), 8);
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -85,7 +86,8 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		glClearDepth(1.0f);
 		
 		//Initialize clear color
-		glClearColor(0.f, 0.f, 0.f, 1.f);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.f);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		//Check for error
 		error = glGetError();
@@ -95,14 +97,21 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 			ret = false;
 		}
 		
-		GLfloat LightModelAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		GLfloat LightModelAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 		
 		lights[0].ref = GL_LIGHT0;
-		lights[0].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
-		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
-		lights[0].SetPos(0.0f, 0.0f, 2.5f);
+		lights[0].ambient.Set(0.3f, 0.3f, 0.3f, 1.0f);
+		lights[1].diffuse.Set(0.7f, 0.7f, 0.7f, 1.0f);
+		lights[0].SetPos(-1.0f, 1.0f, 1.0f);
 		lights[0].Init();
+
+		lights[1].ref = GL_LIGHT1;
+		lights[1].ambient.Set(0.2f, 0.2f, 0.2f, 1.0f);
+		lights[1].diffuse.Set(0.7f, 0.7f, 0.7f, 1.0f);
+		lights[1].specular.Set(1.0f, 1.0f, 1.0f, 1.0f);
+		lights[1].SetPos(-1.0f, 1.0f, 1.0f);
+		lights[1].Init();
 		
 		GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
@@ -113,12 +122,14 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		lights[0].Active(true);
-		glEnable(GL_LIGHTING);
+		lights[1].Active(true);
 		glEnable(GL_COLOR_MATERIAL);
 		is_using_lightning = true;
 		is_using_depth_test = true;
 		is_using_cull_test = true;
 		is_using_color_material = true;
+
+		glEnable(GL_MULTISAMPLE);
 	}
 
 	return ret;
@@ -128,7 +139,9 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	ms_timer.Start();
-	texture->Bind();
+	glEnable(GL_LIGHTING);
+
+	textureMSAA->Bind();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
@@ -148,6 +161,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+
 	//Test. This should be removed in the future
 	pCube cube(1, 1, 1);
 	cube.color = Red;
@@ -159,13 +173,28 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	sphere.SetPos(2, 0, 0);
 	sphere.Render();
 
-	texture->Unbind();
+	drawTeapot();
 
+	pPlane pl;
+	pl.normal.x = 0;
+	pl.normal.y = 1;
+	pl.normal.z = 0;
+	pl.constant = 0;
+	pl.axis = true;
+	pl.Render();
+
+	textureMSAA->Render();
+
+	textureMSAA->Unbind();
+	
 	//EditorUI can't be drawn in wireframe mode!
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//Disable Lighting before draw editor or shadows will appear in menu bars and ligth will affect editor colors.
+	glDisable(GL_LIGHTING);
+
 	App->editor->DrawEditor();
 
-	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
 
 	SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
@@ -209,11 +238,13 @@ void ModuleRenderer3D::SetActiveLighting(bool active)
 
 	if (active)
 	{
-		glEnable(GL_LIGHTING);
+		for (uint i = 1; i < MAX_LIGHTS; ++i)
+			lights[i].Active(true);
 	}
 	else 
 	{
-		glDisable(GL_LIGHTING);
+		for (uint i = 1; i < MAX_LIGHTS; ++i)
+			lights[i].Active(false);
 	}
 }
 
@@ -315,6 +346,21 @@ bool ModuleRenderer3D::GetActiveTexture2D() const
 bool ModuleRenderer3D::GetActiveFog() const
 {
 	return is_using_fog;
+}
+
+void ModuleRenderer3D::EnableTestLight()
+{
+	lights[7].ref = GL_LIGHT7;
+	lights[7].Active(true);
+	for (uint i = 1; i < MAX_LIGHTS - 1; ++i)
+		lights[i].Active(false);
+}
+
+void ModuleRenderer3D::DisableTestLight()
+{
+	lights[7].Active(false);
+	for (uint i = 1; i < MAX_LIGHTS - 1; ++i)
+		lights[i].Active(true);
 }
 
 

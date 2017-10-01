@@ -108,7 +108,7 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 			}
 		}
 	}
-	App->editor->SendDataToPerformance(this->name, ms_timer.Read());
+	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 
