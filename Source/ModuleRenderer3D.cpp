@@ -49,14 +49,16 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		//Get Config Data
 		editor_config->EnterSection("Renderer_Config");
 		use_vsync = editor_config->GetBool("Vsync");
+		int MSAA_level = editor_config->GetInt("MSAA_Level");
 		editor_config->LeaveSection();
+		if (MSAA_level < 0) MSAA_level = 2;
 
 		//Use Vsync
 		if(use_vsync && SDL_GL_SetSwapInterval(1) < 0)
 			CONSOLE_LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		textureMSAA = new RenderTextureMSAA();
-		textureMSAA->Create(App->window->GetWidth(), App->window->GetHeight(), 8);
+		textureMSAA->Create(App->window->GetWidth(), App->window->GetHeight(), MSAA_level);
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -173,7 +175,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	sphere.SetPos(2, 0, 0);
 	sphere.Render();
 
-	drawTeapot();
+	//drawTeapot();
 
 	pPlane pl;
 	pl.normal.x = 0;
@@ -191,7 +193,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	//Disable Lighting before draw editor or shadows will appear in menu bars and ligth will affect editor colors.
 	glDisable(GL_LIGHTING);
-
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	App->editor->DrawEditor();
 
 	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
@@ -229,6 +231,7 @@ void ModuleRenderer3D::SaveData(Data * data)
 {
 	data->CreateSection("Renderer_Config");
 	data->AddBool("Vsync", use_vsync);
+	data->AddInt("MSAA_Level", textureMSAA->GetCurrentMSAALevel());
 	data->CloseSection();
 }
 

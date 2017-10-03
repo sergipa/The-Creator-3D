@@ -43,11 +43,11 @@ void SceneWindow::DrawMenuBar()
 	{
 		if (ImGui::BeginMenu("Shading Mode"))
 		{
-			if (ImGui::MenuItem("Shaded"))
+			if (ImGui::MenuItem("Shaded", "", !wireframe_mode))
 			{
 				wireframe_mode = false;
 			}
-			if (ImGui::MenuItem("Wireframe"))
+			if (ImGui::MenuItem("Wireframe", "", wireframe_mode))
 			{
 				wireframe_mode = true;
 			}
@@ -56,18 +56,19 @@ void SceneWindow::DrawMenuBar()
 		if (ImGui::BeginMenu("Anti Aliasing level"))
 		{
 			int max_msaa_level = App->renderer3D->textureMSAA->GetMaxMSAALevel();
-			if (ImGui::MenuItem("Off"))
-			{
-				App->renderer3D->textureMSAA->ChangeMSAALevel(0);
-			}
-			for (int i = 2; i <= max_msaa_level; i *= 2)
+			int curr_msaa_level = App->renderer3D->textureMSAA->GetCurrentMSAALevel();
+			bool selected = false;
+			for (int i = 0; i <= max_msaa_level; i *= 2)
 			{
 				char msaa_level[5];
 				sprintf(msaa_level, "x%d", i);
-				if (ImGui::MenuItem(msaa_level))
+				if (i == curr_msaa_level) selected = true;
+				if (ImGui::MenuItem(msaa_level, "", selected))
 				{
 					App->renderer3D->textureMSAA->ChangeMSAALevel(i);
 				}
+				if (i == 0) i++;
+				selected = false;
 			}
 			ImGui::EndMenu();
 		}

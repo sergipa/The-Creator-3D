@@ -724,7 +724,7 @@ ImGuiStyle::ImGuiStyle()
 	Colors[ImGuiCol_Button]						= ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
 	Colors[ImGuiCol_ButtonHovered]				= ImVec4(0.34f, 0.33f, 0.39f, 1.00f);
 	Colors[ImGuiCol_ButtonActive]				= ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
-	Colors[ImGuiCol_Header]						= ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
+	Colors[ImGuiCol_Header]						= ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
 	Colors[ImGuiCol_HeaderHovered]				= ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
 	Colors[ImGuiCol_HeaderActive]				= ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
 	Colors[ImGuiCol_Column]						= ImVec4(0.56f, 0.56f, 0.58f, 1.00f);

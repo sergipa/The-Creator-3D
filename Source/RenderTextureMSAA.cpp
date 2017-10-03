@@ -4,9 +4,12 @@
 
 RenderTextureMSAA::RenderTextureMSAA()
 {
-	fboId = fboMsaaId = 0;
+	fboId = 0;
+	fboMsaaId = 0;
 	textureId = 0;
-	rboId = rboColorId = rboDepthId = 0;
+	rboId = 0;
+	rboColorId = 0;
+	rboDepthId = 0;
 }
 
 RenderTextureMSAA::~RenderTextureMSAA()
@@ -25,12 +28,8 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); // automatic mipmap generation included in OpenGL v1.4
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -109,6 +108,9 @@ void RenderTextureMSAA::Unbind()
 
 void RenderTextureMSAA::Render()
 {
+	// copy rendered image from MSAA (multi-sample) to normal (single-sample) FBO
+	// NOTE: The multi samples at a pixel in read buffer will be converted
+	// to a single sample at the target pixel in draw buffer.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboMsaaId);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboId);
 	glBlitFramebuffer(0, 0, width, height,  // src rect
@@ -130,11 +132,15 @@ void RenderTextureMSAA::Destroy()
 
 	glDeleteFramebuffers(1, &fboId);
 	fboId = 0;
+	glDeleteFramebuffers(1, &fboMsaaId);
+	fboMsaaId = 0;
 
 	glDeleteRenderbuffers(1, &rboId);
 	glDeleteRenderbuffers(1, &rboColorId);
 	glDeleteRenderbuffers(1, &rboDepthId);
-	rboId = rboColorId = rboDepthId = 0;
+	rboId = 0;
+	rboColorId = 0;
+	rboDepthId = 0;
 }
 
 uint RenderTextureMSAA::GetTexture() const
