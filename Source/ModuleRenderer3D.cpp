@@ -134,6 +134,68 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		glEnable(GL_MULTISAMPLE);
 	}
 
+	float cube_vertex[108] =
+	{
+		0.f, 0.f, 0.f,
+		10.f, 0.f, 0.f,
+		10.f, 10.f, 0.f,
+
+		0.f, 0.f, 0.f,
+		10.f, 10.f, 0.f,
+		0.f, 10.f, 0.f,
+		//cara2
+		0.f, 0.f, 0.f,
+		0.f, 10.f, -10.f,
+		0.f, 0.f, -10.f,
+
+		0.f, 0.f, 0.f,
+		0.f, 10.f, 0.f,
+		0.f, 10.f, -10.f,
+		//cara3
+		10.f, 0.f, 0.f,
+		10.f, 0.f, -10.f,
+		10.f, 10.f, 0.f,
+
+		10.f, 0.f, -10.f,
+		10.f, 10.f, -10.f,
+		10.f, 10.f, 0.f,
+		//cara4
+		0.f, 0.f, 0.f,
+		0.f, 0.f, -10.f,
+		10.f, 0.f, 0.f,
+
+		10.f, 0.f, 0.f,
+		0.f, 0.f, -10.f,
+		10.f, 0.f, -10.f,
+		//cara5
+		0.f, 0.f, -10.f,
+		0.f, 10.f, -10.f,
+		10.f, 0.f, -10.f,
+
+		10.f, 10.f, -10.f,
+		10.f, 0.f, -10.f,
+		0.f, 10.f, -10.f,
+		//cara 6
+		0.f, 10.f, 0.f,
+		10.f, 10.f, 0.f,
+		0.f, 10.f, -10.f,
+
+		10.f, 10.f, 0.f,
+		10.f, 10.f, -10.f,
+		0.f, 10.f, -10.f,
+	};
+
+	vbo_id = 0;
+	num_vertex = 36;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex * 3, cube_vertex, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	ibo = 0;
+	num_indices = 36;
+	//glGenBuffers(1, &)
+
 	return ret;
 }
 
@@ -176,6 +238,13 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	sphere.Render();
 
 	//drawTeapot();
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glDrawArrays(GL_TRIANGLES, 0, num_vertex * 3);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	pPlane pl;
 	pl.normal.x = 0;

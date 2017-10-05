@@ -56,4 +56,8 @@ private:
 	bool is_using_color_material;
 	bool is_using_texture2D;
 	bool is_using_fog;
+	uint vbo_id;
+	float num_vertex;
+	uint ibo;
+	int num_indices;
 };
