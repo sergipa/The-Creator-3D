@@ -14,6 +14,7 @@ enum PrimitiveTypes
 	Primitive_CubeArray,
 	Primitive_CubeIndices,
 	Primitive_Ray,
+	Primitive_Frustum,
 };
 
 class Primitive
@@ -150,4 +151,22 @@ public:
 public:
 	vec3 normal;
 	float constant;
+};
+// ============================================
+typedef struct
+{
+	float FrustumVertices[24];
+	uint  Indices[36];
+}FrustumI;
+class pFrustum : public Primitive
+{
+public:
+	pFrustum();
+	pFrustum(float w1, float h1, float l, float w2, float h2);
+	void InnerRender() const;
+public:
+	vec2 face1;
+	int length;
+	vec2 face2;
+	FrustumI vertices_indices;
 };

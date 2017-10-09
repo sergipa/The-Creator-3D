@@ -165,8 +165,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 
 	//Test. This should be removed in the future
-	pSphere cube;
+	pFrustum cube(10,10,30,40,40);
 	cube.color = Red;
+	cube.SetPos(0, 10, 0);
 	cube.Render();
 
 	pRay ray(0, 0, 0, 0, 10, 0);

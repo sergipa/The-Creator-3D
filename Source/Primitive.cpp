@@ -602,3 +602,77 @@ void pRay::InnerRender() const
 
 	glLineWidth(1.0f);
 }
+
+pFrustum::pFrustum()
+{
+	//    v4----- v5
+	//   /|      /|
+	//  v0------v1|
+	//  | |     | |
+	//  | |v6---|-|v7
+	//  |/      |/
+	//  v2------v3
+	vertices_indices =
+	{
+		-5.f,5.f,0.f,     //v0
+		 5.f,5.f,0.f,     //v1
+		-5.f,-5.f,0.f,    //v2
+		 5.f,-5.f,0.f,    //v3
+						  
+		-20.f,20.f,-20.f, //v4
+		 20.f,20.f,-20.f, //v5
+		-20.f,-20.f,-20.f,//v6
+		 20.f,-20.f,-20.f,//v7
+
+		 //INDICES
+		 0,2,1,	2,3,1,
+		 7,4,5,	7,6,4,
+		 4,0,5,	5,0,1,
+		 5,1,7,	7,1,3,
+		 2,6,3,	3,6,7,
+		 2,4,6,	2,0,4	
+	};
+}
+
+pFrustum::pFrustum(float w1, float h1, float l, float w2, float h2)
+{
+	//    v4----- v5
+	//   /|      /|
+	//  v0------v1|
+	//  | |     | |
+	//  | |v6---|-|v7
+	//  |/      |/
+	//  v2------v3
+	vertices_indices =
+	{
+		-w1/2,h1/2,0.f,     //v0
+		w1 / 2,h1 / 2,0.f,  //v1
+		-w1 / 2,-h1 / 2,0.f,//v2
+		w1 / 2,-h1 / 2,0.f, //v3
+
+		-w2/2,h2/2,-l,		//v4
+		w2 / 2,h2 / 2,-l,   //v5
+		-w2 / 2,-h2 / 2,-l, //v6
+		w2 / 2,-h2 / 2,-l,  //v7
+
+		//INDICES
+		0,2,1,	2,3,1,
+		7,4,5,	7,6,4,
+		4,0,5,	5,0,1,
+		5,1,7,	7,1,3,
+		2,6,3,	3,6,7,
+		2,4,6,	2,0,4
+	};
+}
+
+void pFrustum::InnerRender() const
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, vertices_indices.FrustumVertices);
+
+	// draw a cube
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, vertices_indices.Indices);
+
+	// deactivate vertex arrays after drawing
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
