@@ -133,69 +133,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 
 		glEnable(GL_MULTISAMPLE);
 	}
-
-	float cube_vertex[108] =
-	{
-		0.f, 0.f, 0.f,
-		10.f, 0.f, 0.f,
-		10.f, 10.f, 0.f,
-
-		0.f, 0.f, 0.f,
-		10.f, 10.f, 0.f,
-		0.f, 10.f, 0.f,
-		//cara2
-		0.f, 0.f, 0.f,
-		0.f, 10.f, -10.f,
-		0.f, 0.f, -10.f,
-
-		0.f, 0.f, 0.f,
-		0.f, 10.f, 0.f,
-		0.f, 10.f, -10.f,
-		//cara3
-		10.f, 0.f, 0.f,
-		10.f, 0.f, -10.f,
-		10.f, 10.f, 0.f,
-
-		10.f, 0.f, -10.f,
-		10.f, 10.f, -10.f,
-		10.f, 10.f, 0.f,
-		//cara4
-		0.f, 0.f, 0.f,
-		0.f, 0.f, -10.f,
-		10.f, 0.f, 0.f,
-
-		10.f, 0.f, 0.f,
-		0.f, 0.f, -10.f,
-		10.f, 0.f, -10.f,
-		//cara5
-		0.f, 0.f, -10.f,
-		0.f, 10.f, -10.f,
-		10.f, 0.f, -10.f,
-
-		10.f, 10.f, -10.f,
-		10.f, 0.f, -10.f,
-		0.f, 10.f, -10.f,
-		//cara 6
-		0.f, 10.f, 0.f,
-		10.f, 10.f, 0.f,
-		0.f, 10.f, -10.f,
-
-		10.f, 10.f, 0.f,
-		10.f, 10.f, -10.f,
-		0.f, 10.f, -10.f,
-	};
-
-	vbo_id = 0;
-	num_vertex = 36;
-	glGenBuffers(1, &vbo_id);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex * 3, cube_vertex, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	ibo = 0;
-	num_indices = 36;
 	//glGenBuffers(1, &)
-
 	return ret;
 }
 
@@ -227,25 +165,11 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 
 	//Test. This should be removed in the future
-	pCube cube(1, 1, 1);
+	pCubeVArray cube(10,10,10);
 	cube.color = Red;
-	cube.SetPos(-2, 0, 0);
 	cube.Render();
 
-	pSphere sphere(1);
-	sphere.color = Green;
-	sphere.SetPos(2, 0, 0);
-	sphere.Render();
-
 	//drawTeapot();
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-	glDrawArrays(GL_TRIANGLES, 0, num_vertex * 3);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	pPlane pl;
 	pl.normal.x = 0;
 	pl.normal.y = 1;
@@ -257,7 +181,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	textureMSAA->Render();
 
 	textureMSAA->Unbind();
-	
 	//EditorUI can't be drawn in wireframe mode!
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	//Disable Lighting before draw editor or shadows will appear in menu bars and ligth will affect editor colors.

@@ -2,7 +2,7 @@
 #pragma once
 #include "glmath.h"
 #include "Color.h"
-
+#include <vector>
 enum PrimitiveTypes
 {
 	Primitive_Point,
@@ -10,7 +10,10 @@ enum PrimitiveTypes
 	Primitive_Plane,
 	Primitive_Cube,
 	Primitive_Sphere,
-	Primitive_Cylinder
+	Primitive_Cylinder,
+	Primitive_CubeArray,
+	Primitive_CubeIndices,
+	Primitive_Ray,
 };
 
 class Primitive
@@ -49,14 +52,55 @@ public:
 };
 
 // ============================================
+// ============================================
+typedef struct
+{
+	float CubeVertices[108];
+}CubeV;
+class pCubeVArray : public Primitive
+{
+public:
+	pCubeVArray();
+	pCubeVArray(float sizeX, float sizeY, float sizeZ);
+	void InnerRender() const;
+public:
+	vec3 size;
+private:
+	CubeV vertices;
+	uint vbo_id;
+	float num_vertex;
+};
+// ============================================
+
+// ============================================
+typedef struct
+{
+	float CubeVertices[24];
+	uint  Indices[36];
+}CubeI;
+class pCubeIndices : public Primitive
+{
+public:
+	pCubeIndices();
+	pCubeIndices(float sizeX, float sizeY, float sizeZ);
+	void InnerRender() const;
+public:
+	vec3 size;
+private:
+	CubeI vertices_indices;
+};
+// ============================================
 class pSphere : public Primitive
 {
 public:
 	pSphere();
 	pSphere(float radius);
+	pSphere(float radius,uint rings,uint sectors);
 	void InnerRender() const;
 public:
 	float radius;
+	std::vector<float> vertices;
+	std::vector<uint> indices;
 };
 
 // ============================================
@@ -77,6 +121,19 @@ class pLine : public Primitive
 public:
 	pLine();
 	pLine(float x, float y, float z);
+	void InnerRender() const;
+public:
+	vec3 origin;
+	vec3 destination;
+};
+
+// ============================================
+// ============================================
+class pRay : public Primitive
+{
+public:
+	pRay();
+	pRay(float ox, float oy, float oz, float dx, float dy, float dz);
 	void InnerRender() const;
 public:
 	vec3 origin;

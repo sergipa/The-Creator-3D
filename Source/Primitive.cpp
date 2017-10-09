@@ -1,12 +1,9 @@
 
 #include "Globals.h"
+#include "OpenGL.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include "Primitive.h"
-#include "glut/glut.h"
-
-#pragma comment (lib, "glut/glut32.lib")
-
 // ------------------------------------------------------------
 Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
 {}
@@ -165,21 +162,315 @@ void pCube::InnerRender() const
 
 	glEnd();
 }
+// CUBEVArray ============================================
+pCubeVArray::pCubeVArray() : Primitive()//Default Size 10.f
+{
+	type = PrimitiveTypes::Primitive_CubeArray;
+	vertices =
+	{
+		-5.f, -5.f, 5.f,//o
+		5.f, -5.f, 5.f,
+		5.f, 5.f, 5.f,
 
+		-5.f, -5.f, 5.f,//o
+		5.f, 5.f, 5.f,
+		-5.f, 5.f, 5.f,
+		//cara2
+		-5.f, -5.f, 5.f,//o
+		-5.f, 5.f, -5.f,
+		-5.f, -5.f, -5.f,
+
+		-5.f, -5.f, 5.f,//o
+		-5.f, 5.f, 5.f,
+		-5.f, 5.f, -5.f,
+		//cara3
+		5.f, -5.f, 5.f,
+		5.f, -5.f, -5.f,
+		5.f, 5.f, 5.f,
+
+		5.f, -5.f, -5.f,
+		5.f, 5.f, -5.f,
+		5.f, 5.f, 5.f,
+		//cara4
+		-5.f, -5.f, 5.f,//o
+		-5.f, -5.f, -5.f,
+		5.f, -5.f, -5.f,
+
+		-5.f, -5.f, 5.f,
+		5.f, -5.f, -5.f,
+		5.f, -5.f, 5.f,
+		//cara5
+		-5.f, -5.f, -5.f,
+		-5.f, 5.f, -5.f,
+		5.f, -5.f, -5.f,
+
+		5.f, 5.f, -5.f,
+		5.f, -5.f, -5.f,
+		-5.f, 5.f, -5.f,
+		//cara 6
+		-5.f, 5.f, 5.f,
+		5.f, 5.f, 5.f,
+		-5.f, 5.f, -5.f,
+
+		5.f, 5.f, 5.f,
+		5.f, 5.f, -5.f,
+		-5.f, 5.f, -5.f,
+	};
+	vbo_id = 0;
+	num_vertex = 36;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex * 3, vertices.CubeVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+pCubeVArray::pCubeVArray(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
+{
+	type = PrimitiveTypes::Primitive_CubeArray;
+	vertices =
+	{
+		-sizeX / 2, -sizeY / 2, sizeZ / 2,
+		sizeX/2, -sizeY / 2, sizeZ / 2,
+		sizeX/2, sizeY/2, sizeZ / 2,
+
+		-sizeX / 2, -sizeY / 2, sizeZ / 2,
+		sizeX / 2, sizeY / 2, sizeZ / 2,
+		-sizeX / 2, sizeY / 2, sizeZ / 2,
+		//cara2
+		-sizeX / 2, -sizeY / 2, sizeZ / 2,
+		-sizeX / 2, sizeY / 2, -sizeZ/2,
+		-sizeX / 2, -sizeY / 2, -sizeZ / 2,
+
+		-sizeX / 2, -sizeY / 2, sizeZ / 2,
+		-sizeX / 2, sizeY/2, sizeZ / 2,
+		-sizeX / 2, sizeY/2, -sizeZ / 2,
+		//cara3
+		sizeX/2, -sizeY / 2, sizeZ / 2,
+		sizeX/2, -sizeY / 2, -sizeZ / 2,
+		sizeX/2, sizeY / 2, sizeZ / 2,
+
+		sizeX/2, -sizeY / 2, -sizeZ / 2,
+		sizeX/2, sizeY/2, -sizeZ / 2,
+		sizeX/2, sizeY/2, sizeZ / 2,
+		//cara4
+		-sizeX / 2, -sizeY / 2, sizeZ / 2,
+		-sizeX / 2, -sizeY / 2, -sizeZ / 2,
+		sizeX / 2, -sizeY / 2, sizeZ / 2,
+
+		sizeX / 2, -sizeY / 2, sizeZ / 2,
+		-sizeX / 2, -sizeY / 2, -sizeZ / 2,
+		sizeX / 2, -sizeY / 2, -sizeZ / 2,
+		//cara5
+		-sizeX / 2, -sizeY / 2, -sizeZ / 2,
+		-sizeX / 2, sizeY / 2, -sizeZ / 2,
+		sizeX / 2, -sizeY / 2, -sizeZ / 2,
+
+		sizeX/2, sizeY / 2, -sizeZ / 2,
+		sizeX/2, -sizeY / 2, -sizeZ / 2,
+		-sizeX / 2, sizeY / 2, -sizeZ / 2,
+		//cara 6
+		-sizeX / 2, sizeY / 2, sizeZ / 2,
+		sizeX / 2, sizeY / 2, sizeZ / 2,
+		-sizeX / 2, sizeY / 2, -sizeZ / 2,
+
+		sizeX/2, sizeY / 2, sizeZ / 2,
+		sizeX/2, sizeY / 2, -sizeZ / 2,
+		-sizeX / 2, sizeY / 2, -sizeZ / 2,
+	};
+	vbo_id = 0;
+	num_vertex = 36;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex * 3, vertices.CubeVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void pCubeVArray::InnerRender() const
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	glDrawArrays(GL_TRIANGLES, 0, num_vertex * 3);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+//CUBE INDICES ==================================================
+pCubeIndices::pCubeIndices()
+{
+	//    v6----- v5
+	//   /|      /|
+	//  v1------v0|
+	//  | |     | |
+	//  | |v7---|-|v4
+	//  |/      |/
+	//  v2------v3
+	type = PrimitiveTypes::Primitive_CubeIndices;
+	vertices_indices = 
+	{
+		5.f, 5.f, 5.f, //v0
+		-5.f, 5.f, 5.f, //v1
+		-5.f, -5.f, 5.f, //v2
+		5.f, -5.f, 5.f, //v3
+		5.f, -5.f, -5.f, //v4
+		5.f, 5.f, -5.f, //v5
+		-5.f, 5.f, -5.f, //v6
+		-5.f, -5.f, -5.f, //v7
+		//INDICES
+		0, 1, 2,   2, 3, 0,
+		0, 3, 4,   4, 5, 0,
+		0, 5, 6,   6, 1, 0,
+		1, 6, 7,   7, 2, 1,
+		4, 3, 2,   2, 7, 4,
+		7, 6, 5,   5, 4, 7
+	};
+}
+
+pCubeIndices::pCubeIndices(float sizeX, float sizeY, float sizeZ)
+{
+	//    v6----- v5
+	//   /|      /|
+	//  v1------v0|
+	//  | |     | |
+	//  | |v7---|-|v4
+	//  |/      |/
+	//  v2------v3
+	type = PrimitiveTypes::Primitive_CubeIndices;
+	vertices_indices =
+	{
+		sizeX/2, sizeY / 2, -sizeZ / 2, //v0
+		-sizeX / 2, sizeY / 2, -sizeZ / 2, //v1
+		-sizeX / 2, -sizeY / 2, -sizeZ / 2, //v2
+		sizeX / 2, -sizeY / 2, -sizeZ / 2, //v3
+		sizeX / 2, -sizeY / 2, sizeZ / 2, //v4
+		sizeX / 2, sizeY / 2, sizeZ / 2, //v5
+		-sizeX / 2, sizeY / 2, sizeZ / 2, //v6
+		-sizeX / 2, -sizeY / 2, sizeZ / 2, //v7
+		//INDICES
+		0, 1, 2,   2, 3, 0,
+		0, 3, 4,   4, 5, 0,
+		0, 5, 6,   6, 1, 0,
+		1, 6, 7,   7, 2, 1,
+		4, 3, 2,   2, 7, 4,
+		7, 6, 5,   5, 4, 7
+	};
+}
+
+void pCubeIndices::InnerRender() const
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, vertices_indices.CubeVertices);
+
+	// draw a cube
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, vertices_indices.Indices);
+
+	// deactivate vertex arrays after drawing
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
 // SPHERE ============================================
 pSphere::pSphere() : Primitive(), radius(1.0f)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
+
+	uint rings = 20;//DEFAULT rings
+	uint sectors = 20;//DEFAULT sectors
+
+	float const R = 1. / (float)(rings - 1);
+	float const S = 1. / (float)(sectors - 1);
+	int r, s;
+
+	vertices.resize(rings * sectors * 3);
+	std::vector<GLfloat>::iterator v = vertices.begin();
+	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
+		float const y = sin(-M_PI_2 + M_PI * r * R);
+		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
+		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+
+		*v++ = x * radius;
+		*v++ = y * radius;
+		*v++ = z * radius;
+	}
+
+	indices.resize(rings * sectors * 4);
+	std::vector<uint>::iterator i = indices.begin();
+	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) {
+		*i++ = r * sectors + s;
+		*i++ = r * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + s;
+	}
 }
 
 pSphere::pSphere(float radius) : Primitive(), radius(radius)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
+
+	uint rings = 5;//DEFAULT rings
+	uint sectors = 5;//DEFAULT sectors
+
+	float const R = 1. / (float)(rings - 1);
+	float const S = 1. / (float)(sectors - 1);
+	int r, s;
+
+	vertices.resize(rings * sectors * 3);
+	std::vector<GLfloat>::iterator v = vertices.begin();
+	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
+		float const y = sin(-M_PI_2 + M_PI * r * R);
+		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
+		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+
+		*v++ = x * radius;
+		*v++ = y * radius;
+		*v++ = z * radius;
+	}
+
+	indices.resize(rings * sectors * 4);
+	std::vector<uint>::iterator i = indices.begin();
+	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) {
+		*i++ = r * sectors + s;
+		*i++ = r * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + s;
+	}
+}
+
+pSphere::pSphere(float radius, uint rings, uint sectors)
+{
+	float const R = 1. / (float)(rings - 1);
+	float const S = 1. / (float)(sectors - 1);
+	int r, s;
+
+	vertices.resize(rings * sectors * 3);
+	std::vector<GLfloat>::iterator v = vertices.begin();
+	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
+		float const y = sin(-M_PI_2 + M_PI * r * R);
+		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
+		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+
+		*v++ = x * radius;
+		*v++ = y * radius;
+		*v++ = z * radius;
+	}
+
+	indices.resize(rings * sectors * 4);
+	std::vector<uint>::iterator i = indices.begin();
+	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) {
+		*i++ = r * sectors + s;
+		*i++ = r * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + s;
+	}
+
 }
 
 void pSphere::InnerRender() const
 {
-	glutSolidSphere(radius, 25, 25);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, 0, &vertices[0]);
+	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_INT, &indices[0]);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 
@@ -283,4 +574,30 @@ void pPlane::InnerRender() const
 	}
 
 	glEnd();
+
+	glLineWidth(1.0f);
+}
+
+pRay::pRay() : Primitive(), origin(0, 0, 0), destination(1, 1, 1)
+{
+	type = PrimitiveTypes::Primitive_Ray;
+}
+
+pRay::pRay(float ox, float oy, float oz, float dx, float dy, float dz) : Primitive(), origin(ox, oy, oz), destination(dx, dy, dz)
+{
+	type = PrimitiveTypes::Primitive_Ray;
+}
+
+void pRay::InnerRender() const
+{
+	glLineWidth(2.0f);
+
+	glBegin(GL_LINES);
+
+	glVertex3f(origin.x, origin.y, origin.z);
+	glVertex3f(destination.x, destination.y, destination.z);
+
+	glEnd();
+
+	glLineWidth(1.0f);
 }
