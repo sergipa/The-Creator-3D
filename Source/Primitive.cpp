@@ -591,11 +591,12 @@ pRay::pRay(float ox, float oy, float oz, float dx, float dy, float dz) : Primiti
 void pRay::InnerRender() const
 {
 	glLineWidth(2.0f);
+	vec3 dir(destination - origin);
 
 	glBegin(GL_LINES);
 
 	glVertex3f(origin.x, origin.y, origin.z);
-	glVertex3f(destination.x, destination.y, destination.z);
+	glVertex3f(dir.x * 999, dir.y * 999, dir.z * 999);
 
 	glEnd();
 

@@ -165,10 +165,12 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 
 	//Test. This should be removed in the future
-	pCubeVArray cube(10,10,10);
+	pSphere cube;
 	cube.color = Red;
 	cube.Render();
 
+	pRay ray(0, 0, 0, 0, 10, 0);
+	ray.Render();
 	//drawTeapot();
 	pPlane pl;
 	pl.normal.x = 0;
