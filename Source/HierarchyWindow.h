@@ -2,6 +2,8 @@
 
 #include "Window.h"
 
+class GameObject;
+
 class HierarchyWindow :
 	public Window
 {
@@ -10,15 +12,15 @@ public:
 	virtual ~HierarchyWindow();
 
 	void DrawWindow();
-	//void DrawChilds(GameObject* gameObject);
+	void DrawSceneGameObjects(GameObject* gameObject);
 	//void CheckMouseOver(GameObject* gameObject);
 
 private:
-	bool show_rename_window = false;
+	bool show_rename_window;
 	char node_name[30];
-	bool show_rename_error = false;
+	bool show_rename_error;
 	//GameObject* open_gameobject_node = nullptr;
-	//GameObject* gameobject_to_rename = nullptr;
+	GameObject* gameobject_to_rename;
 	float rename_window_y;
 };
 

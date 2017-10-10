@@ -1,8 +1,12 @@
 #include "GameObject.h"
 #include "ComponentMeshRenderer.h"
+#include "Application.h"
+#include "ModuleScene.h"
 
-GameObject::GameObject()
+GameObject::GameObject(GameObject* parent)
 {
+	active = true;
+	parent = parent;
 }
 
 GameObject::~GameObject()
@@ -67,3 +71,33 @@ Component * GameObject::GetComponent(std::string component_type)
 	}
 	return nullptr;
 }
+
+void GameObject::AddChild(GameObject * gameobject)
+{
+	childs.push_back(gameobject);
+}
+
+bool GameObject::IsActive() const
+{
+	return active;
+}
+
+GameObject * GameObject::GetParent() const
+{
+	return parent;
+}
+
+void GameObject::SetName(std::string name)
+{
+	this->name = name;
+}
+
+std::string GameObject::GetName() const
+{
+	return name;
+}
+void GameObject::Destroy()
+{
+	App->scene->AddGameObjectToDestroy(this);
+}
+

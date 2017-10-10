@@ -1,10 +1,14 @@
 #include "HierarchyWindow.h"
 #include "Application.h"
+#include "GameObject.h"
 
 HierarchyWindow::HierarchyWindow()
 {
 	active = true;
 	window_name = "Hierarchy";
+	gameobject_to_rename = nullptr;
+	show_rename_window = false;
+	show_rename_error = false;
 }
 
 HierarchyWindow::~HierarchyWindow()
@@ -21,38 +25,38 @@ void HierarchyWindow::DrawWindow()
 
 		if (ImGui::BeginPopup("GameObject Options"))
 		{
-			//if (!App->scene_manager_module->selectedGameObjects.empty()) {
-			//	if (ImGui::MenuItem("Duplicate")) {
-			//		for (list<GameObject*>::iterator it = App->scene_manager_module->selectedGameObjects.begin(); it != App->scene_manager_module->selectedGameObjects.end(); it++) {
-			//			if ((*it)->parent != nullptr) {
-			//				if (find(App->scene_manager_module->selectedGameObjects.begin(), App->scene_manager_module->selectedGameObjects.end(), (*it)->parent) != App->scene_manager_module->selectedGameObjects.end()) {
-			//					continue; //If parent will be duplicated skip this because parent will take care of childs;
-			//				}
-			//			}
-			//			App->scene_manager_module->DuplicateGameObject(*it);
-			//		}
-			//	}
-			//	if (ImGui::MenuItem("Delete")) {
-			//		for (list<GameObject*>::iterator it = App->scene_manager_module->selectedGameObjects.begin(); it != App->scene_manager_module->selectedGameObjects.end(); it++) {
-			//			(*it)->Destroy();
-			//		}
-			//	}
-			//	if (App->scene_manager_module->selectedGameObjects.size() == 1) {
-			//		if (ImGui::MenuItem("Rename")) {
-			//			show_rename_window = true;
-			//			gameobject_to_rename = App->scene_manager_module->selectedGameObjects.front();
-			//		}
-			//		if (ImGui::MenuItem("Create Child")) {
-			//			GameObject* parent = nullptr;
-			//			parent = App->scene_manager_module->selectedGameObjects.front();
-			//			App->scene_manager_module->CreateGameObject(parent);
-			//			open_game_object_node = parent;
-			//		}
-			//	}
-			//	ImGui::Separator();
-			//}
+			if (!App->scene->selected_gameobjects.empty()) {
+				if (ImGui::MenuItem("Duplicate")) {
+					for (std::list<GameObject*>::iterator it = App->scene->selected_gameobjects.begin(); it != App->scene->selected_gameobjects.end(); it++) {
+						if ((*it)->GetParent() != nullptr) {
+							if (std::find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), (*it)->GetParent()) != App->scene->selected_gameobjects.end()) {
+								continue; //If parent will be duplicated skip this because parent will take care of childs;
+							}
+						}
+						//App->scene->DuplicateGameObject(*it);
+					}
+				}
+				if (ImGui::MenuItem("Delete")) {
+					for (std::list<GameObject*>::iterator it = App->scene->selected_gameobjects.begin(); it != App->scene->selected_gameobjects.end(); it++) {
+						(*it)->Destroy();
+					}
+				}
+				if (App->scene->selected_gameobjects.size() == 1) {
+					if (ImGui::MenuItem("Rename")) {
+						show_rename_window = true;
+						gameobject_to_rename = App->scene->selected_gameobjects.front();
+					}
+					if (ImGui::MenuItem("Create Child")) {
+						GameObject* parent = nullptr;
+						parent = App->scene->selected_gameobjects.front();
+						App->scene->CreateGameObject(parent);
+						//open_game_object_node = parent;
+					}
+				}
+				ImGui::Separator();
+			}
 			if (ImGui::MenuItem("Create Game Object")) {
-				//App->scene_manager_module->CreateGameObject(nullptr);
+				App->scene->CreateGameObject(nullptr);
 			}
 
 			ImGui::EndPopup();
@@ -83,7 +87,7 @@ void HierarchyWindow::DrawWindow()
 					}
 				}
 				if (!isBlankString) {
-					//App->scene_manager_module->selectedGameObjects.front()->Rename(inputText);
+					App->scene->selected_gameobjects.front()->SetName(inputText);
 					//App->scene_manager_module->RenameDuplicatedGameObject(engine->sceneManagerModule->selectedGameObjects.front());
 					show_rename_error = false;
 					show_rename_window = false;
@@ -101,10 +105,62 @@ void HierarchyWindow::DrawWindow()
 			ImGui::End();
 		}
 
-		//for (list<GameObject*>::iterator it = App->scene_manager_module->sceneRootObjects.begin(); it != App->scene_manager_module->sceneRootObjects.end(); it++) {
-		//	DrawChilds(*it);
-		//}
+		for (std::list<GameObject*>::iterator it = App->scene->root_gameobjects.begin(); it != App->scene->root_gameobjects.end(); it++) {
+			DrawSceneGameObjects(*it);
+		}
 	}
 
 	ImGui::EndDock();
+}
+
+void HierarchyWindow::DrawSceneGameObjects(GameObject * gameObject)
+{
+	uint flag = 0;
+
+	if (gameObject->childs.empty()) {
+		flag |= ImGuiTreeNodeFlags_Leaf;
+	}
+
+	for (std::list<GameObject*>::iterator it = App->scene->selected_gameobjects.begin(); it != App->scene->selected_gameobjects.end(); it++) {
+		if (gameObject == *it) {
+			flag |= ImGuiTreeNodeFlags_Selected;
+			break;
+		}
+	}
+
+	flag |= ImGuiTreeNodeFlags_OpenOnArrow;
+
+	/*if (openGameObjectNode == gameObject) {
+		ImGui::SetNextTreeNodeOpen(true);
+		openGameObjectNode = nullptr;
+	}*/
+
+	if (ImGui::TreeNodeEx(gameObject->GetName().c_str(), flag))
+	{
+		/*if (ImGui::IsItemHoveredRect()) {
+			if (ImGui::IsMouseClicked(0)) {
+				if (!engine->editorModule->dragData.hasData) {
+					engine->editorModule->dragData.fromPanel = "Hierarchy";
+					engine->editorModule->dragData.extension = ".prefab";
+					engine->editorModule->dragData.name = gameObject->name;
+					engine->editorModule->dragData.hasData = true;
+					engine->editorModule->draggingGameObject = gameObject;
+				}
+			}
+		}
+		CheckMouseOver(gameObject);*/
+		for (std::list<GameObject*>::iterator it = gameObject->childs.begin(); it != gameObject->childs.end(); ++it) {
+			DrawSceneGameObjects(*it);
+		}
+		ImGui::TreePop();
+	}
+	else {
+		//CheckMouseOver(gameObject);
+	}
+
+	/*if (ImGui::IsMouseReleased(0) && engine->editorModule->dragData.hasData) {
+		if (engine->editorModule->dragData.fromPanel == "Hierarchy") {
+			engine->editorModule->dragData.clearData();
+		}
+	}*/
 }

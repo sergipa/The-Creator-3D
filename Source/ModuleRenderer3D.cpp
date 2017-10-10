@@ -7,7 +7,6 @@
 #include "Primitive.h"
 #include "Data.h"
 #include "Mesh.h"
-#include "RenderTextureMSAA.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -184,6 +183,14 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 void ModuleRenderer3D::DrawScene()
 {
+	pPlane pl;
+	pl.normal.x = 0;
+	pl.normal.y = 1;
+	pl.normal.z = 0;
+	pl.constant = 0;
+	pl.axis = true;
+	pl.Render();
+
 	for (std::list<Mesh*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
 		
@@ -193,11 +200,12 @@ void ModuleRenderer3D::DrawScene()
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
 		//INDICES
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->id_indices);
-		glDrawElements(GL_TRIANGLES, (*it)->id_indices, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLES, (*it)->num_indices, GL_UNSIGNED_INT, NULL);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+	mesh_to_draw.clear();
 }
 
 void ModuleRenderer3D::AddMeshToDraw(Mesh * mesh)

@@ -122,8 +122,9 @@ update_status ModuleInput::PreUpdate(float dt)
 					App->window->SetHeight(e.window.data2);
 				}
 			}
+				break;
 			case SDL_DROPFILE:
-				App->
+				App->import->LoadMesh(e.drop.file);
 				break;
 		}
 	}

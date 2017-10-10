@@ -3,8 +3,9 @@
 #include "Globals.h"
 #include "glmath.h"
 #include "Light.h"
+#include "RenderTextureMSAA.h"
+#include <list>
 
-class RenderTextureMSAA;
 class Mesh;
 
 #define MAX_LIGHTS 8

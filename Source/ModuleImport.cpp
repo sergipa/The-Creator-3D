@@ -70,6 +70,7 @@ bool ModuleImport::LoadMesh(const char* path)
 			GameObject* go = new GameObject();
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
 			mesh_renderer->LoadMesh(mesh);
+			go->SetName("Warrior");
 			App->scene->AddGameObjectToScene(go);
 		}
 
