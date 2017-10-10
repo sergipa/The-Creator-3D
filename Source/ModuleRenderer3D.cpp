@@ -186,7 +186,17 @@ void ModuleRenderer3D::DrawScene()
 {
 	for (std::list<Mesh*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
-		//Draw Mesh
+		
+		//VERTICES
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_vertices);
+		glVertexPointer(3, GL_FLOAT, 0, NULL);
+		//INDICES
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->id_indices);
+		glDrawElements(GL_TRIANGLES, (*it)->id_indices, GL_UNSIGNED_INT, NULL);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
 
