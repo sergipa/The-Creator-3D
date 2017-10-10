@@ -89,6 +89,11 @@ public:
 	vec3 size;
 private:
 	CubeI vertices_indices;
+
+	uint vbo_id;
+	float num_vertex;
+	uint ibo_id;
+	float num_indices;
 };
 // ============================================
 class pSphere : public Primitive
@@ -102,6 +107,11 @@ public:
 	float radius;
 	std::vector<float> vertices;
 	std::vector<uint> indices;
+
+	uint vbo_id;
+	float num_vertex;
+	uint ibo_id;
+	float num_indices;
 };
 
 // ============================================
@@ -169,4 +179,9 @@ public:
 	int length;
 	vec2 face2;
 	FrustumI vertices_indices;
+
+	uint vbo_id;
+	float num_vertex;
+	uint ibo_id;
+	float num_indices;
 };

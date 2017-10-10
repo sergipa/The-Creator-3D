@@ -323,6 +323,20 @@ pCubeIndices::pCubeIndices()
 		4, 3, 2,   2, 7, 4,
 		7, 6, 5,   5, 4, 7
 	};
+	vbo_id = 0;
+	num_vertex = 24;
+	ibo_id = 0;
+	num_indices = 36;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, vertices_indices.CubeVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, vertices_indices.Indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 }
 
 pCubeIndices::pCubeIndices(float sizeX, float sizeY, float sizeZ)
@@ -346,25 +360,41 @@ pCubeIndices::pCubeIndices(float sizeX, float sizeY, float sizeZ)
 		-sizeX / 2, sizeY / 2, sizeZ / 2, //v6
 		-sizeX / 2, -sizeY / 2, sizeZ / 2, //v7
 		//INDICES
-		0, 1, 2,   2, 3, 0,
-		0, 3, 4,   4, 5, 0,
-		0, 5, 6,   6, 1, 0,
-		1, 6, 7,   7, 2, 1,
-		4, 3, 2,   2, 7, 4,
-		7, 6, 5,   5, 4, 7
+		2,1,0,   0,3,2,
+		4,3,0,   0,5,4,
+		6,5,0,   0,1,6,
+		7,6,1,   1,2,7,
+		2,3,4,   4,7,2,
+		5,6,7,   7,4,5
+
 	};
+	vbo_id = 0;
+	num_vertex = 24;
+	ibo_id = 0;
+	num_indices = 36;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, vertices_indices.CubeVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, vertices_indices.Indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void pCubeIndices::InnerRender() const
 {
+	//VERTICES
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, vertices_indices.CubeVertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	//INDICES
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glDrawElements(GL_TRIANGLES, ibo_id, GL_UNSIGNED_INT, NULL);
 
-	// draw a cube
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, vertices_indices.Indices);
-
-	// deactivate vertex arrays after drawing
-	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 // SPHERE ============================================
 pSphere::pSphere() : Primitive(), radius(1.0f)
@@ -393,19 +423,33 @@ pSphere::pSphere() : Primitive(), radius(1.0f)
 	indices.resize(rings * sectors * 4);
 	std::vector<uint>::iterator i = indices.begin();
 	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) {
-		*i++ = r * sectors + s;
 		*i++ = r * sectors + (s + 1);
-		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = r * sectors + s;
 		*i++ = (r + 1) * sectors + s;
+		*i++ = (r + 1) * sectors + (s + 1);
 	}
+
+	num_indices = indices.size();
+	num_vertex = vertices.size();
+	vbo_id = 0;
+	ibo_id = 0;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, &vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, &indices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 pSphere::pSphere(float radius) : Primitive(), radius(radius)
 {
 	type = PrimitiveTypes::Primitive_Sphere;
 
-	uint rings = 5;//DEFAULT rings
-	uint sectors = 5;//DEFAULT sectors
+	uint rings = 20;//DEFAULT rings
+	uint sectors = 20;//DEFAULT sectors
 
 	float const R = 1. / (float)(rings - 1);
 	float const S = 1. / (float)(sectors - 1);
@@ -426,15 +470,33 @@ pSphere::pSphere(float radius) : Primitive(), radius(radius)
 	indices.resize(rings * sectors * 4);
 	std::vector<uint>::iterator i = indices.begin();
 	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) {
-		*i++ = r * sectors + s;
 		*i++ = r * sectors + (s + 1);
-		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = r * sectors + s;
 		*i++ = (r + 1) * sectors + s;
+		*i++ = (r + 1) * sectors + (s + 1);
 	}
+	num_indices = indices.size();
+	num_vertex = vertices.size();
+	vbo_id = 0;
+	ibo_id = 0;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, &vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, &indices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 pSphere::pSphere(float radius, uint rings, uint sectors)
 {
+	type = PrimitiveTypes::Primitive_Sphere;
+
+	num_vertex = 0;
+	num_indices = 0;
+
 	float const R = 1. / (float)(rings - 1);
 	float const S = 1. / (float)(sectors - 1);
 	int r, s;
@@ -454,23 +516,38 @@ pSphere::pSphere(float radius, uint rings, uint sectors)
 	indices.resize(rings * sectors * 4);
 	std::vector<uint>::iterator i = indices.begin();
 	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) {
-		*i++ = r * sectors + s;
 		*i++ = r * sectors + (s + 1);
-		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = r * sectors + s;
 		*i++ = (r + 1) * sectors + s;
+		*i++ = (r + 1) * sectors + (s + 1);
 	}
+	num_indices = indices.size();
+	num_vertex = vertices.size();
+	vbo_id = 0;
+	ibo_id = 0;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, &vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, &indices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void pSphere::InnerRender() const
 {
-
+	//VERTICES
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	//INDICES
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glDrawElements(GL_QUADS, ibo_id, GL_UNSIGNED_INT, NULL);
 
-	glVertexPointer(3, GL_FLOAT, 0, &vertices[0]);
-	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_INT, &indices[0]);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 
@@ -632,6 +709,19 @@ pFrustum::pFrustum()
 		 2,6,3,	3,6,7,
 		 2,4,6,	2,0,4	
 	};
+	vbo_id = 0;
+	num_vertex = 24;
+	ibo_id = 0;
+	num_indices = 36;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, vertices_indices.FrustumVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, vertices_indices.Indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 pFrustum::pFrustum(float w1, float h1, float l, float w2, float h2)
@@ -663,16 +753,31 @@ pFrustum::pFrustum(float w1, float h1, float l, float w2, float h2)
 		2,6,3,	3,6,7,
 		2,4,6,	2,0,4
 	};
+	vbo_id = 0;
+	num_vertex = 24;
+	ibo_id = 0;
+	num_indices = 36;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, vertices_indices.FrustumVertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, vertices_indices.Indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void pFrustum::InnerRender() const
 {
+	//VERTICES
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, vertices_indices.FrustumVertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	//INDICES
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glDrawElements(GL_TRIANGLES, ibo_id, GL_UNSIGNED_INT, NULL);
 
-	// draw a cube
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, vertices_indices.Indices);
-
-	// deactivate vertex arrays after drawing
-	glDisableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
