@@ -1,6 +1,7 @@
 #include "HierarchyWindow.h"
 #include "Application.h"
 #include "GameObject.h"
+#include "ModuleInput.h"
 
 HierarchyWindow::HierarchyWindow()
 {
@@ -33,7 +34,7 @@ void HierarchyWindow::DrawWindow()
 								continue; //If parent will be duplicated skip this because parent will take care of childs;
 							}
 						}
-						//App->scene->DuplicateGameObject(*it);
+						App->scene->DuplicateGameObject(*it);
 					}
 				}
 				if (ImGui::MenuItem("Delete")) {
@@ -88,7 +89,7 @@ void HierarchyWindow::DrawWindow()
 				}
 				if (!isBlankString) {
 					App->scene->selected_gameobjects.front()->SetName(inputText);
-					//App->scene_manager_module->RenameDuplicatedGameObject(engine->sceneManagerModule->selectedGameObjects.front());
+					App->scene->RenameDuplicatedGameObject(App->scene->selected_gameobjects.front());
 					show_rename_error = false;
 					show_rename_window = false;
 				}
@@ -147,15 +148,17 @@ void HierarchyWindow::DrawSceneGameObjects(GameObject * gameObject)
 					engine->editorModule->draggingGameObject = gameObject;
 				}
 			}
-		}
-		CheckMouseOver(gameObject);*/
+		}*/
+
+		IsMouseOver(gameObject);
 		for (std::list<GameObject*>::iterator it = gameObject->childs.begin(); it != gameObject->childs.end(); ++it) {
 			DrawSceneGameObjects(*it);
 		}
 		ImGui::TreePop();
 	}
-	else {
-		//CheckMouseOver(gameObject);
+	else 
+	{
+		IsMouseOver(gameObject);
 	}
 
 	/*if (ImGui::IsMouseReleased(0) && engine->editorModule->dragData.hasData) {
@@ -163,4 +166,44 @@ void HierarchyWindow::DrawSceneGameObjects(GameObject * gameObject)
 			engine->editorModule->dragData.clearData();
 		}
 	}*/
+}
+
+void HierarchyWindow::IsMouseOver(GameObject * gameObject)
+{
+	if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)) {
+		if (ImGui::IsItemHoveredRect())
+		{
+			std::list<GameObject*>::iterator it;
+
+			if (!App->scene->selected_gameobjects.empty()) {
+				it = find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), gameObject);
+				if (it == App->scene->selected_gameobjects.end()) {
+					App->scene->selected_gameobjects.clear();
+					App->scene->selected_gameobjects.push_back(gameObject);
+				}
+			}
+			else {
+				App->scene->selected_gameobjects.push_back(gameObject);
+			}
+		}
+		else {
+			if (ImGui::IsMouseHoveringWindow() && !ImGui::IsMouseClicked(1)) {
+				if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT && !App->scene->selected_gameobjects.empty() &&
+					!show_rename_error) {
+					App->scene->selected_gameobjects.remove(gameObject);
+				}
+			}
+		}
+	}
+
+	if (ImGui::IsMouseDoubleClicked(0)/* && !App->IsPlaying()*/)
+	{
+		if (ImGui::IsItemHoveredRect())
+		{
+			if (!show_rename_error) {
+				show_rename_error = true;
+				rename_window_y = ImGui::GetMousePos().y;
+			}
+		}
+	}
 }

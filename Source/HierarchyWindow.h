@@ -13,7 +13,7 @@ public:
 
 	void DrawWindow();
 	void DrawSceneGameObjects(GameObject* gameObject);
-	//void CheckMouseOver(GameObject* gameObject);
+	void IsMouseOver(GameObject* gameObject);
 
 private:
 	bool show_rename_window;

@@ -47,6 +47,31 @@ GameObject * ModuleScene::CreateGameObject(GameObject * parent)
 	return ret;
 }
 
+GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
+{
+	GameObject* ret = nullptr;
+
+	//if (gameObject != nullptr) {
+	//	Data data;
+	//	gameObject->Save(data, true);
+	//	for (int i = 0; i < savingIndex; i++) {
+	//		GameObject* go = new GameObject();
+	//		data.EnterSection("GameObject_" + std::to_string(i));
+	//		go->Load(data);
+	//		data.LeaveSection();
+	//		gameobjectsList.push_back(go);
+	//		engine->sceneWindow->drawableObjects.push_back(go);
+	//		if (i == 0) { //return the first object (parent)
+	//			ret = go;
+	//		}
+	//	}
+	//	data.ClearData();
+	//	engine->sceneManagerModule->savingIndex = 0;
+	//}
+
+	return ret;
+}
+
 // Update
 update_status ModuleScene::Update(float dt)
 {
@@ -57,7 +82,10 @@ update_status ModuleScene::Update(float dt)
 		if ((*it)->IsActive())
 		{
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-			App->renderer3D->AddMeshToDraw(mesh_renderer->GetMesh());
+			if (mesh_renderer != nullptr)
+			{
+				App->renderer3D->AddMeshToDraw(mesh_renderer->GetMesh());
+			}
 		}
 	}
 

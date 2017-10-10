@@ -2,7 +2,8 @@
 
 #include "Window.h"
 #include <map>
-//#include <afx.h>
+#include "ComponentMeshRenderer.h"
+#include "ComponentTransform.h"
 
 class PropertiesWindow :
 	public Window
@@ -12,21 +13,9 @@ public:
 	virtual ~PropertiesWindow();
 
 	void DrawWindow();
-	//void DrawComponent(Component* component);
-	//void DrawTransformPanel(ComponentTransform* transform);
-	//void DrawSpriteRendererPanel(ComponentSpriteRenderer* spriteRenderer);
-	//void DrawAnimatonPanel(ComponentAnimation* animator);
-	//void DrawAudioPanel(ComponentAudio* audio);
-	//void DrawParticlePanel(ComponentParticle* particle);
-	//void DrawScriptPanel(ComponentScript* script);
-	//bool ScriptHasChanged(string path);
-	//void UpdateScript(ComponentScript * script);
+	void DrawComponent(Component* component);
+	void DrawTransformPanel(ComponentTransform* transform);
+	void DrawMeshRendererPanel(ComponentMeshRenderer* spriteRenderer);
 
-private:
-	//std::map<std::string, CTime> scriptsChangesData;
-	int anim_index = 0;
-	int sound_index = 0;
-	int music_index = 0;
-	int particle_FX_index = 0;
 };
 

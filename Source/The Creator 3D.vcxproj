@@ -86,6 +86,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
+    <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="EditorStyleWindow.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />
+    <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="EditorStyleWindow.cpp" />
     <ClCompile Include="GameObject.cpp" />

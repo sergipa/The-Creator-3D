@@ -32,7 +32,7 @@ public:
 
 private:
 	ComponentType type;
-	GameObject* gameObject;
+	GameObject* gameobject;
 	std::string name;
 	bool active;
 };

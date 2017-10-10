@@ -20,6 +20,7 @@ public:
 	bool CleanUp();
 
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
+	GameObject* DuplicateGameObject(GameObject* gameObject);
 	void RenameDuplicatedGameObject(GameObject * gameObject, bool justIncrease = false);
 
 	void AddGameObjectToScene(GameObject* gameobject);

@@ -4,7 +4,7 @@ Component::Component()
 {
 	type = Unknown;
 	active = true;
-	gameObject = nullptr;
+	gameobject = nullptr;
 	name = "Unknown";
 }
 
@@ -38,12 +38,12 @@ bool Component::IsActive() const
 
 void Component::SetGameObject(GameObject * attached_gameobject)
 {
-	gameObject = attached_gameobject;
+	gameobject = attached_gameobject;
 }
 
 GameObject * Component::GetGameObject() const
 {
-	return gameObject;
+	return gameobject;
 }
 
 void Component::SetType(ComponentType type)
