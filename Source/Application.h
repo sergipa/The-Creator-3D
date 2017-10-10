@@ -23,7 +23,7 @@ public:
 	ModuleWindow* window;
 	ModuleInput* input;
 	ModuleAudio* audio;
-	ModuleScene* scene_intro;
+	ModuleScene* scene;
 	ModuleRenderer3D* renderer3D;
 	ModuleCamera3D* camera;
 	ModulePhysics3D* physics;

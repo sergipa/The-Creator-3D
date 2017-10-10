@@ -4,6 +4,8 @@
 #include "MathGeoLib\MathGeoLib.h"
 #include "Primitive.h"
 
+class GameObject;
+
 
 class ModuleScene : public Module
 {
@@ -17,8 +19,8 @@ public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
+	void AddGameObjectToScene(GameObject* gameobject);
+
 private:
-	pPlane pl;
-	math::Sphere ball1;
-	math::Sphere ball2;
+	std::list<GameObject*> scene_gameobjects;
 };

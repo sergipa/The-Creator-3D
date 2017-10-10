@@ -6,9 +6,8 @@
 #include "ModuleEditor.h"
 #include "Primitive.h"
 #include "Data.h"
-#include "Component.h"
 #include "Mesh.h"
-#include "ComponentMeshRenderer.h"
+#include "RenderTextureMSAA.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -165,27 +164,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-
-<<<<<<< HEAD
 	DrawScene();
-=======
-	//Test. This should be removed in the future
-	pSphere cube;
-	cube.color = Red;
-	cube.SetPos(0, 0, 0);
-	cube.Render();
-
-	pRay ray(0, 0, 0, 0, 10, 0);
-	ray.Render();
-	//drawTeapot();
-	pPlane pl;
-	pl.normal.x = 0;
-	pl.normal.y = 1;
-	pl.normal.z = 0;
-	pl.constant = 0;
-	pl.axis = true;
-	pl.Render();
->>>>>>> origin/master
 
 	textureMSAA->Render();
 
@@ -205,17 +184,15 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 void ModuleRenderer3D::DrawScene()
 {
-	for (std::list<GameObject*>::iterator it = gameobjects_to_draw.begin(); it != gameobjects_to_draw.end(); it++)
+	for (std::list<Mesh*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-		Mesh* mesh = mesh_renderer->GetMesh();
-		
+		//Draw Mesh
 	}
 }
 
-void ModuleRenderer3D::AddGameObjectToDraw(GameObject * gameobject)
+void ModuleRenderer3D::AddMeshToDraw(Mesh * mesh)
 {
-	gameobjects_to_draw.push_back(gameobject);
+	mesh_to_draw.push_back(mesh);
 }
 
 // Called before quitting

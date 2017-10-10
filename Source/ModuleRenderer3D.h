@@ -3,8 +3,9 @@
 #include "Globals.h"
 #include "glmath.h"
 #include "Light.h"
-#include "RenderTextureMSAA.h"
-#include "GameObject.h"
+
+class RenderTextureMSAA;
+class Mesh;
 
 #define MAX_LIGHTS 8
 
@@ -42,7 +43,7 @@ public:
 
 	void DrawScene();
 
-	void AddGameObjectToDraw(GameObject* gameobject);
+	void AddMeshToDraw(Mesh* mesh);
 
 public:
 
@@ -61,5 +62,5 @@ private:
 	bool is_using_texture2D;
 	bool is_using_fog;
 
-	std::list<GameObject*> gameobjects_to_draw;
+	std::list<Mesh*> mesh_to_draw;
 };

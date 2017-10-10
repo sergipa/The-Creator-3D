@@ -19,6 +19,11 @@ Mesh* ComponentMeshRenderer::GetMesh()
 	return mesh;
 }
 
+void ComponentMeshRenderer::LoadMesh(Mesh * mesh)
+{
+	this->mesh = mesh;
+}
+
 void ComponentMeshRenderer::Save(Data & data) const
 {
 }

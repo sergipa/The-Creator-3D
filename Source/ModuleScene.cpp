@@ -26,13 +26,6 @@ bool ModuleScene::Start()
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
 
-	
-
-	ball1.pos = { 50,0,0 };
-	ball1.r = 10;
-	ball2.pos = { -50,0,0 };
-	ball2.r = 10;
-
 	return ret;
 }
 
@@ -48,23 +41,16 @@ bool ModuleScene::CleanUp()
 update_status ModuleScene::Update(float dt)
 {
 	ms_timer.Start();
-	ball1.Translate({-0.1f,0,0});
-	ball2.Translate({ 0.1f,0,0 });
 
-	float distance = ball1.Distance(ball2);
-	
-	if (ball1.Intersects(ball2)) {
-		//App->imgui->AddLogToConsole("Ball 1 and ball 2 are intersecting");
-	}
-	else {
-		std::string str = std::to_string(distance);
-		//App->imgui->AddLogToConsole(("Distance between both speheres: " + str).c_str());
-	}
-	//pl.Render();
 	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 
 void ModuleScene::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
+}
+
+void ModuleScene::AddGameObjectToScene(GameObject* gameobject)
+{
+	scene_gameobjects.push_back(gameobject);
 }

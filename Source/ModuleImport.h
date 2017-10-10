@@ -21,6 +21,5 @@ public:
 
 private:
 	struct aiLogStream stream;
-	Mesh* mesh;
 };
 

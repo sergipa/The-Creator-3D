@@ -10,6 +10,7 @@ public:
 	~ComponentMeshRenderer();
 
 	Mesh* GetMesh();
+	void LoadMesh(Mesh* mesh);
 
 	void Save(Data& data) const;
 	void Load(Data& data);
