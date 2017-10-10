@@ -166,7 +166,26 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 
+<<<<<<< HEAD
 	DrawScene();
+=======
+	//Test. This should be removed in the future
+	pSphere cube;
+	cube.color = Red;
+	cube.SetPos(0, 0, 0);
+	cube.Render();
+
+	pRay ray(0, 0, 0, 0, 10, 0);
+	ray.Render();
+	//drawTeapot();
+	pPlane pl;
+	pl.normal.x = 0;
+	pl.normal.y = 1;
+	pl.normal.z = 0;
+	pl.constant = 0;
+	pl.axis = true;
+	pl.Render();
+>>>>>>> origin/master
 
 	textureMSAA->Render();
 
