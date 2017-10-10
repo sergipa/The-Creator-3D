@@ -6,7 +6,9 @@
 #include "ModuleEditor.h"
 #include "Primitive.h"
 #include "Data.h"
-#include "teapot.h"
+#include "Component.h"
+#include "Mesh.h"
+#include "ComponentMeshRenderer.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -164,22 +166,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 
-	//Test. This should be removed in the future
-	pFrustum cube(10,10,30,40,40);
-	cube.color = Red;
-	cube.SetPos(0, 10, 0);
-	cube.Render();
-
-	pRay ray(0, 0, 0, 0, 10, 0);
-	ray.Render();
-	//drawTeapot();
-	pPlane pl;
-	pl.normal.x = 0;
-	pl.normal.y = 1;
-	pl.normal.z = 0;
-	pl.constant = 0;
-	pl.axis = true;
-	pl.Render();
+	DrawScene();
 
 	textureMSAA->Render();
 
@@ -195,6 +182,21 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 	SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
+}
+
+void ModuleRenderer3D::DrawScene()
+{
+	for (std::list<GameObject*>::iterator it = gameobjects_to_draw.begin(); it != gameobjects_to_draw.end(); it++)
+	{
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+		Mesh* mesh = mesh_renderer->GetMesh();
+		
+	}
+}
+
+void ModuleRenderer3D::AddGameObjectToDraw(GameObject * gameobject)
+{
+	gameobjects_to_draw.push_back(gameobject);
 }
 
 // Called before quitting

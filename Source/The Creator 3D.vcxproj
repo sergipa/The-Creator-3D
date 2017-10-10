@@ -84,9 +84,12 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppWindowConfigWindow.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentMeshRenderer.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="EditorStyleWindow.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="HardwareWindow.h" />
@@ -158,8 +161,10 @@
     <ClInclude Include="MathGeoLib\Math\sse_mathfun.h" />
     <ClInclude Include="MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="MathGeoLib\Time\Clock.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="ModuleCamera3D.h" />
     <ClInclude Include="ModuleEditor.h" />
+    <ClInclude Include="ModuleImport.h" />
     <ClInclude Include="ModulePhysics3D.h" />
     <ClInclude Include="ModuleRenderer3D.h" />
     <ClInclude Include="OpenGL.h" />
@@ -172,7 +177,6 @@
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="RendererConfigWindow.h" />
     <ClInclude Include="RenderTextureMSAA.h" />
-    <ClInclude Include="teapot.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="AssetsWindow.h" />
     <ClInclude Include="ConsoleWindow.h" />
@@ -189,8 +193,11 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AppWindowConfigWindow.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ComponentMeshRenderer.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="EditorStyleWindow.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="HardwareWindow.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -232,9 +239,11 @@
     <ClCompile Include="MathGeoLib\Math\SSEMath.cpp" />
     <ClCompile Include="MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\Time\Clock.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModuleAudio.cpp" />
     <ClCompile Include="ModuleCamera3D.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
+    <ClCompile Include="ModuleImport.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModulePhysics3D.cpp" />
     <ClCompile Include="ModuleRenderer3D.cpp" />

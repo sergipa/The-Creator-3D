@@ -4,6 +4,7 @@
 #include "glmath.h"
 #include "Light.h"
 #include "RenderTextureMSAA.h"
+#include "GameObject.h"
 
 #define MAX_LIGHTS 8
 
@@ -39,6 +40,9 @@ public:
 	void EnableTestLight();
 	void DisableTestLight();
 
+	void DrawScene();
+
+	void AddGameObjectToDraw(GameObject* gameobject);
 
 public:
 
@@ -47,6 +51,7 @@ public:
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 	RenderTextureMSAA* textureMSAA;
+
 private:
 	bool use_vsync;
 	bool is_using_lightning;
@@ -55,4 +60,6 @@ private:
 	bool is_using_color_material;
 	bool is_using_texture2D;
 	bool is_using_fog;
+
+	std::list<GameObject*> gameobjects_to_draw;
 };

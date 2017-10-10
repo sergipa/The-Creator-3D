@@ -3,6 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleEditor.h"
 #include "ModuleWindow.h"
+#include "ModuleImport.h"
 
 #define MAX_KEYS 300
 
@@ -121,6 +122,9 @@ update_status ModuleInput::PreUpdate(float dt)
 					App->window->SetHeight(e.window.data2);
 				}
 			}
+			case SDL_DROPFILE:
+				App->
+				break;
 		}
 	}
 

@@ -12,6 +12,7 @@
 #include "ModulePhysics3D.h"
 #include "MathGeoLib\Algorithm\Random\LCG.h"
 #include "ModuleEditor.h"
+#include "ModuleImport.h"
 #include <list>
 
 class Data;
@@ -27,6 +28,7 @@ public:
 	ModuleCamera3D* camera;
 	ModulePhysics3D* physics;
 	ModuleEditor* editor;
+	ModuleImport* import;
 private:
 
 	Timer	ms_timer;
