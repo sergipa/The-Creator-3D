@@ -79,13 +79,10 @@ update_status ModuleScene::Update(float dt)
 	
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
-		if ((*it)->IsActive())
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+		if (mesh_renderer != nullptr && mesh_renderer->IsActive())
 		{
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-			if (mesh_renderer != nullptr)
-			{
-				App->renderer3D->AddMeshToDraw(mesh_renderer->GetMesh());
-			}
+			App->renderer3D->AddMeshToDraw(mesh_renderer->GetMesh());
 		}
 	}
 
@@ -96,7 +93,9 @@ update_status ModuleScene::Update(float dt)
 void ModuleScene::AddGameObjectToScene(GameObject* gameobject)
 {
 	scene_gameobjects.push_back(gameobject);
-	root_gameobjects.push_back(gameobject);
+
+	if(gameobject->GetParent()== nullptr)
+		root_gameobjects.push_back(gameobject);
 }
 
 void ModuleScene::AddGameObjectToDestroy(GameObject * gameobject)

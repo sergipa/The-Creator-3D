@@ -7,7 +7,7 @@
 #include "Mesh.h"
 
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
-
+class GameObject;
 class ModuleImport :
 	public Module
 {
@@ -21,5 +21,6 @@ public:
 
 private:
 	struct aiLogStream stream;
+	GameObject* parent;
 };
 

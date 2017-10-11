@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "ModuleScene.h"
 #include "OpenGL.h"
+#include <string>
 
 ModuleImport::ModuleImport(Application * app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -30,6 +31,7 @@ bool ModuleImport::LoadMesh(const char* path)
 	if (scene != nullptr && scene->HasMeshes())
 	{
 		// Use scene->mNumMeshes to iterate on scene->mMeshes array
+		bool parent_created = false;
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
 			aiMesh* ai_mesh = scene->mMeshes[i];
@@ -67,10 +69,44 @@ bool ModuleImport::LoadMesh(const char* path)
 			glBufferData(GL_ARRAY_BUFFER, sizeof(uint)*mesh->num_indices, mesh->indices, GL_STATIC_DRAW);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			GameObject* go = new GameObject();
+			
+			std::string name;
+			if (!parent_created) parent = nullptr;
+			if (scene->mNumMeshes > 1 && !parent_created)
+			{
+				parent = new GameObject();
+				std::string temp_path;
+				temp_path = path;
+				uint pos_bar = temp_path.find_last_of('\\');
+				uint pos_point = temp_path.find_last_of('.');
+				std::string name;
+				for (int i = pos_bar + 1; i < pos_point; i++)
+				{
+					name.push_back(temp_path[i]);
+				}
+				parent->SetName(name.c_str());
+				App->scene->AddGameObjectToScene(parent);
+				parent_created = true;
+			}
+			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
 			mesh_renderer->LoadMesh(mesh);
-			go->SetName("Warrior");
+			if (parent_created)
+			{
+				name = parent->GetName() + "_Mesh_" + std::to_string(i);
+			}
+			else
+			{
+				std::string temp_path;
+				temp_path = path;
+				uint pos_bar = temp_path.find_last_of('\\');
+				uint pos_point = temp_path.find_last_of('.');
+				for (int i = pos_bar + 1; i < pos_point; i++)
+				{
+					name.push_back(temp_path[i]);
+				}
+			}
+			go->SetName(name);
 			App->scene->AddGameObjectToScene(go);
 		}
 
