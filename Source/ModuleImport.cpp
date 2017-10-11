@@ -59,12 +59,12 @@ bool ModuleImport::LoadMesh(const char* path)
 
 			glGenBuffers(1, &mesh->id_vertices);
 			glBindBuffer(GL_ARRAY_BUFFER, mesh->id_vertices);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh->num_vertices, mesh->vertices, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh->num_vertices * 3, mesh->vertices, GL_STATIC_DRAW);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			glGenBuffers(1, &mesh->id_indices);
 			glBindBuffer(GL_ARRAY_BUFFER, mesh->id_indices);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mesh->num_vertices, mesh->indices, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(uint)*mesh->num_indices, mesh->indices, GL_STATIC_DRAW);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			GameObject* go = new GameObject();
