@@ -79,6 +79,10 @@ void PropertiesWindow::DrawWindow()
 					if (selected_gameobject->GetComponent(Component::MeshRenderer) == nullptr) {
 						selected_gameobject->AddComponent(Component::MeshRenderer);
 					}
+					else
+					{
+						CONSOLE_LOG("GameObject can't have more than 1 Mesh Renderer!");
+					}
 				}
 				ImGui::EndPopup();
 			}
@@ -148,7 +152,13 @@ void PropertiesWindow::DrawTransformPanel(ComponentTransform * transform)
 	}
 }
 
-void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * spriteRenderer)
+void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_renderer)
 {
-
+	if (ImGui::CollapsingHeader("Mesh Renderer", ImGuiTreeNodeFlags_DefaultOpen)) {
+		bool is_active = mesh_renderer->IsActive();
+		if (ImGui::Checkbox("Active##Mesh_Renderer", &is_active))
+		{
+			mesh_renderer->SetActive(is_active);
+		}
+	}
 }

@@ -125,6 +125,7 @@ update_status ModuleInput::PreUpdate(float dt)
 				break;
 			case SDL_DROPFILE:
 				App->import->LoadMesh(e.drop.file);
+				App->scene->AddGameObjectToDestroy(App->scene->root_gameobjects.front());
 				break;
 		}
 	}

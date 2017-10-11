@@ -9,7 +9,8 @@
             "Window_Full_Desktop": "0"
         },
         "Renderer_Config": {
-            "Vsync": "1"
+            "Vsync": "1",
+            "MSAA_Level": "2"
         }
     }
 }

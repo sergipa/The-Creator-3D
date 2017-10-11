@@ -163,3 +163,26 @@ void GameObject::Destroy()
 	App->scene->AddGameObjectToDestroy(this);
 }
 
+void GameObject::OnDestroy()
+{
+	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end();) {
+		if (*it != nullptr) {
+			(*it)->OnDestroy();
+			RELEASE(*it);
+			it = childs.erase(it);
+		}
+	}
+	/*for (int i = 0; i < App->scene->.size(); i++) {
+		if (engine->sceneWindow->drawableObjects[i] == this) {
+			engine->sceneWindow->drawableObjects.erase(engine->sceneWindow->drawableObjects.begin() + i);
+		}
+	}
+	if (parent != nullptr && !parent->onDestroy) {
+		parent->childs.remove(this);
+	}
+	vector<GameObject*>::iterator it = find(engine->sceneManagerModule->gameObjectsList.begin(), engine->sceneManagerModule->gameObjectsList.end(), this);
+	if (it != engine->sceneManagerModule->gameObjectsList.end()) {
+		engine->sceneManagerModule->gameObjectsList.erase(it);
+	}*/
+}
+

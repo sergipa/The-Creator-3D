@@ -17,6 +17,7 @@ public:
 
 	bool Start();
 	update_status Update(float dt);
+	update_status PreUpdate(float dt);
 	bool CleanUp();
 
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
@@ -26,12 +27,15 @@ public:
 	void AddGameObjectToScene(GameObject* gameobject);
 	void AddGameObjectToDestroy(GameObject* gameobject);
 
+	bool RecursiveCheckActiveParents(GameObject* gameobject);
+
 public:
 	std::list<GameObject*> selected_gameobjects;
 	std::list<GameObject*> root_gameobjects;
+	std::list<GameObject*> scene_gameobjects;
 
 private:
-	std::list<GameObject*> scene_gameobjects;
+	
 	std::list<GameObject*> gameobjects_to_destroy;
 	std::map<std::string, int> scene_gameobjects_name_counter;
 };

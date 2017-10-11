@@ -72,6 +72,23 @@ GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
 	return ret;
 }
 
+update_status ModuleScene::PreUpdate(float dt)
+{
+	for (std::list<GameObject*>::iterator it = gameobjects_to_destroy.begin(); it != gameobjects_to_destroy.end();) {
+		if (*it != nullptr) {
+			(*it)->OnDestroy();
+			if ((*it)->IsRoot()) {
+				root_gameobjects.remove(*it);
+			}
+			selected_gameobjects.remove(*it);
+			RELEASE(*it);
+			it = gameobjects_to_destroy.erase(it);
+		}
+	}
+
+	return UPDATE_CONTINUE;
+}
+
 // Update
 update_status ModuleScene::Update(float dt)
 {
@@ -80,7 +97,8 @@ update_status ModuleScene::Update(float dt)
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
 		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-		if (mesh_renderer != nullptr && mesh_renderer->IsActive())
+		bool active_parents = RecursiveCheckActiveParents((*it));
+		if (mesh_renderer != nullptr && mesh_renderer->IsActive() && active_parents && (*it)->IsActive())
 		{
 			App->renderer3D->AddMeshToDraw(mesh_renderer->GetMesh());
 		}
@@ -103,6 +121,20 @@ void ModuleScene::AddGameObjectToDestroy(GameObject * gameobject)
 	gameobjects_to_destroy.push_back(gameobject);
 }
 
+bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)
+{
+	if (gameobject->GetParent() != nullptr)
+	{
+		if (gameobject->GetParent()->IsActive())
+		{
+			RecursiveCheckActiveParents(gameobject->GetParent());
+		}
+		else {
+			return false;
+		}
+	}
+	return true;
+}
 
 void ModuleScene::RenameDuplicatedGameObject(GameObject * gameObject, bool justIncrease)
 {

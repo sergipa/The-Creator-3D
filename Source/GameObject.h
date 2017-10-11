@@ -30,6 +30,7 @@ public:
 	std::string GetLayer() const;
 
 	void Destroy();
+	void OnDestroy();
 
 public:
 	std::list<GameObject*> childs;
