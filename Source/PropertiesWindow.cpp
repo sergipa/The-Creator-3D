@@ -160,5 +160,8 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 		{
 			mesh_renderer->SetActive(is_active);
 		}
+		ImGui::Text("Texture: %s", mesh_renderer->GetMesh()->texture_name.c_str());
+
+		ImGui::Spacing();
 	}
 }

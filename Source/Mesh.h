@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 typedef unsigned int uint;
 
 class Mesh
@@ -15,5 +17,17 @@ public:
 	uint id_vertices; // id in VRAM
 	uint num_vertices;
 	float* vertices;
+
+	uint id_normals;
+	float* normals;
+
+	uint id_colors;
+	float* colors;
+
+	uint id_texture_coords;
+	float* texture_coords;
+
+	int texture;
+	std::string texture_name;
 };
 

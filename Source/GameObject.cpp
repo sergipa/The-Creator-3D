@@ -19,12 +19,24 @@ GameObject::GameObject(GameObject* parent)
 	tag = "None";
 	layer = "None";
 	name = "New GameObject";
+	is_on_destroy = false;
 
 	AddComponent(Component::Transform);
 }
 
 GameObject::~GameObject()
 {
+	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); ++it) {
+		if (*it != nullptr) {
+			RELEASE(*it);
+		}
+	}
+
+	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
+		if (*it != nullptr) {
+			RELEASE(*it);
+		}
+	}
 }
 
 Component * GameObject::AddComponent(Component::ComponentType component_type)
@@ -165,6 +177,8 @@ void GameObject::Destroy()
 
 void GameObject::OnDestroy()
 {
+	is_on_destroy = true;
+
 	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end();) {
 		if (*it != nullptr) {
 			(*it)->OnDestroy();
@@ -172,17 +186,14 @@ void GameObject::OnDestroy()
 			it = childs.erase(it);
 		}
 	}
-	/*for (int i = 0; i < App->scene->.size(); i++) {
-		if (engine->sceneWindow->drawableObjects[i] == this) {
-			engine->sceneWindow->drawableObjects.erase(engine->sceneWindow->drawableObjects.begin() + i);
-		}
-	}
-	if (parent != nullptr && !parent->onDestroy) {
+
+	if (parent != nullptr && !parent->is_on_destroy) {
 		parent->childs.remove(this);
 	}
-	vector<GameObject*>::iterator it = find(engine->sceneManagerModule->gameObjectsList.begin(), engine->sceneManagerModule->gameObjectsList.end(), this);
-	if (it != engine->sceneManagerModule->gameObjectsList.end()) {
-		engine->sceneManagerModule->gameObjectsList.erase(it);
-	}*/
+	
+	std::list<GameObject*>::iterator it = find(App->scene->scene_gameobjects.begin(), App->scene->scene_gameobjects.end(), this);
+	if (it != App->scene->scene_gameobjects.end()) {
+		App->scene->scene_gameobjects.erase(it);
+	}
 }
 

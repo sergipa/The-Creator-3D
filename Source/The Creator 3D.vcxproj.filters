@@ -309,9 +309,6 @@
     <ClInclude Include="imgui\imguidock.h">
       <Filter>Sources\3d Party\imGui</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTexture.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="OpenGL.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
@@ -357,9 +354,6 @@
     <ClInclude Include="PerfTimer.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTextureMSAA.h">
-      <Filter>Sources\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleImport.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
@@ -377,6 +371,12 @@
     </ClInclude>
     <ClInclude Include="ComponentTransform.h">
       <Filter>Sources\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTexture.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTextureMSAA.h">
+      <Filter>Sources\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -539,9 +539,6 @@
     <ClCompile Include="imgui\imguidock.cpp">
       <Filter>Sources\3d Party\imGui</Filter>
     </ClCompile>
-    <ClCompile Include="RenderTexture.cpp">
-      <Filter>Sources\Tools</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui_impl_sdl_gl3.cpp">
       <Filter>Sources\3d Party\imGui</Filter>
     </ClCompile>
@@ -584,9 +581,6 @@
     <ClCompile Include="PerfTimer.cpp">
       <Filter>Sources\Tools</Filter>
     </ClCompile>
-    <ClCompile Include="RenderTextureMSAA.cpp">
-      <Filter>Sources\Tools</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleImport.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
@@ -604,6 +598,12 @@
     </ClCompile>
     <ClCompile Include="ComponentTransform.cpp">
       <Filter>Sources\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTexture.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTextureMSAA.cpp">
+      <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

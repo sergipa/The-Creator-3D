@@ -130,6 +130,8 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		is_using_depth_test = true;
 		is_using_cull_test = true;
 		is_using_color_material = true;
+		glEnable(GL_TEXTURE_2D);
+		is_using_texture2D = true;
 
 		glEnable(GL_MULTISAMPLE);
 	}
@@ -193,18 +195,49 @@ void ModuleRenderer3D::DrawScene()
 
 	for (std::list<Mesh*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
-		
+		if ((*it)->texture > 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, (*it)->texture);
+		}
 		//VERTICES
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_vertices);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
+		//NORMALS
+		if ((*it)->id_normals > 0)
+		{
+			glEnableClientState(GL_NORMAL_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_normals);
+			glNormalPointer(GL_FLOAT, 0, NULL);
+		}
+		//TEXTURE_COORDS
+		if ((*it)->id_texture_coords > 0)
+		{
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_texture_coords);
+			glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+		}
+		//COLORS
+		if ((*it)->id_colors > 0)
+		{
+			glEnableClientState(GL_COLOR_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_colors);
+			glColorPointer(3, GL_FLOAT, 0, NULL);
+		}
 		//INDICES
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->id_indices);
 		glDrawElements(GL_TRIANGLES, (*it)->num_indices, GL_UNSIGNED_INT, NULL);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		if ((*it)->texture > 0)
+		{
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
 	}
 	mesh_to_draw.clear();
 }

@@ -1,13 +1,10 @@
 #pragma once
 #include "Module.h"
 #include "Assimp/include/cimport.h"
-#include "Assimp/include/scene.h"
-#include "Assimp/include/postprocess.h"
-#include "Assimp/include/cfileio.h"
-#include "Mesh.h"
+#include <string>
 
-#pragma comment (lib, "Assimp/libx86/assimp.lib")
 class GameObject;
+
 class ModuleImport :
 	public Module
 {
@@ -17,10 +14,14 @@ public:
 
 	bool CleanUp();
 
+	void LoadFile(std::string path);
 	bool LoadMesh(const char* path);
+	int LoadTexture(const char* path);
+
+	std::string GetFileName(const char* path);
 
 private:
-	struct aiLogStream stream;
+	aiLogStream stream;
 	GameObject* parent;
 };
 

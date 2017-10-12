@@ -42,5 +42,6 @@ private:
 	std::string tag;
 	std::string layer;
 	bool is_root;
+	bool is_on_destroy;
 };
 
