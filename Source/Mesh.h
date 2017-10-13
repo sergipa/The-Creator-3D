@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 typedef unsigned int uint;
 
 class Mesh
@@ -26,8 +24,5 @@ public:
 
 	uint id_texture_coords;
 	float* texture_coords;
-
-	int texture;
-	std::string texture_name;
 };
 

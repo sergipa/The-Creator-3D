@@ -1,7 +1,7 @@
 #include "PropertiesWindow.h"
 #include "Application.h"
 #include "GameObject.h"
-#include "MathGeoLib\Math\float3.h"
+#include "glmath.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -19,6 +19,9 @@ void PropertiesWindow::DrawWindow()
 		GameObject* selected_gameobject = nullptr;
 		if (App->scene->selected_gameobjects.size() == 1) {
 			selected_gameobject = App->scene->selected_gameobjects.front();
+		}
+		else if (App->scene->selected_gameobjects.size() > 1) {
+			ImGui::Text("More than 1 GameObject selected!");
 		}
 
 		if (selected_gameobject != nullptr) {
@@ -126,9 +129,9 @@ void PropertiesWindow::DrawComponent(Component * component)
 void PropertiesWindow::DrawTransformPanel(ComponentTransform * transform)
 {
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-		float3 position;
-		float3 rotation;
-		float3 scale;
+		vec3 position;
+		vec3 rotation;
+		vec3 scale;
 		if (transform->GetGameObject()->IsRoot()) {
 			position = transform->GetGlobalPosition();
 			rotation = transform->GetGlobalRotation();
@@ -160,7 +163,48 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 		{
 			mesh_renderer->SetActive(is_active);
 		}
-		ImGui::Text("Texture: %s", mesh_renderer->GetMesh()->texture_name.c_str());
+		if(ImGui::TreeNodeEx("Mesh Info##1", ImGuiTreeNodeFlags_OpenOnArrow))
+		{
+			if (mesh_renderer->GetMesh() == nullptr)
+			{
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Mesh not found");
+				ImGui::TreePop();
+				return;
+			}
+			ImGui::Text("Triangle Count: %d", mesh_renderer->GetMesh()->num_indices / 3);
+			ImGui::Text("Vertex Count: %d", mesh_renderer->GetMesh()->num_vertices);
+			ImGui::Text("Indices Count: %d", mesh_renderer->GetMesh()->num_indices);
+			ImGui::Text("Normals: "); ImGui::SameLine(); (mesh_renderer->GetMesh()->id_normals > 0) ? ImGui::TextColored(ImVec4(0, 1, 0, 1), ("yes")) : ImGui::TextColored(ImVec4(1, 0, 0, 1), ("no"));
+			ImGui::Text("Colors: "); ImGui::SameLine(); (mesh_renderer->GetMesh()->id_colors > 0) ? ImGui::TextColored(ImVec4(0, 1, 0, 1), ("yes")) : ImGui::TextColored(ImVec4(1, 0, 0, 1), ("no"));
+			ImGui::Text("UV: "); ImGui::SameLine(); (mesh_renderer->GetMesh()->id_texture_coords > 0) ? ImGui::TextColored(ImVec4(0, 1, 0, 1), ("yes")) : ImGui::TextColored(ImVec4(1, 0, 0, 1), ("no"));
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNodeEx("Texture Info##2", ImGuiTreeNodeFlags_OpenOnArrow))
+		{
+			if (mesh_renderer->GetTexture() == nullptr)
+			{
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Not using a Texture");
+				ImGui::TreePop();
+				return;
+			}
+			ImGui::Text("Texture ID: %d", mesh_renderer->GetTexture()->GetID());
+			ImGui::Text("Texture Path: %s", mesh_renderer->GetTexture()->GetPath().c_str());
+			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(mesh_renderer->GetTexture()->GetPath().c_str()).x > ImGui::GetContentRegionAvailWidth()) {
+				ImGui::BeginTooltip();
+				ImGui::Text("%s", mesh_renderer->GetTexture()->GetPath().c_str());
+				ImGui::EndTooltip();
+			}
+			ImGui::Text("Texture Name: %s", mesh_renderer->GetTexture()->GetName().c_str());
+			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(mesh_renderer->GetTexture()->GetName().c_str()).x > ImGui::GetContentRegionAvailWidth()) {
+				ImGui::BeginTooltip();
+				ImGui::Text("%s", mesh_renderer->GetTexture()->GetName().c_str());
+				ImGui::EndTooltip();
+			}
+			ImGui::Text("Texture Size: %d x %d", mesh_renderer->GetTexture()->GetWidth(), mesh_renderer->GetTexture()->GetHeight());
+			ImGui::Text("Texture Format: %s", mesh_renderer->GetTexture()->GetFormatString().c_str());
+			ImGui::Text("Texture Type: %s", mesh_renderer->GetTexture()->GetTypeString().c_str());
+			ImGui::TreePop();
+		}
 
 		ImGui::Spacing();
 	}

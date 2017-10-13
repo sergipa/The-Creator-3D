@@ -3,6 +3,8 @@
 #include "PhysBody3D.h"
 #include "ModuleCamera3D.h"
 #include "SceneWindow.h"
+#include "ModuleScene.h"
+#include "PerformanceWindow.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -17,6 +19,7 @@ ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(ap
 
 	name = "Camera";
 	can_update = false;
+	camera_is_orbital = false;
 }
 
 ModuleCamera3D::~ModuleCamera3D()
@@ -53,8 +56,8 @@ update_status ModuleCamera3D::Update(float dt)
 		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 			speed = 70.0f * dt;
 
-		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
-		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
+		if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) newPos.y += speed;
+		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) newPos.y -= speed;
 
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
 		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
@@ -69,7 +72,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 		// Mouse motion ----------------
 
-		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+		if ((App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT && !camera_is_orbital) || App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && camera_is_orbital)
 		{
 			int dx = -App->input->GetMouseXMotion();
 			int dy = -App->input->GetMouseYMotion();
@@ -107,7 +110,7 @@ update_status ModuleCamera3D::Update(float dt)
 		// Recalculate matrix -------------
 		CalculateViewMatrix();
 	}
-	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
+	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	
 	return UPDATE_CONTINUE;
 }
@@ -157,6 +160,16 @@ void ModuleCamera3D::Move(const vec3 &Movement)
 float* ModuleCamera3D::GetViewMatrix()
 {
 	return &ViewMatrix;
+}
+
+void ModuleCamera3D::SetOrbital(bool is_orbital)
+{
+	camera_is_orbital = is_orbital;
+}
+
+bool ModuleCamera3D::IsOrbital() const
+{
+	return camera_is_orbital;
 }
 
 // -----------------------------------------------------------------

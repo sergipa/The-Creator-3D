@@ -56,10 +56,12 @@ public:
 
 	void LoadEditorStyle();
 
-	void SendDataToPerformance(std::string name, float ms);
 private:
 	ImFont* font = nullptr;
 	std::vector<Window*> editor_windows;
+
+public:
+	DragObjectData drag_data;
 	HierarchyWindow* hierarchy_window = nullptr;
 	AssetsWindow* assets_window = nullptr;
 	PropertiesWindow* properties_window = nullptr;
@@ -73,9 +75,6 @@ private:
 	RendererConfigWindow* renderer_config_window = nullptr;
 	//AnimatorWindow* animator_window = nullptr;
 	//ParticleEditorWindow* particle_editor_window = nullptr;
-
-public:
-	DragObjectData drag_data;
 	//GameObject* dragging_gameobject = nullptr;
 };
 

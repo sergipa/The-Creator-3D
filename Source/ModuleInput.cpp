@@ -4,6 +4,7 @@
 #include "ModuleEditor.h"
 #include "ModuleWindow.h"
 #include "ModuleImport.h"
+#include "PerformanceWindow.h"
 
 #define MAX_KEYS 300
 
@@ -132,7 +133,7 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
 		return UPDATE_STOP;
-	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
+	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 

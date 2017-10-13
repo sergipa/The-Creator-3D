@@ -6,7 +6,8 @@
 #include "ModuleEditor.h"
 #include "Primitive.h"
 #include "Data.h"
-#include "Mesh.h"
+#include "ComponentMeshRenderer.h"
+#include "PerformanceWindow.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -135,7 +136,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 
 		glEnable(GL_MULTISAMPLE);
 	}
-	//glGenBuffers(1, &)
+	
 	return ret;
 }
 
@@ -177,7 +178,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	App->editor->DrawEditor();
 
-	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
+	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 
 	SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
@@ -185,6 +186,9 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 void ModuleRenderer3D::DrawScene()
 {
+	//Wihout this, the dragged texture will be drawn on the plane if scene doesn't have gameobjects
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	pPlane pl;
 	pl.normal.x = 0;
 	pl.normal.y = 1;
@@ -193,44 +197,44 @@ void ModuleRenderer3D::DrawScene()
 	pl.axis = true;
 	pl.Render();
 
-	for (std::list<Mesh*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
+	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
-		if ((*it)->texture > 0)
+		if ((*it)->GetTexture() != nullptr && (*it)->GetTexture()->GetID() > 0)
 		{
-			glBindTexture(GL_TEXTURE_2D, (*it)->texture);
+			glBindTexture(GL_TEXTURE_2D, (*it)->GetTexture()->GetID());
 		}
 		//VERTICES
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_vertices);
+		glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_vertices);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
 		//NORMALS
-		if ((*it)->id_normals > 0)
+		if ((*it)->GetMesh()->id_normals > 0)
 		{
 			glEnableClientState(GL_NORMAL_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_normals);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_normals);
 			glNormalPointer(GL_FLOAT, 0, NULL);
 		}
 		//TEXTURE_COORDS
-		if ((*it)->id_texture_coords > 0)
+		if ((*it)->GetMesh()->id_texture_coords > 0)
 		{
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_texture_coords);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_texture_coords);
 			glTexCoordPointer(3, GL_FLOAT, 0, NULL);
 		}
 		//COLORS
-		if ((*it)->id_colors > 0)
+		if ((*it)->GetMesh()->id_colors > 0)
 		{
 			glEnableClientState(GL_COLOR_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->id_colors);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_colors);
 			glColorPointer(3, GL_FLOAT, 0, NULL);
 		}
 		//INDICES
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->id_indices);
-		glDrawElements(GL_TRIANGLES, (*it)->num_indices, GL_UNSIGNED_INT, NULL);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->GetMesh()->id_indices);
+		glDrawElements(GL_TRIANGLES, (*it)->GetMesh()->num_indices, GL_UNSIGNED_INT, NULL);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		if ((*it)->texture > 0)
+		if ((*it)->GetTexture() != nullptr && (*it)->GetTexture() > 0)
 		{
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
@@ -242,7 +246,7 @@ void ModuleRenderer3D::DrawScene()
 	mesh_to_draw.clear();
 }
 
-void ModuleRenderer3D::AddMeshToDraw(Mesh * mesh)
+void ModuleRenderer3D::AddMeshToDraw(ComponentMeshRenderer * mesh)
 {
 	mesh_to_draw.push_back(mesh);
 }

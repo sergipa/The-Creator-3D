@@ -19,10 +19,13 @@ Mesh::Mesh()
 
 	id_texture_coords = 0;
 	texture_coords = nullptr;
-
-	texture_name = "None";
 }
 
 Mesh::~Mesh()
 {
+	delete indices;
+	delete vertices;
+	delete normals;
+	delete colors;
+	delete texture_coords;
 }

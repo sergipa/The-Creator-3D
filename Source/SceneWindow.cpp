@@ -31,7 +31,13 @@ void SceneWindow::DrawWindow()
 
 		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
 
-		HandleInput();
+		is_mouse_hovering_window = ImGui::IsMouseHoveringWindow();
+		//Necessary because left-click doesn't give focus to a window
+		if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1))
+		{
+			if(is_mouse_hovering_window) is_window_focused = true;
+			else is_window_focused = false;
+		}
 	}
 
 	ImGui::EndDock();
@@ -55,10 +61,9 @@ void SceneWindow::DrawMenuBar()
 		}
 		if (ImGui::BeginMenu("Anti Aliasing level"))
 		{
-			int max_msaa_level = App->renderer3D->textureMSAA->GetMaxMSAALevel();
 			int curr_msaa_level = App->renderer3D->textureMSAA->GetCurrentMSAALevel();
 			bool selected = false;
-			for (int i = 0; i <= max_msaa_level; i *= 2)
+			for (int i = 0; i <= 8; i *= 2) //cap the max MSAA level at x8
 			{
 				char msaa_level[5];
 				sprintf(msaa_level, "x%d", i);
@@ -81,17 +86,12 @@ void SceneWindow::DrawMenuBar()
 	}
 }
 
-void SceneWindow::HandleInput()
+bool SceneWindow::IsWindowFocused() const
 {
-	if (ImGui::IsMouseDown(1) || App->input->GetMouseZ() > 0 || App->input->GetMouseZ() < 0)
-	{
-		if (ImGui::IsMouseHoveringWindow())
-		{
-			App->camera->can_update = true;
-		}
-	}
-	if (ImGui::IsMouseReleased(1))
-	{
-		App->camera->can_update = false;
-	}
+	return is_window_focused;
+}
+
+bool SceneWindow::IsMouseHoveringWindow() const
+{
+	return is_mouse_hovering_window;
 }

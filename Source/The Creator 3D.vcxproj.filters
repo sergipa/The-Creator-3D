@@ -378,6 +378,9 @@
     <ClInclude Include="RenderTextureMSAA.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -603,6 +606,9 @@
       <Filter>Sources\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="RenderTextureMSAA.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>

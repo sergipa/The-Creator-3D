@@ -4,6 +4,7 @@
 #include "PhysBody3D.h"
 #include "Primitive.h"
 #include "ModuleEditor.h"
+#include "PerformanceWindow.h"
 
 #ifdef _DEBUG
 	#pragma comment (lib, "Bullet/libx86/BulletDynamics_debug.lib")
@@ -108,7 +109,7 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 			}
 		}
 	}
-	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
+	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 

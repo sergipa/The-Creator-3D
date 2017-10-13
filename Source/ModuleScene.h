@@ -7,7 +7,7 @@
 #include <string>
 
 class GameObject;
-
+class Texture;
 
 class ModuleScene : public Module
 {
@@ -27,7 +27,12 @@ public:
 	void AddGameObjectToScene(GameObject* gameobject);
 	void AddGameObjectToDestroy(GameObject* gameobject);
 
+	void ApplyTextureToSelectedGameObjects(Texture* texture);
+	void ApplyTextureToGameObject(GameObject* gameobject, Texture* texture);
+
+private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
+	void HandleInput();
 
 public:
 	std::list<GameObject*> selected_gameobjects;

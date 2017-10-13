@@ -11,11 +11,14 @@ public:
 
 	void DrawWindow();
 	void DrawMenuBar();
-	void HandleInput();
+	bool IsWindowFocused() const;
+	bool IsMouseHoveringWindow() const;
 
 private:
 	float scene_width;
 	float scene_height;
 	bool wireframe_mode;
+	bool is_window_focused;
+	bool is_mouse_hovering_window;
 };
 

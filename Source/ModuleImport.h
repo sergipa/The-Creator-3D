@@ -4,6 +4,7 @@
 #include <string>
 
 class GameObject;
+class Texture;
 
 class ModuleImport :
 	public Module
@@ -16,7 +17,7 @@ public:
 
 	void LoadFile(std::string path);
 	bool LoadMesh(const char* path);
-	int LoadTexture(const char* path);
+	Texture* LoadTexture(const char* path, bool attach_to_gameobject);
 
 	std::string GetFileName(const char* path);
 

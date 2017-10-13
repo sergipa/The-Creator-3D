@@ -34,6 +34,7 @@ ModuleImport::ModuleImport(Application * app, bool start_enabled) : Module(app, 
 
 ModuleImport::~ModuleImport()
 {
+	ilShutDown();
 }
 
 bool ModuleImport::CleanUp()
@@ -50,7 +51,7 @@ void ModuleImport::LoadFile(std::string path)
 	}
 	else if(path.find(".png") != std::string::npos || path.find(".jpg") != std::string::npos)
 	{
-		LoadTexture(path.c_str());
+		LoadTexture(path.c_str(), true); //<-- Right now, we will use the textures only to attach them to gameobjects (Assigment1)
 	}
 }
 
@@ -128,6 +129,7 @@ bool ModuleImport::LoadMesh(const char* path)
 				glGenBuffers(1, &(mesh->id_normals));
 				glBindBuffer(GL_ARRAY_BUFFER, mesh->id_normals);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->num_vertices * 3, mesh->normals, GL_STATIC_DRAW);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
 
 			if (mesh->colors != nullptr)
@@ -135,6 +137,7 @@ bool ModuleImport::LoadMesh(const char* path)
 				glGenBuffers(1, &(mesh->id_colors));
 				glBindBuffer(GL_ARRAY_BUFFER, mesh->id_colors);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->num_vertices * 3, mesh->colors, GL_STATIC_DRAW);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
 
 			if (mesh->texture_coords != nullptr)
@@ -142,6 +145,7 @@ bool ModuleImport::LoadMesh(const char* path)
 				glGenBuffers(1, &(mesh->id_texture_coords));
 				glBindBuffer(GL_ARRAY_BUFFER, mesh->id_texture_coords);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(float) * mesh->num_vertices * 3, mesh->texture_coords, GL_STATIC_DRAW);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 			}
 			
 			std::string name;
@@ -176,20 +180,51 @@ bool ModuleImport::LoadMesh(const char* path)
 	return ret;
 }
 
-int ModuleImport::LoadTexture(const char * path)
+Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 {
-	int ret = -1;
+	//If gameobjects are not selected, don't load a texture. This is just for the assigment 1.
+	//In the future if we drag a image without selected gameobjects, a texture should be created and stored in assets/library
+	if (App->scene->selected_gameobjects.empty() && attach_to_gameobject) return nullptr;
 
 	ILuint image_id;
 	ilGenImages(1, &image_id);
 	ilBindImage(image_id);
+
+	Texture* tmp_texture = nullptr;
 
 	if (ilLoadImage(path))
 	{
 		ILinfo ImageInfo;
 		iluGetImageInfo(&ImageInfo);
 
-		ret = ilutGLBindTexImage();
+		tmp_texture = new Texture();
+		tmp_texture->SetID(ilutGLBindTexImage());
+		tmp_texture->SetWidth(ImageInfo.Width);
+		tmp_texture->SetHeight(ImageInfo.Height);
+		tmp_texture->SetPath(path);
+		tmp_texture->SetName(GetFileName(path).c_str());
+
+		switch (ImageInfo.Format)
+		{
+			case IL_COLOUR_INDEX: tmp_texture->SetFormat(Texture::ColorIndex); break;
+			case IL_ALPHA: tmp_texture->SetFormat(Texture::alpha); break;
+			case IL_RGB: tmp_texture->SetFormat(Texture::rgb); break;
+			case IL_RGBA: tmp_texture->SetFormat(Texture::rgba); break;
+			case IL_BGR: tmp_texture->SetFormat(Texture::bgr); break;
+			case IL_BGRA: tmp_texture->SetFormat(Texture::bgra); break;
+			case IL_LUMINANCE: tmp_texture->SetFormat(Texture::luminance); break;
+			case IL_LUMINANCE_ALPHA: tmp_texture->SetFormat(Texture::luminance_alpha); break;
+			default: tmp_texture->SetFormat(Texture::UnknownFormat); break;
+		}
+		switch (ImageInfo.Type)
+		{
+			case IL_BMP: tmp_texture->SetType(Texture::TextureType::bmp); break;
+			case IL_JPG: tmp_texture->SetType(Texture::TextureType::jpg); break;
+			case IL_PNG: tmp_texture->SetType(Texture::TextureType::png); break;
+			case IL_TGA: tmp_texture->SetType(Texture::TextureType::tga); break;
+			case IL_DDS: tmp_texture->SetType(Texture::TextureType::dds); break;
+			default: tmp_texture->SetType(Texture::TextureType::UnknownType); break;
+		}
 		ilDeleteImages(1, &image_id);
 	}
 	else 
@@ -197,32 +232,9 @@ int ModuleImport::LoadTexture(const char * path)
 		CONSOLE_LOG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
 	}
 
-	GameObject* go = App->scene->scene_gameobjects.front();
-	if (go->childs.empty())
-	{
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->GetComponent(Component::MeshRenderer);
+	if (attach_to_gameobject) App->scene->ApplyTextureToSelectedGameObjects(tmp_texture);
 
-		if (mesh_renderer != nullptr)
-		{
-			mesh_renderer->GetMesh()->texture = ret;
-			mesh_renderer->GetMesh()->texture_name = GetFileName(path);
-		}
-	}
-	else 
-	{
-		for (std::list<GameObject*>::iterator it = go->childs.begin(); it != go->childs.end(); it++)
-		{
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-
-			if (mesh_renderer != nullptr)
-			{
-				mesh_renderer->GetMesh()->texture = ret;
-				mesh_renderer->GetMesh()->texture_name = GetFileName(path);
-			}
-		}
-	}
-
-	return ret;
+	return tmp_texture;
 }
 
 std::string ModuleImport::GetFileName(const char * path)

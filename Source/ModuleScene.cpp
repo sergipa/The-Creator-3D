@@ -4,8 +4,12 @@
 #include "ModuleEditor.h"
 #include "ModuleRenderer3D.h"
 #include "ComponentMeshRenderer.h"
+#include "ComponentTransform.h"
 #include "GameObject.h"
 #include "Component.h"
+#include "SceneWindow.h"
+#include "PerformanceWindow.h"
+#include "Texture.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -93,18 +97,20 @@ update_status ModuleScene::PreUpdate(float dt)
 update_status ModuleScene::Update(float dt)
 {
 	ms_timer.Start();
+
+	HandleInput();
 	
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
 		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
 		bool active_parents = RecursiveCheckActiveParents((*it));
-		if (mesh_renderer != nullptr && mesh_renderer->IsActive() && active_parents && (*it)->IsActive())
+		if (mesh_renderer != nullptr && mesh_renderer->IsActive() && active_parents && (*it)->IsActive() && mesh_renderer->GetMesh() != nullptr)
 		{
-			App->renderer3D->AddMeshToDraw(mesh_renderer->GetMesh());
+			App->renderer3D->AddMeshToDraw(mesh_renderer);
 		}
 	}
 
-	App->editor->SendDataToPerformance(this->name, ms_timer.ReadMs());
+	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 
@@ -121,6 +127,27 @@ void ModuleScene::AddGameObjectToDestroy(GameObject * gameobject)
 	gameobjects_to_destroy.push_back(gameobject);
 }
 
+void ModuleScene::ApplyTextureToSelectedGameObjects(Texture * texture)
+{
+	for (std::list<GameObject*>::iterator it = selected_gameobjects.begin(); it != selected_gameobjects.end(); it++)
+	{
+		ApplyTextureToGameObject((*it), texture);
+	}
+}
+
+void ModuleScene::ApplyTextureToGameObject(GameObject * gameobject, Texture* texture)
+{
+	if (gameobject->IsActive())
+	{
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::MeshRenderer);
+
+		if (mesh_renderer != nullptr)
+		{
+			mesh_renderer->LoadTexture(texture);
+		}
+	}
+}
+
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)
 {
 	if (gameobject->GetParent() != nullptr)
@@ -134,6 +161,59 @@ bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)
 		}
 	}
 	return true;
+}
+
+void ModuleScene::HandleInput()
+{
+	if (App->editor->scene_window->IsWindowFocused() && App->editor->scene_window->IsMouseHoveringWindow())
+	{
+		//Rotate camera or zomm in/out
+		if (App->input->GetMouseButton(3) == KEY_REPEAT || App->input->GetMouseZ() > 0 || App->input->GetMouseZ() < 0)
+		{
+			App->camera->can_update = true;
+		}
+		if (App->input->GetMouseButton(3) == KEY_UP)
+		{
+			App->camera->can_update = false;
+		}
+		if (App->input->GetMouseButton(3) == KEY_IDLE && App->input->GetKey(SDL_SCANCODE_LALT) == KEY_IDLE && 
+			App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_IDLE && App->input->GetMouseZ() == 0)
+		{
+			App->camera->can_update = false;
+		}
+
+		//Focus on first selected object
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		{
+			if (!selected_gameobjects.empty())
+			{
+				ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
+				App->camera->can_update = true;
+				App->camera->Look(App->camera->Position, transform->GetGlobalPosition());
+				App->camera->can_update = false;
+			}
+		} 
+		//Use orbital camera
+		else if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+		{			
+			if (!App->camera->IsOrbital())
+			{
+				if (!selected_gameobjects.empty())
+				{
+					ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
+					App->camera->can_update = true;
+					App->camera->Look(App->camera->Position, transform->GetGlobalPosition(), true);
+					App->camera->SetOrbital(true);
+				}
+			}
+		}
+		//Disable orbital camera
+		if (App->camera->IsOrbital() && (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_UP || App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP))
+		{
+			App->camera->can_update = false;
+			App->camera->SetOrbital(false);
+		}
+	}
 }
 
 void ModuleScene::RenameDuplicatedGameObject(GameObject * gameObject, bool justIncrease)

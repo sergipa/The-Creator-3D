@@ -8,13 +8,16 @@ ComponentMeshRenderer::ComponentMeshRenderer(GameObject* attached_gameobject)
 	SetType(ComponentType::MeshRenderer);
 	SetGameObject(attached_gameobject);
 	mesh = nullptr;
+	texture = nullptr;
 }
 
 ComponentMeshRenderer::~ComponentMeshRenderer()
 {
+	delete mesh;
+	delete texture;
 }
 
-Mesh* ComponentMeshRenderer::GetMesh()
+Mesh* ComponentMeshRenderer::GetMesh() const
 {
 	return mesh;
 }
@@ -22,6 +25,16 @@ Mesh* ComponentMeshRenderer::GetMesh()
 void ComponentMeshRenderer::LoadMesh(Mesh * mesh)
 {
 	this->mesh = mesh;
+}
+
+Texture * ComponentMeshRenderer::GetTexture() const
+{
+	return texture;
+}
+
+void ComponentMeshRenderer::LoadTexture(Texture * texture)
+{
+	this->texture = texture;
 }
 
 void ComponentMeshRenderer::Save(Data & data) const

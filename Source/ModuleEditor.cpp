@@ -210,7 +210,7 @@ update_status ModuleEditor::Update(float deltaTime)
 	ImGui::EndDockspace();
 	ImGui::End();
 	ImGui::PopFont();
-	SendDataToPerformance(this->name, ms_timer.ReadMs());
+	performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
 
@@ -284,10 +284,5 @@ void ModuleEditor::LoadEditorStyle()
 		}
 		data.LeaveSection();
 	}
-}
-
-void ModuleEditor::SendDataToPerformance(std::string name, float ms)
-{
-	performance_window->AddModuleData(name, ms);
 }
 

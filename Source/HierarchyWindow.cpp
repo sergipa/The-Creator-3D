@@ -138,18 +138,6 @@ void HierarchyWindow::DrawSceneGameObjects(GameObject * gameObject)
 
 	if (ImGui::TreeNodeEx(gameObject->GetName().c_str(), flag))
 	{
-		/*if (ImGui::IsItemHoveredRect()) {
-			if (ImGui::IsMouseClicked(0)) {
-				if (!engine->editorModule->dragData.hasData) {
-					engine->editorModule->dragData.fromPanel = "Hierarchy";
-					engine->editorModule->dragData.extension = ".prefab";
-					engine->editorModule->dragData.name = gameObject->name;
-					engine->editorModule->dragData.hasData = true;
-					engine->editorModule->draggingGameObject = gameObject;
-				}
-			}
-		}*/
-
 		IsMouseOver(gameObject);
 		for (std::list<GameObject*>::iterator it = gameObject->childs.begin(); it != gameObject->childs.end(); ++it) {
 			DrawSceneGameObjects(*it);
@@ -160,12 +148,6 @@ void HierarchyWindow::DrawSceneGameObjects(GameObject * gameObject)
 	{
 		IsMouseOver(gameObject);
 	}
-
-	/*if (ImGui::IsMouseReleased(0) && engine->editorModule->dragData.hasData) {
-		if (engine->editorModule->dragData.fromPanel == "Hierarchy") {
-			engine->editorModule->dragData.clearData();
-		}
-	}*/
 }
 
 void HierarchyWindow::IsMouseOver(GameObject * gameObject)
@@ -178,7 +160,7 @@ void HierarchyWindow::IsMouseOver(GameObject * gameObject)
 			if (!App->scene->selected_gameobjects.empty()) {
 				it = find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), gameObject);
 				if (it == App->scene->selected_gameobjects.end()) {
-					App->scene->selected_gameobjects.clear();
+					if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT) App->scene->selected_gameobjects.clear();
 					App->scene->selected_gameobjects.push_back(gameObject);
 				}
 			}

@@ -6,7 +6,7 @@
 #include "RenderTextureMSAA.h"
 #include <list>
 
-class Mesh;
+class ComponentMeshRenderer;
 
 #define MAX_LIGHTS 8
 
@@ -44,7 +44,7 @@ public:
 
 	void DrawScene();
 
-	void AddMeshToDraw(Mesh* mesh);
+	void AddMeshToDraw(ComponentMeshRenderer* mesh);
 
 public:
 
@@ -63,5 +63,5 @@ private:
 	bool is_using_texture2D;
 	bool is_using_fog;
 
-	std::list<Mesh*> mesh_to_draw;
+	std::list<ComponentMeshRenderer*> mesh_to_draw;
 };

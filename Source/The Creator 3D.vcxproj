@@ -178,6 +178,7 @@
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="RendererConfigWindow.h" />
     <ClInclude Include="RenderTextureMSAA.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="AssetsWindow.h" />
     <ClInclude Include="ConsoleWindow.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="RendererConfigWindow.cpp" />
     <ClCompile Include="RenderTextureMSAA.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="AssetsWindow.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
