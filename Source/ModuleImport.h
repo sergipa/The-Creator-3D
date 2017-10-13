@@ -5,6 +5,8 @@
 
 class GameObject;
 class Texture;
+struct aiNode;
+struct aiScene;
 
 class ModuleImport :
 	public Module
@@ -22,7 +24,10 @@ public:
 	std::string GetFileName(const char* path);
 
 private:
+	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene);
+
+private:
 	aiLogStream stream;
-	GameObject* parent;
+	GameObject* root_gameobject;
 };
 

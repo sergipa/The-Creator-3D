@@ -2,6 +2,8 @@
 
 typedef unsigned int uint;
 
+#include <string>
+
 class Mesh
 {
 public:
@@ -24,5 +26,7 @@ public:
 
 	uint id_texture_coords;
 	float* texture_coords;
+
+	std::string name;
 };
 
