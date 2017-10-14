@@ -16,6 +16,7 @@ public:
 
 	void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
 	void LookAt(const vec3 &Spot);
+	void FocusOnObject(const vec3& object, const float& distance);
 	void Move(const vec3 &Movement);
 	float* GetViewMatrix();
 	void SetOrbital(bool is_orbital);

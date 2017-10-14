@@ -6,6 +6,7 @@
 #include "ModuleScene.h"
 #include "OpenGL.h"
 #include "Mesh.h"
+#include "ModuleCamera3D.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"

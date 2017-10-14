@@ -146,6 +146,12 @@ void ModuleCamera3D::LookAt( const vec3 &Spot)
 	CalculateViewMatrix();
 }
 
+void ModuleCamera3D::FocusOnObject(const vec3 & object, const float & distance)
+{
+	Reference = object;
+	Position = Reference + (Z * distance);
+}
+
 
 // -----------------------------------------------------------------
 void ModuleCamera3D::Move(const vec3 &Movement)

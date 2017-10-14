@@ -3,6 +3,7 @@
 typedef unsigned int uint;
 
 #include <string>
+#include "MathGeoLib\Geometry\GeometryAll.h"
 
 class Mesh
 {
@@ -28,5 +29,7 @@ public:
 	float* texture_coords;
 
 	std::string name;
+
+	AABB box;
 };
 
