@@ -141,6 +141,11 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 				}
 				CONSOLE_DEBUG("New mesh ""%s"" with %d triangles.", node->mName.C_Str(), mesh->num_indices /3);
 			}
+			
+			mesh->box.SetNegativeInfinity();
+			mesh->box.Enclose((float3*)ai_mesh->mVertices, ai_mesh->mNumVertices);
+			//Focus the camera on the mesh
+			App->camera->FocusOnObject(vec3(0, 0, 0), mesh->box.Size().Length());
 
 			if (ai_mesh->HasNormals())
 			{
