@@ -77,39 +77,7 @@ update_status ModuleEditor::Update(float deltaTime)
 		if (ImGui::BeginMenu("File"))
 		{
 			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-			//if (ImGui::MenuItem("New Scene")) {
-			//	//App->scene_manager_module->NewScene();
-			//}
-			//if (ImGui::MenuItem("Load Scene")) {
-			//	char const * lFilterPatterns[1] = { "*.scene" };
-			//	//const char* path = tinyfd_openFileDialog("Load Scene...", NULL, 1, lFilterPatterns, NULL, 0);
-			//	//if (path != NULL) {
-			//	//	//App->scene_manager_module->LoadScene(path);
-			//	//}
-			//}
-			//if (ImGui::MenuItem("Save Scene")) {
-			//	/*char const * lFilterPatterns[1] = { "*.scene" };
-			//	const char* path = tinyfd_saveFileDialog("Save Scene...", (App->scene_manager_module->scene_name + ".scene").c_str(), 1, lFilterPatterns, NULL);
-			//	if (path != NULL) {
-			//		std::string str(path);
-			//		bool get_char = false;
-			//		std::string new_scene_name;
-			//		for (std::string::reverse_iterator it = str.rbegin(); it != str.rend(); it++) {
-			//			if (*it == '\\') {
-			//				get_char = false;
-			//			}
-			//			if (get_char) {
-			//				new_scene_name.insert(0, 1, *it);
-			//			}
-			//			if (*it == '.') {
-			//				get_char = true;
-			//			}
-			//		}
-			//		App->engine_Window->SetSceneName(new_scene_name);
-			//		App->scene_manager_module->SaveScene(path);
-			//		App->scene_manager_module->saving_index = 0;
-			//	}*/
-			//}
+
 			if (ImGui::MenuItem("Exit")) {
 				return UPDATE_STOP;
 			}

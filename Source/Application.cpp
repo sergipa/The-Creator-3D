@@ -26,13 +26,13 @@ Application::Application()
 	// Main Modules
 	AddModule(window);
 	AddModule(camera);
-	AddModule(editor);
 	AddModule(input);
 	AddModule(audio);
 	//AddModule(physics);
 	AddModule(renderer3D);
 	AddModule(scene);
 	AddModule(import);
+	AddModule(editor);
 
 	random = new math::LCG();
 	cursor = nullptr;

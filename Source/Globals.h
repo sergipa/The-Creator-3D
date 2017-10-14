@@ -59,7 +59,7 @@ enum update_status
 	 }
 
 // Configuration -----------
-#define TITLE "The Creator"
+#define TITLE "The Creator 3D"
 
 
 #define ASSETS_FOLDER "./Assets/"
