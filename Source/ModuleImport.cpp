@@ -6,6 +6,7 @@
 #include "ModuleScene.h"
 #include "OpenGL.h"
 #include "Mesh.h"
+#include "ConsoleWindow.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -88,7 +89,7 @@ bool ModuleImport::LoadMesh(const char* path)
 				mesh->vertices = new float[mesh->num_vertices * 3];
 				memcpy(mesh->vertices, ai_mesh->mVertices, sizeof(float) * mesh->num_vertices * 3);
 				CONSOLE_LOG("New mesh with %d vertices", mesh->num_vertices);
-
+				App->editor->console_window->AddLog(std::string("New mesh with " + std::to_string(mesh->num_vertices) + " vertices. (" + node->mName.C_Str() + ")"));
 				if (ai_mesh->HasFaces())
 				{
 					mesh->num_indices = ai_mesh->mNumFaces * 3;
@@ -98,6 +99,7 @@ bool ModuleImport::LoadMesh(const char* path)
 						if (ai_mesh->mFaces[k].mNumIndices != 3)
 						{
 							CONSOLE_LOG("WARNING, geometry face with != 3 indices!");
+							App->editor->console_window->AddLog(std::string("WARNING, geometry face with != 3 indices!"));
 							ret = false;
 						}
 						else
@@ -111,18 +113,21 @@ bool ModuleImport::LoadMesh(const char* path)
 				{
 					mesh->normals = new float[mesh->num_vertices * 3];
 					memcpy(mesh->normals, ai_mesh->mNormals, sizeof(float) * mesh->num_vertices * 3);
+					App->editor->console_window->AddLog(std::string("Mesh has normals (" + std::string(node->mName.C_Str()) + ")"));
 				}
 
 				if (ai_mesh->HasVertexColors(0))
 				{
 					mesh->colors = new float[mesh->num_vertices * 3];
 					memcpy(mesh->colors, ai_mesh->mColors, sizeof(float) * mesh->num_vertices * 3);
+					App->editor->console_window->AddLog(std::string("Mesh has Vertex Colors (" + std::string(node->mName.C_Str()) + ")"));
 				}
 
 				if (ai_mesh->HasTextureCoords(0))
 				{
 					mesh->texture_coords = new float[mesh->num_vertices * 3];
 					memcpy(mesh->texture_coords, ai_mesh->mTextureCoords[0], sizeof(float) * mesh->num_vertices * 3);
+					App->editor->console_window->AddLog(std::string("Has Texture Coords (" + std::string(node->mName.C_Str()) + ")"));
 				}
 
 				glGenBuffers(1, &mesh->id_vertices);
@@ -168,9 +173,13 @@ bool ModuleImport::LoadMesh(const char* path)
 		}
 
 		aiReleaseImport(scene);
+		App->editor->console_window->AddLog(std::string("Object succesfully loaded from" + std::string(path)));
 	}
 	else
-		CONSOLE_LOG("Error loading scene %s", path);
+	{
+		CONSOLE_LOG("Error loading object %s", path);
+		App->editor->console_window->AddLog(std::string("Error loading object" + std::string(path)), true, false);
+	}
 
 	return ret;
 }
@@ -221,10 +230,12 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 			default: tmp_texture->SetType(Texture::TextureType::UnknownType); break;
 		}
 		ilDeleteImages(1, &image_id);
+		App->editor->console_window->AddLog(std::string("Texture Loaded " + std::string(path)));
 	}
 	else 
 	{
 		CONSOLE_LOG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
+		App->editor->console_window->AddLog(std::string("Cannot load image " + std::string(path) + " Error number: " + iluErrorString(ilGetError())), true, false);
 	}
 
 	if (attach_to_gameobject) App->scene->ApplyTextureToSelectedGameObjects(tmp_texture);
