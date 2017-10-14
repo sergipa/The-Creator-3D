@@ -42,7 +42,7 @@ ModulePhysics3D::~ModulePhysics3D()
 // Render not available yet----------------------------------
 bool ModulePhysics3D::Init(Data* editor_config)
 {
-	CONSOLE_LOG("Creating 3D Physics simulation");
+	CONSOLE_DEBUG("Creating 3D Physics simulation");
 	bool ret = true;
 
 	return ret;
@@ -51,7 +51,7 @@ bool ModulePhysics3D::Init(Data* editor_config)
 // ---------------------------------------------------------
 bool ModulePhysics3D::Start()
 {
-	CONSOLE_LOG("Creating Physics environment");
+	CONSOLE_DEBUG("Creating Physics environment");
 
 	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
 	world->setDebugDrawer(debug_draw);
@@ -136,7 +136,7 @@ update_status ModulePhysics3D::PostUpdate(float dt)
 // Called before quitting
 bool ModulePhysics3D::CleanUp()
 {
-	CONSOLE_LOG("Destroying 3D Physics simulation");
+	CONSOLE_DEBUG("Destroying 3D Physics simulation");
 
 	// Remove from the world all collision bodies
 	for(int i = world->getNumCollisionObjects() - 1; i >= 0; i--)
@@ -333,12 +333,12 @@ void DebugDrawer::drawContactPoint(const btVector3& PointOnB, const btVector3& n
 
 void DebugDrawer::reportErrorWarning(const char* warningString)
 {
-	CONSOLE_LOG("Bullet warning: %s", warningString);
+	CONSOLE_DEBUG("Bullet warning: %s", warningString);
 }
 
 void DebugDrawer::draw3dText(const btVector3& location, const char* textString)
 {
-	CONSOLE_LOG("Bullet draw text: %s", textString);
+	CONSOLE_DEBUG("Bullet draw text: %s", textString);
 }
 
 void DebugDrawer::setDebugMode(int debugMode)

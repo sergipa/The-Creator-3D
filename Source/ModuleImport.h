@@ -24,6 +24,6 @@ private:
 	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
 	std::string GetFileName(const char* path);
 	std::string GetFileExtension(const char* path);
-	void bla(char* message);
 };
 
+void Callback(const char* message, char* c);

@@ -143,14 +143,14 @@ void RendererConfigWindow::SetDefaultValues()
 	fog_density = 1.0f;
 
 	//Light
-	light_ambient[0] = 0.2f;
-	light_ambient[1] = 0.2f;
-	light_ambient[2] = 0.2f;
+	light_ambient[0] = 1.0f;
+	light_ambient[1] = 1.0f;
+	light_ambient[2] = 1.0f;
 	light_ambient[3] = 1.0f;
 
-	light_diffuse[0] = 0.7f;
-	light_diffuse[1] = 0.7f;
-	light_diffuse[2] = 0.7f;
+	light_diffuse[0] = 1.0f;
+	light_diffuse[1] = 1.0f;
+	light_diffuse[2] = 1.0f;
 	light_diffuse[3] = 1.0f;
 
 	light_specular[0] = 1.0f;

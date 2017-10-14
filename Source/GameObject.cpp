@@ -182,6 +182,7 @@ void GameObject::OnDestroy()
 	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end();) {
 		if (*it != nullptr) {
 			(*it)->OnDestroy();
+			CONSOLE_DEBUG("GameObject Destroyed: %s", (*it)->GetName().c_str());
 			RELEASE(*it);
 			it = childs.erase(it);
 		}

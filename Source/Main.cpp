@@ -19,7 +19,7 @@ Application* App = NULL;
 
 int main(int argc, char ** argv)
 {
-	CONSOLE_LOG("Starting game '%s'...", TITLE);
+	CONSOLE_DEBUG("Starting game '%s'...", TITLE);
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -30,23 +30,23 @@ int main(int argc, char ** argv)
 		{
 		case MAIN_CREATION:
 
-			CONSOLE_LOG("-------------- Application Creation --------------");
+			CONSOLE_DEBUG("-------------- Application Creation --------------");
 			App = new Application();
 			state = MAIN_START;
 			break;
 
 		case MAIN_START:
 
-			CONSOLE_LOG("-------------- Application Init --------------");
+			CONSOLE_DEBUG("-------------- Application Init --------------");
 			if (App->Init() == false)
 			{
-				CONSOLE_LOG("Application Init exits with ERROR");
+				CONSOLE_DEBUG("Application Init exits with ERROR");
 				state = MAIN_EXIT;
 			}
 			else
 			{
 				state = MAIN_UPDATE;
-				CONSOLE_LOG("-------------- Application Update --------------");
+				CONSOLE_DEBUG("-------------- Application Update --------------");
 			}
 
 			break;
@@ -57,7 +57,7 @@ int main(int argc, char ** argv)
 
 			if (update_return == UPDATE_ERROR)
 			{
-				CONSOLE_LOG("Application Update exits with ERROR");
+				CONSOLE_DEBUG("Application Update exits with ERROR");
 				state = MAIN_EXIT;
 			}
 
@@ -68,10 +68,10 @@ int main(int argc, char ** argv)
 
 		case MAIN_FINISH:
 
-			CONSOLE_LOG("-------------- Application CleanUp --------------");
+			CONSOLE_DEBUG("-------------- Application CleanUp --------------");
 			if (App->CleanUp() == false)
 			{
-				CONSOLE_LOG("Application CleanUp exits with ERROR");
+				CONSOLE_DEBUG("Application CleanUp exits with ERROR");
 			}
 			else
 				main_return = EXIT_SUCCESS;
@@ -84,6 +84,6 @@ int main(int argc, char ** argv)
 	}
 
 	delete App;
-	CONSOLE_LOG("Exiting game '%s'...\n", TITLE);
+	CONSOLE_DEBUG("Exiting game '%s'...\n", TITLE);
 	return main_return;
 }

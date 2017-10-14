@@ -22,7 +22,7 @@ ModuleScene::~ModuleScene()
 // Load assets
 bool ModuleScene::Start()
 {
-	CONSOLE_LOG("Loading Intro assets");
+	CONSOLE_DEBUG("Loading Intro assets");
 	bool ret = true;
 
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
@@ -34,7 +34,7 @@ bool ModuleScene::Start()
 // Load assets
 bool ModuleScene::CleanUp()
 {
-	CONSOLE_LOG("Unloading Intro scene");
+	CONSOLE_DEBUG("Unloading Intro scene");
 
 	return true;
 }
@@ -42,12 +42,8 @@ bool ModuleScene::CleanUp()
 GameObject * ModuleScene::CreateGameObject(GameObject * parent)
 {
 	GameObject* ret = new GameObject(parent);
-	if (parent == nullptr) {
-		root_gameobjects.push_back(ret);
-	}
-
 	RenameDuplicatedGameObject(ret);
-	scene_gameobjects.push_back(ret);
+	AddGameObjectToScene(ret);
 	return ret;
 }
 
@@ -85,6 +81,7 @@ update_status ModuleScene::PreUpdate(float dt)
 				root_gameobjects.remove(*it);
 			}
 			selected_gameobjects.remove(*it);
+			CONSOLE_DEBUG("GameObject Destroyed: %s", (*it)->GetName().c_str());
 			RELEASE(*it);
 			it = gameobjects_to_destroy.erase(it);
 		}
@@ -116,10 +113,16 @@ update_status ModuleScene::Update(float dt)
 
 void ModuleScene::AddGameObjectToScene(GameObject* gameobject)
 {
-	scene_gameobjects.push_back(gameobject);
+	if (gameobject != nullptr)
+	{
+		scene_gameobjects.push_back(gameobject);
 
-	if(gameobject->GetParent()== nullptr)
-		root_gameobjects.push_back(gameobject);
+		if (gameobject->GetParent() == nullptr)
+			root_gameobjects.push_back(gameobject);
+
+		CONSOLE_DEBUG("GameObject Created: %s", gameobject->GetName().c_str());
+	}
+	
 }
 
 void ModuleScene::AddGameObjectToDestroy(GameObject * gameobject)
@@ -144,6 +147,7 @@ void ModuleScene::ApplyTextureToGameObject(GameObject * gameobject, Texture* tex
 		if (mesh_renderer != nullptr)
 		{
 			mesh_renderer->LoadTexture(texture);
+			CONSOLE_DEBUG("Texture %s attached to %s", texture->GetName().c_str(), gameobject->GetName().c_str());
 		}
 	}
 }
@@ -218,6 +222,8 @@ void ModuleScene::HandleInput()
 
 void ModuleScene::RenameDuplicatedGameObject(GameObject * gameObject, bool justIncrease)
 {
+	if (gameObject == nullptr) return;
+
 	int gameObjectCount = 1;
 	//Rename if name exist
 	bool inParenthesis = false;

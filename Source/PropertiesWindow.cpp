@@ -84,7 +84,7 @@ void PropertiesWindow::DrawWindow()
 					}
 					else
 					{
-						CONSOLE_LOG("GameObject can't have more than 1 Mesh Renderer!");
+						CONSOLE_WARNING("GameObject can't have more than 1 Mesh Renderer!");
 					}
 				}
 				ImGui::EndPopup();

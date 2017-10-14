@@ -6,7 +6,6 @@
 #include "ModuleScene.h"
 #include "OpenGL.h"
 #include "Mesh.h"
-#include "ConsoleWindow.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -29,7 +28,7 @@ ModuleImport::ModuleImport(Application * app, bool start_enabled) : Module(app, 
 #if _DEBUG
 	struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
-	stream.callback("bla", stream.user);
+	stream.callback = &Callback;
 	aiAttachLogStream(&stream);
 #endif
 
@@ -77,13 +76,12 @@ bool ModuleImport::LoadMesh(const char* path)
 	{
 		aiNode* root_node = scene->mRootNode;
 		LoadMeshNode(nullptr, root_node, scene, path);
-		App->editor->console_window->AddLog(std::string("Object succesfully loaded from" + std::string(path)));
+		CONSOLE_DEBUG("Object succesfully loaded from, %s", path);
 		aiReleaseImport(scene);
 	}
 	else
 	{
-		CONSOLE_LOG("Error loading scene %s", path);
-		App->editor->console_window->AddLog(std::string("Error loading object from" + std::string(path)));
+		CONSOLE_ERROR("Cannot load object from %s", path);
 	}
 	return ret;
 }
@@ -121,20 +119,18 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 			mesh->num_vertices = ai_mesh->mNumVertices;
 			mesh->vertices = new float[mesh->num_vertices * 3];
 			memcpy(mesh->vertices, ai_mesh->mVertices, sizeof(float) * mesh->num_vertices * 3);
-			CONSOLE_LOG("New mesh with %d vertices", mesh->num_vertices);
+			CONSOLE_DEBUG("New mesh ""%s"" with %d vertices", node->mName.C_Str(), mesh->num_vertices);
 
 			if (ai_mesh->HasFaces())
 			{
-
 				mesh->num_indices = ai_mesh->mNumFaces * 3;
 				mesh->indices = new uint[mesh->num_indices]; // assume each face is a triangle
-				App->editor->console_window->AddLog(std::string("New mesh with " + std::to_string(mesh->num_vertices) + " vertices. (" + node->mName.C_Str() + ")"));
+				CONSOLE_DEBUG("New mesh ""%s"" with %d indices.", node->mName.C_Str(), mesh->num_indices);
 				for (uint j = 0; j < ai_mesh->mNumFaces; ++j)
 				{
 					if (ai_mesh->mFaces[j].mNumIndices != 3)
 					{
-						CONSOLE_LOG("WARNING, geometry face with != 3 indices!");
-						App->editor->console_window->AddLog(std::string("WARNING, geometry face with != 3 indices!"));
+						CONSOLE_DEBUG("WARNING, geometry face %d with != 3 indices!", j);
 						ret = false;
 					}
 					else
@@ -142,27 +138,28 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 						memcpy(&mesh->indices[j * 3], ai_mesh->mFaces[j].mIndices, 3 * sizeof(uint));
 					}
 				}
+				CONSOLE_DEBUG("New mesh ""%s"" with %d triangles.", node->mName.C_Str(), mesh->num_indices /3);
 			}
 
 			if (ai_mesh->HasNormals())
 			{
 				mesh->normals = new float[mesh->num_vertices * 3];
 				memcpy(mesh->normals, ai_mesh->mNormals, sizeof(float) * mesh->num_vertices * 3);
-				App->editor->console_window->AddLog(std::string("Mesh has normals (" + std::string(node->mName.C_Str()) + ")"));
+				CONSOLE_DEBUG("Mesh ""%s"" has Normals", node->mName.C_Str());
 			}
 
 			if (ai_mesh->HasVertexColors(0))
 			{
 				mesh->colors = new float[mesh->num_vertices * 4];
 				memcpy(mesh->colors, ai_mesh->mColors[0], sizeof(float) * mesh->num_vertices * 4);
-				App->editor->console_window->AddLog(std::string("Mesh has Vertex Colors (" + std::string(node->mName.C_Str()) + ")"));
+				CONSOLE_DEBUG("Mesh ""%s"" has Colors", node->mName.C_Str());
 			}
 
 			if (ai_mesh->HasTextureCoords(0))
 			{
 				mesh->texture_coords = new float[mesh->num_vertices * 3];
 				memcpy(mesh->texture_coords, ai_mesh->mTextureCoords[0], sizeof(float) * mesh->num_vertices * 3);
-				App->editor->console_window->AddLog(std::string("Has Texture Coords (" + std::string(node->mName.C_Str()) + ")"));
+				CONSOLE_DEBUG("Mesh ""%s"" has UVs", node->mName.C_Str());
 			}
 
 			glGenBuffers(1, &mesh->id_vertices);
@@ -217,9 +214,6 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 					}
 				}
 			}
-
-
-
 
 			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
@@ -285,12 +279,11 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 			default: tmp_texture->SetType(Texture::TextureType::UnknownType); break;
 		}
 		ilDeleteImages(1, &image_id);
-		App->editor->console_window->AddLog(std::string("Texture Loaded " + std::string(path)));
+		CONSOLE_DEBUG("Texture Loaded: %s", path);
 	}
 	else 
 	{
-		CONSOLE_LOG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
-		App->editor->console_window->AddLog(std::string("Cannot load image " + std::string(path) + " Error number: " + iluErrorString(ilGetError())), true, false);
+		CONSOLE_DEBUG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
 	}
 
 	if (attach_to_gameobject) App->scene->ApplyTextureToSelectedGameObjects(tmp_texture);
@@ -325,8 +318,6 @@ std::string ModuleImport::GetFileExtension(const char * path)
 	return name;
 }
 
-void ModuleImport::bla(char* message)
-{
-	int i = 0;
+void Callback(const char* message, char* c) {
+	CONSOLE_DEBUG("%s", message);
 }
-

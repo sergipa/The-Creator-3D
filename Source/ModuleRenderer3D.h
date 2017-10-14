@@ -42,9 +42,10 @@ public:
 	void EnableTestLight();
 	void DisableTestLight();
 
-	void DrawScene();
-
 	void AddMeshToDraw(ComponentMeshRenderer* mesh);
+
+private:
+	void DrawScene();
 
 public:
 
@@ -62,6 +63,8 @@ private:
 	bool is_using_color_material;
 	bool is_using_texture2D;
 	bool is_using_fog;
+
+	bool testing_light;
 
 	std::list<ComponentMeshRenderer*> mesh_to_draw;
 };

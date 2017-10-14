@@ -27,16 +27,16 @@ void HierarchyWindow::DrawWindow()
 		if (ImGui::BeginPopup("GameObject Options"))
 		{
 			if (!App->scene->selected_gameobjects.empty()) {
-				if (ImGui::MenuItem("Duplicate")) {
-					for (std::list<GameObject*>::iterator it = App->scene->selected_gameobjects.begin(); it != App->scene->selected_gameobjects.end(); it++) {
-						if ((*it)->GetParent() != nullptr) {
-							if (std::find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), (*it)->GetParent()) != App->scene->selected_gameobjects.end()) {
-								continue; //If parent will be duplicated skip this because parent will take care of childs;
-							}
-						}
-						App->scene->DuplicateGameObject(*it);
-					}
-				}
+				//if (ImGui::MenuItem("Duplicate")) {
+				//	for (std::list<GameObject*>::iterator it = App->scene->selected_gameobjects.begin(); it != App->scene->selected_gameobjects.end(); it++) {
+				//		if ((*it)->GetParent() != nullptr) {
+				//			if (std::find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), (*it)->GetParent()) != App->scene->selected_gameobjects.end()) {
+				//				continue; //If parent will be duplicated skip this because parent will take care of childs;
+				//			}
+				//		}
+				//		App->scene->DuplicateGameObject(*it);
+				//	}
+				//}
 				if (ImGui::MenuItem("Delete")) {
 					for (std::list<GameObject*>::iterator it = App->scene->selected_gameobjects.begin(); it != App->scene->selected_gameobjects.end(); it++) {
 						(*it)->Destroy();

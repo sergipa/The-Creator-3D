@@ -26,11 +26,11 @@ Application::Application()
 	// Main Modules
 	AddModule(window);
 	AddModule(camera);
+	AddModule(editor);
 	AddModule(input);
 	AddModule(audio);
-	AddModule(physics);
+	//AddModule(physics);
 	AddModule(renderer3D);
-	AddModule(editor);
 	AddModule(scene);
 	AddModule(import);
 
@@ -75,7 +75,7 @@ bool Application::Init()
 	}
 
 	// After all Init calls we call Start() in all modules
-	CONSOLE_LOG("Application Start --------------");
+	CONSOLE_DEBUG("-------------- Application Start --------------");
 	item = list_modules.begin();
 
 	while (item != list_modules.end() && ret == true)

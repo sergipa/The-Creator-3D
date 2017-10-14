@@ -22,6 +22,7 @@ ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Modul
 	is_using_color_material = false;
 	is_using_texture2D = false;
 	is_using_fog = false;
+	testing_light = false;
 	name = "Renderer";
 }
 
@@ -32,14 +33,14 @@ ModuleRenderer3D::~ModuleRenderer3D()
 // Called before render is available
 bool ModuleRenderer3D::Init(Data* editor_config)
 {
-	CONSOLE_LOG("Creating 3D Renderer context");
+	CONSOLE_DEBUG("Creating 3D Renderer context");
 	bool ret = true;
 	
 	//Create context
 	context = SDL_GL_CreateContext(App->window->window);
 	if(context == NULL)
 	{
-		CONSOLE_LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+		CONSOLE_DEBUG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -56,7 +57,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 
 		//Use Vsync
 		if(use_vsync && SDL_GL_SetSwapInterval(1) < 0)
-			CONSOLE_LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			CONSOLE_DEBUG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		textureMSAA = new RenderTextureMSAA();
 		textureMSAA->Create(App->window->GetWidth(), App->window->GetHeight(), MSAA_level);
@@ -69,7 +70,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		GLenum error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			CONSOLE_LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			CONSOLE_DEBUG("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 
@@ -81,7 +82,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			CONSOLE_LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			CONSOLE_DEBUG("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 		
@@ -96,22 +97,22 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		error = glGetError();
 		if(error != GL_NO_ERROR)
 		{
-			CONSOLE_LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			CONSOLE_DEBUG("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 		
-		GLfloat LightModelAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+		GLfloat LightModelAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 		
 		lights[0].ref = GL_LIGHT0;
-		lights[0].ambient.Set(0.3f, 0.3f, 0.3f, 1.0f);
-		lights[1].diffuse.Set(0.7f, 0.7f, 0.7f, 1.0f);
+		lights[0].ambient.Set(1, 1, 1, 1);
+		lights[1].diffuse.Set(1, 1, 1, 1);
 		lights[0].SetPos(-1.0f, 1.0f, 1.0f);
 		lights[0].Init();
 
 		lights[1].ref = GL_LIGHT1;
-		lights[1].ambient.Set(0.2f, 0.2f, 0.2f, 1.0f);
-		lights[1].diffuse.Set(0.7f, 0.7f, 0.7f, 1.0f);
+		lights[1].ambient.Set(1, 1, 1, 1.0f);
+		lights[1].diffuse.Set(1, 1, 1, 1.0f);
 		lights[1].specular.Set(1.0f, 1.0f, 1.0f, 1.0f);
 		lights[1].SetPos(-1.0f, 1.0f, 1.0f);
 		lights[1].Init();
@@ -186,17 +187,30 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 
 void ModuleRenderer3D::DrawScene()
 {
-	//Wihout this, the dragged texture will be drawn on the plane if scene doesn't have gameobjects
+	for (uint i = 1; i < MAX_LIGHTS; ++i)
+		lights[i].Active(false);
+
+	//Wihout this, the dragged texture will be drawn on the grid if scene doesn't have gameobjects
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	pPlane pl;
-	pl.normal.x = 0;
-	pl.normal.y = 1;
-	pl.normal.z = 0;
-	pl.constant = 0;
+	pPlane pl(0,1,0,0);
 	pl.axis = true;
+	pl.color = { 0.3f,0.3f,0.3f,1 };
 	pl.Render();
 
+	if (is_using_lightning)
+	{
+		if (testing_light)
+		{
+			lights[7].Active(true);
+		}
+		else
+		{
+			for (uint i = 1; i < MAX_LIGHTS; ++i)
+				lights[i].Active(true);
+		}
+	}
+	
 	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
 		if ((*it)->GetTexture() != nullptr && (*it)->GetTexture()->GetID() > 0)
@@ -254,7 +268,7 @@ void ModuleRenderer3D::AddMeshToDraw(ComponentMeshRenderer * mesh)
 // Called before quitting
 bool ModuleRenderer3D::CleanUp()
 {
-	CONSOLE_LOG("Destroying 3D Renderer");
+	CONSOLE_DEBUG("Destroying 3D Renderer");
 
 	SDL_GL_DeleteContext(context);
 
@@ -290,12 +304,12 @@ void ModuleRenderer3D::SetActiveLighting(bool active)
 
 	if (active)
 	{
-		for (uint i = 1; i < MAX_LIGHTS; ++i)
+		for (uint i = 0; i < MAX_LIGHTS; ++i)
 			lights[i].Active(true);
 	}
 	else 
 	{
-		for (uint i = 1; i < MAX_LIGHTS; ++i)
+		for (uint i = 0; i < MAX_LIGHTS; ++i)
 			lights[i].Active(false);
 	}
 }
@@ -406,6 +420,7 @@ void ModuleRenderer3D::EnableTestLight()
 	lights[7].Active(true);
 	for (uint i = 1; i < MAX_LIGHTS - 1; ++i)
 		lights[i].Active(false);
+	testing_light = true;
 }
 
 void ModuleRenderer3D::DisableTestLight()
@@ -413,6 +428,8 @@ void ModuleRenderer3D::DisableTestLight()
 	lights[7].Active(false);
 	for (uint i = 1; i < MAX_LIGHTS - 1; ++i)
 		lights[i].Active(true);
+	lights[7].ref = 0;
+	testing_light = false;
 }
 
 
