@@ -24,7 +24,7 @@ void PropertiesWindow::DrawWindow()
 			ImGui::Text("More than 1 GameObject selected!");
 		}
 
-		if (selected_gameobject != nullptr) {
+		if (selected_gameobject != nullptr && !selected_gameobject->is_on_destroy) {
 			bool is_gameobject_active = selected_gameobject->IsActive();
 			ImGui::SameLine();
 			if (ImGui::Checkbox("", &is_gameobject_active)) {
@@ -163,7 +163,7 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 		{
 			mesh_renderer->SetActive(is_active);
 		}
-		if(ImGui::TreeNodeEx("Mesh Info##1", ImGuiTreeNodeFlags_OpenOnArrow))
+		if(ImGui::TreeNodeEx("Mesh Info", ImGuiTreeNodeFlags_OpenOnArrow))
 		{
 			if (mesh_renderer->GetMesh() == nullptr)
 			{
@@ -179,7 +179,7 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 			ImGui::Text("UV: "); ImGui::SameLine(); (mesh_renderer->GetMesh()->id_texture_coords > 0) ? ImGui::TextColored(ImVec4(0, 1, 0, 1), ("yes")) : ImGui::TextColored(ImVec4(1, 0, 0, 1), ("no"));
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNodeEx("Texture Info##2", ImGuiTreeNodeFlags_OpenOnArrow))
+		if (ImGui::TreeNodeEx("Texture Info", ImGuiTreeNodeFlags_OpenOnArrow))
 		{
 			if (mesh_renderer->GetTexture() == nullptr)
 			{
@@ -187,15 +187,14 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 				ImGui::TreePop();
 				return;
 			}
-			ImGui::Text("Texture ID: %d", mesh_renderer->GetTexture()->GetID());
 			ImGui::Text("Texture Path: %s", mesh_renderer->GetTexture()->GetPath().c_str());
-			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(mesh_renderer->GetTexture()->GetPath().c_str()).x > ImGui::GetContentRegionAvailWidth()) {
+			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Path: " + mesh_renderer->GetTexture()->GetPath()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
 				ImGui::BeginTooltip();
 				ImGui::Text("%s", mesh_renderer->GetTexture()->GetPath().c_str());
 				ImGui::EndTooltip();
 			}
 			ImGui::Text("Texture Name: %s", mesh_renderer->GetTexture()->GetName().c_str());
-			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(mesh_renderer->GetTexture()->GetName().c_str()).x > ImGui::GetContentRegionAvailWidth()) {
+			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Name: " + mesh_renderer->GetTexture()->GetName()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
 				ImGui::BeginTooltip();
 				ImGui::Text("%s", mesh_renderer->GetTexture()->GetName().c_str());
 				ImGui::EndTooltip();

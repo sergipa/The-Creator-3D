@@ -35,6 +35,8 @@ public:
 public:
 	std::list<GameObject*> childs;
 	std::list<Component*> components_list;
+	bool is_on_destroy;
+
 private:
 	bool active;
 	GameObject* parent;
@@ -42,6 +44,5 @@ private:
 	std::string tag;
 	std::string layer;
 	bool is_root;
-	bool is_on_destroy;
 };
 
