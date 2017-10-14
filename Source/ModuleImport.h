@@ -1,6 +1,5 @@
 #pragma once
 #include "Module.h"
-#include "Assimp/include/cimport.h"
 #include <string>
 
 class GameObject;
@@ -21,13 +20,10 @@ public:
 	bool LoadMesh(const char* path);
 	Texture* LoadTexture(const char* path, bool attach_to_gameobject);
 
+private:
+	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
 	std::string GetFileName(const char* path);
-
-private:
-	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene);
-
-private:
-	aiLogStream stream;
-	GameObject* root_gameobject;
+	std::string GetFileExtension(const char* path);
+	void bla(char* message);
 };
 
