@@ -52,16 +52,16 @@ void ConsoleWindow::DrawWindow()
 		ImGui::BeginChild("scrolling");
 
 		for (int i = 0; i < message_list.size(); i++) {
-			if (show_errors && message_list[i].find("Error") != std::string::npos) {
+			if (show_errors && message_list[i].find("[Error]") != std::string::npos) {
 				ImGui::TextColored(error_text_color, "%s", message_list[i].c_str());
 			}
-			else if (show_warnings && message_list[i].find("Warning") != std::string::npos) {
+			else if (show_warnings && message_list[i].find("[Warning]") != std::string::npos) {
 				ImGui::TextColored(warning_text_color, "%s", message_list[i].c_str());
 			}
-			else if (show_logs && message_list[i].find("Log") != std::string::npos) {
+			else if (show_logs && message_list[i].find("[Log]") != std::string::npos) {
 				ImGui::TextColored(log_text_color,"%s", message_list[i].c_str());
 			}
-			else if (show_debug_logs && message_list[i].find("Debug") != std::string::npos) {
+			else if (show_debug_logs && message_list[i].find("[Debug]") != std::string::npos) {
 				ImGui::TextColored(debug_text_color,"%s", message_list[i].c_str());
 			}
 			else {

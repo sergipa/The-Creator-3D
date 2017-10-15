@@ -1,6 +1,7 @@
 #include "ModuleImport.h"
 #include "GameObject.h"
 #include "ComponentMeshRenderer.h"
+#include "ComponentTransform.h"
 #include "Component.h"
 #include "Application.h"
 #include "ModuleScene.h"
@@ -222,12 +223,24 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 				}
 			}
 
+
+
 			App->resources->AddMesh(mesh);
 
 			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
 			mesh_renderer->LoadMesh(mesh);
 			mesh_renderer->LoadTexture(material_texture);
+			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::Transform);
+			aiVector3D position;
+			aiQuaternion rotation_quat;
+			aiVector3D scale;
+			node->mTransformation.Decompose(scale, rotation_quat, position);
+			aiVector3D rotation = rotation_quat.GetEuler();
+			rotation *= RADTODEG;
+			transform->SetPosition({ position.x, position.y, position.z });
+			transform->SetRotation({ rotation.x, rotation.y, rotation.z });
+			transform->SetScale({ scale.x, scale.y, scale.z });
 			go->SetName((std::string)node->mName.C_Str());
 			App->scene->AddGameObjectToScene(go);
 		}
