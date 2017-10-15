@@ -23,12 +23,12 @@ public:
 	int GetCurrentMSAALevel() const;
 
 private:
-	uint fboId;
-	uint fboMsaaId;
-	uint textureId;
-	uint rboId;
-	uint rboColorId;
-	uint rboDepthId;
+	uint fbo_id;
+	uint fbo_msaa_id;
+	uint texture_id;
+	uint rbo_id;
+	uint rbo_color_id;
+	uint rbo_depth_id;
 
 	uint width;
 	uint height;

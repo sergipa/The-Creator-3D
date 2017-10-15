@@ -68,7 +68,7 @@ bool ModuleImport::LoadMesh(const char* path)
 
 	if (!App->scene->root_gameobjects.empty())
 	{
-		App->scene->AddGameObjectToDestroy(App->scene->root_gameobjects.front());
+		App->scene->DestroyAllGameObjects();
 	}
 
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);

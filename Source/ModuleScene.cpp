@@ -35,19 +35,11 @@ bool ModuleScene::Start()
 bool ModuleScene::CleanUp()
 {
 	CONSOLE_DEBUG("Unloading Scene");
-	//for (std::list<GameObject*>::iterator it = selected_gameobjects.begin(); it != selected_gameobjects.end(); ++it) {
-	//	RELEASE(*it);
-	//}
+	
+	//Destroy the root gameobjects. Each gameobject will take care of their childs
 	for (std::list<GameObject*>::iterator it = root_gameobjects.begin(); it != root_gameobjects.end(); ++it) {
 		RELEASE(*it);
 	}
-	//for (std::list<GameObject*>::iterator it = gameobjects_to_destroy.begin(); it != gameobjects_to_destroy.end(); ++it) {
-	//	RELEASE(*it);
-	//}
-	//for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); ++it) {
-	//	RELEASE(*it);
-	//	it = scene_gameobjects.erase(it);
-	//}
 
 	return true;
 }
@@ -60,12 +52,12 @@ GameObject * ModuleScene::CreateGameObject(GameObject * parent)
 	return ret;
 }
 
-GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
-{
-	GameObject* ret = nullptr;
-
-	return ret;
-}
+//GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
+//{
+//	GameObject* ret = nullptr;
+//
+//	return ret;
+//}
 
 update_status ModuleScene::PreUpdate(float dt)
 {
@@ -125,11 +117,19 @@ void ModuleScene::AddGameObjectToDestroy(GameObject * gameobject)
 	gameobjects_to_destroy.push_back(gameobject);
 }
 
+void ModuleScene::DestroyAllGameObjects()
+{
+	for (std::list<GameObject*>::iterator it = root_gameobjects.begin(); it != root_gameobjects.end(); it++)
+	{
+		if(*it != nullptr) AddGameObjectToDestroy(*it);
+	}
+}
+
 void ModuleScene::ApplyTextureToSelectedGameObjects(Texture * texture)
 {
 	for (std::list<GameObject*>::iterator it = selected_gameobjects.begin(); it != selected_gameobjects.end(); it++)
 	{
-		ApplyTextureToGameObject((*it), texture);
+		if (*it != nullptr) ApplyTextureToGameObject(*it, texture);
 	}
 }
 

@@ -1,5 +1,5 @@
 #include "Mesh.h"
-
+#include "OpenGL.h"
 
 Mesh::Mesh()
 {
@@ -24,9 +24,21 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-	delete indices;
-	delete vertices;
-	delete normals;
-	delete colors;
-	delete texture_coords;
+	RELEASE(indices);
+	RELEASE(vertices);
+	RELEASE(normals);
+	RELEASE(colors);
+	RELEASE(texture_coords);
+
+	glDeleteBuffers(1, &id_vertices);
+	glDeleteBuffers(1, &id_indices);
+	glDeleteBuffers(1, &id_normals);
+	glDeleteBuffers(1, &id_colors);
+	glDeleteBuffers(1, &id_texture_coords);
+
+	id_vertices = 0;
+	id_indices = 0;
+	id_normals = 0;
+	id_colors = 0;
+	id_texture_coords = 0;
 }

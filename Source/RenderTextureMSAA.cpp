@@ -4,12 +4,12 @@
 
 RenderTextureMSAA::RenderTextureMSAA()
 {
-	fboId = 0;
-	fboMsaaId = 0;
-	textureId = 0;
-	rboId = 0;
-	rboColorId = 0;
-	rboDepthId = 0;
+	fbo_id = 0;
+	fbo_msaa_id = 0;
+	texture_id = 0;
+	rbo_id = 0;
+	rbo_color_id = 0;
+	rbo_depth_id = 0;
 }
 
 RenderTextureMSAA::~RenderTextureMSAA()
@@ -24,8 +24,8 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 	current_msaa_samples = MSAA_level;
 
 	// create a texture object
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	glGenTextures(1, &texture_id);
+	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -34,39 +34,39 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// create a MSAA framebuffer object
-	glGenFramebuffers(1, &fboMsaaId);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboMsaaId);
+	glGenFramebuffers(1, &fbo_msaa_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo_msaa_id);
 
 	// create a MSAA renderbuffer object to store color info
-	glGenRenderbuffers(1, &rboColorId);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboColorId);
+	glGenRenderbuffers(1, &rbo_color_id);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo_color_id);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, MSAA_level, GL_RGB8, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	// create a MSAA renderbuffer object to store depth info
-	glGenRenderbuffers(1, &rboDepthId);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboDepthId);
+	glGenRenderbuffers(1, &rbo_depth_id);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo_depth_id);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, MSAA_level, GL_DEPTH_COMPONENT, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	// attach msaa RBOs to FBO attachment points
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorId);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthId);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo_color_id);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo_depth_id);
 
 	// create a normal (no MSAA) FBO to hold a render-to-texture
-	glGenFramebuffers(1, &fboId);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboId);
+	glGenFramebuffers(1, &fbo_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
 
-	glGenRenderbuffers(1, &rboId);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboId);
+	glGenRenderbuffers(1, &rbo_id);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo_id);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	// attach a texture to FBO color attachement point
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_id, 0);
 
 	// attach a rbo to FBO depth attachement point
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboId);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo_id);
 
 	// check FBO status
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -82,7 +82,7 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 
 void RenderTextureMSAA::Bind()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, fboMsaaId);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo_msaa_id);
 	glViewport(0, 0, width, height);
 }
 
@@ -94,8 +94,8 @@ void RenderTextureMSAA::Unbind()
 
 void RenderTextureMSAA::Render()
 {
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboMsaaId);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboId);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo_msaa_id);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_id);
 	glBlitFramebuffer(0, 0, width, height,  // src rect
 		0, 0, width, height,  // dst rect
 		GL_COLOR_BUFFER_BIT, // buffer mask
@@ -110,25 +110,25 @@ void RenderTextureMSAA::ChangeMSAALevel(int MSAA_level)
 
 void RenderTextureMSAA::Destroy()
 {
-	glDeleteTextures(1, &textureId);
-	textureId = 0;
+	glDeleteTextures(1, &texture_id);
+	texture_id = 0;
 
-	glDeleteFramebuffers(1, &fboId);
-	fboId = 0;
-	glDeleteFramebuffers(1, &fboMsaaId);
-	fboMsaaId = 0;
+	glDeleteFramebuffers(1, &fbo_id);
+	fbo_id = 0;
+	glDeleteFramebuffers(1, &fbo_msaa_id);
+	fbo_msaa_id = 0;
 
-	glDeleteRenderbuffers(1, &rboId);
-	glDeleteRenderbuffers(1, &rboColorId);
-	glDeleteRenderbuffers(1, &rboDepthId);
-	rboId = 0;
-	rboColorId = 0;
-	rboDepthId = 0;
+	glDeleteRenderbuffers(1, &rbo_id);
+	glDeleteRenderbuffers(1, &rbo_color_id);
+	glDeleteRenderbuffers(1, &rbo_depth_id);
+	rbo_id = 0;
+	rbo_color_id = 0;
+	rbo_depth_id = 0;
 }
 
 uint RenderTextureMSAA::GetTexture() const
 {
-	return textureId;
+	return texture_id;
 }
 
 int RenderTextureMSAA::GetMaxMSAALevel() const

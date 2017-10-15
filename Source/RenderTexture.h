@@ -23,9 +23,9 @@ private:
 	void Destroy();
 
 private:
-	GLuint fbo;
-	GLuint color_texture;
-	GLuint depth_texture;
+	GLuint fbo_id;
+	GLuint color_texture_id;
+	GLuint depth_texture_id;
 	int width;
 	int height;
 };

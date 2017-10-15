@@ -1,5 +1,5 @@
 #include "Texture.h"
-
+#include "OpenGL.h"
 
 Texture::Texture()
 {
@@ -12,6 +12,8 @@ Texture::Texture()
 
 Texture::~Texture()
 {
+	glDeleteTextures(1, &texture_id);
+	texture_id = 0;
 }
 
 void Texture::SetID(uint id)
