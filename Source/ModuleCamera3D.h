@@ -10,7 +10,7 @@ public:
 	ModuleCamera3D(Application* app, bool start_enabled = true);
 	~ModuleCamera3D();
 
-	bool Start();
+	bool Init(Data* editor_config);
 	update_status Update(float dt);
 	bool CleanUp();
 
@@ -22,13 +22,21 @@ public:
 	void SetOrbital(bool is_orbital);
 	bool IsOrbital() const;
 
+	void SaveData(Data* data);
 private:
 	void CalculateViewMatrix();
 	mat4x4 ViewMatrix, ViewMatrixInverse;
 	bool isPlaying = false;
 	bool camera_is_orbital;
-
 public:
 	vec3 X, Y, Z, Position, Reference;
 	bool can_update;
+
+	int key_speed;
+	int key_forward;
+	int key_backward;
+	int key_up;
+	int key_down;
+	int key_left;
+	int key_right;
 };

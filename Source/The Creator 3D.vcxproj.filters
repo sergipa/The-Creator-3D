@@ -390,6 +390,9 @@
     <ClInclude Include="Resource.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="CameraConfigWindow.h">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -625,6 +628,9 @@
     </ClCompile>
     <ClCompile Include="Resource.cpp">
       <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraConfigWindow.cpp">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

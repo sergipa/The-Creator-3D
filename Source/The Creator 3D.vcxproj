@@ -83,6 +83,7 @@
     <ClInclude Include="AboutWindow.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppWindowConfigWindow.h" />
+    <ClInclude Include="CameraConfigWindow.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentMeshRenderer.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="AboutWindow.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AppWindowConfigWindow.cpp" />
+    <ClCompile Include="CameraConfigWindow.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentMeshRenderer.cpp" />

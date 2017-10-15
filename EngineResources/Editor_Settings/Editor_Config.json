@@ -8,8 +8,10 @@
             "Window_Borderless": "0",
             "Window_Full_Desktop": "0"
         },
+        "Camera_Config": {
+        },
         "Renderer_Config": {
-            "Vsync": "1",
+            "Vsync": "0",
             "MSAA_Level": "2"
         }
     }

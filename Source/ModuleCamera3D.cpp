@@ -5,6 +5,8 @@
 #include "SceneWindow.h"
 #include "ModuleScene.h"
 #include "PerformanceWindow.h"
+#include "Data.h"
+
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -20,17 +22,35 @@ ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(ap
 	name = "Camera";
 	can_update = false;
 	camera_is_orbital = false;
+
+	key_speed = 38;//DEFAULT LSHIFT
+	key_forward = 22;//DEFAULT W
+	key_backward = 18;//DEFAULT S
+	key_up = 16;//DEFAULT Q
+	key_down = 4;//DEFAULT E
+	key_left = 0;//DEFAULT A
+	key_right = 3;//DEFAULT D
 }
 
 ModuleCamera3D::~ModuleCamera3D()
 {}
-
 // -----------------------------------------------------------------
-bool ModuleCamera3D::Start()
+bool ModuleCamera3D::Init(Data * editor_config)
 {
 	CONSOLE_DEBUG("Setting up the camera");
 	bool ret = true;
 
+	editor_config->EnterSection("Camera_Config");
+
+	key_speed = App->input->StringToKey(editor_config->GetString("key_speed"));
+	key_forward = App->input->StringToKey(editor_config->GetString("key_forward"));
+	key_backward = App->input->StringToKey(editor_config->GetString("key_backward"));
+	key_up = App->input->StringToKey(editor_config->GetString("key_up"));
+	key_down = App->input->StringToKey(editor_config->GetString("key_down"));
+	key_left = App->input->StringToKey(editor_config->GetString("key_left"));
+	key_right = App->input->StringToKey(editor_config->GetString("key_right"));
+
+	editor_config->LeaveSection();
 	return ret;
 }
 
@@ -53,19 +73,19 @@ update_status ModuleCamera3D::Update(float dt)
 
 		vec3 newPos(0, 0, 0);
 		float speed = 20.0f * dt;
-		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		if (App->input->GetKey(key_speed) == KEY_REPEAT)
 			speed = 70.0f * dt;
 
-		if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT) newPos.y += speed;
-		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) newPos.y -= speed;
+		if (App->input->GetKey(key_up) == KEY_REPEAT) newPos.y += speed;
+		if (App->input->GetKey(key_down) == KEY_REPEAT) newPos.y -= speed;
 
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
+		if (App->input->GetKey(key_forward) == KEY_REPEAT) newPos -= Z * speed;
+		if (App->input->GetKey(key_backward) == KEY_REPEAT) newPos += Z * speed;
 		if (App->input->GetMouseZ() > 0) newPos -= Z * speed;
 		if (App->input->GetMouseZ() < 0) newPos += Z * speed;
 
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
+		if (App->input->GetKey(key_left) == KEY_REPEAT) newPos -= X * speed;
+		if (App->input->GetKey(key_right) == KEY_REPEAT) newPos += X * speed;
 
 		Position += newPos;
 		Reference += newPos;
@@ -177,6 +197,20 @@ void ModuleCamera3D::SetOrbital(bool is_orbital)
 bool ModuleCamera3D::IsOrbital() const
 {
 	return camera_is_orbital;
+}
+
+void ModuleCamera3D::SaveData(Data * data)
+{
+	data->CreateSection("Camera_Config");
+
+	data->AddString("key_speed", App->input->KeyToString(key_speed));
+	data->AddString("key_forward", App->input->KeyToString(key_forward));
+	data->AddString("key_backward", App->input->KeyToString(key_backward));
+	data->AddString("key_up", App->input->KeyToString(key_up));
+	data->AddString("key_down", App->input->KeyToString(key_down));
+	data->AddString("key_left", App->input->KeyToString(key_left));
+
+	data->CloseSection();
 }
 
 // -----------------------------------------------------------------

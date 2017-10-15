@@ -98,31 +98,6 @@ update_status ModuleInput::PreUpdate(float dt)
 
 		switch(e.type)
 		{
-			case SDL_KEYDOWN:
-				if (keyboardKeys.find(e.key.state) != keyboardKeys.end()) {
-					keyboardKeys[e.key.state] = KEY_REPEAT;
-				}
-				else {
-					keyboardKeys.insert(std::pair<SDL_Keycode, KEY_STATE>(e.key.state, KEY_DOWN));
-				}
-			break;
-
-			case SDL_KEYUP:
-			keyboardKeys[e.key.state] = KEY_UP;
-			break;
-
-			case SDL_MOUSEBUTTONDOWN:
-				if (mouseBbuttons.find(e.button) != mouseBbuttons.end()) {
-					mouseBbuttons[e.button] = KEY_REPEAT;
-				}
-				else {
-					mouseBbuttons.insert(std::pair<SDL_MouseButtonEvent, KEY_STATE>(e.button, KEY_DOWN));
-				}
-			break;
-
-			case SDL_MOUSEBUTTONUP:
-				mouseBbuttons[e.button] = KEY_UP;
-			break;
 
 			case SDL_MOUSEWHEEL:
 			mouse_z = e.wheel.y;
@@ -286,50 +261,10 @@ SDL_Keycode ModuleInput::StringToKey(std::string key)
 	return ret;
 }
 
-bool ModuleInput::IsKeyPressed(SDL_Keycode key) const
+std::string ModuleInput::KeyToString(SDL_Keycode key)
 {
-	if (keyboardKeys.find(key)->second == KEY_DOWN)
-		return true;
-	else
-		return false;
-}
-
-bool ModuleInput::IsKeyRepeated(SDL_Keycode key)
-{
-	if (keyboardKeys.find(key)->second == KEY_REPEAT)
-		return true;
-	else
-		return false;
-}
-
-bool ModuleInput::IsKeyReleased(SDL_Keycode key)
-{
-	if (keyboardKeys.find(key)->second == KEY_UP)
-		return true;
-	else
-		return false;
-}
-
-bool ModuleInput::IsMouseButtonPressed(SDL_MouseButtonEvent button) const
-{
-	if (mouseBbuttons.find(button)->second == KEY_DOWN)
-		return true;
-	else
-		return false;
-}
-
-bool ModuleInput::IsMouseButtonRepeated(SDL_MouseButtonEvent button)
-{
-	if (mouseBbuttons.find(button)->second == KEY_REPEAT)
-		return true;
-	else
-		return false;
-}
-
-bool ModuleInput::IsMouseButtonReleased(SDL_MouseButtonEvent button)
-{
-	if (mouseBbuttons.find(button)->second == KEY_UP)
-		return true;
-	else
-		return false;
+	std::string ret;
+	for (std::map<std::string, SDL_Keycode>::iterator it = stringKeys.begin(); it != stringKeys.end(); ++it)
+		if (it->second == key)
+			return it->first;
 }
