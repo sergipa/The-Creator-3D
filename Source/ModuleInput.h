@@ -2,6 +2,8 @@
 #include "Module.h"
 #include "Globals.h"
 
+#include <map>
+
 #define MAX_MOUSE_BUTTONS 5
 
 enum KEY_STATE
@@ -58,9 +60,29 @@ public:
 		return mouse_y_motion;
 	}
 
+	void StoreStringKeys();
+
+	SDL_Keycode StringToKey(std::string key);
+
+	bool IsKeyPressed(SDL_Keycode key) const;
+	bool IsKeyRepeated(SDL_Keycode key);
+	bool IsKeyReleased(SDL_Keycode key);
+
+	bool IsMouseButtonPressed(SDL_MouseButtonEvent button) const;
+	bool IsMouseButtonRepeated(SDL_MouseButtonEvent button);
+	bool IsMouseButtonReleased(SDL_MouseButtonEvent button);
+
 private:
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
+
+
+	KEY_STATE keyState = KEY_IDLE;
+	std::map<SDL_Keycode, KEY_STATE> keyboardKeys;
+	std::map<SDL_MouseButtonEvent, KEY_STATE> mouseBbuttons;
+	std::map<std::string, SDL_Keycode> stringKeys;
+
+
 	int mouse_x;
 	int mouse_y;
 	int mouse_z;
