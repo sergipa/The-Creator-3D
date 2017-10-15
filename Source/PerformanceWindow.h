@@ -8,7 +8,7 @@ class PerformanceWindow : public Window
 {
 public:
 	PerformanceWindow();
-	~PerformanceWindow();
+	virtual ~PerformanceWindow();
 
 	void DrawWindow();
 

@@ -269,7 +269,7 @@ void ModuleRenderer3D::AddMeshToDraw(ComponentMeshRenderer * mesh)
 bool ModuleRenderer3D::CleanUp()
 {
 	CONSOLE_DEBUG("Destroying 3D Renderer");
-
+	RELEASE(textureMSAA);
 	SDL_GL_DeleteContext(context);
 
 	return true;

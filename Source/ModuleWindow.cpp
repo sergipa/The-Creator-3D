@@ -5,14 +5,15 @@
 
 ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	window = NULL;
-	screen_surface = NULL;
+	window = nullptr;
+	screen_surface = nullptr;
 	screen_width = 1280;
 	screen_height = 950;
 	is_fullscreen = false;
 	is_resizable = true;
 	is_borderless = false;
 	is_full_desktop = false;
+	engine_icon = nullptr;
 
 	name = "Window";
 }
@@ -20,6 +21,7 @@ ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, s
 // Destructor
 ModuleWindow::~ModuleWindow()
 {
+
 }
 
 // Called before render is available

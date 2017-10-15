@@ -34,7 +34,20 @@ bool ModuleScene::Start()
 // Load assets
 bool ModuleScene::CleanUp()
 {
-	CONSOLE_DEBUG("Unloading Intro scene");
+	CONSOLE_DEBUG("Unloading Scene");
+	//for (std::list<GameObject*>::iterator it = selected_gameobjects.begin(); it != selected_gameobjects.end(); ++it) {
+	//	RELEASE(*it);
+	//}
+	for (std::list<GameObject*>::iterator it = root_gameobjects.begin(); it != root_gameobjects.end(); ++it) {
+		RELEASE(*it);
+	}
+	//for (std::list<GameObject*>::iterator it = gameobjects_to_destroy.begin(); it != gameobjects_to_destroy.end(); ++it) {
+	//	RELEASE(*it);
+	//}
+	//for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); ++it) {
+	//	RELEASE(*it);
+	//	it = scene_gameobjects.erase(it);
+	//}
 
 	return true;
 }
@@ -50,24 +63,6 @@ GameObject * ModuleScene::CreateGameObject(GameObject * parent)
 GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
 {
 	GameObject* ret = nullptr;
-
-	//if (gameObject != nullptr) {
-	//	Data data;
-	//	gameObject->Save(data, true);
-	//	for (int i = 0; i < savingIndex; i++) {
-	//		GameObject* go = new GameObject();
-	//		data.EnterSection("GameObject_" + std::to_string(i));
-	//		go->Load(data);
-	//		data.LeaveSection();
-	//		gameobjectsList.push_back(go);
-	//		engine->sceneWindow->drawableObjects.push_back(go);
-	//		if (i == 0) { //return the first object (parent)
-	//			ret = go;
-	//		}
-	//	}
-	//	data.ClearData();
-	//	engine->sceneManagerModule->savingIndex = 0;
-	//}
 
 	return ret;
 }

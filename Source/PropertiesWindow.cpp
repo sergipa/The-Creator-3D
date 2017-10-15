@@ -187,6 +187,7 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 				ImGui::TreePop();
 				return;
 			}
+			ImGui::Text("Texture ID: %d", mesh_renderer->GetTexture()->GetID());
 			ImGui::Text("Texture Path: %s", mesh_renderer->GetTexture()->GetPath().c_str());
 			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Path: " + mesh_renderer->GetTexture()->GetPath()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
 				ImGui::BeginTooltip();

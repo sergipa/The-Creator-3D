@@ -6,7 +6,7 @@ class RendererConfigWindow :
 {
 public:
 	RendererConfigWindow();
-	~RendererConfigWindow();
+	virtual ~RendererConfigWindow();
 
 	void DrawWindow();
 	void SetDefaultValues();

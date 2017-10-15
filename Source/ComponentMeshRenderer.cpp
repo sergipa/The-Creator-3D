@@ -13,8 +13,7 @@ ComponentMeshRenderer::ComponentMeshRenderer(GameObject* attached_gameobject)
 
 ComponentMeshRenderer::~ComponentMeshRenderer()
 {
-	delete mesh;
-	delete texture;
+
 }
 
 Mesh* ComponentMeshRenderer::GetMesh() const

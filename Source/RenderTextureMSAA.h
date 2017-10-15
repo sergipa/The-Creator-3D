@@ -23,9 +23,12 @@ public:
 	int GetCurrentMSAALevel() const;
 
 private:
-	uint fboId, fboMsaaId;                // IDs of FBOs
-	uint textureId;                       // ID of texture
-	uint rboId, rboColorId, rboDepthId;   // IDs of Renderbuffer objects
+	uint fboId;
+	uint fboMsaaId;
+	uint textureId;
+	uint rboId;
+	uint rboColorId;
+	uint rboDepthId;
 
 	uint width;
 	uint height;

@@ -34,8 +34,6 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// create a MSAA framebuffer object
-	// NOTE: All attachment images must have the same # of samples.
-	// Ohterwise, the framebuffer status will not be completed.
 	glGenFramebuffers(1, &fboMsaaId);
 	glBindFramebuffer(GL_FRAMEBUFFER, fboMsaaId);
 
@@ -46,11 +44,6 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	// create a MSAA renderbuffer object to store depth info
-	// NOTE: A depth renderable image should be attached the FBO for depth test.
-	// If we don't attach a depth renderable image to the FBO, then
-	// the rendering output will be corrupted because of missing depth test.
-	// If you also need stencil test for your rendering, then you must
-	// attach additional image to the stencil attachement point, too.
 	glGenRenderbuffers(1, &rboDepthId);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepthId);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, MSAA_level, GL_DEPTH_COMPONENT, width, height);
@@ -59,7 +52,6 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 	// attach msaa RBOs to FBO attachment points
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColorId);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepthId);
-
 
 	// create a normal (no MSAA) FBO to hold a render-to-texture
 	glGenFramebuffers(1, &fboId);
@@ -75,12 +67,6 @@ bool RenderTextureMSAA::Create(uint width, uint height, int MSAA_level)
 
 	// attach a rbo to FBO depth attachement point
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboId);
-
-	//@@ disable color buffer if you don't attach any color buffer image,
-	//@@ for example, rendering the depth buffer only to a texture.
-	//@@ Otherwise, glCheckFramebufferStatus will not be complete.
-	//glDrawBuffer(GL_NONE);
-	//glReadBuffer(GL_NONE);
 
 	// check FBO status
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -108,9 +94,6 @@ void RenderTextureMSAA::Unbind()
 
 void RenderTextureMSAA::Render()
 {
-	// copy rendered image from MSAA (multi-sample) to normal (single-sample) FBO
-	// NOTE: The multi samples at a pixel in read buffer will be converted
-	// to a single sample at the target pixel in draw buffer.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fboMsaaId);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboId);
 	glBlitFramebuffer(0, 0, width, height,  // src rect

@@ -19,6 +19,7 @@ Mesh::Mesh()
 
 	id_texture_coords = 0;
 	texture_coords = nullptr;
+
 }
 
 Mesh::~Mesh()

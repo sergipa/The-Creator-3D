@@ -6,7 +6,8 @@ class AppWindowConfigWindow : public Window
 {
 public:
 	AppWindowConfigWindow();
-	~AppWindowConfigWindow();
+	virtual ~AppWindowConfigWindow();
+	
 	void DrawWindow();
 
 private:

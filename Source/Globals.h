@@ -21,10 +21,10 @@ void log(const char file[], const char function[], int line, bool is_warning, bo
 #define QUARTER_PI 0.78539816339744830961f
 #define INV_PI 0.31830988618379067154f
 #define INV_TWO_PI 0.15915494309189533576f
-#define HAVE_M_PI
 
 
 typedef unsigned int uint;
+typedef unsigned long long UID;
 
 enum update_status
 {

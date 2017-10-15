@@ -2,10 +2,10 @@
 
 #include "Module.h"
 #include "Window.h"
-#include <vector>
+#include <list>
 #include <string>
+
 union SDL_Event;
-struct SDL_Texture;
 
 class HierarchyWindow;
 class PropertiesWindow;
@@ -18,23 +18,6 @@ class AboutWindow;
 class AppWindowConfigWindow;
 class EditorStyleWindow;
 class RendererConfigWindow;
-
-struct DragObjectData {
-	std::string from_window;
-	std::string path;
-	std::string extension;
-	std::string name;
-	bool has_data = false;
-	SDL_Texture* drag_sprite;
-	void clearData() {
-		from_window.clear();
-		path.clear();
-		extension.clear();
-		name.clear();
-		has_data = false;
-		drag_sprite = nullptr;
-	}
-};
 
 class ModuleEditor :
 	public Module
@@ -58,10 +41,9 @@ public:
 
 private:
 	ImFont* font = nullptr;
-	std::vector<Window*> editor_windows;
+	std::list<Window*> editor_windows;
 
 public:
-	DragObjectData drag_data;
 	HierarchyWindow* hierarchy_window = nullptr;
 	AssetsWindow* assets_window = nullptr;
 	PropertiesWindow* properties_window = nullptr;
@@ -73,8 +55,5 @@ public:
 	AppWindowConfigWindow* config_window = nullptr;
 	EditorStyleWindow* style_editor_window = nullptr;
 	RendererConfigWindow* renderer_config_window = nullptr;
-	//AnimatorWindow* animator_window = nullptr;
-	//ParticleEditorWindow* particle_editor_window = nullptr;
-	//GameObject* dragging_gameobject = nullptr;
 };
 

@@ -27,15 +27,11 @@ GameObject::GameObject(GameObject* parent)
 GameObject::~GameObject()
 {
 	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); ++it) {
-		if (*it != nullptr) {
-			RELEASE(*it);
-		}
+		RELEASE(*it);
 	}
 
 	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
-		if (*it != nullptr) {
-			RELEASE(*it);
-		}
+		RELEASE(*it);
 	}
 }
 
@@ -92,6 +88,19 @@ Component * GameObject::GetComponent(std::string component_type)
 		}
 	}
 	return nullptr;
+}
+
+void GameObject::DestroyComponent(Component::ComponentType component)
+{
+	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end();) {
+		if ((*it)->GetType() == component) {
+			RELEASE(*it);
+			it = components_list.erase(it);
+		}
+		else {
+			it++;
+		}
+	}
 }
 
 void GameObject::AddChild(GameObject * gameobject)
@@ -179,6 +188,11 @@ void GameObject::OnDestroy()
 {
 	is_on_destroy = true;
 
+	std::list<GameObject*>::iterator it = find(App->scene->scene_gameobjects.begin(), App->scene->scene_gameobjects.end(), this);
+	if (it != App->scene->scene_gameobjects.end()) {
+		App->scene->scene_gameobjects.erase(it);
+	}
+
 	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end();) {
 		if (*it != nullptr) {
 			(*it)->OnDestroy();
@@ -192,9 +206,5 @@ void GameObject::OnDestroy()
 		parent->childs.remove(this);
 	}
 	
-	std::list<GameObject*>::iterator it = find(App->scene->scene_gameobjects.begin(), App->scene->scene_gameobjects.end(), this);
-	if (it != App->scene->scene_gameobjects.end()) {
-		App->scene->scene_gameobjects.erase(it);
-	}
 }
 

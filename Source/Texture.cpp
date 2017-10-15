@@ -6,8 +6,6 @@ Texture::Texture()
 	texture_id = 0;
 	width = 0;
 	height = 0;
-	path = "";
-	name = "";
 	format = UnknownFormat;
 	type = UnknownType;
 }
@@ -56,26 +54,6 @@ void Texture::GetSize(uint & width, uint & height) const
 {
 	width = this->width;
 	height = this->height;
-}
-
-void Texture::SetPath(const char * path)
-{
-	this->path = path;
-}
-
-std::string Texture::GetPath() const
-{
-	return path;
-}
-
-void Texture::SetName(const char * name)
-{
-	this->name = name;
-}
-
-std::string Texture::GetName() const
-{
-	return name;
 }
 
 void Texture::SetType(TextureType type)

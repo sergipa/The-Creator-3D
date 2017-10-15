@@ -164,12 +164,9 @@ update_status ModuleEditor::Update(float deltaTime)
 
 	}
 
-	//ImGui::SameLine();
-	//ImGui::Text("%f", App->GetFPS());
-
 	ImGui::Separator();
 	ImGui::BeginDockspace();
-	for (std::vector<Window*>::iterator it = editor_windows.begin(); it != editor_windows.end(); it++) {
+	for (std::list<Window*>::iterator it = editor_windows.begin(); it != editor_windows.end(); it++) {
 		if ((*it)->IsActive())
 		{
 			(*it)->DrawWindow();
@@ -190,7 +187,7 @@ bool ModuleEditor::DrawEditor()
 
 bool ModuleEditor::CleanUp()
 {
-	for (std::vector<Window*>::iterator it = editor_windows.begin(); it != editor_windows.end(); ++it) {
+	for (std::list<Window*>::iterator it = editor_windows.begin(); it != editor_windows.end(); ++it) {
 		RELEASE(*it);
 	}
 	editor_windows.clear();

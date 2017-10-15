@@ -168,6 +168,7 @@
     <ClInclude Include="ModuleImport.h" />
     <ClInclude Include="ModulePhysics3D.h" />
     <ClInclude Include="ModuleRenderer3D.h" />
+    <ClInclude Include="ModuleResources.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleAudio.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="PerfTimer.h" />
     <ClInclude Include="RendererConfigWindow.h" />
     <ClInclude Include="RenderTextureMSAA.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="AssetsWindow.h" />
@@ -250,12 +252,14 @@
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModulePhysics3D.cpp" />
     <ClCompile Include="ModuleRenderer3D.cpp" />
+    <ClCompile Include="ModuleResources.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="PerformanceWindow.cpp" />
     <ClCompile Include="PerfTimer.cpp" />
     <ClCompile Include="RendererConfigWindow.cpp" />
     <ClCompile Include="RenderTextureMSAA.cpp" />
+    <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="AssetsWindow.cpp" />

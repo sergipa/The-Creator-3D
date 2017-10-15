@@ -7,7 +7,7 @@ class HardwareWindow :
 {
 public:
 	HardwareWindow();
-	~HardwareWindow();
+	virtual ~HardwareWindow();
 
 	void DrawWindow();
 };

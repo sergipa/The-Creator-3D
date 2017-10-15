@@ -7,7 +7,7 @@ class AboutWindow :
 {
 public:
 	AboutWindow();
-	~AboutWindow();
+	virtual ~AboutWindow();
 
 	void DrawWindow();
 };

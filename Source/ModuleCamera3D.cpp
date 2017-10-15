@@ -150,6 +150,7 @@ void ModuleCamera3D::FocusOnObject(const vec3 & object, const float & distance)
 {
 	Reference = object;
 	Position = Reference + (Z * distance);
+	CalculateViewMatrix();
 }
 
 

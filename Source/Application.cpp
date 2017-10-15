@@ -15,9 +15,10 @@ Application::Application()
 	scene = new ModuleScene(this);
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
-	physics = new ModulePhysics3D(this);
+	//physics = new ModulePhysics3D(this);
 	editor = new ModuleEditor(this);
 	import = new ModuleImport(this);
+	resources = new ModuleResources(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -33,6 +34,7 @@ Application::Application()
 	AddModule(scene);
 	AddModule(import);
 	AddModule(editor);
+	AddModule(resources);
 
 	random = new math::LCG();
 	cursor = nullptr;

@@ -19,7 +19,7 @@ void AboutWindow::DrawWindow()
 		ImGuiWindowFlags_ShowBorders);
 	ImGui::ShowTestWindow();
 	ImGui::SetWindowFontScale(1.1f);
-	ImGui::Text("The Creator v0.2");
+	ImGui::Text("The Creator v0.3");
 	ImGui::SetWindowFontScale(1);
 	ImGui::Text("The next generation 3D Game Engine");
 	ImGui::Text("By Adria Martin & Sergi Perez");
@@ -32,7 +32,9 @@ void AboutWindow::DrawWindow()
 	ImGui::BulletText("Glew 2.0.0");
 	ImGui::BulletText("ImGui 1.51");
 	ImGui::BulletText("MathGeoLib 1.5");
-	ImGui::BulletText("OpenGL 2.1");
+	ImGui::BulletText("OpenGL 3.1");
+	ImGui::BulletText("Assimp 3.1.1");
+	ImGui::BulletText("Devil 1.7.8");
 	ImGui::Spacing();
 	ImGui::Spacing();
 	ImGui::Text("License:");

@@ -4,8 +4,9 @@ typedef unsigned int uint;
 
 #include <string>
 #include "MathGeoLib\Geometry\GeometryAll.h"
+#include "Resource.h"
 
-class Mesh
+class Mesh : public Resource
 {
 public:
 	Mesh();
@@ -27,8 +28,6 @@ public:
 
 	uint id_texture_coords;
 	float* texture_coords;
-
-	std::string name;
 
 	AABB box;
 };

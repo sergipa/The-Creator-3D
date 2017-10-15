@@ -8,7 +8,7 @@ class ComponentMeshRenderer :
 {
 public:
 	ComponentMeshRenderer(GameObject* attached_gameobject);
-	~ComponentMeshRenderer();
+	virtual ~ComponentMeshRenderer();
 
 	Mesh* GetMesh() const;
 	void LoadMesh(Mesh* mesh);

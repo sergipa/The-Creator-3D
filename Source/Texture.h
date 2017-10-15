@@ -3,8 +3,9 @@
 typedef unsigned int uint;
 
 #include <string>
+#include "Resource.h"
 
-class Texture
+class Texture : public Resource
 {
 public:
 
@@ -28,10 +29,6 @@ public:
 	uint GetHeight() const;
 	void SetSize(uint width, uint height);
 	void GetSize(uint& width, uint& height) const;
-	void SetPath(const char* path);
-	std::string GetPath() const;
-	void SetName(const char* name);
-	std::string GetName() const;
 	void SetType(TextureType type);
 	TextureType GetType() const;
 	std::string GetTypeString() const;
@@ -43,8 +40,6 @@ private:
 	uint texture_id;
 	uint width;
 	uint height;
-	std::string path;
-	std::string name;
 	TextureFormat format;
 	TextureType type;
 };

@@ -7,7 +7,7 @@ class EditorStyleWindow :
 {
 public:
 	EditorStyleWindow();
-	~EditorStyleWindow();
+	virtual ~EditorStyleWindow();
 
 	void DrawWindow();
 };

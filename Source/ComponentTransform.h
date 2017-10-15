@@ -7,7 +7,7 @@ class ComponentTransform :
 {
 public:
 	ComponentTransform(GameObject* attached_gameobject);
-	~ComponentTransform();
+	virtual ~ComponentTransform();
 
 	void SetPosition(vec3 position);
 	vec3 GetGlobalPosition() const;

@@ -17,7 +17,7 @@ void log(const char file[], const char function[], int line, bool is_warning, bo
 	va_start(ap, format);
 	vsprintf_s(tmp_string, 4096, format, ap);
 	va_end(ap);
-	sprintf_s(tmp_string2, 4096, "%s\n At: %s => %s() => Line: %d.", tmp_string, file, function, line);
+	sprintf_s(tmp_string2, 4096, "At: %s => %s() => Line: %d. ""%s""\n", file, function, line, tmp_string);
 	OutputDebugString(tmp_string2);
 
 	sprintf_s(tmp_string2, 4096, "%s", tmp_string);

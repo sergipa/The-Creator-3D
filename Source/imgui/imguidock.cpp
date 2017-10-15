@@ -1215,7 +1215,7 @@ namespace ImGui {
 
 				for (int i = 0; i < docksCount; i++) {
 					data.EnterSection("Dock_" + std::to_string(i));
-					m_docks[i]->label = _strdup(data.GetString("label").c_str());
+					m_docks[i]->label = ImStrdup(data.GetString("label").c_str());
 					m_docks[i]->id = ImHash(m_docks[i]->label, 0);
 					m_docks[i]->status = (Status_)data.GetInt("status");
 					m_docks[i]->active = data.GetBool("active");

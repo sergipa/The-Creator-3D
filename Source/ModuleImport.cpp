@@ -7,6 +7,7 @@
 #include "OpenGL.h"
 #include "Mesh.h"
 #include "ModuleCamera3D.h"
+#include "ModuleResources.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -26,12 +27,10 @@ ModuleImport::ModuleImport(Application * app, bool start_enabled) : Module(app, 
 {
 	name = "Importer";
 
-#if _DEBUG
 	struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	stream.callback = &Callback;
 	aiAttachLogStream(&stream);
-#endif
 
 	ilInit();
 	iluInit();
@@ -116,7 +115,7 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 		{
 			aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
 			Mesh* mesh = new Mesh();
-			mesh->name = (std::string)ai_mesh->mName.C_Str();
+			mesh->SetName((std::string)ai_mesh->mName.C_Str());
 			mesh->num_vertices = ai_mesh->mNumVertices;
 			mesh->vertices = new float[mesh->num_vertices * 3];
 			memcpy(mesh->vertices, ai_mesh->mVertices, sizeof(float) * mesh->num_vertices * 3);
@@ -145,7 +144,9 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 			mesh->box.SetNegativeInfinity();
 			mesh->box.Enclose((float3*)ai_mesh->mVertices, ai_mesh->mNumVertices);
 			//Focus the camera on the mesh
+			App->camera->can_update = true;
 			App->camera->FocusOnObject(vec3(0, 0, 0), mesh->box.Size().Length());
+			App->camera->can_update = false;
 
 			if (ai_mesh->HasNormals())
 			{
@@ -221,6 +222,8 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 				}
 			}
 
+			App->resources->AddMesh(mesh);
+
 			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
 			mesh_renderer->LoadMesh(mesh);
@@ -244,6 +247,9 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 	//If gameobjects are not selected, don't load a texture. This is just for the assigment 1.
 	//In the future if we drag a image without selected gameobjects, a texture should be created and stored in assets/library
 	if (App->scene->selected_gameobjects.empty() && attach_to_gameobject) return nullptr;
+
+	//If texture exist. Don't load a new one
+	if (App->resources->TextureExist(GetFileName(path))) return App->resources->GetTexture(GetFileName(path));
 
 	ILuint image_id;
 	ilGenImages(1, &image_id);
@@ -286,6 +292,7 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 		}
 		ilDeleteImages(1, &image_id);
 		CONSOLE_DEBUG("Texture Loaded: %s", path);
+		App->resources->AddTexture(tmp_texture);
 	}
 	else 
 	{
@@ -293,6 +300,7 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 	}
 
 	if (attach_to_gameobject) App->scene->ApplyTextureToSelectedGameObjects(tmp_texture);
+
 
 	return tmp_texture;
 }

@@ -52,6 +52,9 @@
     <Filter Include="Sources\GameObject\Components">
       <UniqueIdentifier>{ae7286de-084c-42ab-89ad-970261411237}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Resources">
+      <UniqueIdentifier>{2edd635c-3608-4366-9052-5751a6604922}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -366,9 +369,6 @@
     <ClInclude Include="ComponentMeshRenderer.h">
       <Filter>Sources\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Sources\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentTransform.h">
       <Filter>Sources\GameObject\Components</Filter>
     </ClInclude>
@@ -378,8 +378,17 @@
     <ClInclude Include="RenderTextureMSAA.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleResources.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Sources\Helpers</Filter>
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Sources\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -596,9 +605,6 @@
     <ClCompile Include="ComponentMeshRenderer.cpp">
       <Filter>Sources\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Sources\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="ComponentTransform.cpp">
       <Filter>Sources\GameObject\Components</Filter>
     </ClCompile>
@@ -608,8 +614,17 @@
     <ClCompile Include="RenderTextureMSAA.cpp">
       <Filter>Sources\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleResources.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Sources\Helpers</Filter>
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Sources\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
