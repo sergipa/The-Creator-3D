@@ -9,6 +9,13 @@
             "Window_Full_Desktop": "0"
         },
         "Camera_Config": {
+            "key_speed": "L_SHIFT",
+            "key_forward": "W",
+            "key_backward": "S",
+            "key_up": "Q",
+            "key_down": "E",
+            "key_left": "A",
+            "key_right": "D"
         },
         "Renderer_Config": {
             "Vsync": "0",

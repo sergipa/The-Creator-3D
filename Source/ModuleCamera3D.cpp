@@ -209,6 +209,7 @@ void ModuleCamera3D::SaveData(Data * data)
 	data->AddString("key_up", App->input->KeyToString(key_up));
 	data->AddString("key_down", App->input->KeyToString(key_down));
 	data->AddString("key_left", App->input->KeyToString(key_left));
+	data->AddString("key_right", App->input->KeyToString(key_right));
 
 	data->CloseSection();
 }
