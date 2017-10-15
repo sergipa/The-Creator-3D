@@ -1,27 +1,37 @@
-#include "CameraConfigWindow.h"
+#include "InputConfigWindow.h"
 #include "ModuleCamera3D.h"
 #include "Application.h"
 #include "ModuleInput.h"
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
-CameraConfigWindow::CameraConfigWindow()
+InputConfigWindow::InputConfigWindow()
 {
 	active = false;
-	window_name = "Camera Config";
+	window_name = "Input Config";
 }
 
 
-CameraConfigWindow::~CameraConfigWindow()
+InputConfigWindow::~InputConfigWindow()
 {
 }
 
-void CameraConfigWindow::DrawWindow()
+void InputConfigWindow::DrawWindow()
 {
 	ImGui::Begin(window_name.c_str(), &active,
 		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_ShowBorders);
+
+	ImGui::Text("Mouse Position:");
+	ImGui::Text("X: %d", App->input->GetMouseX());
+	ImGui::Text("Y: %d", App->input->GetMouseY());
+	ImGui::Text("Mouse Motion:");
+	ImGui::Text("X: %d", App->input->GetMouseXMotion());
+	ImGui::Text("Y: %d", App->input->GetMouseYMotion());
+	ImGui::Text("Mouse Wheel: %d", App->input->GetMouseZ());
+
+	ImGui::Separator();
 
 	const char* Keys[] = { "A" ,"B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R",
 		"S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -30,6 +40,8 @@ void CameraConfigWindow::DrawWindow()
 		"+", "-", "*", "/", "LEFT_ARROW", "RIGHT_ARROW", "UP_ARROW","DOWN_ARROW","NUM_PAD_0","NUM_PAD_1",
 		"NUM_PAD_2", "NUM_PAD_3", "NUM_PAD_4", "NUM_PAD_5", "NUM_PAD_6", "NUM_PAD_7", "NUM_PAD_8", "NUM_PAD_9", "F1",
 		"F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10","F11","F12","F13","F14","F15","PAUSE" };
+
+	ImGui::Text("Camera:");
 
 	static int key_speed = SearchInKeys(Keys,App->input->KeyToString(App->camera->key_speed));//DEFAULT LSHIFT
 	static int key_forward = SearchInKeys(Keys, App->input->KeyToString(App->camera->key_forward));;//DEFAULT W
@@ -60,7 +72,7 @@ void CameraConfigWindow::DrawWindow()
 	
 }
 
-int CameraConfigWindow::SearchInKeys(const char *keys[],std::string key)
+int InputConfigWindow::SearchInKeys(const char *keys[],std::string key)
 {
 	int temp;
 	for (temp = 0; temp < 99; temp++)

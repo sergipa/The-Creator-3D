@@ -390,7 +390,7 @@
     <ClInclude Include="Resource.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="CameraConfigWindow.h">
+    <ClInclude Include="InputConfigWindow.h">
       <Filter>Sources\EditorUI\Modules Config</Filter>
     </ClInclude>
   </ItemGroup>
@@ -629,7 +629,7 @@
     <ClCompile Include="Resource.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="CameraConfigWindow.cpp">
+    <ClCompile Include="InputConfigWindow.cpp">
       <Filter>Sources\EditorUI\Modules Config</Filter>
     </ClCompile>
   </ItemGroup>

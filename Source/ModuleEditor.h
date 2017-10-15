@@ -18,7 +18,7 @@ class AboutWindow;
 class AppWindowConfigWindow;
 class EditorStyleWindow;
 class RendererConfigWindow;
-class CameraConfigWindow;
+class InputConfigWindow;
 
 class ModuleEditor :
 	public Module
@@ -56,7 +56,7 @@ public:
 	AppWindowConfigWindow* config_window = nullptr;
 	EditorStyleWindow* style_editor_window = nullptr;
 	RendererConfigWindow* renderer_config_window = nullptr;
-	CameraConfigWindow* camera_config_window = nullptr;
+	InputConfigWindow* input_config_window = nullptr;
 
 };
 

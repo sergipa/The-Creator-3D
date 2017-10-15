@@ -2,12 +2,12 @@
 #include "Window.h"
 #include <string>
 
-class CameraConfigWindow :
+class InputConfigWindow :
 	public Window
 {
 public:
-	CameraConfigWindow();
-	~CameraConfigWindow();
+	InputConfigWindow();
+	~InputConfigWindow();
 
 	void DrawWindow();
 	int SearchInKeys(const char *keys[],std::string key);

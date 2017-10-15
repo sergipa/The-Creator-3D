@@ -262,7 +262,12 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 	if (App->scene->selected_gameobjects.empty() && attach_to_gameobject) return nullptr;
 
 	//If texture exist. Don't load a new one
-	if (App->resources->TextureExist(GetFileName(path))) return App->resources->GetTexture(GetFileName(path));
+	if (App->resources->TextureExist(GetFileName(path)))
+	{
+		Texture* existing_texture = App->resources->GetTexture(GetFileName(path));
+		if(attach_to_gameobject) App->scene->ApplyTextureToSelectedGameObjects(existing_texture);
+		return existing_texture;
+	}
 
 	ILuint image_id;
 	ilGenImages(1, &image_id);
