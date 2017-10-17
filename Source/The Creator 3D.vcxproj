@@ -54,6 +54,8 @@
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -182,6 +184,7 @@
     <ClInclude Include="RenderTextureMSAA.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="tinyfiledialogs.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="AssetsWindow.h" />
     <ClInclude Include="ConsoleWindow.h" />
@@ -263,6 +266,7 @@
     <ClCompile Include="RenderTextureMSAA.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="tinyfiledialogs.c" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="AssetsWindow.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />

@@ -43,3 +43,13 @@ void Resource::SetUID(UID uid)
 {
 	this->uid = uid;
 }
+
+Resource::ResourceType Resource::GetType() const
+{
+	return type;
+}
+
+void Resource::SetType(ResourceType type)
+{
+	this->type = type;
+}

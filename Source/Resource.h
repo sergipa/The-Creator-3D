@@ -6,8 +6,13 @@
 class Resource
 {
 public:
+
+	enum ResourceType {
+		TextureResource, MeshResource, SceneResource, AnimationResource, PrefabResource, ScriptResource, AudioResource, ParticleFXResource, Unknown
+	};
+
 	Resource();
-	~Resource();
+	virtual ~Resource();
 
 	std::string GetName() const;
 	std::string GetPath() const;
@@ -15,10 +20,13 @@ public:
 	void SetName(std::string name);
 	void SetPath(std::string path);
 	void SetUID(UID uid);
+	ResourceType GetType() const;
+	void SetType(ResourceType type);
 
 private:
 	std::string name;
 	std::string path;
 	UID uid;
+	ResourceType type;
 };
 

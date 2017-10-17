@@ -19,7 +19,7 @@ public:
 	};
 
 	Texture();
-	~Texture();
+	virtual ~Texture();
 
 	void SetID(uint id);
 	uint GetID() const;

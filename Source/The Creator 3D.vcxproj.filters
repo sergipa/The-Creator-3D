@@ -393,6 +393,9 @@
     <ClInclude Include="InputConfigWindow.h">
       <Filter>Sources\EditorUI\Modules Config</Filter>
     </ClInclude>
+    <ClInclude Include="tinyfiledialogs.h">
+      <Filter>Sources\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -631,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="InputConfigWindow.cpp">
       <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyfiledialogs.c">
+      <Filter>Sources\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
