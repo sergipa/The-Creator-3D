@@ -188,11 +188,16 @@ void GameObject::OnDestroy()
 {
 	is_on_destroy = true;
 
-	std::list<GameObject*>::iterator it = find(App->scene->scene_gameobjects.begin(), App->scene->scene_gameobjects.end(), this);
-	if (it != App->scene->scene_gameobjects.end()) {
-		App->scene->scene_gameobjects.erase(it);
+	std::list<GameObject*>::iterator it = find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), this);
+	if (it != App->scene->selected_gameobjects.end()) {
+		App->scene->selected_gameobjects.erase(it);
 	}
 
+	std::list<GameObject*>::iterator it2 = find(App->scene->scene_gameobjects.begin(), App->scene->scene_gameobjects.end(), this);
+	if (it2 != App->scene->scene_gameobjects.end()) {
+		App->scene->scene_gameobjects.erase(it2);
+	}
+	
 	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end();) {
 		if (*it != nullptr) {
 			(*it)->OnDestroy();

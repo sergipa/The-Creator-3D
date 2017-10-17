@@ -67,12 +67,12 @@ update_status ModuleScene::PreUpdate(float dt)
 			if ((*it)->IsRoot()) {
 				root_gameobjects.remove(*it);
 			}
-			selected_gameobjects.remove(*it);
 			CONSOLE_DEBUG("GameObject Destroyed: %s", (*it)->GetName().c_str());
 			RELEASE(*it);
 			it = gameobjects_to_destroy.erase(it);
 		}
 	}
+
 
 	return UPDATE_CONTINUE;
 }
