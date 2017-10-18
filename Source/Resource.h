@@ -8,7 +8,8 @@ class Resource
 public:
 
 	enum ResourceType {
-		TextureResource, MeshResource, SceneResource, AnimationResource, PrefabResource, ScriptResource, AudioResource, ParticleFXResource, Unknown
+		TextureResource, MeshResource, SceneResource, AnimationResource, PrefabResource, ScriptResource, 
+		AudioResource, ParticleFXResource, FontResource, Unknown
 	};
 
 	Resource();

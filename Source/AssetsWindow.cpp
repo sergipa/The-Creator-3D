@@ -16,7 +16,9 @@ AssetsWindow::AssetsWindow()
 	show_new_folder_window = false;
 	file_options_open = true;
 	texture_icon = nullptr;
-	mesh_icon = nullptr;
+	mesh_icon = App->import->LoadEngineImages(EDITOR_IMAGES_FOLDER"mesh_icon.png");
+	font_icon = App->import->LoadEngineImages(EDITOR_IMAGES_FOLDER"font_icon.png");
+	folder_icon = App->import->LoadEngineImages(EDITOR_IMAGES_FOLDER"folder_icon.png");
 
 	if (!fs::exists(ASSETS_FOLDER)) {
 		if (!fs::create_directory(ASSETS_FOLDER)) {
@@ -32,6 +34,7 @@ AssetsWindow::~AssetsWindow()
 {
 	RELEASE(texture_icon);
 	RELEASE(mesh_icon);
+	RELEASE(font_icon);
 }
 
 void AssetsWindow::DrawWindow()
@@ -126,17 +129,27 @@ void AssetsWindow::DrawWindow()
 					if (!fs::is_directory(p)) 
 					{
 						bool selected = false;
+						float font_size = ImGui::GetFontSize();
 						switch (ExtensionToResourceType(p.path().extension().string()))
 						{
 						case Resource::TextureResource:
-							//ImGui::Image((ImTextureID)texture_icon->GetID(), { 16,16 });
-							//ImGui::SameLine();
+							texture_icon = App->resources->GetTexture(p.path().stem().string());
+							ImGui::Image((ImTextureID)texture_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
+							ImGui::SameLine();
 							break;
 						case Resource::MeshResource:
-							//ImGui::Image((ImTextureID)mesh_icon->GetID(), { 16,16 });
+							ImGui::Image((ImTextureID)mesh_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
+							ImGui::SameLine();
+							break;
+						case Resource::FontResource:
+							ImGui::Image((ImTextureID)font_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
+							ImGui::SameLine();
+							break;
+						case Resource::Unknown:
+							continue; //if the type is unknown skip and don't draw the file in the panel
 							break;
 						}
-
+						
 						if (p.path() == selected_file_path) {
 							if (App->scene->selected_gameobjects.empty()) {
 								selected = true;
@@ -145,7 +158,7 @@ void AssetsWindow::DrawWindow()
 								selected_file_path.clear();
 							}
 						}
-						ImGui::Selectable(p.path().filename().string().c_str(), &selected, 0, { 0,0 });
+						ImGui::Selectable(p.path().filename().string().c_str(), &selected);
 						if (ImGui::IsItemHoveredRect()) {
 							if (ImGui::IsItemClicked(0) || ImGui::IsItemClicked(1) && !file_options_open) {
 								selected_file_path = p.path();
@@ -191,7 +204,7 @@ void AssetsWindow::FillAssetsLists()
 			switch (ExtensionToResourceType(p.path().extension().string()))
 			{
 			case Resource::TextureResource:
-				//App->import->LoadTexture(p.path().string().c_str(), false);
+				App->import->LoadTexture(p.path().string().c_str(), false);
 				break;
 			case Resource::MeshResource:
 				//App->import->LoadMesh(p.path().string().c_str());
@@ -228,7 +241,7 @@ void AssetsWindow::DrawChilds(fs::path path)
 		flag |= ImGuiTreeNodeFlags_Selected;
 	}
 
-	if (ImGui::TreeNodeEx(node_name, flag))
+	if (ImGui::TreeNodeExI(node_name, (ImTextureID)folder_icon->GetID(), flag))
 	{
 		if (ImGui::IsItemClicked(0) || ImGui::IsItemClicked(1)) {
 			selected_folder = path;
@@ -256,6 +269,7 @@ int AssetsWindow::ExtensionToResourceType(std::string str)
 	else if (str == ".animation") return Resource::AnimationResource;
 	else if (str == ".particleFX") return Resource::ParticleFXResource;
 	else if (str == ".scene") return Resource::SceneResource;
+	else if (str == ".ttf") return Resource::FontResource;
 	
 	return Resource::Unknown;
 }

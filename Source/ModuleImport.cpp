@@ -323,6 +323,58 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 	return tmp_texture;
 }
 
+Texture * ModuleImport::LoadEngineImages(const char * path)
+{
+	ILuint image_id;
+	ilGenImages(1, &image_id);
+	ilBindImage(image_id);
+
+	Texture* tmp_texture = nullptr;
+
+	if (ilLoadImage(path))
+	{
+		ILinfo ImageInfo;
+		iluGetImageInfo(&ImageInfo);
+
+		tmp_texture = new Texture();
+		tmp_texture->SetID(ilutGLBindTexImage());
+		tmp_texture->SetWidth(ImageInfo.Width);
+		tmp_texture->SetHeight(ImageInfo.Height);
+		tmp_texture->SetPath(path);
+		tmp_texture->SetName(GetFileName(path).c_str());
+
+		switch (ImageInfo.Format)
+		{
+		case IL_COLOUR_INDEX: tmp_texture->SetFormat(Texture::ColorIndex); break;
+		case IL_ALPHA: tmp_texture->SetFormat(Texture::alpha); break;
+		case IL_RGB: tmp_texture->SetFormat(Texture::rgb); break;
+		case IL_RGBA: tmp_texture->SetFormat(Texture::rgba); break;
+		case IL_BGR: tmp_texture->SetFormat(Texture::bgr); break;
+		case IL_BGRA: tmp_texture->SetFormat(Texture::bgra); break;
+		case IL_LUMINANCE: tmp_texture->SetFormat(Texture::luminance); break;
+		case IL_LUMINANCE_ALPHA: tmp_texture->SetFormat(Texture::luminance_alpha); break;
+		default: tmp_texture->SetFormat(Texture::UnknownFormat); break;
+		}
+		switch (ImageInfo.Type)
+		{
+		case IL_BMP: tmp_texture->SetType(Texture::TextureType::bmp); break;
+		case IL_JPG: tmp_texture->SetType(Texture::TextureType::jpg); break;
+		case IL_PNG: tmp_texture->SetType(Texture::TextureType::png); break;
+		case IL_TGA: tmp_texture->SetType(Texture::TextureType::tga); break;
+		case IL_DDS: tmp_texture->SetType(Texture::TextureType::dds); break;
+		default: tmp_texture->SetType(Texture::TextureType::UnknownType); break;
+		}
+		ilDeleteImages(1, &image_id);
+		CONSOLE_DEBUG("Engine image Loaded: %s", path);
+	}
+	else
+	{
+		CONSOLE_DEBUG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
+	}
+
+	return tmp_texture;
+}
+
 std::string ModuleImport::GetFileName(const char * path)
 {
 	std::string name;

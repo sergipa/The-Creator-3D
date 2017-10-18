@@ -546,6 +546,8 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_PLACEMENT_NEW
 #include "imgui_internal.h"
+#include "../Application.h"
+#include "../ModuleImport.h"
 
 #include <ctype.h>      // toupper, isprint
 #include <stdlib.h>     // NULL, malloc, free, qsort, atoi
@@ -5970,7 +5972,7 @@ bool ImGui::TreeNodeBehaviorIsOpen(ImGuiID id, ImGuiTreeNodeFlags flags)
     return is_open;
 }
 
-bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* label, const char* label_end)
+bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* label, const char* label_end, ImTextureID image_id)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -6070,7 +6072,12 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
             RenderCollapseTriangle(bb.Min + ImVec2(padding.x, g.FontSize*0.15f + text_base_offset_y), is_open, 0.70f);
         if (g.LogEnabled)
             LogRenderedText(text_pos, ">");
-        RenderText(text_pos, label, label_end, false);
+		/*const ImRect image_bb(window->DC.CursorPos + padding, window->DC.CursorPos - padding - ImVec2(16, 5));*/
+		if (image_id > 0)
+		{
+			window->DrawList->AddImage((ImTextureID)image_id, bb.Min + ImVec2(padding.x + g.FontSize, g.FontSize*0.03 + text_base_offset_y), bb.Min + ImVec2(padding.x + g.FontSize, g.FontSize*0.03f + text_base_offset_y) + ImVec2(g.FontSize, g.FontSize), ImVec2(0, 1), ImVec2(1, 0));
+		}
+		RenderText(text_pos + ImVec2(g.FontSize, -1), label, label_end, false);
     }
 
     if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))
@@ -6119,6 +6126,15 @@ bool ImGui::TreeNodeEx(const char* label, ImGuiTreeNodeFlags flags)
         return false;
 
     return TreeNodeBehavior(window->GetID(label), flags, label, NULL);
+}
+
+bool ImGui::TreeNodeExI(const char* label, ImTextureID image_id, ImGuiTreeNodeFlags flags)
+{
+	ImGuiWindow* window = GetCurrentWindow();
+	if (window->SkipItems)
+		return false;
+
+	return TreeNodeBehavior(window->GetID(label), flags, label, NULL, image_id);
 }
 
 bool ImGui::TreeNodeExV(const char* str_id, ImGuiTreeNodeFlags flags, const char* fmt, va_list args)

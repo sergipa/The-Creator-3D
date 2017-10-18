@@ -67,4 +67,6 @@ enum update_status
 #define EDITOR_CONFIG_FILE "./Editor_Settings/Editor_Config.json"
 #define EDITOR_LAYOUT_FILE "./Editor_Settings/Editor_Layout"
 #define EDITOR_STYLE_FILE "./Editor_Settings/Editor_Style.json"
+#define EDITOR_IMAGES_FOLDER "./Editor_Settings/Images/"
+#define EDITOR_FONTS_FOLDER "./Editor_Settings/Fonts/"
 #define TEXTURES_FOLDER "./Assets/Textures/"

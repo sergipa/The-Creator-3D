@@ -3,6 +3,8 @@
 #include <filesystem>
 namespace fs = std::experimental::filesystem;
 
+//C++ filesystem library: http://en.cppreference.com/w/cpp/experimental/fs
+
 class Texture;
 
 class AssetsWindow :
@@ -29,6 +31,9 @@ private:
 
 	Texture* texture_icon;
 	Texture* mesh_icon;
+	Texture* font_icon;
+	Texture* folder_icon;
+
 	fs::path selected_file_path;
 	fs::path selected_folder;
 };

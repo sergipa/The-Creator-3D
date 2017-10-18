@@ -32,11 +32,11 @@ bool ModuleEditor::Init(Data* editor_config)
 	// (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontDefault();
-	io.Fonts->AddFontFromFileTTF(FONTS_FOLDER"Cousine-Regular.ttf", 15.0f);
-	io.Fonts->AddFontFromFileTTF(FONTS_FOLDER"DroidSans.ttf", 16.0f);
-	io.Fonts->AddFontFromFileTTF(FONTS_FOLDER"ProggyClean.ttf", 13.0f);
-	io.Fonts->AddFontFromFileTTF(FONTS_FOLDER"ProggyTiny.ttf", 10.0f);
-	font = io.Fonts->AddFontFromFileTTF(FONTS_FOLDER"OpenSans-Semibold.ttf", 16.0f);
+	io.Fonts->AddFontFromFileTTF(EDITOR_FONTS_FOLDER"Cousine-Regular.ttf", 15.0f);
+	io.Fonts->AddFontFromFileTTF(EDITOR_FONTS_FOLDER"DroidSans.ttf", 16.0f);
+	io.Fonts->AddFontFromFileTTF(EDITOR_FONTS_FOLDER"ProggyClean.ttf", 13.0f);
+	io.Fonts->AddFontFromFileTTF(EDITOR_FONTS_FOLDER"ProggyTiny.ttf", 10.0f);
+	font = io.Fonts->AddFontFromFileTTF(EDITOR_FONTS_FOLDER"OpenSans-Semibold.ttf", 16.0f);
 
 	LoadEditorStyle();
 	
