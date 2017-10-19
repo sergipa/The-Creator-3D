@@ -33,6 +33,8 @@ public:
 	void Destroy();
 	void OnDestroy();
 
+	UID GetUID() const;
+
 public:
 	std::list<GameObject*> childs;
 	std::list<Component*> components_list;
@@ -45,5 +47,6 @@ private:
 	std::string tag;
 	std::string layer;
 	bool is_root;
+	UID uuid;
 };
 

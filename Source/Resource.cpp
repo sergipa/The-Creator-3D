@@ -1,14 +1,12 @@
 #include "Resource.h"
-
-
+#include "Application.h"
 
 Resource::Resource()
 {
 	name = "";
 	path = "";
-	uid = 0;
+	uuid = App->RandomNumber().Int();
 }
-
 
 Resource::~Resource()
 {

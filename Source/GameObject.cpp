@@ -22,6 +22,8 @@ GameObject::GameObject(GameObject* parent)
 	is_on_destroy = false;
 
 	AddComponent(Component::Transform);
+
+	uuid = App->RandomNumber().Int();
 }
 
 GameObject::~GameObject()
@@ -211,5 +213,10 @@ void GameObject::OnDestroy()
 		parent->childs.remove(this);
 	}
 	
+}
+
+UID GameObject::GetUID() const
+{
+	return uuid;
 }
 

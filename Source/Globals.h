@@ -63,10 +63,11 @@ enum update_status
 
 
 #define ASSETS_FOLDER "./Project/Assets/"
+#define ASSETS_TEXTURES_FOLDER "./Project/Assets/Textures/"
 #define PROJECT_FOLDER "./Project/"
-#define FONTS_FOLDER "./Project/Assets/Fonts/"
-#define TEXTURES_FOLDER "./Project/Assets/Textures/"
 #define LIBRARY_FOLDER "./Project/Library/"
+#define LIBRARY_TEXTURES_FOLDER "./Project/Library/Textures/"
+#define LIBRARY_MESHES_FOLDER "./Project/Library/Textures/"
 #define EDITOR_CONFIG_FILE "./Editor_Settings/Editor_Config.json"
 #define EDITOR_LAYOUT_FILE "./Editor_Settings/Editor_Layout"
 #define EDITOR_STYLE_FILE "./Editor_Settings/Editor_Style.json"

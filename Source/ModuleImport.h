@@ -6,6 +6,7 @@ class GameObject;
 class Texture;
 struct aiNode;
 struct aiScene;
+class Mesh;
 
 class ModuleImport :
 	public Module
@@ -22,6 +23,8 @@ public:
 
 	//Loads images used in engine like files icons
 	Texture* LoadEngineImages(const char* path);
+
+	Mesh* LoadMeshFromLibrary(std::string path);
 
 private:
 	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);

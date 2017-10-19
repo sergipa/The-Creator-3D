@@ -20,14 +20,13 @@ public:
 	UID GetUID() const;
 	void SetName(std::string name);
 	void SetPath(std::string path);
-	void SetUID(UID uid);
 	ResourceType GetType() const;
 	void SetType(ResourceType type);
 
 private:
 	std::string name;
 	std::string path;
-	UID uid;
+	UID uuid;
 	ResourceType type;
 };
 

@@ -1,4 +1,5 @@
 #include "Component.h"
+#include "Application.h"
 
 Component::Component()
 {
@@ -6,6 +7,7 @@ Component::Component()
 	active = true;
 	gameobject = nullptr;
 	name = "Unknown";
+	uuid = App->RandomNumber().Int();
 }
 
 Component::~Component()
@@ -64,6 +66,11 @@ void Component::SetName(std::string name)
 std::string Component::GetName() const
 {
 	return name;
+}
+
+UID Component::GetUID() const
+{
+	return uuid;
 }
 
 void Component::Save(Data & data) const

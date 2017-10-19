@@ -24,11 +24,11 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-	RELEASE(indices);
-	RELEASE(vertices);
-	RELEASE(normals);
-	RELEASE(colors);
-	RELEASE(texture_coords);
+	RELEASE_ARRAY(indices);
+	RELEASE_ARRAY(vertices);
+	RELEASE_ARRAY(normals);
+	RELEASE_ARRAY(colors);
+	RELEASE_ARRAY(texture_coords);
 
 	glDeleteBuffers(1, &id_vertices);
 	glDeleteBuffers(1, &id_indices);
