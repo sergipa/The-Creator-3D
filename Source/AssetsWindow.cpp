@@ -21,7 +21,7 @@ AssetsWindow::AssetsWindow()
 	folder_icon = App->import->LoadEngineImages(EDITOR_IMAGES_FOLDER"folder_icon.png");
 
 	if (!fs::exists(ASSETS_FOLDER)) {
-		if (!fs::create_directory(ASSETS_FOLDER)) {
+		if (!fs::create_directory(PROJECT_FOLDER"Assets")) {
 			CONSOLE_ERROR("Assets folder is not found and can't create new folder");
 			return;
 		}

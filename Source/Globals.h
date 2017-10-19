@@ -62,11 +62,13 @@ enum update_status
 #define TITLE "The Creator 3D"
 
 
-#define ASSETS_FOLDER "./Assets/"
-#define FONTS_FOLDER "./Assets/Fonts/"
+#define ASSETS_FOLDER "./Project/Assets/"
+#define PROJECT_FOLDER "./Project/"
+#define FONTS_FOLDER "./Project/Assets/Fonts/"
+#define TEXTURES_FOLDER "./Project/Assets/Textures/"
+#define LIBRARY_FOLDER "./Project/Library/"
 #define EDITOR_CONFIG_FILE "./Editor_Settings/Editor_Config.json"
 #define EDITOR_LAYOUT_FILE "./Editor_Settings/Editor_Layout"
 #define EDITOR_STYLE_FILE "./Editor_Settings/Editor_Style.json"
 #define EDITOR_IMAGES_FOLDER "./Editor_Settings/Images/"
 #define EDITOR_FONTS_FOLDER "./Editor_Settings/Fonts/"
-#define TEXTURES_FOLDER "./Assets/Textures/"
