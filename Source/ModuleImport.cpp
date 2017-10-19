@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "ModuleCamera3D.h"
 #include "ModuleResources.h"
+#include "Data.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -308,6 +309,18 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 			case IL_DDS: tmp_texture->SetType(Texture::TextureType::dds); break;
 			default: tmp_texture->SetType(Texture::TextureType::UnknownType); break;
 		}
+
+		//save texture library
+		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
+		if (ilSave(IL_DDS, (LIBRARY_FOLDER + GetFileName(path) + ".dds").c_str()))
+		{
+			CONSOLE_DEBUG("%s library file created.", GetFileName(path).c_str());
+		}
+		else 
+		{
+			CONSOLE_DEBUG("%s library file cannot be created.", GetFileName(path).c_str());
+		}
+
 		ilDeleteImages(1, &image_id);
 		CONSOLE_DEBUG("Texture Loaded: %s", path);
 		App->resources->AddTexture(tmp_texture);
@@ -318,7 +331,6 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 	}
 
 	if (attach_to_gameobject) App->scene->ApplyTextureToSelectedGameObjects(tmp_texture);
-
 
 	return tmp_texture;
 }
