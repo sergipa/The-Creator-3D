@@ -213,6 +213,8 @@ void ModuleRenderer3D::DrawScene()
 	
 	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
+		glPushMatrix();
+
 		if ((*it)->GetTexture() != nullptr && (*it)->GetTexture()->GetID() > 0)
 		{
 			glBindTexture(GL_TEXTURE_2D, (*it)->GetTexture()->GetID());
@@ -256,6 +258,8 @@ void ModuleRenderer3D::DrawScene()
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
+
+		glPopMatrix();
 	}
 	mesh_to_draw.clear();
 }

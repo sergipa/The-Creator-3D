@@ -10,6 +10,7 @@
 #include "SceneWindow.h"
 #include "PerformanceWindow.h"
 #include "Texture.h"
+#include "Primitive.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -83,7 +84,7 @@ update_status ModuleScene::Update(float dt)
 	ms_timer.Start();
 
 	HandleInput();
-	
+
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
 		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
@@ -188,7 +189,7 @@ void ModuleScene::HandleInput()
 			{
 				ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
 				App->camera->can_update = true;
-				App->camera->Look(App->camera->Position, transform->GetGlobalPosition());
+				App->camera->Look(App->camera->Position, vec3(transform->GetGlobalPosition().x, transform->GetGlobalPosition().y, transform->GetGlobalPosition().z));
 				App->camera->can_update = false;
 			}
 		} 
@@ -201,7 +202,7 @@ void ModuleScene::HandleInput()
 				{
 					ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
 					App->camera->can_update = true;
-					App->camera->Look(App->camera->Position, transform->GetGlobalPosition(), true);
+					App->camera->Look(App->camera->Position, vec3(transform->GetGlobalPosition().x, transform->GetGlobalPosition().y, transform->GetGlobalPosition().z), true);
 					App->camera->SetOrbital(true);
 				}
 			}

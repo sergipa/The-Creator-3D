@@ -1,7 +1,7 @@
 #include "PropertiesWindow.h"
 #include "Application.h"
 #include "GameObject.h"
-#include "glmath.h"
+#include "MathGeoLib\MathGeoLib.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -129,9 +129,9 @@ void PropertiesWindow::DrawComponent(Component * component)
 void PropertiesWindow::DrawTransformPanel(ComponentTransform * transform)
 {
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-		vec3 position;
-		vec3 rotation;
-		vec3 scale;
+		float3 position;
+		float3 rotation;
+		float3 scale;
 		if (transform->GetGameObject()->IsRoot()) {
 			position = transform->GetGlobalPosition();
 			rotation = transform->GetGlobalRotation();
