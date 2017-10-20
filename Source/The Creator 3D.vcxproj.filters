@@ -396,6 +396,9 @@
     <ClInclude Include="tinyfiledialogs.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentCamera.h">
+      <Filter>Sources\GameObject\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -637,6 +640,9 @@
     </ClCompile>
     <ClCompile Include="tinyfiledialogs.c">
       <Filter>Sources\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCamera.cpp">
+      <Filter>Sources\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

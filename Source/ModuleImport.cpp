@@ -259,14 +259,14 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 				cursor += bytes;
 			}
 			
-			std::ofstream outfile((LIBRARY_FOLDER + mesh->GetName() + ".mesh").c_str(), std::ofstream::binary);
+			std::ofstream outfile((LIBRARY_MESHES_FOLDER + mesh->GetName() + ".mesh").c_str(), std::ofstream::binary);
 			outfile.write(data, size);
 			outfile.close();
 
 			delete[] data;
 			data = nullptr;
 
-			LoadMeshFromLibrary((LIBRARY_FOLDER + mesh->GetName() + ".mesh"));
+			LoadMeshFromLibrary((LIBRARY_MESHES_FOLDER + mesh->GetName() + ".mesh"));
 
 			App->resources->AddMesh(mesh);
 

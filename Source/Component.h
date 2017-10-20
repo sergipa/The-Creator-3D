@@ -26,6 +26,7 @@ public:
 	std::string GetName() const;
 	UID GetUID() const;
 
+
 	virtual void Save(Data& data) const = 0;
 	virtual void Load(Data& data) = 0;
 

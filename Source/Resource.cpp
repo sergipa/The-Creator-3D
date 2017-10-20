@@ -24,7 +24,7 @@ std::string Resource::GetPath() const
 
 UID Resource::GetUID() const
 {
-	return uid;
+	return uuid;
 }
 
 void Resource::SetName(std::string name)
@@ -39,7 +39,7 @@ void Resource::SetPath(std::string path)
 
 void Resource::SetUID(UID uid)
 {
-	this->uid = uid;
+	uuid = uid;
 }
 
 Resource::ResourceType Resource::GetType() const

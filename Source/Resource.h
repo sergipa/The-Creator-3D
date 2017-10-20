@@ -18,6 +18,7 @@ public:
 	std::string GetName() const;
 	std::string GetPath() const;
 	UID GetUID() const;
+	void SetUID(UID uid);
 	void SetName(std::string name);
 	void SetPath(std::string path);
 	ResourceType GetType() const;
