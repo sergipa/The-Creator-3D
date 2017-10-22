@@ -8,6 +8,9 @@
 #include "Data.h"
 #include "ComponentMeshRenderer.h"
 #include "PerformanceWindow.h"
+#include "GameObject.h"
+#include "ComponentTransform.h"
+#include "Component.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -213,8 +216,10 @@ void ModuleRenderer3D::DrawScene()
 	
 	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
-		glPushMatrix();
+		ComponentTransform* transform = (ComponentTransform*)(*it)->GetGameObject()->GetComponent(Component::Transform);
 
+		glPushMatrix();
+		glMultMatrixf(transform->GetOpenGLMatrix());
 		if ((*it)->GetTexture() != nullptr && (*it)->GetTexture()->GetID() > 0)
 		{
 			glBindTexture(GL_TEXTURE_2D, (*it)->GetTexture()->GetID());
@@ -258,8 +263,9 @@ void ModuleRenderer3D::DrawScene()
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisableClientState(GL_COLOR_ARRAY);
-
 		glPopMatrix();
+
+		transform->UpdateGlobalMatrix();
 	}
 	mesh_to_draw.clear();
 }

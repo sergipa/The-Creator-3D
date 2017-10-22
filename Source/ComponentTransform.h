@@ -19,13 +19,16 @@ public:
 	float3 GetGlobalScale() const;
 	float3 GetLocalScale() const;
 	void UpdateGlobalMatrix();
+	const float4x4 GetMatrix() const;
+	const float* GetOpenGLMatrix() const;
 
 	void Save(Data& data) const;
 	void Load(Data& data);
 
 private:
 	float3 position;
-	float3 rotation;
+	Quat rotation;
+	float3 shown_rotation;
 	float3 scale;
 
 	float4x4 transform_matrix;
