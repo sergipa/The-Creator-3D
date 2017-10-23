@@ -8,6 +8,10 @@
             "Window_Borderless": "0",
             "Window_Full_Desktop": "0"
         },
+        "Renderer_Config": {
+            "Vsync": "0",
+            "MSAA_Level": "2"
+        },
         "Camera_Config": {
             "key_speed": "L_SHIFT",
             "key_forward": "W",
@@ -17,9 +21,15 @@
             "key_left": "A",
             "key_right": "D"
         },
-        "Renderer_Config": {
-            "Vsync": "0",
-            "MSAA_Level": "2"
+        "Tags": {
+            "tags_num": "1",
+            "tag_0": "Default"
+        },
+        "Layers": {
+            "layers_num": "1",
+            "layer_0": "Default",
+            "layer_1": "Ignore Raycast",
+            "layer_2": "UI"
         }
     }
 }

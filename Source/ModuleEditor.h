@@ -19,6 +19,8 @@ class AppWindowConfigWindow;
 class EditorStyleWindow;
 class RendererConfigWindow;
 class InputConfigWindow;
+class TagsAndLayersWindow;
+class ImportWindow;
 
 class ModuleEditor :
 	public Module
@@ -57,6 +59,7 @@ public:
 	EditorStyleWindow* style_editor_window = nullptr;
 	RendererConfigWindow* renderer_config_window = nullptr;
 	InputConfigWindow* input_config_window = nullptr;
-
+	TagsAndLayersWindow* tags_and_layers_window = nullptr;
+	ImportWindow* import_window = nullptr;
 };
 

@@ -17,6 +17,7 @@
 #include <list>
 
 class Data;
+class TagsAndLayers;
 
 class Application
 {
@@ -31,6 +32,7 @@ public:
 	ModuleEditor* editor;
 	ModuleImport* import;
 	ModuleResources* resources;
+	TagsAndLayers* tags_and_layers;
 private:
 
 	Timer	ms_timer;

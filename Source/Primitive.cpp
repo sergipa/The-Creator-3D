@@ -85,6 +85,10 @@ void Primitive::InnerRender() const
 	glPointSize(1.0f);
 }
 
+void Primitive::CleanUp()
+{
+}
+
 // ------------------------------------------------------------
 void Primitive::SetPos(float x, float y, float z)
 {
@@ -291,6 +295,8 @@ void pCubeVArray::InnerRender() const
 	glDrawArrays(GL_TRIANGLES, 0, num_vertex * 3);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
 }
 //CUBE INDICES ==================================================
 pCubeIndices::pCubeIndices()
@@ -393,6 +399,8 @@ void pCubeIndices::InnerRender() const
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
 }
 // SPHERE ============================================
 pSphere::pSphere() : Primitive(), radius(1.0f)
@@ -546,6 +554,8 @@ void pSphere::InnerRender() const
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 
@@ -778,4 +788,116 @@ void pFrustum::InnerRender() const
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+
 }
+
+DebugFrustum::DebugFrustum(math::Frustum & frustum)
+{
+	frustum.GetCornerPoints(corners);
+}
+
+void DebugFrustum::InnerRender() const
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(2.0f);
+	glDisable(GL_CULL_FACE);
+
+	glColor3f(color.r, color.g, color.b);
+
+	glBegin(GL_QUADS);
+
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[3]);
+
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+	glVertex3fv((GLfloat*)&corners[7]);
+
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[6]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[1]);
+
+	glEnd();
+	glLineWidth(1.0f);
+	glEnable(GL_CULL_FACE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+
+DebugAABB::DebugAABB(math::AABB & aabb)
+{
+	aabb.GetCornerPoints(corners);
+
+	/*for (int i = 0; i < 8; i++)
+	{
+		corners[i].z *= -1;
+	}*/
+}
+
+void DebugAABB::InnerRender() const
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(2.0f);
+	glDisable(GL_CULL_FACE);
+
+	glColor3f(color.r, color.g, color.b);
+
+	glBegin(GL_QUADS);
+
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[3]);
+
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[2]);
+	glVertex3fv((GLfloat*)&corners[6]);
+
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[6]);
+	glVertex3fv((GLfloat*)&corners[7]);
+
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[1]);
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	glVertex3fv((GLfloat*)&corners[3]);
+	glVertex3fv((GLfloat*)&corners[7]);
+	glVertex3fv((GLfloat*)&corners[6]);
+	glVertex3fv((GLfloat*)&corners[2]);
+
+	glVertex3fv((GLfloat*)&corners[0]);
+	glVertex3fv((GLfloat*)&corners[4]);
+	glVertex3fv((GLfloat*)&corners[5]);
+	glVertex3fv((GLfloat*)&corners[1]);
+
+	glEnd();
+	glLineWidth(1.0f);
+	glEnable(GL_CULL_FACE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+

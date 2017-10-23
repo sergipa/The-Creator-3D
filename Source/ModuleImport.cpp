@@ -10,6 +10,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleResources.h"
 #include "Data.h"
+#include "ImportWindow.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -67,11 +68,6 @@ void ModuleImport::LoadFile(std::string path)
 bool ModuleImport::LoadMesh(const char* path)
 {
 	bool ret = true;
-
-	if (!App->scene->root_gameobjects.empty())
-	{
-		App->scene->DestroyAllGameObjects();
-	}
 
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene != nullptr && scene->HasMeshes())
@@ -143,11 +139,9 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 				CONSOLE_DEBUG("New mesh ""%s"" with %d triangles.", node->mName.C_Str(), mesh->num_indices /3);
 			}
 			
-			mesh->box.SetNegativeInfinity();
-			mesh->box.Enclose((float3*)ai_mesh->mVertices, ai_mesh->mNumVertices);
 			//Focus the camera on the mesh
 			App->camera->can_update = true;
-			App->camera->FocusOnObject(vec3(0, 0, 0), mesh->box.Size().Length());
+			App->camera->FocusOnObject(float3(0, 0, 0), mesh->box.Size().Length());
 			App->camera->can_update = false;
 
 			if (ai_mesh->HasNormals())
@@ -354,7 +348,7 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 
 		//save texture library
 		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
-		if (ilSave(IL_DDS, (LIBRARY_FOLDER + GetFileName(path) + ".dds").c_str()))
+		if (ilSave(IL_DDS, (LIBRARY_TEXTURES_FOLDER + GetFileName(path) + ".dds").c_str()))
 		{
 			CONSOLE_DEBUG("%s library file created.", GetFileName(path).c_str());
 		}

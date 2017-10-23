@@ -399,6 +399,15 @@
     <ClInclude Include="ComponentCamera.h">
       <Filter>Sources\GameObject\Components</Filter>
     </ClInclude>
+    <ClInclude Include="TagsAndLayers.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="TagsAndLayersWindow.h">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -643,6 +652,15 @@
     </ClCompile>
     <ClCompile Include="ComponentCamera.cpp">
       <Filter>Sources\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TagsAndLayers.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TagsAndLayersWindow.cpp">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,8 @@ public:
 	Texture* GetTexture() const;
 	void LoadTexture(Texture* texture);
 
+	void UpdateBoundingBox();
+
 	void Save(Data& data) const;
 	void Load(Data& data);
 

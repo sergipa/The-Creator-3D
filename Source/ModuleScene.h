@@ -8,6 +8,7 @@
 
 class GameObject;
 class Texture;
+class ComponentCamera;
 
 class ModuleScene : public Module
 {
@@ -31,6 +32,8 @@ public:
 	void ApplyTextureToSelectedGameObjects(Texture* texture);
 	void ApplyTextureToGameObject(GameObject* gameobject, Texture* texture);
 
+	int GetNumCameras() const;
+
 private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
 	void HandleInput();
@@ -39,6 +42,7 @@ public:
 	std::list<GameObject*> selected_gameobjects;
 	std::list<GameObject*> root_gameobjects;
 	std::list<GameObject*> scene_gameobjects;
+	std::list<ComponentCamera*> scene_cameras;
 
 private:
 	

@@ -15,6 +15,8 @@
 #include "Data.h"
 #include "RendererConfigWindow.h"
 #include "InputConfigWindow.h"
+#include "TagsAndLayersWindow.h"
+#include "ImportWindow.h"
 
 ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -52,6 +54,9 @@ bool ModuleEditor::Init(Data* editor_config)
 	editor_windows.push_back(style_editor_window = new EditorStyleWindow());
 	editor_windows.push_back(renderer_config_window = new RendererConfigWindow());
 	editor_windows.push_back(input_config_window = new InputConfigWindow());
+	editor_windows.push_back(tags_and_layers_window = new TagsAndLayersWindow());
+	editor_windows.push_back(import_window = new ImportWindow());
+	
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());
 	ImGui::LoadDocks();
@@ -103,6 +108,10 @@ update_status ModuleEditor::Update(float deltaTime)
 				if (ImGui::MenuItem("Input Config"))
 				{
 					input_config_window->active = !input_config_window->active;
+				}
+				if (ImGui::MenuItem("Tags & Layers"))
+				{
+					tags_and_layers_window->active = !tags_and_layers_window->active;
 				}
 				ImGui::EndMenu();
 			}
@@ -223,36 +232,38 @@ void ModuleEditor::LoadEditorStyle()
 	if (data.LoadJSON(EDITOR_STYLE_FILE))
 	{
 		ImGuiStyle * style = &ImGui::GetStyle();
-		data.EnterSection("Editor_Style");
-		style->Alpha = data.GetFloat("Alpha");
-		style->WindowPadding = data.GetVector2("WindowPadding");
-		style->WindowMinSize = data.GetVector2("WindowMinSize");
-		style->WindowRounding = data.GetFloat("WindowRounding");
-		style->WindowTitleAlign = data.GetVector2("WindowTitleAlign");
-		style->ChildWindowRounding = data.GetFloat("ChildWindowRounding");
-		style->FramePadding = data.GetVector2("FramePadding");
-		style->FrameRounding = data.GetFloat("FrameRounding");
-		style->ItemSpacing = data.GetVector2("ItemSpacing");
-		style->ItemInnerSpacing = data.GetVector2("ItemInnerSpacing");
-		style->TouchExtraPadding = data.GetVector2("TouchExtraPadding");
-		style->IndentSpacing = data.GetFloat("IndentSpacing");
-		style->ColumnsMinSpacing = data.GetFloat("ColumnsMinSpacing");
-		style->ScrollbarSize = data.GetFloat("ScrollbarSize");
-		style->ScrollbarRounding = data.GetFloat("ScrollbarRounding");
-		style->GrabMinSize = data.GetFloat("GrabMinSize");
-		style->GrabRounding = data.GetFloat("GrabRounding");
-		style->ButtonTextAlign = data.GetVector2("ButtonTextAlign");
-		style->DisplayWindowPadding = data.GetVector2("DisplayWindowPadding");
-		style->DisplaySafeAreaPadding = data.GetVector2("DisplaySafeAreaPadding");
-		style->AntiAliasedLines = data.GetBool("AntiAliasedLines");             
-		style->AntiAliasedShapes = data.GetBool("AntiAliasedShapes");
-		style->CurveTessellationTol = data.GetFloat("CurveTessellationTol");
-
-		for (int i = 0; i < ImGuiCol_COUNT; i++)
+		if (data.EnterSection("Editor_Style"))
 		{
-			style->Colors[i] = data.GetVector4(ImGui::GetStyleColorName(i));
+			style->Alpha = data.GetFloat("Alpha");
+			style->WindowPadding = data.GetVector2("WindowPadding");
+			style->WindowMinSize = data.GetVector2("WindowMinSize");
+			style->WindowRounding = data.GetFloat("WindowRounding");
+			style->WindowTitleAlign = data.GetVector2("WindowTitleAlign");
+			style->ChildWindowRounding = data.GetFloat("ChildWindowRounding");
+			style->FramePadding = data.GetVector2("FramePadding");
+			style->FrameRounding = data.GetFloat("FrameRounding");
+			style->ItemSpacing = data.GetVector2("ItemSpacing");
+			style->ItemInnerSpacing = data.GetVector2("ItemInnerSpacing");
+			style->TouchExtraPadding = data.GetVector2("TouchExtraPadding");
+			style->IndentSpacing = data.GetFloat("IndentSpacing");
+			style->ColumnsMinSpacing = data.GetFloat("ColumnsMinSpacing");
+			style->ScrollbarSize = data.GetFloat("ScrollbarSize");
+			style->ScrollbarRounding = data.GetFloat("ScrollbarRounding");
+			style->GrabMinSize = data.GetFloat("GrabMinSize");
+			style->GrabRounding = data.GetFloat("GrabRounding");
+			style->ButtonTextAlign = data.GetVector2("ButtonTextAlign");
+			style->DisplayWindowPadding = data.GetVector2("DisplayWindowPadding");
+			style->DisplaySafeAreaPadding = data.GetVector2("DisplaySafeAreaPadding");
+			style->AntiAliasedLines = data.GetBool("AntiAliasedLines");
+			style->AntiAliasedShapes = data.GetBool("AntiAliasedShapes");
+			style->CurveTessellationTol = data.GetFloat("CurveTessellationTol");
+
+			for (int i = 0; i < ImGuiCol_COUNT; i++)
+			{
+				style->Colors[i] = data.GetVector4(ImGui::GetStyleColorName(i));
+			}
+			data.LeaveSection();
 		}
-		data.LeaveSection();
 	}
 }
 

@@ -3,6 +3,8 @@
 #include "glmath.h"
 #include "Color.h"
 #include <vector>
+#include "MathGeoLib\Geometry\Frustum.h"
+#include "MathGeoLib\Geometry\AABB.h"
 enum PrimitiveTypes
 {
 	Primitive_Point,
@@ -25,6 +27,7 @@ public:
 
 	virtual void	Render() const;
 	virtual void	InnerRender() const;
+	virtual void	CleanUp();
 	void			SetPos(float x, float y, float z);
 	void			SetRotation(float angle, const vec3 &u);
 	void			Scale(float x, float y, float z);
@@ -50,6 +53,7 @@ public :
 	void InnerRender() const;
 public:
 	vec3 size;
+	float3 corners[8];
 };
 
 // ============================================
@@ -184,4 +188,24 @@ public:
 	float num_vertex;
 	uint ibo_id;
 	float num_indices;
+};
+
+class DebugFrustum : public Primitive
+{
+public:
+	DebugFrustum(math::Frustum& frustum);
+	void InnerRender() const;
+
+private:
+	float3 corners[8];
+};
+
+class DebugAABB : public Primitive
+{
+public:
+	DebugAABB(math::AABB& aabb);
+	void InnerRender() const;
+
+private:
+	float3 corners[8];
 };

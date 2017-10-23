@@ -1,10 +1,12 @@
 #pragma once
 #include "Component.h"
-#include "RenderTexture.h"
 #include "MathGeoLib\Geometry\Frustum.h"
 #include "MathGeoLib\Geometry\AABB.h"
 #include "MathGeoLib\Math\Rect.h"
+#include "Color.h"
+#include "Primitive.h"
 
+class RenderTexture;
 
 //MathGeoLib frustum info: http://clb.demon.fi/MathGeoLib/nightly/docs/Frustum_summary.php
 
@@ -15,24 +17,48 @@ public:
 	ComponentCamera(GameObject* attached_gameobject);
 	~ComponentCamera();
 
-	void DrawFrustum();
+	math::Frustum GetFrustum() const;
 	bool ContainsGameObjectAABB(AABB& gameobject_bounding_box);
+	void UpdatePosition();
+	void UpdateProjection();
+	float* GetProjectionMatrix() const;
+	float* GetViewMatrix();
 
 	void SetFOV(float fov);
-	void SetAspectRatio(float aspect_ratio);
 	float GetFOV() const;
+	void AddLayerToDraw(std::string layer);
+	std::string GetLayerToDraw(int index) const;
+	void RemoveLayerToDraw(std::string layer);
+	void SetBackgroundColor(Color color);
+	Color GetBackgroundColor() const;
+	void SetNearPlaneDistance(float distance);
 	float GetNearPlaneDistance() const;
+	void SetFarPlaneDistance(float distance);
 	float GetFarPlanceDistance() const;
 	float GetAspectRatio() const;
+	void SetViewport(Rect viewport);
+	Rect GetViewport() const;
+	void SetRenderOrder(int position);
+	int GetRenderOrder() const;
+	void SetTargetTexture(RenderTexture* texture);
+	RenderTexture* GetTargetTexture() const;
+	RenderTexture* GetViewportTexture() const;
 
-	void SetLayerToAvoid(std::string layer);
+	void Save(Data& data) const;
+	void Load(Data& data);
+
+public:
+	std::vector<std::string> layers_to_draw;
+	Frustum camera_frustum;
 
 private:
 	RenderTexture* camera_viewport_texture;
 	RenderTexture* camera_target_texture;
-	Frustum camera_frustum;
+	
+	
 	Color background_color;
-	Rect viewport;
-	std::string layer_to_avoid;
+	Rect camera_viewport;
+	int render_order;
+	
 };
 

@@ -4,6 +4,7 @@
 #include "Component.h"
 #include <list>
 #include <string>
+#include "MathGeoLib\Math\float4x4.h"
 
 class GameObject
 {
@@ -19,6 +20,8 @@ public:
 	void AddChild(GameObject* gameobject);
 	bool IsActive() const;
 	void SetActive(bool active);
+	bool IsSelected() const;
+	void SetSelected(bool selected);
 	bool IsRoot() const;
 	void SetRoot(bool root);
 	GameObject* GetParent() const;
@@ -29,6 +32,12 @@ public:
 	std::string GetTag() const;
 	void SetLayer(std::string layer);
 	std::string GetLayer() const;
+
+	void UpdateBoundingBox();
+	math::float4x4 GetGlobalTransfomMatrix();
+	const float* GetOpenGLMatrix();
+	void UpdateGlobalMatrix();
+	void UpdateCamera();
 
 	void Destroy();
 	void OnDestroy();
@@ -48,5 +57,6 @@ private:
 	std::string layer;
 	bool is_root;
 	UID uuid;
+	bool is_selected;
 };
 

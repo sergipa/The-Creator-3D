@@ -2,6 +2,12 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "MathGeoLib\MathGeoLib.h"
+#include "ComponentCamera.h"
+#include "ComponentMeshRenderer.h"
+#include "ComponentTransform.h"
+#include "TagsAndLayers.h"
+#include "ModuleEditor.h"
+#include "TagsAndLayersWindow.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -35,15 +41,18 @@ void PropertiesWindow::DrawWindow()
 			ImGui::Text("Tag:");
 			ImGui::SameLine();
 			if (ImGui::SmallButton((selected_gameobject->GetTag() + "##tags").c_str())) {
-				ImGui::OpenPopup("Tags");
+				ImGui::OpenPopup("Tags##gameobject");
 			}
-			if (ImGui::BeginPopup("Tags")) {
-				//This should be the tags! now is a test
-				for (int i = 0; i < 5; i++) {
-					std::string name = "tag" + std::to_string(i);
+			if (ImGui::BeginPopup("Tags##gameobject")) {
+				for (int i = 0; i < App->tags_and_layers->tags_list.size(); i++) {
+					std::string name = App->tags_and_layers->tags_list[i];
 					if (ImGui::MenuItem(name.c_str())) {
 						selected_gameobject->SetTag(name);
 					}
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Add Tag##gameobject")) {
+					App->editor->tags_and_layers_window->active = true;
 				}
 				ImGui::EndPopup();
 			}
@@ -51,15 +60,18 @@ void PropertiesWindow::DrawWindow()
 			ImGui::Text("Layer:");
 			ImGui::SameLine();
 			if (ImGui::SmallButton((selected_gameobject->GetLayer() + "##layers").c_str())) {
-				ImGui::OpenPopup("Layers");
+				ImGui::OpenPopup("Layers##gameobject");
 			}
-			if (ImGui::BeginPopup("Layers")) {
-				//This should be the layers! now is a test
-				for (int i = 0; i < 5; i++) {
-					std::string name = "layer" + std::to_string(i);
+			if (ImGui::BeginPopup("Layers##gameobject")) {
+				for (int i = 0; i < App->tags_and_layers->layers_list.size(); i++) {
+					std::string name = App->tags_and_layers->layers_list[i];
 					if (ImGui::MenuItem(name.c_str())) {
 						selected_gameobject->SetLayer(name);
 					}
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Add Layer##gameobject")) {
+					App->editor->tags_and_layers_window->active = true;
 				}
 				ImGui::EndPopup();
 			}
@@ -87,6 +99,15 @@ void PropertiesWindow::DrawWindow()
 						CONSOLE_WARNING("GameObject can't have more than 1 Mesh Renderer!");
 					}
 				}
+				if (ImGui::MenuItem("Camera")) {
+					if (selected_gameobject->GetComponent(Component::Camera) == nullptr) {
+						selected_gameobject->AddComponent(Component::Camera);
+					}
+					else
+					{
+						CONSOLE_WARNING("GameObject can't have more than 1 Camera!");
+					}
+				}
 				ImGui::EndPopup();
 			}
 		}
@@ -103,6 +124,7 @@ void PropertiesWindow::DrawComponent(Component * component)
 		DrawTransformPanel((ComponentTransform*)component);
 		break;
 	case Component::Camera:
+		DrawCameraPanel((ComponentCamera*)component);
 		break;
 	case Component::RigidBody:
 		break;
@@ -206,6 +228,88 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 			ImGui::TreePop();
 		}
 
+		ImGui::Spacing();
+	}
+}
+
+void PropertiesWindow::DrawCameraPanel(ComponentCamera * camera)
+{
+	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+		bool is_active = camera->IsActive();
+		if (ImGui::Checkbox("Active##Camera", &is_active))
+		{
+			camera->SetActive(is_active);
+		}
+
+		Color background_color = camera->GetBackgroundColor();
+		ImGui::Text("Background Color:");
+		if (ImGui::ColorEdit4("##Background Color", &background_color.r))
+		{
+			camera->SetBackgroundColor(background_color);
+		}
+		ImGui::Text("Culling Mask:");
+		if (ImGui::Button("Select Layers")) {
+			ImGui::OpenPopup("Layers##camera");
+		}
+		if (ImGui::BeginPopup("Layers##camera")) {
+			for (int i = 0; i < App->tags_and_layers->layers_list.size(); i++) {
+				std::string name = App->tags_and_layers->layers_list[i];
+				bool selected = false;
+				if (std::find(camera->layers_to_draw.begin(), camera->layers_to_draw.end(), name) != camera->layers_to_draw.end()) selected = true;
+				if (ImGui::MenuItem(name.c_str(), "", selected)) {
+					if (selected) camera->RemoveLayerToDraw(name);
+					else camera->AddLayerToDraw(name);
+				}
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Add Layer##camera")) {
+				App->editor->tags_and_layers_window->active = true;
+			}
+			ImGui::EndPopup();
+		}
+		float fov = camera->GetFOV();
+		ImGui::Text("Field of View:");
+		if (ImGui::SliderFloat("##Field of View", &fov, 1, 160))
+		{
+			camera->SetFOV(fov);
+		}
+		float near_plane = camera->GetNearPlaneDistance();
+		float far_plane = camera->GetFarPlanceDistance();
+		ImGui::Text("Near Plane:");
+		if (ImGui::DragFloat("##Near Plane", &near_plane, 0.025f, 0.01, far_plane - 0.1f))
+		{
+			camera->SetNearPlaneDistance(near_plane);
+		}
+		ImGui::Text("Far Plane:");
+		if (ImGui::DragFloat("##Far Plane", &far_plane, 0.025f, near_plane + 0.1f))
+		{
+			camera->SetFarPlaneDistance(far_plane);
+		}
+		Rect viewport = camera->GetViewport();
+		ImGui::Text("Viewport:");
+		if (ImGui::DragInt("X", &viewport.left, 0.025f, 0, 1))
+		{
+			camera->SetViewport(viewport);
+		}
+		if (ImGui::DragInt("Y", &viewport.top, 0.025f, 0, 1))
+		{
+			camera->SetViewport(viewport);
+		}
+		if (ImGui::DragInt("W", &viewport.right, 0.025f, 1, 0))
+		{
+			camera->SetViewport(viewport);
+		}
+		if (ImGui::DragInt("H", &viewport.bottom, 0.025f, 1, 0))
+		{
+			camera->SetViewport(viewport);
+		}
+		int render_order = camera->GetRenderOrder();
+		ImGui::Text("Render Order:");
+		if (ImGui::DragInt("##Render Order", &render_order))
+		{
+			camera->SetRenderOrder(render_order);
+		}
+		
 		ImGui::Spacing();
 	}
 }

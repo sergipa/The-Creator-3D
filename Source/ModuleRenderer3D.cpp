@@ -11,6 +11,8 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "Component.h"
+#include "ComponentCamera.h"
+#include "RenderTexture.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -27,6 +29,7 @@ ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Modul
 	is_using_fog = false;
 	testing_light = false;
 	name = "Renderer";
+	active_camera = nullptr;
 }
 
 // Destructor
@@ -52,10 +55,14 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 	if(ret == true)
 	{
 		//Get Config Data
-		editor_config->EnterSection("Renderer_Config");
-		use_vsync = editor_config->GetBool("Vsync");
-		int MSAA_level = editor_config->GetInt("MSAA_Level");
-		editor_config->LeaveSection();
+		int MSAA_level = -1;
+		if (editor_config->EnterSection("Renderer_Config"))
+		{
+			use_vsync = editor_config->GetBool("Vsync");
+			MSAA_level = editor_config->GetInt("MSAA_Level");
+			editor_config->LeaveSection();
+		}
+		
 		if (MSAA_level < 0) MSAA_level = 2;
 
 		//Use Vsync
@@ -140,6 +147,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 
 		glEnable(GL_MULTISAMPLE);
 	}
+	OnResize(App->window->GetWidth(), App->window->GetHeight());
 	
 	return ret;
 }
@@ -159,7 +167,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
 	// light 0 on cam pos
-	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+	lights[0].SetPos(App->camera->GetPosition().x, App->camera->GetPosition().y, App->camera->GetPosition().z);
 
 	for(uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
@@ -170,11 +178,13 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+
 	DrawScene();
 
 	textureMSAA->Render();
 
 	textureMSAA->Unbind();
+
 	//EditorUI can't be drawn in wireframe mode!
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	//Disable Lighting before draw editor or shadows will appear in menu bars and ligth will affect editor colors.
@@ -213,60 +223,77 @@ void ModuleRenderer3D::DrawScene()
 				lights[i].Active(true);
 		}
 	}
-	
-	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
+
+	for (std::list<ComponentCamera*>::iterator it = rendering_cameras.begin(); it != rendering_cameras.end(); it++)
 	{
-		ComponentTransform* transform = (ComponentTransform*)(*it)->GetGameObject()->GetComponent(Component::Transform);
-
-		glPushMatrix();
-		glMultMatrixf(transform->GetOpenGLMatrix());
-		if ((*it)->GetTexture() != nullptr && (*it)->GetTexture()->GetID() > 0)
-		{
-			glBindTexture(GL_TEXTURE_2D, (*it)->GetTexture()->GetID());
-		}
-		//VERTICES
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_vertices);
-		glVertexPointer(3, GL_FLOAT, 0, NULL);
-		//NORMALS
-		if ((*it)->GetMesh()->id_normals > 0)
-		{
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_normals);
-			glNormalPointer(GL_FLOAT, 0, NULL);
-		}
-		//TEXTURE_COORDS
-		if ((*it)->GetMesh()->id_texture_coords > 0)
-		{
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_texture_coords);
-			glTexCoordPointer(3, GL_FLOAT, 0, NULL);
-		}
-		//COLORS
-		if ((*it)->GetMesh()->id_colors > 0)
-		{
-			glEnableClientState(GL_COLOR_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_colors);
-			glColorPointer(3, GL_FLOAT, 0, NULL);
-		}
-		//INDICES
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->GetMesh()->id_indices);
-		glDrawElements(GL_TRIANGLES, (*it)->GetMesh()->num_indices, GL_UNSIGNED_INT, NULL);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		if ((*it)->GetTexture() != nullptr && (*it)->GetTexture() > 0)
-		{
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
-		glPopMatrix();
-
-		transform->UpdateGlobalMatrix();
+		DrawSceneGameObjects(*it);
 	}
+	rendering_cameras.clear();
+	DrawSceneGameObjects(active_camera);
+}
+
+void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
+{
+		/*this->active_camera = active_camera;
+		active_camera->GetViewportTexture()->Bind();*/
+		for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
+		{
+			if (active_camera->GetGameObject())
+			{
+				if (!active_camera->ContainsGameObjectAABB((*it)->GetMesh()->box)) continue;
+			}
+
+			glPushMatrix();
+			glMultMatrixf((*it)->GetGameObject()->GetOpenGLMatrix());
+			if ((*it)->GetTexture() != nullptr && (*it)->GetTexture()->GetID() > 0)
+			{
+				glBindTexture(GL_TEXTURE_2D, (*it)->GetTexture()->GetID());
+			}
+			//VERTICES
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_vertices);
+			glVertexPointer(3, GL_FLOAT, 0, NULL);
+			//NORMALS
+			if ((*it)->GetMesh()->id_normals > 0)
+			{
+				glEnableClientState(GL_NORMAL_ARRAY);
+				glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_normals);
+				glNormalPointer(GL_FLOAT, 0, NULL);
+			}
+			//TEXTURE_COORDS
+			if ((*it)->GetMesh()->id_texture_coords > 0)
+			{
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_texture_coords);
+				glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+			}
+			//COLORS
+			if ((*it)->GetMesh()->id_colors > 0)
+			{
+				glEnableClientState(GL_COLOR_ARRAY);
+				glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_colors);
+				glColorPointer(3, GL_FLOAT, 0, NULL);
+			}
+			//INDICES
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->GetMesh()->id_indices);
+			glDrawElements(GL_TRIANGLES, (*it)->GetMesh()->num_indices, GL_UNSIGNED_INT, NULL);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			if ((*it)->GetTexture() != nullptr && (*it)->GetTexture() > 0)
+			{
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
+			glDisableClientState(GL_VERTEX_ARRAY);
+			glDisableClientState(GL_NORMAL_ARRAY);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			glDisableClientState(GL_COLOR_ARRAY);
+			glPopMatrix();
+
+			(*it)->GetGameObject()->UpdateGlobalMatrix();
+
+		}
+		//active_camera->GetViewportTexture()->Unbind();
 	mesh_to_draw.clear();
 }
 

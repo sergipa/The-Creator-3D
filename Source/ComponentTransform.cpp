@@ -22,7 +22,7 @@ ComponentTransform::~ComponentTransform()
 void ComponentTransform::SetPosition(float3 position)
 {
 	this->position = position;
-	void UpdateGlobalMatrix();
+	UpdateGlobalMatrix();
 }
 
 float3 ComponentTransform::GetGlobalPosition() const
@@ -47,6 +47,7 @@ void ComponentTransform::SetRotation(float3 rotation)
 {
 	this->shown_rotation = rotation;
 	this->rotation = Quat::FromEulerXYZ(rotation.x * DEGTORAD, rotation.y * DEGTORAD, rotation.z * DEGTORAD);
+	UpdateGlobalMatrix();
 }
 
 float3 ComponentTransform::GetGlobalRotation() const
@@ -67,7 +68,7 @@ float3 ComponentTransform::GetLocalRotation() const
 void ComponentTransform::SetScale(float3 scale)
 {
 	this->scale = scale;
-	void UpdateGlobalMatrix();
+	UpdateGlobalMatrix();
 }
 
 float3 ComponentTransform::GetGlobalScale() const
@@ -99,10 +100,20 @@ void ComponentTransform::UpdateGlobalMatrix()
 	if (!this->GetGameObject()->IsRoot())
 	{
 		ComponentTransform* parent_transform = (ComponentTransform*)this->GetGameObject()->GetParent()->GetComponent(Component::Transform);
-		if(parent_transform->rotation.Length() != 0)
-		transform_matrix = float4x4::FromTRS((position + parent_transform->position), parent_transform->rotation * rotation, scale + parent_transform->scale);
+		/*if(parent_transform->rotation.Length() != 0)
+			transform_matrix = float4x4::FromTRS((position + parent_transform->position), parent_transform->rotation * rotation, scale + parent_transform->scale);
 		else 
-			transform_matrix = float4x4::FromTRS((position + parent_transform->position), Quat::identity * rotation, scale + parent_transform->scale);
+			transform_matrix = float4x4::FromTRS((position + parent_transform->position), Quat::identity * rotation, scale + parent_transform->scale);*/
+		if (parent_transform->rotation.Length() != 0)
+		{
+			transform_matrix = float4x4::FromTRS(position, rotation, scale);
+		}
+		else
+		{
+			transform_matrix = float4x4::FromTRS(position, Quat::identity, scale);
+		}
+
+		transform_matrix = parent_transform->transform_matrix * transform_matrix;
 	}
 	else
 	{
@@ -113,6 +124,9 @@ void ComponentTransform::UpdateGlobalMatrix()
 			child_transform->UpdateGlobalMatrix();
 		}
 	}
+
+	GetGameObject()->UpdateBoundingBox();
+	GetGameObject()->UpdateCamera();
 }
 
 const float4x4 ComponentTransform::GetMatrix() const

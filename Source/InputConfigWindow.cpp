@@ -68,6 +68,12 @@ void InputConfigWindow::DrawWindow()
 	App->camera->key_left = App->input->StringToKey(Keys[key_left]);
 	App->camera->key_right = App->input->StringToKey(Keys[key_right]);
 
+	float sensitivity = App->camera->GetCameraSensitivity();
+	ImGui::SliderFloat("Camera sensitivity", &sensitivity, 0.01f, 1.0f);
+	App->camera->SetCameraSensitivity(sensitivity);
+	ImGui::SameLine();
+	ImGui::SetTooltip("Adjust the camera sensitivity when rotating the scene view");
+
 	ImGui::End();
 	
 }

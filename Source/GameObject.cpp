@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ModuleScene.h"
 #include "ComponentTransform.h"
+#include "ComponentCamera.h"
 
 GameObject::GameObject(GameObject* parent)
 {
@@ -16,11 +17,11 @@ GameObject::GameObject(GameObject* parent)
 	{
 		is_root = true;
 	}
-	tag = "None";
-	layer = "None";
+	tag = "Default";
+	layer = "Default";
 	name = "New GameObject";
 	is_on_destroy = false;
-
+	is_selected = false;
 	AddComponent(Component::Transform);
 
 	uuid = App->RandomNumber().Int();
@@ -47,6 +48,7 @@ Component * GameObject::AddComponent(Component::ComponentType component_type)
 		components_list.push_back(component = new ComponentTransform(this));
 		break;
 	case Component::Camera:
+		components_list.push_back(component = new ComponentCamera(this));
 		break;
 	case Component::RigidBody:
 		break;
@@ -120,6 +122,16 @@ void GameObject::SetActive(bool active)
 	this->active = active;
 }
 
+bool GameObject::IsSelected() const
+{
+	return is_selected;
+}
+
+void GameObject::SetSelected(bool selected)
+{
+	is_selected = selected;
+}
+
 bool GameObject::IsRoot() const
 {
 	return is_root;
@@ -181,6 +193,42 @@ std::string GameObject::GetLayer() const
 	return layer;
 }
 
+void GameObject::UpdateBoundingBox()
+{
+	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+	if (mesh_renderer != nullptr)
+	{
+		mesh_renderer->UpdateBoundingBox();
+	}
+}
+
+math::float4x4 GameObject::GetGlobalTransfomMatrix()
+{
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	return transform->GetMatrix();
+}
+
+const float * GameObject::GetOpenGLMatrix()
+{
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	return transform->GetOpenGLMatrix();
+}
+
+void GameObject::UpdateGlobalMatrix()
+{
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	transform->UpdateGlobalMatrix();
+}
+
+void GameObject::UpdateCamera()
+{
+	ComponentCamera* camera = (ComponentCamera*)GetComponent(Component::Camera);
+	if (camera != nullptr)
+	{
+		camera->UpdatePosition();
+	}
+}
+
 void GameObject::Destroy()
 {
 	App->scene->AddGameObjectToDestroy(this);
@@ -193,6 +241,7 @@ void GameObject::OnDestroy()
 	std::list<GameObject*>::iterator it = find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), this);
 	if (it != App->scene->selected_gameobjects.end()) {
 		App->scene->selected_gameobjects.erase(it);
+		is_selected = false;
 	}
 
 	std::list<GameObject*>::iterator it2 = find(App->scene->scene_gameobjects.begin(), App->scene->scene_gameobjects.end(), this);

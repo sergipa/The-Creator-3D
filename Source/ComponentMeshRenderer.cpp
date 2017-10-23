@@ -1,5 +1,5 @@
 #include "ComponentMeshRenderer.h"
-
+#include "GameObject.h"
 
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* attached_gameobject)
 {
@@ -24,6 +24,7 @@ Mesh* ComponentMeshRenderer::GetMesh() const
 void ComponentMeshRenderer::LoadMesh(Mesh * mesh)
 {
 	this->mesh = mesh;
+	UpdateBoundingBox();
 }
 
 Texture * ComponentMeshRenderer::GetTexture() const
@@ -34,6 +35,17 @@ Texture * ComponentMeshRenderer::GetTexture() const
 void ComponentMeshRenderer::LoadTexture(Texture * texture)
 {
 	this->texture = texture;
+}
+
+void ComponentMeshRenderer::UpdateBoundingBox()
+{
+	if (GetMesh() != nullptr)
+	{
+		GetMesh()->box.SetNegativeInfinity();
+		GetMesh()->box.Enclose((float3*)GetMesh()->vertices, GetMesh()->num_vertices);
+		math::OBB obb = GetMesh()->box.Transform(GetGameObject()->GetGlobalTransfomMatrix());
+		GetMesh()->box = obb.MinimalEnclosingAABB();
+	}
 }
 
 void ComponentMeshRenderer::Save(Data & data) const

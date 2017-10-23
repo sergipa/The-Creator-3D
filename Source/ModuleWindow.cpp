@@ -38,14 +38,16 @@ bool ModuleWindow::Init(Data* editor_config)
 	else
 	{
 		//Get Config Data
-		editor_config->EnterSection("Window_Config");
-		screen_width = editor_config->GetInt("screen_width");
-		screen_height = editor_config->GetInt("screen_height");
-		is_fullscreen = editor_config->GetBool("Fullscreen");
-		is_resizable = editor_config->GetBool("Window_Resizable");
-		is_borderless = editor_config->GetBool("Window_Borderless");
-		is_full_desktop = editor_config->GetBool("Window_Full_Desktop");
-		editor_config->LeaveSection();
+		if (editor_config->EnterSection("Window_Config"))
+		{
+			screen_width = editor_config->GetInt("screen_width");
+			screen_height = editor_config->GetInt("screen_height");
+			is_fullscreen = editor_config->GetBool("Fullscreen");
+			is_resizable = editor_config->GetBool("Window_Resizable");
+			is_borderless = editor_config->GetBool("Window_Borderless");
+			is_full_desktop = editor_config->GetBool("Window_Full_Desktop");
+			editor_config->LeaveSection();
+		}
 
 		//Create window
 		Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;

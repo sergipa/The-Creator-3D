@@ -1,27 +1,20 @@
 #include "Globals.h"
 #include "Application.h"
-#include "PhysBody3D.h"
 #include "ModuleCamera3D.h"
 #include "SceneWindow.h"
 #include "ModuleScene.h"
 #include "PerformanceWindow.h"
 #include "Data.h"
+#include "ComponentCamera.h"
 
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	CalculateViewMatrix();
-
-	X = vec3(1.0f, 0.0f, 0.0f);
-	Y = vec3(0.0f, 1.0f, 0.0f);
-	Z = vec3(0.0f, 0.0f, 1.0f);
-
-	Position = vec3(0.0f, 3.5f, 10.0f);
-	Reference = vec3(0.0f, 0.0f, 0.0f);
 
 	name = "Camera";
 	can_update = false;
 	camera_is_orbital = false;
+	camera_sensitivity = 0.25f;
 
 	key_speed = 38;//DEFAULT LSHIFT
 	key_forward = 22;//DEFAULT W
@@ -38,19 +31,25 @@ ModuleCamera3D::~ModuleCamera3D()
 bool ModuleCamera3D::Init(Data * editor_config)
 {
 	CONSOLE_DEBUG("Setting up the camera");
+	editor_camera = new ComponentCamera(nullptr);
+
 	bool ret = true;
 
-	editor_config->EnterSection("Camera_Config");
+	if (editor_config->EnterSection("Camera_Config"))
+	{
 
-	key_speed = App->input->StringToKey(editor_config->GetString("key_speed"));
-	key_forward = App->input->StringToKey(editor_config->GetString("key_forward"));
-	key_backward = App->input->StringToKey(editor_config->GetString("key_backward"));
-	key_up = App->input->StringToKey(editor_config->GetString("key_up"));
-	key_down = App->input->StringToKey(editor_config->GetString("key_down"));
-	key_left = App->input->StringToKey(editor_config->GetString("key_left"));
-	key_right = App->input->StringToKey(editor_config->GetString("key_right"));
+		key_speed = App->input->StringToKey(editor_config->GetString("key_speed"));
+		key_forward = App->input->StringToKey(editor_config->GetString("key_forward"));
+		key_backward = App->input->StringToKey(editor_config->GetString("key_backward"));
+		key_up = App->input->StringToKey(editor_config->GetString("key_up"));
+		key_down = App->input->StringToKey(editor_config->GetString("key_down"));
+		key_left = App->input->StringToKey(editor_config->GetString("key_left"));
+		key_right = App->input->StringToKey(editor_config->GetString("key_right"));
 
-	editor_config->LeaveSection();
+		editor_config->LeaveSection();
+	}
+
+	App->renderer3D->active_camera = editor_camera;
 	return ret;
 }
 
@@ -58,7 +57,8 @@ bool ModuleCamera3D::Init(Data * editor_config)
 bool ModuleCamera3D::CleanUp()
 {
 	CONSOLE_DEBUG("Cleaning camera");
-
+	RELEASE(editor_camera);
+	App->renderer3D->active_camera = nullptr;
 	return true;
 }
 
@@ -70,65 +70,55 @@ update_status ModuleCamera3D::Update(float dt)
 	{
 		// Implement a debug camera with keys and mouse
 		// Now we can make this movememnt frame rate independant!
-
-		vec3 newPos(0, 0, 0);
+		math::Frustum* tmp_camera_frustum = &editor_camera->camera_frustum;
+		float3 new_pos(0, 0, 0);
 		float speed = 20.0f * dt;
 		if (App->input->GetKey(key_speed) == KEY_REPEAT)
 			speed = 70.0f * dt;
 
-		if (App->input->GetKey(key_up) == KEY_REPEAT) newPos.y += speed;
-		if (App->input->GetKey(key_down) == KEY_REPEAT) newPos.y -= speed;
+		if (App->input->GetKey(key_up) == KEY_REPEAT) new_pos.y += speed;
+		if (App->input->GetKey(key_down) == KEY_REPEAT) new_pos.y -= speed;
 
-		if (App->input->GetKey(key_forward) == KEY_REPEAT) newPos -= Z * speed;
-		if (App->input->GetKey(key_backward) == KEY_REPEAT) newPos += Z * speed;
-		if (App->input->GetMouseZ() > 0) newPos -= Z * speed;
-		if (App->input->GetMouseZ() < 0) newPos += Z * speed;
+		if (App->input->GetKey(key_forward) == KEY_REPEAT) new_pos += tmp_camera_frustum->front * speed;
+		if (App->input->GetKey(key_backward) == KEY_REPEAT) new_pos -= tmp_camera_frustum->front * speed;
+		if (App->input->GetMouseZ() > 0) new_pos += tmp_camera_frustum->front * speed;
+		if (App->input->GetMouseZ() < 0) new_pos -= tmp_camera_frustum->front * speed;
 
-		if (App->input->GetKey(key_left) == KEY_REPEAT) newPos -= X * speed;
-		if (App->input->GetKey(key_right) == KEY_REPEAT) newPos += X * speed;
+		if (App->input->GetKey(key_left) == KEY_REPEAT) new_pos -= tmp_camera_frustum->WorldRight() * speed;
+		if (App->input->GetKey(key_right) == KEY_REPEAT) new_pos += tmp_camera_frustum->WorldRight() * speed;
 
-		Position += newPos;
-		Reference += newPos;
+		if (!new_pos.IsZero())
+		{
+			tmp_camera_frustum->Translate(new_pos);
+		}
 
 		// Mouse motion ----------------
 
 		if ((App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT && !camera_is_orbital) || App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT && camera_is_orbital)
 		{
-			int dx = -App->input->GetMouseXMotion();
-			int dy = -App->input->GetMouseYMotion();
-
-			float Sensitivity = 0.25f;
-
-			Position -= Reference;
+			float dx = -(float)App->input->GetMouseXMotion() * camera_sensitivity * dt;
+			float dy = -(float)App->input->GetMouseYMotion() * camera_sensitivity * dt;
 
 			if (dx != 0)
 			{
-				float DeltaX = (float)dx * Sensitivity;
-
-				X = rotate(X, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-				Y = rotate(Y, DeltaX, vec3(0.0f, 1.0f, 0.0f));
-				Z = rotate(Z, DeltaX, vec3(0.0f, 1.0f, 0.0f));
+				Quat rotation_x = Quat::RotateY(dx);
+				tmp_camera_frustum->front = rotation_x.Mul(tmp_camera_frustum->front).Normalized();
+				tmp_camera_frustum->up = rotation_x.Mul(tmp_camera_frustum->up).Normalized();
 			}
 
 			if (dy != 0)
 			{
-				float DeltaY = (float)dy * Sensitivity;
+				Quat rotation_y = Quat::RotateAxisAngle(tmp_camera_frustum->WorldRight(), dy);
 
-				Y = rotate(Y, DeltaY, X);
-				Z = rotate(Z, DeltaY, X);
+				float3 new_up = rotation_y.Mul(tmp_camera_frustum->up).Normalized();
 
-				if (Y.y < 0.0f)
+				if (new_up.y > 0.0f)
 				{
-					Z = vec3(0.0f, Z.y > 0.0f ? 1.0f : -1.0f, 0.0f);
-					Y = cross(Z, X);
+					tmp_camera_frustum->up = new_up;
+					tmp_camera_frustum->front = rotation_y.Mul(tmp_camera_frustum->front).Normalized();
 				}
 			}
-
-			Position = Reference + Z * length(Position);
 		}
-		
-		// Recalculate matrix -------------
-		CalculateViewMatrix();
 	}
 	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	
@@ -136,57 +126,32 @@ update_status ModuleCamera3D::Update(float dt)
 }
 
 // -----------------------------------------------------------------
-void ModuleCamera3D::Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference)
+void ModuleCamera3D::LookAt(const float3 &spot)
 {
-	this->Position = Position;
-	this->Reference = Reference;
+	float3 direction = spot - editor_camera->camera_frustum.pos;
 
-	Z = normalize(Position - Reference);
-	X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
-	Y = cross(Z, X);
+	float3x3 matrix = float3x3::LookAt(editor_camera->camera_frustum.front, direction.Normalized(), editor_camera->camera_frustum.up, float3::unitY);
 
-	if(!RotateAroundReference)
-	{
-		this->Reference = this->Position;
-		this->Position += Z * 0.05f;
-	}
-
-	CalculateViewMatrix();
+	editor_camera->camera_frustum.front = matrix.MulDir(editor_camera->camera_frustum.front).Normalized();
+	editor_camera->camera_frustum.up = matrix.MulDir(editor_camera->camera_frustum.up).Normalized();
 }
 
-// -----------------------------------------------------------------
-void ModuleCamera3D::LookAt( const vec3 &Spot)
+void ModuleCamera3D::OrbitAt(const float3 & spot)
 {
-	Reference = Spot;
 
-	Z = normalize(Position - Reference);
-	X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), Z));
-	Y = cross(Z, X);
-
-	CalculateViewMatrix();
 }
 
-void ModuleCamera3D::FocusOnObject(const vec3 & object, const float & distance)
+void ModuleCamera3D::FocusOnObject(const float3 & object_pos, const float & distance)
 {
-	Reference = object;
+	/*Reference = object;
 	Position = Reference + (Z * distance);
-	CalculateViewMatrix();
-}
-
-
-// -----------------------------------------------------------------
-void ModuleCamera3D::Move(const vec3 &Movement)
-{
-	Position += Movement;
-	Reference += Movement;
-
-	CalculateViewMatrix();
+	CalculateViewMatrix();*/
 }
 
 // -----------------------------------------------------------------
 float* ModuleCamera3D::GetViewMatrix()
 {
-	return &ViewMatrix;
+	return editor_camera->GetViewMatrix();
 }
 
 void ModuleCamera3D::SetOrbital(bool is_orbital)
@@ -197,6 +162,31 @@ void ModuleCamera3D::SetOrbital(bool is_orbital)
 bool ModuleCamera3D::IsOrbital() const
 {
 	return camera_is_orbital;
+}
+
+math::float3 ModuleCamera3D::GetPosition() const
+{
+	return editor_camera->camera_frustum.pos;
+}
+
+void ModuleCamera3D::SetPosition(math::float3 position)
+{
+	editor_camera->camera_frustum.Translate(position);
+}
+
+ComponentCamera * ModuleCamera3D::GetCamera() const
+{
+	return editor_camera;
+}
+
+void ModuleCamera3D::SetCameraSensitivity(float sensivity)
+{
+	camera_sensitivity = sensivity;
+}
+
+float ModuleCamera3D::GetCameraSensitivity() const
+{
+	return camera_sensitivity;
 }
 
 void ModuleCamera3D::SaveData(Data * data)
@@ -212,11 +202,4 @@ void ModuleCamera3D::SaveData(Data * data)
 	data->AddString("key_right", App->input->KeyToString(key_right));
 
 	data->CloseSection();
-}
-
-// -----------------------------------------------------------------
-void ModuleCamera3D::CalculateViewMatrix()
-{
-	ViewMatrix = mat4x4(X.x, Y.x, Z.x, 0.0f, X.y, Y.y, Z.y, 0.0f, X.z, Y.z, Z.z, 0.0f, -dot(X, Position), -dot(Y, Position), -dot(Z, Position), 1.0f);
-	ViewMatrixInverse = inverse(ViewMatrix);
 }

@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "Data.h"
+#include "TagsAndLayers.h"
 
 Application::Application()
 {
@@ -27,10 +28,10 @@ Application::Application()
 	// Main Modules
 	AddModule(window);
 	AddModule(input);
-	AddModule(camera);
 	AddModule(audio);
 	//AddModule(physics);
 	AddModule(renderer3D);
+	AddModule(camera);
 	AddModule(scene);
 	AddModule(import);
 	AddModule(editor);
@@ -38,6 +39,8 @@ Application::Application()
 
 	random = new math::LCG();
 	cursor = nullptr;
+
+	tags_and_layers = new TagsAndLayers();
 }
 
 Application::~Application()
@@ -61,7 +64,7 @@ bool Application::Init()
 	bool ret = true;
 
 	Data data;
-	
+
 	if (!data.LoadJSON(EDITOR_CONFIG_FILE))
 	{
 		CreateEngineData(&data);
@@ -70,10 +73,14 @@ bool Application::Init()
 	// Call Init() in all modules
 	std::list<Module*>::iterator item = list_modules.begin();
 
-	while (item != list_modules.end() && ret == true)
+	if (data.EnterSection("Engine_Settings"))
 	{
-		ret = (*item)->Init(&data);
-		++item;
+		while (item != list_modules.end() && ret == true)
+		{
+			ret = (*item)->Init(&data);
+			++item;
+		}
+		data.LeaveSection();
 	}
 
 	// After all Init calls we call Start() in all modules
@@ -88,6 +95,9 @@ bool Application::Init()
 	
 	ms_timer.Start();
 	fps_timer.Start();
+
+	tags_and_layers->Load(&data);
+
 	return ret;
 }
 
@@ -195,6 +205,7 @@ void Application::CreateEngineData(Data * data)
 	{
 		(*it)->SaveData(data);
 	}
+	tags_and_layers->Save(data);
 	data->CloseSection();
 	data->SaveAsJSON(EDITOR_CONFIG_FILE);
 }

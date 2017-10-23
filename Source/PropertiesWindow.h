@@ -2,8 +2,11 @@
 
 #include "Window.h"
 #include <map>
-#include "ComponentMeshRenderer.h"
-#include "ComponentTransform.h"
+
+class ComponentMeshRenderer;
+class ComponentTransform;
+class ComponentCamera;
+class Component;
 
 class PropertiesWindow :
 	public Window
@@ -16,6 +19,6 @@ public:
 	void DrawComponent(Component* component);
 	void DrawTransformPanel(ComponentTransform* transform);
 	void DrawMeshRendererPanel(ComponentMeshRenderer* spriteRenderer);
-
+	void DrawCameraPanel(ComponentCamera* camera);
 };
 

@@ -7,6 +7,8 @@
 #include <list>
 
 class ComponentMeshRenderer;
+class Primitive;
+class ComponentCamera;
 
 #define MAX_LIGHTS 8
 
@@ -43,9 +45,12 @@ public:
 	void DisableTestLight();
 
 	void AddMeshToDraw(ComponentMeshRenderer* mesh);
+	//void AddPrimitiveToDraw(Primitive* primitive);
 
 private:
 	void DrawScene();
+	void DrawSceneGameObjects(ComponentCamera* active_camera);
+	//void DrawDebugScene();
 
 public:
 
@@ -54,6 +59,8 @@ public:
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 	RenderTextureMSAA* textureMSAA;
+	std::list<ComponentCamera*> rendering_cameras;
+	ComponentCamera* active_camera;
 
 private:
 	bool use_vsync;
@@ -67,4 +74,6 @@ private:
 	bool testing_light;
 
 	std::list<ComponentMeshRenderer*> mesh_to_draw;
+	std::list<Primitive*> debug_primitive_to_draw;
+
 };

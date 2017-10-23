@@ -86,6 +86,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="AppWindowConfigWindow.h" />
     <ClInclude Include="ComponentCamera.h" />
+    <ClInclude Include="ImportWindow.h" />
     <ClInclude Include="InputConfigWindow.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
@@ -184,6 +185,8 @@
     <ClInclude Include="RendererConfigWindow.h" />
     <ClInclude Include="RenderTextureMSAA.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="TagsAndLayers.h" />
+    <ClInclude Include="TagsAndLayersWindow.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="tinyfiledialogs.h" />
     <ClInclude Include="Window.h" />
@@ -202,6 +205,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AppWindowConfigWindow.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
+    <ClCompile Include="ImportWindow.cpp" />
     <ClCompile Include="InputConfigWindow.cpp" />
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -267,6 +271,8 @@
     <ClCompile Include="RendererConfigWindow.cpp" />
     <ClCompile Include="RenderTextureMSAA.cpp" />
     <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="TagsAndLayers.cpp" />
+    <ClCompile Include="TagsAndLayersWindow.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="tinyfiledialogs.c" />
     <ClCompile Include="Window.cpp" />

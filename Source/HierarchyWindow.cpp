@@ -149,14 +149,16 @@ void HierarchyWindow::IsMouseOver(GameObject * gameObject)
 			std::list<GameObject*>::iterator it;
 
 			if (!App->scene->selected_gameobjects.empty()) {
-				it = find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), gameObject);
+				it = std::find(App->scene->selected_gameobjects.begin(), App->scene->selected_gameobjects.end(), gameObject);
 				if (it == App->scene->selected_gameobjects.end()) {
 					if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT) App->scene->selected_gameobjects.clear();
 					App->scene->selected_gameobjects.push_back(gameObject);
+					gameObject->SetSelected(true);
 				}
 			}
 			else {
 				App->scene->selected_gameobjects.push_back(gameObject);
+				gameObject->SetSelected(true);
 			}
 		}
 		else {
@@ -164,6 +166,7 @@ void HierarchyWindow::IsMouseOver(GameObject * gameObject)
 				if (App->input->GetKey(SDL_SCANCODE_LCTRL) != KEY_REPEAT && !App->scene->selected_gameobjects.empty() &&
 					!show_rename_error) {
 					App->scene->selected_gameobjects.remove(gameObject);
+					gameObject->SetSelected(false);
 				}
 			}
 		}

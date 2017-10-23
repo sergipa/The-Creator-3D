@@ -1,8 +1,10 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "glmath.h"
 #include "ModuleEditor.h"
+#include "MathGeoLib\MathGeoLib.h"
+
+class ComponentCamera;
 
 class ModuleCamera3D : public Module
 {
@@ -14,22 +16,27 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
-	void LookAt(const vec3 &Spot);
-	void FocusOnObject(const vec3& object, const float& distance);
-	void Move(const vec3 &Movement);
+	void LookAt(const float3 &spot);
+	void OrbitAt(const float3 &spot);
+	void FocusOnObject(const float3& object_pos, const float& distance);
 	float* GetViewMatrix();
 	void SetOrbital(bool is_orbital);
 	bool IsOrbital() const;
+	math::float3 GetPosition() const;
+	void SetPosition(math::float3 position);
+	ComponentCamera* GetCamera() const;
+	void SetCameraSensitivity(float sensivity);
+	float GetCameraSensitivity() const;
 
 	void SaveData(Data* data);
+
 private:
-	void CalculateViewMatrix();
-	mat4x4 ViewMatrix, ViewMatrixInverse;
 	bool isPlaying = false;
 	bool camera_is_orbital;
+	ComponentCamera* editor_camera;
+	float camera_sensitivity;
+
 public:
-	vec3 X, Y, Z, Position, Reference;
 	bool can_update;
 
 	int key_speed;

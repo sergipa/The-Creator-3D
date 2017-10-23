@@ -5,6 +5,7 @@
 #include "ModuleRenderer3D.h"
 #include "ComponentMeshRenderer.h"
 #include "ComponentTransform.h"
+#include "ComponentCamera.h"
 #include "GameObject.h"
 #include "Component.h"
 #include "SceneWindow.h"
@@ -26,8 +27,10 @@ bool ModuleScene::Start()
 	CONSOLE_DEBUG("Loading Intro assets");
 	bool ret = true;
 
-	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
-	App->camera->LookAt(vec3(0, 0, 0));
+	math::float3 initial_pos(0.f, 5.f, -10.f);
+	App->camera->SetPosition(initial_pos);
+	math::float3 initial_look_at(0, 0, 0);
+	App->camera->LookAt(initial_look_at);
 
 	return ret;
 }
@@ -88,10 +91,25 @@ update_status ModuleScene::Update(float dt)
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
 		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+		ComponentCamera* camera = (ComponentCamera*)(*it)->GetComponent(Component::Camera);
 		bool active_parents = RecursiveCheckActiveParents((*it));
-		if (mesh_renderer != nullptr && mesh_renderer->IsActive() && active_parents && (*it)->IsActive() && mesh_renderer->GetMesh() != nullptr)
+		if (active_parents && (*it)->IsActive())
 		{
-			App->renderer3D->AddMeshToDraw(mesh_renderer);
+			if (mesh_renderer != nullptr && mesh_renderer->IsActive() && mesh_renderer->GetMesh() != nullptr)
+			{
+				App->renderer3D->AddMeshToDraw(mesh_renderer);
+				if ((*it)->IsSelected())
+				{
+					DebugAABB aabb(mesh_renderer->GetMesh()->box);
+					aabb.Render();
+				}
+			}
+			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
+			{
+				DebugFrustum frustum(camera->GetFrustum());
+				frustum.Render();
+				App->renderer3D->rendering_cameras.push_back(camera);
+			}
 		}
 	}
 
@@ -148,19 +166,25 @@ void ModuleScene::ApplyTextureToGameObject(GameObject * gameobject, Texture* tex
 	}
 }
 
+int ModuleScene::GetNumCameras() const
+{
+	return scene_cameras.size();
+}
+
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)
 {
+	bool ret = true;
 	if (gameobject->GetParent() != nullptr)
 	{
 		if (gameobject->GetParent()->IsActive())
 		{
-			RecursiveCheckActiveParents(gameobject->GetParent());
+			ret = RecursiveCheckActiveParents(gameobject->GetParent());
 		}
 		else {
-			return false;
+			ret = false;
 		}
 	}
-	return true;
+	return ret;
 }
 
 void ModuleScene::HandleInput()
@@ -189,7 +213,7 @@ void ModuleScene::HandleInput()
 			{
 				ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
 				App->camera->can_update = true;
-				App->camera->Look(App->camera->Position, vec3(transform->GetGlobalPosition().x, transform->GetGlobalPosition().y, transform->GetGlobalPosition().z));
+				App->camera->LookAt(transform->GetGlobalPosition());
 				App->camera->can_update = false;
 			}
 		} 
@@ -202,7 +226,7 @@ void ModuleScene::HandleInput()
 				{
 					ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
 					App->camera->can_update = true;
-					App->camera->Look(App->camera->Position, vec3(transform->GetGlobalPosition().x, transform->GetGlobalPosition().y, transform->GetGlobalPosition().z), true);
+					App->camera->LookAt(transform->GetGlobalPosition());
 					App->camera->SetOrbital(true);
 				}
 			}

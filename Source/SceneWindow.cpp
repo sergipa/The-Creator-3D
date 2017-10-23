@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
+#include "ComponentCamera.h"
+#include "RenderTexture.h"
 
 SceneWindow::SceneWindow()
 {
@@ -30,6 +32,12 @@ void SceneWindow::DrawWindow()
 		DrawMenuBar();
 
 		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
+		
+		if (App->renderer3D->active_camera != nullptr)
+		{
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			//draw_list->AddImage((void*)App->renderer3D->active_camera->GetViewportTexture()->GetTexture(), { 600,400 }, { 900,700 }, ImVec2(0, 1), ImVec2(1, 0));
+		}
 
 		is_mouse_hovering_window = ImGui::IsMouseHoveringWindow();
 		//Necessary because left-click doesn't give focus to a window
