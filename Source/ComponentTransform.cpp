@@ -110,7 +110,7 @@ void ComponentTransform::UpdateGlobalMatrix()
 		}
 		else
 		{
-			transform_matrix = float4x4::FromTRS(position, Quat::identity, scale);
+			transform_matrix = float4x4::FromTRS(position, Quat::identity * rotation, scale);
 		}
 
 		transform_matrix = parent_transform->transform_matrix * transform_matrix;

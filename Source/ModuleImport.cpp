@@ -276,7 +276,7 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 			aiVector3D rotation = rotation_quat.GetEuler();
 			rotation *= RADTODEG;
 			transform->SetPosition({ position.x, position.y, position.z });
-			transform->SetRotation({ rotation.x, rotation.y, rotation.z });
+			transform->SetRotation({ rotation.x, rotation.z, rotation.y });
 			transform->SetScale({ scale.x, scale.y, scale.z });
 			go->SetName(mesh->GetName());
 			App->scene->AddGameObjectToScene(go);
