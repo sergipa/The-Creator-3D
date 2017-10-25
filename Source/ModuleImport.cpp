@@ -93,19 +93,29 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 	if (node->mNumMeshes < 1)
 	{
 		std::string s_node_name(node->mName.C_Str());
-		if (s_node_name.find("$AssimpFbx$_PreRotation") == std::string::npos && s_node_name.find("$AssimpFbx$_Rotation") == std::string::npos &&
-			s_node_name.find("$AssimpFbx$_PostRotation") == std::string::npos && s_node_name.find("$AssimpFbx$_Scaling") == std::string::npos &&
-			s_node_name.find("$AssimpFbx$_Translation") == std::string::npos)
+		aiVector3D pos;
+		aiQuaternion quat;
+		aiVector3D scale;
+		if (s_node_name.find("$AssimpFbx$_PreRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Rotation") != std::string::npos ||
+			s_node_name.find("$AssimpFbx$_PostRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Scaling") != std::string::npos ||
+			s_node_name.find("$AssimpFbx$_Translation") != std::string::npos)
 		{
-			std::string root_go_name;
-			(s_node_name.find("RootNode") != std::string::npos) ? root_go_name = GetFileName(path) : root_go_name = s_node_name;
-			root = new GameObject(parent);
-			root->SetName(root_go_name);
-			App->scene->AddGameObjectToScene(root);
+			GetDummyTransform(*node, pos, quat, scale);
 		}
-		else {
-			root = parent;
-		}
+
+		std::string root_go_name;
+		(s_node_name.find("RootNode") != std::string::npos) ? root_go_name = GetFileName(path) : root_go_name = node->mName.C_Str();
+		root = new GameObject(parent);
+		if (!node->mParent) root->SetRoot(true);
+		root->SetName(root_go_name);
+		ComponentTransform* transform = (ComponentTransform*)root->GetComponent(Component::Transform);
+		aiVector3D rotation = quat.GetEuler();
+		rotation *= RADTODEG;
+		transform->SetPosition({ pos.x, pos.y, pos.z });
+		transform->SetRotation({ rotation.z, rotation.y, rotation.x });
+		transform->SetScale({ scale.x, scale.y, scale.z });
+		App->scene->AddGameObjectToScene(root);
+			
 	}
 	else
 	{
@@ -523,6 +533,29 @@ std::string ModuleImport::GetFileExtension(const char * path)
 	}
 	return name;
 }
+
+void ModuleImport::GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion& rot, aiVector3D& scale)
+{
+	if (node.mChildren)
+	{
+		std::string s_node_name(node.mName.C_Str());
+		if (s_node_name.find("$AssimpFbx$_PreRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Rotation") != std::string::npos ||
+			s_node_name.find("$AssimpFbx$_PostRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Scaling") != std::string::npos ||
+			s_node_name.find("$AssimpFbx$_Translation") != std::string::npos)
+		{
+			aiVector3D node_pos;
+			aiQuaternion node_quat;
+			aiVector3D node_scale;
+			node.mTransformation.Decompose(node_scale, node_quat, node_pos);
+			pos += node_pos;
+			rot = rot * node_quat;
+			scale = aiVector3D(scale * node_scale);
+			node = *node.mChildren[0];
+			GetDummyTransform(node, pos, rot, scale);
+		}
+	}
+}
+
 
 void Callback(const char* message, char* c) {
 	CONSOLE_DEBUG("%s", message);

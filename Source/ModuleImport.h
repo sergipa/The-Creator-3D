@@ -1,6 +1,8 @@
 #pragma once
 #include "Module.h"
 #include <string>
+#include "Assimp\include\quaternion.h"
+#include "Assimp\include\vector3.h"
 
 class GameObject;
 class Texture;
@@ -30,6 +32,7 @@ private:
 	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
 	std::string GetFileName(const char* path);
 	std::string GetFileExtension(const char* path);
+	void GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion& rot, aiVector3D& scale);
 };
 
 void Callback(const char* message, char* c);
