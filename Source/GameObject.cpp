@@ -122,6 +122,16 @@ void GameObject::SetActive(bool active)
 	this->active = active;
 }
 
+void GameObject::SetStatic(bool is_static)
+{
+	is_static = is_static;
+}
+
+bool GameObject::IsStatic() const
+{
+	return is_selected;
+}
+
 bool GameObject::IsSelected() const
 {
 	return is_selected;

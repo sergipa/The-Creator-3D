@@ -5,6 +5,7 @@
 #include "Primitive.h"
 #include <map>
 #include <string>
+#include "Octree.h"
 
 class GameObject;
 class Texture;
@@ -43,7 +44,8 @@ public:
 	std::list<GameObject*> root_gameobjects;
 	std::list<GameObject*> scene_gameobjects;
 	std::list<ComponentCamera*> scene_cameras;
-
+	Octree octree;
+	bool draw_octree;
 private:
 	
 	std::list<GameObject*> gameobjects_to_destroy;

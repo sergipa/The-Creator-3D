@@ -101,6 +101,17 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 			s_node_name.find("$AssimpFbx$_Translation") != std::string::npos)
 		{
 			GetDummyTransform(*node, pos, quat, scale);
+			aiVector3D n_pos;
+			aiQuaternion n_quat;
+			aiVector3D n_scale;
+			node->mTransformation.Decompose(n_scale, n_quat, n_pos);
+			pos += n_pos;
+			quat = quat * n_quat;
+			scale = n_scale;
+		}
+		else
+		{
+			node->mTransformation.Decompose(scale, quat, pos);
 		}
 
 		std::string root_go_name;
@@ -109,10 +120,10 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 		if (!node->mParent) root->SetRoot(true);
 		root->SetName(root_go_name);
 		ComponentTransform* transform = (ComponentTransform*)root->GetComponent(Component::Transform);
-		aiVector3D rotation = quat.GetEuler();
-		rotation *= RADTODEG;
+		math::Quat math_quat(quat.x, quat.y, quat.z, quat.w);
+		float3 rotation = math::RadToDeg(math_quat.ToEulerXYZ());
 		transform->SetPosition({ pos.x, pos.y, pos.z });
-		transform->SetRotation({ rotation.z, rotation.y, rotation.x });
+		transform->SetRotation(rotation);
 		transform->SetScale({ scale.x, scale.y, scale.z });
 		App->scene->AddGameObjectToScene(root);
 			
@@ -283,10 +294,10 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 			aiQuaternion rotation_quat;
 			aiVector3D scale;
 			node->mTransformation.Decompose(scale, rotation_quat, position);
-			aiVector3D rotation = rotation_quat.GetEuler();
-			rotation *= RADTODEG;
+			math::Quat math_quat(rotation_quat.x, rotation_quat.y, rotation_quat.z, rotation_quat.w);
+			float3 rotation = math::RadToDeg(math_quat.ToEulerXYZ());
 			transform->SetPosition({ position.x, position.y, position.z });
-			transform->SetRotation({ rotation.x, rotation.z, rotation.y });
+			transform->SetRotation(rotation);
 			transform->SetScale({ scale.x, scale.y, scale.z });
 			go->SetName(mesh->GetName());
 			App->scene->AddGameObjectToScene(go);

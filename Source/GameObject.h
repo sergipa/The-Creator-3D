@@ -20,6 +20,8 @@ public:
 	void AddChild(GameObject* gameobject);
 	bool IsActive() const;
 	void SetActive(bool active);
+	void SetStatic(bool is_static);
+	bool IsStatic() const;
 	bool IsSelected() const;
 	void SetSelected(bool selected);
 	bool IsRoot() const;
@@ -58,5 +60,6 @@ private:
 	bool is_root;
 	UID uuid;
 	bool is_selected;
+	bool is_static;
 };
 

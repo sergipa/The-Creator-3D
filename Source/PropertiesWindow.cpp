@@ -31,13 +31,18 @@ void PropertiesWindow::DrawWindow()
 		}
 
 		if (selected_gameobject != nullptr && !selected_gameobject->is_on_destroy) {
+			ImGui::Text("%s", selected_gameobject->GetName().c_str());
 			bool is_gameobject_active = selected_gameobject->IsActive();
-			ImGui::SameLine();
-			if (ImGui::Checkbox("", &is_gameobject_active)) {
+
+			if (ImGui::Checkbox("Active", &is_gameobject_active)) {
 				selected_gameobject->SetActive(is_gameobject_active);
 			}
 			ImGui::SameLine();
-			ImGui::Text("Name: %s", selected_gameobject->GetName().c_str());
+			bool is_static = selected_gameobject->IsStatic();
+			if (ImGui::Checkbox("Static", &is_static))
+			{
+				selected_gameobject->SetStatic(is_static);
+			}
 			ImGui::Text("Tag:");
 			ImGui::SameLine();
 			if (ImGui::SmallButton((selected_gameobject->GetTag() + "##tags").c_str())) {

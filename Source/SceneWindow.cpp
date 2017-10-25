@@ -85,6 +85,15 @@ void SceneWindow::DrawMenuBar()
 			}
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Gizmos"))
+		{
+			bool selected = App->scene->draw_octree;
+			if (ImGui::MenuItem("Octree", "", selected))
+			{
+				App->scene->draw_octree = !selected;
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMenuBar();
 	}
 

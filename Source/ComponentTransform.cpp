@@ -91,28 +91,12 @@ float3 ComponentTransform::GetLocalScale() const
 
 void ComponentTransform::UpdateGlobalMatrix()
 {
-	//transform_matrix.SetIdentity();
-	//transform_matrix.Scale(scale);
-	//transform_matrix.RotateX(rotation.x);
-	//transform_matrix.RotateY(rotation.y);
-	//transform_matrix.RotateZ(rotation.z);
-	//transform_matrix.Translate(position);
+
 	if (!this->GetGameObject()->IsRoot())
 	{
 		ComponentTransform* parent_transform = (ComponentTransform*)this->GetGameObject()->GetParent()->GetComponent(Component::Transform);
-		/*if(parent_transform->rotation.Length() != 0)
-			transform_matrix = float4x4::FromTRS((position + parent_transform->position), parent_transform->rotation * rotation, scale + parent_transform->scale);
-		else 
-			transform_matrix = float4x4::FromTRS((position + parent_transform->position), Quat::identity * rotation, scale + parent_transform->scale);*/
-		if (parent_transform->rotation.Length() != 0)
-		{
-			transform_matrix = float4x4::FromTRS(position, rotation, scale);
-		}
-		else
-		{
-			transform_matrix = float4x4::FromTRS(position, Quat::identity * rotation, scale);
-		}
 
+		transform_matrix = transform_matrix.FromTRS(position, rotation, scale);
 		transform_matrix = parent_transform->transform_matrix * transform_matrix;
 	}
 	else

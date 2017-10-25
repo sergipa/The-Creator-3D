@@ -228,8 +228,9 @@ void ModuleRenderer3D::DrawScene()
 	{
 		DrawSceneGameObjects(*it);
 	}
-	rendering_cameras.clear();
 	DrawSceneGameObjects(active_camera);
+	rendering_cameras.clear();
+	
 }
 
 void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)

@@ -32,6 +32,8 @@ bool ModuleScene::Start()
 	math::float3 initial_look_at(0, 0, 0);
 	App->camera->LookAt(initial_look_at);
 
+	octree.Create(float3(-500, -10, -500), float3(500, 100, 500));
+	draw_octree = false;
 	return ret;
 }
 
@@ -88,6 +90,8 @@ update_status ModuleScene::Update(float dt)
 
 	HandleInput();
 
+	octree.Create(float3(-500, -10, -500), float3(500, 100, 500));
+
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
 		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
@@ -103,6 +107,7 @@ update_status ModuleScene::Update(float dt)
 					DebugAABB aabb(mesh_renderer->GetMesh()->box);
 					aabb.Render();
 				}
+				octree.Insert(&mesh_renderer->GetMesh()->box);
 			}
 			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
 			{
@@ -112,6 +117,8 @@ update_status ModuleScene::Update(float dt)
 			}
 		}
 	}
+
+	if(draw_octree) octree.DebugDraw();
 
 	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
