@@ -28,6 +28,7 @@ ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Modul
 	is_using_texture2D = false;
 	is_using_fog = false;
 	testing_light = false;
+	textureMSAA = nullptr;
 	name = "Renderer";
 	active_camera = nullptr;
 }
@@ -332,7 +333,11 @@ void ModuleRenderer3D::SaveData(Data * data)
 {
 	data->CreateSection("Renderer_Config");
 	data->AddBool("Vsync", use_vsync);
-	data->AddInt("MSAA_Level", textureMSAA->GetCurrentMSAALevel());
+	if(textureMSAA == nullptr)
+		data->AddInt("MSAA_Level", 2);
+	else data->AddInt("MSAA_Level", textureMSAA->GetCurrentMSAALevel());
+	
+
 	data->CloseSection();
 }
 
