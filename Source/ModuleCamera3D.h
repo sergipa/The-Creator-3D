@@ -9,7 +9,7 @@ class ComponentCamera;
 class ModuleCamera3D : public Module
 {
 public:
-	ModuleCamera3D(Application* app, bool start_enabled = true);
+	ModuleCamera3D(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleCamera3D();
 
 	bool Init(Data* editor_config);

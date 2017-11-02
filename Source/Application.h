@@ -14,6 +14,7 @@
 #include "ModuleEditor.h"
 #include "ModuleImport.h"
 #include "ModuleResources.h"
+#include "ModuleTime.h"
 #include <list>
 
 class Data;
@@ -32,6 +33,7 @@ public:
 	ModuleEditor* editor;
 	ModuleImport* import;
 	ModuleResources* resources;
+	ModuleTime* time;
 	TagsAndLayers* tags_and_layers;
 private:
 

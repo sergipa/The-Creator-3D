@@ -14,8 +14,9 @@ public:
 	std::string name;
 	PerfTimer ms_timer;
 	Application* App;
+	bool is_game;
 
-	Module(Application* parent, bool start_enabled = true) : App(parent)
+	Module(Application* parent, bool start_enabled = true, bool is_game = false) : App(parent), enabled(start_enabled),is_game(is_game)
 	{}
 
 	virtual ~Module()

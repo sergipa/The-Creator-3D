@@ -3,7 +3,7 @@
 #include "ModuleWindow.h"
 #include "Data.h"
 
-ModuleWindow::ModuleWindow(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleWindow::ModuleWindow(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
 	window = nullptr;
 	screen_surface = nullptr;
@@ -27,6 +27,7 @@ ModuleWindow::~ModuleWindow()
 // Called before render is available
 bool ModuleWindow::Init(Data* editor_config)
 {
+	is_game = false;
 	CONSOLE_DEBUG("Init SDL window & surface");
 	bool ret = true;
 

@@ -11,7 +11,7 @@ class ModuleAudio : public Module
 {
 public:
 
-	ModuleAudio(Application* app, bool start_enabled = true);
+	ModuleAudio(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleAudio();
 
 	bool Init(Data* editor_config = nullptr);

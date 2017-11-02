@@ -2,7 +2,7 @@
 #include "Texture.h"
 #include "Mesh.h"
 
-ModuleResources::ModuleResources(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleResources::ModuleResources(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
 	name = "Resources";
 }

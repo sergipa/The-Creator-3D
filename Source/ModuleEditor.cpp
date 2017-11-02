@@ -18,7 +18,7 @@
 #include "TagsAndLayersWindow.h"
 #include "ImportWindow.h"
 
-ModuleEditor::ModuleEditor(Application * app, bool start_enabled) : Module(app, start_enabled)
+ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {
 	name = "Editor";
 }

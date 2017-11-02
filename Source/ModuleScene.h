@@ -14,7 +14,7 @@ class ComponentCamera;
 class ModuleScene : public Module
 {
 public:
-	ModuleScene(Application* app, bool start_enabled = true);
+	ModuleScene(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleScene();
 
 	bool Start();

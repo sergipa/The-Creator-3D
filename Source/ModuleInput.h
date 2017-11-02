@@ -18,7 +18,7 @@ class ModuleInput : public Module
 {
 public:
 	
-	ModuleInput(Application* app, bool start_enabled = true);
+	ModuleInput(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleInput();
 
 	bool Init(Data* editor_config = nullptr);

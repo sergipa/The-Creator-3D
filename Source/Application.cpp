@@ -20,7 +20,7 @@ Application::Application()
 	editor = new ModuleEditor(this);
 	import = new ModuleImport(this);
 	resources = new ModuleResources(this);
-
+	time = new ModuleTime(this);
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -29,13 +29,16 @@ Application::Application()
 	AddModule(window);
 	AddModule(input);
 	AddModule(audio);
-	//AddModule(physics);
 	AddModule(renderer3D);
 	AddModule(camera);
 	AddModule(scene);
 	AddModule(import);
 	AddModule(editor);
 	AddModule(resources);
+	//TIME
+	AddModule(time);
+	//Game Modules
+	//AddModule(physics);
 
 	random = new math::LCG();
 	cursor = nullptr;
@@ -141,7 +144,11 @@ update_status Application::Update()
 	
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PreUpdate(dt);
+		if((*item)->is_game)
+			ret = (*item)->PreUpdate(time->GetGameDt());
+		else
+			ret = (*item)->PreUpdate(dt);
+
 		++item;
 	}
 
@@ -149,7 +156,11 @@ update_status Application::Update()
 
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->Update(dt);
+		if ((*item)->is_game)
+			ret = (*item)->Update(time->GetGameDt());
+		else
+			ret = (*item)->Update(dt);
+
 		++item;
 	}
 
@@ -157,7 +168,11 @@ update_status Application::Update()
 
 	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
 	{
-		ret = (*item)->PostUpdate(dt);
+		if ((*item)->is_game)
+			ret = (*item)->PostUpdate(time->GetGameDt());
+		else
+			ret = (*item)->PostUpdate(dt);
+
 		++item;
 	}
 	FinishUpdate();

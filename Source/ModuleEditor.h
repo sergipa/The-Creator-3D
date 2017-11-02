@@ -26,7 +26,7 @@ class ModuleEditor :
 	public Module
 {
 public:
-	ModuleEditor(Application* app, bool start_enabled = true);
+	ModuleEditor(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleEditor();
 
 	bool Init(Data* editor_config = nullptr);

@@ -9,7 +9,7 @@ class ModuleResources :
 	public Module
 {
 public:
-	ModuleResources(Application* app, bool start_enabled = true);
+	ModuleResources(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleResources();
 
 	bool TextureExist(std::string name) const;

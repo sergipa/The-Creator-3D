@@ -14,7 +14,7 @@ class ModuleImport :
 	public Module
 {
 public:
-	ModuleImport(Application * app, bool start_enabled = true);
+	ModuleImport(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleImport();
 
 	bool CleanUp();
