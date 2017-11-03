@@ -132,10 +132,6 @@ void OctreeNode::CollectIntersections(std::list<AABB*>& intersections_list, AABB
 	}
 }
 
-//void OctreeNode::ResizeNode()
-//{
-//}
-
 void OctreeNode::DebugDrawNode()
 {
 	if (node_childs[0] != nullptr)

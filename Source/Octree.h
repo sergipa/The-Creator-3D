@@ -38,14 +38,13 @@ public:
 	void CollectIntersections(std::list<AABB*>& intersections_list, AABB* bounding_box);
 	void DebugDraw();
 	void CalculateNewSize(float3 box_min_point, float3 box_max_point);
-	void CheckIfNeedsUpdate(float3 box_min_point, float3 box_max_point, bool inserting_box);
 
 private:
 	OctreeNode* root_node = nullptr;
-	float3 min_point;
-	float3 max_point;
-	
+
 public:
 	bool update_tree;
+	float3 min_point;
+	float3 max_point;
 };
 

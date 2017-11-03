@@ -143,13 +143,19 @@ void GameObject::SetStatic(bool is_static)
 	this->is_static = is_static;
 	if (active)
 	{
-		if (is_static)
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+		if (mesh_renderer != nullptr)
 		{
-			App->scene->InsertGoInOctree(this);
-		}
-		else
-		{
-			App->scene->EraseGoInOctree(this);
+			if (is_static)
+			{
+				App->scene->InsertGoInOctree(mesh_renderer->GetMesh()->box);
+				App->scene->static_meshes.push_back(mesh_renderer->GetMesh());
+			}
+			else
+			{
+				App->scene->EraseGoInOctree(mesh_renderer->GetMesh()->box);
+				App->scene->static_meshes.remove(mesh_renderer->GetMesh());
+			}
 		}
 	}
 }

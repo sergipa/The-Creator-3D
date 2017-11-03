@@ -32,7 +32,8 @@ bool ModuleScene::Start()
 	math::float3 initial_look_at(0, 0, 0);
 	App->camera->LookAt(initial_look_at);
 
-	octree.Create(float3(-500, -10, -500), float3(500, 100, 500));
+	octree.Create(float3::zero, float3::zero);
+	octree.update_tree = true;
 	draw_octree = false;
 	return ret;
 }
@@ -105,7 +106,6 @@ update_status ModuleScene::Update(float dt)
 					DebugAABB aabb(mesh_renderer->GetMesh()->box);
 					aabb.Render();
 				}
-				if (octree.update_tree) octree.CalculateNewSize(mesh_renderer->GetMesh()->box.minPoint, mesh_renderer->GetMesh()->box.maxPoint);
 			}
 			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
 			{
@@ -118,10 +118,21 @@ update_status ModuleScene::Update(float dt)
 
 	if (octree.update_tree)
 	{
-		for (std::list<GameObject*>::iterator it = static_gameobjects.begin(); it != static_gameobjects.end(); it++)
+		//If octree needs to be updated, set the size to 0 and start growing it
+		octree.min_point = float3::zero;
+		octree.max_point = float3::zero;
+		for (std::list<Mesh*>::iterator it = static_meshes.begin(); it != static_meshes.end(); it++)
 		{
-
+			octree.CalculateNewSize((*it)->box.minPoint, (*it)->box.maxPoint);
 		}
+		//After calculate the size of the new octree, crete it deleteing the previous
+		octree.Update();
+		//Insert all the contents to the new octree
+		for (std::list<Mesh*>::iterator it = static_meshes.begin(); it != static_meshes.end(); it++)
+		{
+			octree.Insert(&(*it)->box);
+		}
+		octree.update_tree = false;
 	}
 	if(draw_octree) octree.DebugDraw();
 

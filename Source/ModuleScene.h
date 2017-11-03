@@ -10,6 +10,7 @@
 class GameObject;
 class Texture;
 class ComponentCamera;
+class Mesh;
 
 class ModuleScene : public Module
 {
@@ -47,8 +48,8 @@ public:
 	std::list<GameObject*> root_gameobjects;
 	std::list<GameObject*> scene_gameobjects;
 	std::list<ComponentCamera*> scene_cameras;
-	std::list<GameObject*> static_gameobjects;
-	std::list<GameObject*> dynamic_gameobjects;
+	std::list<Mesh*> static_meshes;
+	std::list<Mesh*> dynamic_meshes;
 	Octree octree;
 	bool draw_octree;
 private:
