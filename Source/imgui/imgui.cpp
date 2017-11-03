@@ -1955,13 +1955,13 @@ bool ImGui::IsClippedEx(const ImRect& bb, const ImGuiID* id, bool clip_even_when
 }
 
 // NB: This is an internal helper. The user-facing IsItemHovered() is using data emitted from ItemAdd(), with a slightly different logic.
-bool ImGui::IsHovered(const ImRect& bb, ImGuiID id, bool flatten_childs)
+bool ImGui::IsHovered(const ImRect& bb, ImGuiID id, bool flatten_childs, bool editable)
 {
     ImGuiContext& g = *GImGui;
     if (g.HoveredId == 0 || g.HoveredId == id || g.HoveredIdAllowOverlap)
     {
         ImGuiWindow* window = GetCurrentWindowRead();
-        if (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window->RootWindow))
+        if (editable && (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window->RootWindow)))
             if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
                 if (IsWindowContentHoverable(g.HoveredRootWindow))
                     return true;
@@ -6955,7 +6955,7 @@ bool ImGui::DragBehavior(const ImRect& frame_bb, ImGuiID id, float* v, float v_s
     return value_changed;
 }
 
-bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, float v_max, const char* display_format, float power)
+bool ImGui::DragFloat(const char* label, float* v, bool editable, float v_speed, float v_min, float v_max, const char* display_format, float power)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -6978,7 +6978,7 @@ bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, f
         return false;
     }
 
-    const bool hovered = IsHovered(frame_bb, id);
+    const bool hovered = IsHovered(frame_bb, id, true, editable);
     if (hovered)
         SetHoveredID(id);
 
@@ -7007,6 +7007,10 @@ bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, f
     ItemSize(total_bb, style.FramePadding.y);
     const bool value_changed = DragBehavior(frame_bb, id, v, v_speed, v_min, v_max, decimal_precision, power);
 
+	if (!editable)
+	{
+		g.Style.Alpha = 0.5f;
+	}
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
     char value_buf[64];
     const char* value_buf_end = value_buf + ImFormatString(value_buf, IM_ARRAYSIZE(value_buf), display_format, *v);
@@ -7015,10 +7019,14 @@ bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, f
     if (label_size.x > 0.0f)
         RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, inner_bb.Min.y), label);
 
+	if (!editable)
+	{
+		g.Style.Alpha = 1;
+	}
     return value_changed;
 }
 
-bool ImGui::DragFloatN(const char* label, float* v, int components, float v_speed, float v_min, float v_max, const char* display_format, float power)
+bool ImGui::DragFloatN(const char* label, float* v, int components, float v_speed, float v_min, float v_max, const char* display_format, float power, bool editable)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -7032,7 +7040,7 @@ bool ImGui::DragFloatN(const char* label, float* v, int components, float v_spee
     for (int i = 0; i < components; i++)
     {
         PushID(i);
-        value_changed |= DragFloat("##v", &v[i], v_speed, v_min, v_max, display_format, power);
+        value_changed |= DragFloat("##v", &v[i], editable, v_speed, v_min, v_max, display_format, power);
         SameLine(0, g.Style.ItemInnerSpacing.x);
         PopID();
         PopItemWidth();
@@ -7045,22 +7053,22 @@ bool ImGui::DragFloatN(const char* label, float* v, int components, float v_spee
     return value_changed;
 }
 
-bool ImGui::DragFloat2(const char* label, float v[2], float v_speed, float v_min, float v_max, const char* display_format, float power)
+bool ImGui::DragFloat2(const char* label, float v[2], bool editable, float v_speed, float v_min, float v_max, const char* display_format, float power)
 {
-    return DragFloatN(label, v, 2, v_speed, v_min, v_max, display_format, power);
+    return DragFloatN(label, v, 2, v_speed, v_min, v_max, display_format, power, editable);
 }
 
-bool ImGui::DragFloat3(const char* label, float v[3], float v_speed, float v_min, float v_max, const char* display_format, float power)
+bool ImGui::DragFloat3(const char* label, float v[3], bool editable, float v_speed, float v_min, float v_max, const char* display_format, float power)
 {
-    return DragFloatN(label, v, 3, v_speed, v_min, v_max, display_format, power);
+    return DragFloatN(label, v, 3, v_speed, v_min, v_max, display_format, power, editable);
 }
 
-bool ImGui::DragFloat4(const char* label, float v[4], float v_speed, float v_min, float v_max, const char* display_format, float power)
+bool ImGui::DragFloat4(const char* label, float v[4], bool editable, float v_speed, float v_min, float v_max, const char* display_format, float power)
 {
-    return DragFloatN(label, v, 4, v_speed, v_min, v_max, display_format, power);
+    return DragFloatN(label, v, 4, v_speed, v_min, v_max, display_format, power, editable);
 }
 
-bool ImGui::DragFloatRange2(const char* label, float* v_current_min, float* v_current_max, float v_speed, float v_min, float v_max, const char* display_format, const char* display_format_max, float power)
+bool ImGui::DragFloatRange2(const char* label, float* v_current_min, float* v_current_max, bool editable, float v_speed, float v_min, float v_max, const char* display_format, const char* display_format_max, float power)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -7071,10 +7079,10 @@ bool ImGui::DragFloatRange2(const char* label, float* v_current_min, float* v_cu
     BeginGroup();
     PushMultiItemsWidths(2);
 
-    bool value_changed = DragFloat("##min", v_current_min, v_speed, (v_min >= v_max) ? -FLT_MAX : v_min, (v_min >= v_max) ? *v_current_max : ImMin(v_max, *v_current_max), display_format, power);
+    bool value_changed = DragFloat("##min", v_current_min, editable, v_speed, (v_min >= v_max) ? -FLT_MAX : v_min, (v_min >= v_max) ? *v_current_max : ImMin(v_max, *v_current_max), display_format, power);
     PopItemWidth();
     SameLine(0, g.Style.ItemInnerSpacing.x);
-    value_changed |= DragFloat("##max", v_current_max, v_speed, (v_min >= v_max) ? *v_current_min : ImMax(v_min, *v_current_min), (v_min >= v_max) ? FLT_MAX : v_max, display_format_max ? display_format_max : display_format, power);
+    value_changed |= DragFloat("##max", v_current_max, editable, v_speed, (v_min >= v_max) ? *v_current_min : ImMax(v_min, *v_current_min), (v_min >= v_max) ? FLT_MAX : v_max, display_format_max ? display_format_max : display_format, power);
     PopItemWidth();
     SameLine(0, g.Style.ItemInnerSpacing.x);
 
@@ -7086,17 +7094,17 @@ bool ImGui::DragFloatRange2(const char* label, float* v_current_min, float* v_cu
 }
 
 // NB: v_speed is float to allow adjusting the drag speed with more precision
-bool ImGui::DragInt(const char* label, int* v, float v_speed, int v_min, int v_max, const char* display_format)
+bool ImGui::DragInt(const char* label, int* v, bool editable, float v_speed, int v_min, int v_max, const char* display_format)
 {
     if (!display_format)
         display_format = "%.0f";
     float v_f = (float)*v;
-    bool value_changed = DragFloat(label, &v_f, v_speed, (float)v_min, (float)v_max, display_format);
+    bool value_changed = DragFloat(label, &v_f, editable, v_speed, (float)v_min, (float)v_max, display_format);
     *v = (int)v_f;
     return value_changed;
 }
 
-bool ImGui::DragIntN(const char* label, int* v, int components, float v_speed, int v_min, int v_max, const char* display_format)
+bool ImGui::DragIntN(const char* label, int* v, int components, float v_speed, int v_min, int v_max, const char* display_format, bool editable)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -7110,7 +7118,7 @@ bool ImGui::DragIntN(const char* label, int* v, int components, float v_speed, i
     for (int i = 0; i < components; i++)
     {
         PushID(i);
-        value_changed |= DragInt("##v", &v[i], v_speed, v_min, v_max, display_format);
+        value_changed |= DragInt("##v", &v[i], editable, v_speed, v_min, v_max, display_format);
         SameLine(0, g.Style.ItemInnerSpacing.x);
         PopID();
         PopItemWidth();
@@ -7123,22 +7131,22 @@ bool ImGui::DragIntN(const char* label, int* v, int components, float v_speed, i
     return value_changed;
 }
 
-bool ImGui::DragInt2(const char* label, int v[2], float v_speed, int v_min, int v_max, const char* display_format)
+bool ImGui::DragInt2(const char* label, int v[2], bool editable, float v_speed, int v_min, int v_max, const char* display_format)
 {
-    return DragIntN(label, v, 2, v_speed, v_min, v_max, display_format);
+    return DragIntN(label, v, 2, v_speed, v_min, v_max, display_format, editable);
 }
 
-bool ImGui::DragInt3(const char* label, int v[3], float v_speed, int v_min, int v_max, const char* display_format)
+bool ImGui::DragInt3(const char* label, int v[3], bool editable, float v_speed, int v_min, int v_max, const char* display_format)
 {
-    return DragIntN(label, v, 3, v_speed, v_min, v_max, display_format);
+    return DragIntN(label, v, 3, v_speed, v_min, v_max, display_format, editable);
 }
 
-bool ImGui::DragInt4(const char* label, int v[4], float v_speed, int v_min, int v_max, const char* display_format)
+bool ImGui::DragInt4(const char* label, int v[4], bool editable, float v_speed, int v_min, int v_max, const char* display_format)
 {
-    return DragIntN(label, v, 4, v_speed, v_min, v_max, display_format);
+    return DragIntN(label, v, 4, v_speed, v_min, v_max, display_format, editable);
 }
 
-bool ImGui::DragIntRange2(const char* label, int* v_current_min, int* v_current_max, float v_speed, int v_min, int v_max, const char* display_format, const char* display_format_max)
+bool ImGui::DragIntRange2(const char* label, int* v_current_min, int* v_current_max, bool editable, float v_speed, int v_min, int v_max, const char* display_format, const char* display_format_max)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -7149,10 +7157,10 @@ bool ImGui::DragIntRange2(const char* label, int* v_current_min, int* v_current_
     BeginGroup();
     PushMultiItemsWidths(2);
 
-    bool value_changed = DragInt("##min", v_current_min, v_speed, (v_min >= v_max) ? INT_MIN : v_min, (v_min >= v_max) ? *v_current_max : ImMin(v_max, *v_current_max), display_format);
+    bool value_changed = DragInt("##min", v_current_min, editable, v_speed, (v_min >= v_max) ? INT_MIN : v_min, (v_min >= v_max) ? *v_current_max : ImMin(v_max, *v_current_max), display_format);
     PopItemWidth();
     SameLine(0, g.Style.ItemInnerSpacing.x);
-    value_changed |= DragInt("##max", v_current_max, v_speed, (v_min >= v_max) ? *v_current_min : ImMax(v_min, *v_current_min), (v_min >= v_max) ? INT_MAX : v_max, display_format_max ? display_format_max : display_format);
+    value_changed |= DragInt("##max", v_current_max, editable, v_speed, (v_min >= v_max) ? *v_current_min : ImMax(v_min, *v_current_min), (v_min >= v_max) ? INT_MAX : v_max, display_format_max ? display_format_max : display_format);
     PopItemWidth();
     SameLine(0, g.Style.ItemInnerSpacing.x);
 
@@ -9315,9 +9323,9 @@ bool ImGui::ColorEdit4(const char* label, float col[4], ImGuiColorEditFlags flag
             if (n + 1 == components)
                 PushItemWidth(w_item_last);
             if (flags & ImGuiColorEditFlags_Float)
-                value_changed |= value_changed_as_float |= DragFloat(ids[n], &f[n], 1.0f/255.0f, 0.0f, hdr ? 0.0f : 1.0f, fmt_table_float[fmt_idx][n]);
+                value_changed |= value_changed_as_float |= DragFloat(ids[n], &f[n], true, 1.0f/255.0f, 0.0f, hdr ? 0.0f : 1.0f, fmt_table_float[fmt_idx][n]);
             else
-                value_changed |= DragInt(ids[n], &i[n], 1.0f, 0, hdr ? 0 : 255, fmt_table_int[fmt_idx][n]);
+                value_changed |= DragInt(ids[n], &i[n], true, 1.0f, 0, hdr ? 0 : 255, fmt_table_int[fmt_idx][n]);
             if (!(flags & ImGuiColorEditFlags_NoOptions) && IsItemHovered() && IsMouseClicked(1))
                 OpenPopup("context");
         }

@@ -22,6 +22,7 @@ GameObject::GameObject(GameObject* parent)
 	name = "New GameObject";
 	is_on_destroy = false;
 	is_selected = false;
+	is_static = false;
 	AddComponent(Component::Transform);
 
 	uuid = App->RandomNumber().Int();
@@ -120,16 +121,38 @@ bool GameObject::IsActive() const
 void GameObject::SetActive(bool active)
 {
 	this->active = active;
+	if (is_static)
+	{
+		if (active)
+		{
+			App->scene->InsertGoInOctree(this);
+		}
+		else
+		{
+			App->scene->EraseGoInOctree(this);
+		}
+	}
 }
 
 void GameObject::SetStatic(bool is_static)
 {
-	is_static = is_static;
+	this->is_static = is_static;
+	if (active)
+	{
+		if (is_static)
+		{
+			App->scene->InsertGoInOctree(this);
+		}
+		else
+		{
+			App->scene->EraseGoInOctree(this);
+		}
+	}
 }
 
 bool GameObject::IsStatic() const
 {
-	return is_selected;
+	return is_static;
 }
 
 bool GameObject::IsSelected() const
@@ -209,6 +232,11 @@ void GameObject::UpdateBoundingBox()
 	if (mesh_renderer != nullptr)
 	{
 		mesh_renderer->UpdateBoundingBox();
+		if (is_static && active)
+		{
+			App->scene->EraseGoInOctree(this);
+			App->scene->InsertGoInOctree(this);
+		}
 	}
 }
 

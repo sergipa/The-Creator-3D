@@ -31,7 +31,7 @@ void PropertiesWindow::DrawWindow()
 		}
 
 		if (selected_gameobject != nullptr && !selected_gameobject->is_on_destroy) {
-			ImGui::Text("%s", selected_gameobject->GetName().c_str());
+			ImGui::Text("Name: %s", selected_gameobject->GetName().c_str());
 			bool is_gameobject_active = selected_gameobject->IsActive();
 
 			if (ImGui::Checkbox("Active", &is_gameobject_active)) {
@@ -169,14 +169,14 @@ void PropertiesWindow::DrawTransformPanel(ComponentTransform * transform)
 			rotation = transform->GetLocalRotation();
 			scale = transform->GetLocalScale();
 		}
-
-		if (ImGui::DragFloat3("Position", (float*)&position, 0.25f)) {
+		bool is_static = !transform->GetGameObject()->IsStatic();
+		if (ImGui::DragFloat3("Position", (float*)&position, is_static, 0.25f)) {
 			transform->SetPosition(position);
 		}
-		if (ImGui::DragFloat3("Rotation", (float*)&rotation, 0.25f, -360, 360)) {
+		if (ImGui::DragFloat3("Rotation", (float*)&rotation, is_static, 0.25f, -360, 360)) {
 			transform->SetRotation(rotation);
 		}
-		if (ImGui::DragFloat3("Scale", (float*)&scale, 0.25f)) {
+		if (ImGui::DragFloat3("Scale", (float*)&scale, is_static, 0.25f)) {
 			transform->SetScale(scale);
 		}
 	}
@@ -281,30 +281,30 @@ void PropertiesWindow::DrawCameraPanel(ComponentCamera * camera)
 		float near_plane = camera->GetNearPlaneDistance();
 		float far_plane = camera->GetFarPlanceDistance();
 		ImGui::Text("Near Plane:");
-		if (ImGui::DragFloat("##Near Plane", &near_plane, 0.025f, 0.01, far_plane - 0.1f))
+		if (ImGui::DragFloat("##Near Plane", &near_plane, true, 0.025f, 0.01, far_plane - 0.1f))
 		{
 			camera->SetNearPlaneDistance(near_plane);
 		}
 		ImGui::Text("Far Plane:");
-		if (ImGui::DragFloat("##Far Plane", &far_plane, 0.025f, near_plane + 0.1f))
+		if (ImGui::DragFloat("##Far Plane", &far_plane, true, 0.025f, near_plane + 0.1f))
 		{
 			camera->SetFarPlaneDistance(far_plane);
 		}
 		Rect viewport = camera->GetViewport();
 		ImGui::Text("Viewport:");
-		if (ImGui::DragInt("X", &viewport.left, 0.025f, 0, 1))
+		if (ImGui::DragInt("X", &viewport.left, true, 0.025f, 0, 1))
 		{
 			camera->SetViewport(viewport);
 		}
-		if (ImGui::DragInt("Y", &viewport.top, 0.025f, 0, 1))
+		if (ImGui::DragInt("Y", &viewport.top, true, 0.025f, 0, 1))
 		{
 			camera->SetViewport(viewport);
 		}
-		if (ImGui::DragInt("W", &viewport.right, 0.025f, 1, 0))
+		if (ImGui::DragInt("W", &viewport.right, true, 0.025f, 1, 0))
 		{
 			camera->SetViewport(viewport);
 		}
-		if (ImGui::DragInt("H", &viewport.bottom, 0.025f, 1, 0))
+		if (ImGui::DragInt("H", &viewport.bottom, true, 0.025f, 1, 0))
 		{
 			camera->SetViewport(viewport);
 		}

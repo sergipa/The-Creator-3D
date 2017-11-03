@@ -17,7 +17,6 @@ void AboutWindow::DrawWindow()
 		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_ShowBorders);
-	ImGui::ShowTestWindow();
 	ImGui::SetWindowFontScale(1.1f);
 	ImGui::Text("The Creator v0.3");
 	ImGui::SetWindowFontScale(1);

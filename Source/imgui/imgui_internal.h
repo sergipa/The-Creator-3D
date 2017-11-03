@@ -752,7 +752,7 @@ namespace ImGui
     IMGUI_API void          ItemSize(const ImRect& bb, float text_offset_y = 0.0f);
     IMGUI_API bool          ItemAdd(const ImRect& bb, const ImGuiID* id);
     IMGUI_API bool          IsClippedEx(const ImRect& bb, const ImGuiID* id, bool clip_even_when_logged);
-    IMGUI_API bool          IsHovered(const ImRect& bb, ImGuiID id, bool flatten_childs = false);
+    IMGUI_API bool          IsHovered(const ImRect& bb, ImGuiID id, bool flatten_childs = false, bool editable = true);
     IMGUI_API bool          FocusableItemRegister(ImGuiWindow* window, bool is_active, bool tab_stop = true);      // Return true if focus is requested
     IMGUI_API void          FocusableItemUnregister(ImGuiWindow* window);
     IMGUI_API ImVec2        CalcItemSize(ImVec2 size, float default_x, float default_y);
@@ -788,8 +788,8 @@ namespace ImGui
     IMGUI_API bool          SliderIntN(const char* label, int* v, int components, int v_min, int v_max, const char* display_format);
 
     IMGUI_API bool          DragBehavior(const ImRect& frame_bb, ImGuiID id, float* v, float v_speed, float v_min, float v_max, int decimal_precision, float power);
-    IMGUI_API bool          DragFloatN(const char* label, float* v, int components, float v_speed, float v_min, float v_max, const char* display_format, float power);
-    IMGUI_API bool          DragIntN(const char* label, int* v, int components, float v_speed, int v_min, int v_max, const char* display_format);
+    IMGUI_API bool          DragFloatN(const char* label, float* v, int components, float v_speed, float v_min, float v_max, const char* display_format, float power, bool editable = true);
+    IMGUI_API bool          DragIntN(const char* label, int* v, int components, float v_speed, int v_min, int v_max, const char* display_format, bool editable = true);
 
     IMGUI_API bool          InputTextEx(const char* label, char* buf, int buf_size, const ImVec2& size_arg, ImGuiInputTextFlags flags, ImGuiTextEditCallback callback = NULL, void* user_data = NULL);
     IMGUI_API bool          InputFloatN(const char* label, float* v, int components, int decimal_precision, ImGuiInputTextFlags extra_flags);

@@ -30,21 +30,21 @@ void RendererConfigWindow::DrawWindow()
 	{
 		App->renderer3D->EnableTestLight();
 		ImGui::TextColored(ImVec4(0, 1, 0, 1), "Test Light");
-		ImGui::DragFloat4("Ambient light", light_ambient, 0.025f, -1.0, 1.0);
+		ImGui::DragFloat4("Ambient light", light_ambient, true, 0.025f, -1.0, 1.0);
 		glLightfv(GL_LIGHT7, GL_AMBIENT, light_ambient);
-		ImGui::DragFloat4("Difuse light", light_diffuse, 0.025f, -1.0, 1.0);
+		ImGui::DragFloat4("Difuse light", light_diffuse, true, 0.025f, -1.0, 1.0);
 		glLightfv(GL_LIGHT7, GL_DIFFUSE, light_diffuse);
-		ImGui::DragFloat4("Specular light", light_specular, 0.025f, -1.0, 1.0);
+		ImGui::DragFloat4("Specular light", light_specular, true, 0.025f, -1.0, 1.0);
 		glLightfv(GL_LIGHT7, GL_SPECULAR, light_specular);
-		ImGui::DragFloat4("Light position", light_position, 0.025f);
+		ImGui::DragFloat4("Light position", light_position, true, 0.025f);
 		glLightfv(GL_LIGHT7, GL_POSITION, light_position);
-		ImGui::DragFloat3("Light spot direction", light_spot_direction, 0.025f);
+		ImGui::DragFloat3("Light spot direction", light_spot_direction, true, 0.025f);
 		glLightfv(GL_LIGHT7, GL_SPOT_DIRECTION, light_spot_direction);
-		ImGui::DragFloat("Constant attenuation", &light_constant_attenuation, 0.025f, 0);
+		ImGui::DragFloat("Constant attenuation", &light_constant_attenuation, true, 0.025f, 0);
 		glLightf(GL_LIGHT7, GL_CONSTANT_ATTENUATION, light_constant_attenuation);
-		ImGui::DragFloat("Linear attenuation", &light_linear_attenuation, 0.025f, 0);
+		ImGui::DragFloat("Linear attenuation", &light_linear_attenuation, true, 0.025f, 0);
 		glLightf(GL_LIGHT7, GL_LINEAR_ATTENUATION, light_linear_attenuation);
-		ImGui::DragFloat("Quadratic attenuation", &light_quadratic_attenuation, 0.025f, 0);
+		ImGui::DragFloat("Quadratic attenuation", &light_quadratic_attenuation, true, 0.025f, 0);
 		glLightf(GL_LIGHT7, GL_QUADRATIC_ATTENUATION, light_quadratic_attenuation);
 	}
 

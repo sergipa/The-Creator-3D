@@ -344,14 +344,14 @@ void ImGui::ShowTestWindow(bool* p_open)
 
             {
                 static int i1=50, i2=42;
-                ImGui::DragInt("drag int", &i1, 1);
+                ImGui::DragInt("drag int", &i1, true, 1);
                 ImGui::SameLine(); ShowHelpMarker("Click and drag to edit value.\nHold SHIFT/ALT for faster/slower edit.\nDouble-click or CTRL+click to input value.");
 
-                ImGui::DragInt("drag int 0..100", &i2, 1, 0, 100, "%.0f%%");
+                ImGui::DragInt("drag int 0..100", &i2, true, 1, 0, 100, "%.0f%%");
 
                 static float f1=1.00f, f2=0.0067f;
-                ImGui::DragFloat("drag float", &f1, 0.005f);
-                ImGui::DragFloat("drag small float", &f2, 0.0001f, 0.0f, 0.0f, "%.06f ns");
+                ImGui::DragFloat("drag float", &f1, true, 0.005f);
+                ImGui::DragFloat("drag small float", &f2, true, 0.0001f, 0.0f, 0.0f, "%.06f ns");
             }
 
             {
@@ -863,8 +863,8 @@ void ImGui::ShowTestWindow(bool* p_open)
         {
             static float begin = 10, end = 90;
             static int begin_i = 100, end_i = 1000;
-            ImGui::DragFloatRange2("range", &begin, &end, 0.25f, 0.0f, 100.0f, "Min: %.1f %%", "Max: %.1f %%");
-            ImGui::DragIntRange2("range int (no bounds)", &begin_i, &end_i, 5, 0, 0, "Min: %.0f units", "Max: %.0f units");
+            ImGui::DragFloatRange2("range", &begin, &end, true, 0.25f, 0.0f, 100.0f, "Min: %.1f %%", "Max: %.1f %%");
+            ImGui::DragIntRange2("range int (no bounds)", &begin_i, &end_i, true, 5, 0, 0, "Min: %.0f units", "Max: %.0f units");
             ImGui::TreePop();
         }
 
@@ -874,26 +874,26 @@ void ImGui::ShowTestWindow(bool* p_open)
             static int vec4i[4] = { 1, 5, 100, 255 };
 
             ImGui::InputFloat2("input float2", vec4f);
-            ImGui::DragFloat2("drag float2", vec4f, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat2("drag float2", vec4f, true, 0.01f, 0.0f, 1.0f);
             ImGui::SliderFloat2("slider float2", vec4f, 0.0f, 1.0f);
-            ImGui::DragInt2("drag int2", vec4i, 1, 0, 255);
+            ImGui::DragInt2("drag int2", vec4i, true, 1, 0, 255);
             ImGui::InputInt2("input int2", vec4i);
             ImGui::SliderInt2("slider int2", vec4i, 0, 255);
             ImGui::Spacing();
 
             ImGui::InputFloat3("input float3", vec4f);
-            ImGui::DragFloat3("drag float3", vec4f, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat3("drag float3", vec4f, true, 0.01f, 0.0f, 1.0f);
             ImGui::SliderFloat3("slider float3", vec4f, 0.0f, 1.0f);
-            ImGui::DragInt3("drag int3", vec4i, 1, 0, 255);
+            ImGui::DragInt3("drag int3", vec4i, true, 1, 0, 255);
             ImGui::InputInt3("input int3", vec4i);
             ImGui::SliderInt3("slider int3", vec4i, 0, 255);
             ImGui::Spacing();
 
             ImGui::InputFloat4("input float4", vec4f);
-            ImGui::DragFloat4("drag float4", vec4f, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat4("drag float4", vec4f, true, 0.01f, 0.0f, 1.0f);
             ImGui::SliderFloat4("slider float4", vec4f, 0.0f, 1.0f);
             ImGui::InputInt4("input int4", vec4i);
-            ImGui::DragInt4("drag int4", vec4i, 1, 0, 255);
+            ImGui::DragInt4("drag int4", vec4i, true, 1, 0, 255);
             ImGui::SliderInt4("slider int4", vec4i, 0, 255);
 
             ImGui::TreePop();
@@ -1217,9 +1217,9 @@ void ImGui::ShowTestWindow(bool* p_open)
             static int track_line = 50, scroll_to_px = 200;
             ImGui::Checkbox("Track", &track);
             ImGui::PushItemWidth(100);
-            ImGui::SameLine(130); track |= ImGui::DragInt("##line", &track_line, 0.25f, 0, 99, "Line = %.0f");
+            ImGui::SameLine(130); track |= ImGui::DragInt("##line", &track_line, true, 0.25f, 0, 99, "Line = %.0f");
             bool scroll_to = ImGui::Button("Scroll To Pos");
-            ImGui::SameLine(130); scroll_to |= ImGui::DragInt("##pos_y", &scroll_to_px, 1.00f, 0, 9999, "Y = %.0f px");
+            ImGui::SameLine(130); scroll_to |= ImGui::DragInt("##pos_y", &scroll_to_px, true, 1.00f, 0, 9999, "Y = %.0f px");
             ImGui::PopItemWidth();
             if (scroll_to) track = false;
 
@@ -1301,7 +1301,7 @@ void ImGui::ShowTestWindow(bool* p_open)
         {
             static ImVec2 size(100, 100), offset(50, 20);
             ImGui::TextWrapped("On a per-widget basis we are occasionally clipping text CPU-side if it won't fit in its frame. Otherwise we are doing coarser clipping + passing a scissor rectangle to the renderer. The system is designed to try minimizing both execution and CPU/GPU rendering cost.");
-            ImGui::DragFloat2("size", (float*)&size, 0.5f, 0.0f, 200.0f, "%.0f");
+            ImGui::DragFloat2("size", (float*)&size, true, 0.5f, 0.0f, 200.0f, "%.0f");
             ImGui::TextWrapped("(Click and drag)");
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec4 clip_rect(pos.x, pos.y, pos.x+size.x, pos.y+size.y);
@@ -1408,7 +1408,7 @@ void ImGui::ShowTestWindow(bool* p_open)
             {
                 if (ImGui::Selectable("Set to zero")) value = 0.0f;
                 if (ImGui::Selectable("Set to PI")) value = 3.1415f;
-                ImGui::DragFloat("Value", &value, 0.1f, 0.0f, 0.0f);
+                ImGui::DragFloat("Value", &value, true, 0.1f, 0.0f, 0.0f);
                 ImGui::EndPopup();
             }
 
@@ -1846,9 +1846,9 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
         ImGui::Checkbox("Anti-aliased lines", &style.AntiAliasedLines); ImGui::SameLine(); ShowHelpMarker("When disabling anti-aliasing lines, you'll probably want to disable borders in your style as well.");
         ImGui::Checkbox("Anti-aliased shapes", &style.AntiAliasedShapes);
         ImGui::PushItemWidth(100);
-        ImGui::DragFloat("Curve Tessellation Tolerance", &style.CurveTessellationTol, 0.02f, 0.10f, FLT_MAX, NULL, 2.0f);
+        ImGui::DragFloat("Curve Tessellation Tolerance", &style.CurveTessellationTol, true, 0.02f, 0.10f, FLT_MAX, NULL, 2.0f);
         if (style.CurveTessellationTol < 0.0f) style.CurveTessellationTol = 0.10f;
-        ImGui::DragFloat("Global Alpha", &style.Alpha, 0.005f, 0.20f, 1.0f, "%.2f"); // Not exposing zero here so user doesn't "lose" the UI (zero alpha clips all widgets). But application code could have a toggle to switch between zero and non-zero.
+        ImGui::DragFloat("Global Alpha", &style.Alpha, true, 0.005f, 0.20f, 1.0f, "%.2f"); // Not exposing zero here so user doesn't "lose" the UI (zero alpha clips all widgets). But application code could have a toggle to switch between zero and non-zero.
         ImGui::PopItemWidth();
         ImGui::TreePop();
     }
@@ -1950,7 +1950,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
                 ImGui::PushFont(font);
                 ImGui::Text("The quick brown fox jumps over the lazy dog");
                 ImGui::PopFont();
-                ImGui::DragFloat("Font scale", &font->Scale, 0.005f, 0.3f, 2.0f, "%.1f");   // Scale only this font
+                ImGui::DragFloat("Font scale", &font->Scale, true, 0.005f, 0.3f, 2.0f, "%.1f");   // Scale only this font
                 ImGui::SameLine(); ShowHelpMarker("Note than the default embedded font is NOT meant to be scaled.\n\nFont are currently rendered into bitmaps at a given size at the time of building the atlas. You may oversample them to get some flexibility with scaling. You can also render at multiple sizes and select which one to use at runtime.\n\n(Glimmer of hope: the atlas system should hopefully be rewritten in the future to make scaling more natural and automatic.)");
                 ImGui::Text("Ascent: %f, Descent: %f, Height: %f", font->Ascent, font->Descent, font->Ascent - font->Descent);
                 ImGui::Text("Fallback character: '%c' (%d)", font->FallbackChar, font->FallbackChar);
@@ -2005,8 +2005,8 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             }
         }
         static float window_scale = 1.0f;
-        ImGui::DragFloat("this window scale", &window_scale, 0.005f, 0.3f, 2.0f, "%.1f");              // scale only this window
-        ImGui::DragFloat("global scale", &ImGui::GetIO().FontGlobalScale, 0.005f, 0.3f, 2.0f, "%.1f"); // scale everything
+        ImGui::DragFloat("this window scale", &window_scale, true, 0.005f, 0.3f, 2.0f, "%.1f");              // scale only this window
+        ImGui::DragFloat("global scale", &ImGui::GetIO().FontGlobalScale, true, 0.005f, 0.3f, 2.0f, "%.1f"); // scale everything
         ImGui::PopItemWidth();
         ImGui::SetWindowFontScale(window_scale);
         ImGui::TreePop();
@@ -2213,7 +2213,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
     ImGui::Text("Primitives");
     static float sz = 36.0f;
     static ImVec4 col = ImVec4(1.0f,1.0f,0.4f,1.0f);
-    ImGui::DragFloat("Size", &sz, 0.2f, 2.0f, 72.0f, "%.0f");
+    ImGui::DragFloat("Size", &sz, true, 0.2f, 2.0f, 72.0f, "%.0f");
     ImGui::ColorEdit3("Color", &col.x);
     {
         const ImVec2 p = ImGui::GetCursorScreenPos();
@@ -2763,7 +2763,7 @@ static void ShowExampleAppPropertyEditor(bool* p_open)
                         if (i >= 5)
                             ImGui::InputFloat("##value", &dummy_members[i], 1.0f);
                         else
-                            ImGui::DragFloat("##value", &dummy_members[i], 0.01f);
+                            ImGui::DragFloat("##value", &dummy_members[i], true, 0.01f);
                         ImGui::PopItemWidth();
                         ImGui::NextColumn();
                     }
