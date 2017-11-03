@@ -223,10 +223,7 @@ void Octree::Insert(AABB * bounding_box)
 		{
 			root_node->InsertInNode(bounding_box);
 		}
-		else
-		{
-			Update();
-		}
+		
 	}	
 }
 
@@ -265,5 +262,34 @@ void Octree::DebugDraw()
 	if (root_node != nullptr)
 	{
 		root_node->DebugDrawNode();
+	}
+}
+
+void Octree::CalculateNewSize(float3 box_min_point, float3 box_max_point)
+{
+	//If the box that we need to insert is out of the octree, we will need to update the octree.
+	if (box_min_point.x < min_point.x)
+	{
+		min_point.x = box_min_point.x;
+	}
+	if (box_min_point.y < min_point.y)
+	{
+		min_point.y = box_min_point.y;
+	}
+	if (box_min_point.z < min_point.z)
+	{
+		min_point.z = box_min_point.z;
+	}
+	if (box_max_point.x > max_point.x)
+	{
+		max_point.x = box_max_point.x;
+	}
+	if (box_max_point.y > max_point.y)
+	{
+		max_point.y = box_max_point.y;
+	}
+	if (box_max_point.z > max_point.z)
+	{
+		max_point.z = box_max_point.z;
 	}
 }

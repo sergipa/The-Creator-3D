@@ -35,6 +35,9 @@ public:
 
 	int GetNumCameras() const;
 
+	void InsertGoInOctree(AABB& box);
+	void EraseGoInOctree(AABB& box);
+
 private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
 	void HandleInput();
@@ -44,6 +47,8 @@ public:
 	std::list<GameObject*> root_gameobjects;
 	std::list<GameObject*> scene_gameobjects;
 	std::list<ComponentCamera*> scene_cameras;
+	std::list<GameObject*> static_gameobjects;
+	std::list<GameObject*> dynamic_gameobjects;
 	Octree octree;
 	bool draw_octree;
 private:

@@ -123,13 +123,17 @@ void GameObject::SetActive(bool active)
 	this->active = active;
 	if (is_static)
 	{
-		if (active)
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+		if (mesh_renderer != nullptr)
 		{
-			App->scene->InsertGoInOctree(this);
-		}
-		else
-		{
-			App->scene->EraseGoInOctree(this);
+			if (active)
+			{
+				App->scene->InsertGoInOctree(mesh_renderer->GetMesh()->box);
+			}
+			else
+			{
+				App->scene->EraseGoInOctree(mesh_renderer->GetMesh()->box);
+			}
 		}
 	}
 }
@@ -232,11 +236,6 @@ void GameObject::UpdateBoundingBox()
 	if (mesh_renderer != nullptr)
 	{
 		mesh_renderer->UpdateBoundingBox();
-		if (is_static && active)
-		{
-			App->scene->EraseGoInOctree(this);
-			App->scene->InsertGoInOctree(this);
-		}
 	}
 }
 

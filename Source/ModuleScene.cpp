@@ -90,8 +90,6 @@ update_status ModuleScene::Update(float dt)
 
 	HandleInput();
 
-	octree.Create(float3(-500, -10, -500), float3(500, 100, 500));
-
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
 		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
@@ -107,7 +105,7 @@ update_status ModuleScene::Update(float dt)
 					DebugAABB aabb(mesh_renderer->GetMesh()->box);
 					aabb.Render();
 				}
-				octree.Insert(&mesh_renderer->GetMesh()->box);
+				if (octree.update_tree) octree.CalculateNewSize(mesh_renderer->GetMesh()->box.minPoint, mesh_renderer->GetMesh()->box.maxPoint);
 			}
 			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
 			{
@@ -118,6 +116,13 @@ update_status ModuleScene::Update(float dt)
 		}
 	}
 
+	if (octree.update_tree)
+	{
+		for (std::list<GameObject*>::iterator it = static_gameobjects.begin(); it != static_gameobjects.end(); it++)
+		{
+
+		}
+	}
 	if(draw_octree) octree.DebugDraw();
 
 	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
@@ -176,6 +181,16 @@ void ModuleScene::ApplyTextureToGameObject(GameObject * gameobject, Texture* tex
 int ModuleScene::GetNumCameras() const
 {
 	return scene_cameras.size();
+}
+
+void ModuleScene::InsertGoInOctree(AABB& box)
+{
+	octree.Insert(&box);
+}
+
+void ModuleScene::EraseGoInOctree(AABB& box)
+{
+	octree.Erase(&box);
 }
 
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)

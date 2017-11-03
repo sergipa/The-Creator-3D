@@ -37,6 +37,8 @@ public:
 	void Erase(AABB* bounding_box);
 	void CollectIntersections(std::list<AABB*>& intersections_list, AABB* bounding_box);
 	void DebugDraw();
+	void CalculateNewSize(float3 box_min_point, float3 box_max_point);
+	void CheckIfNeedsUpdate(float3 box_min_point, float3 box_max_point, bool inserting_box);
 
 private:
 	OctreeNode* root_node = nullptr;
