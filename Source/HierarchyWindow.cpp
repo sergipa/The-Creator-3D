@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "ModuleInput.h"
+#include "ModuleScene.h"
 
 HierarchyWindow::HierarchyWindow()
 {

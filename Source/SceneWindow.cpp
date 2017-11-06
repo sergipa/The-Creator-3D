@@ -4,6 +4,7 @@
 #include "ModuleCamera3D.h"
 #include "ComponentCamera.h"
 #include "RenderTexture.h"
+#include "ModuleScene.h"
 
 SceneWindow::SceneWindow()
 {

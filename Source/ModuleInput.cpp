@@ -5,6 +5,7 @@
 #include "ModuleWindow.h"
 #include "ModuleImport.h"
 #include "PerformanceWindow.h"
+#include "ModuleRenderer3D.h"
 
 #define MAX_KEYS 300
 

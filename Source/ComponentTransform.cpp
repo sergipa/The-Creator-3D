@@ -110,6 +110,7 @@ void ComponentTransform::UpdateGlobalMatrix()
 	}
 
 	GetGameObject()->UpdateBoundingBox();
+	//If gameobject has a camera component
 	GetGameObject()->UpdateCamera();
 }
 
@@ -125,8 +126,31 @@ const float * ComponentTransform::GetOpenGLMatrix() const
 
 void ComponentTransform::Save(Data & data) const
 {
+	data.AddInt("Type", GetType());
+	data.AddBool("Active", IsActive());
+	data.AddUInt("UUID", GetUID());
+	data.AddVector3("position", position);
+	float4 quat_to_float;
+	quat_to_float.x = rotation.x;
+	quat_to_float.y = rotation.y;
+	quat_to_float.z = rotation.z;
+	quat_to_float.w = rotation.w;
+	data.AddVector4("rotation", quat_to_float);
+	data.AddVector3("scale", scale);
 }
 
 void ComponentTransform::Load(Data & data)
 {
+	SetType((Component::ComponentType)data.GetInt("Type"));
+	SetActive(data.GetBool("Active"));
+	SetUID(data.GetUInt("UUID"));
+	position = data.GetVector3("position"); 
+	float4 float_to_quat = data.GetVector4("rotation");
+	rotation.x = float_to_quat.x;
+	rotation.y = float_to_quat.y;
+	rotation.z = float_to_quat.z;
+	rotation.w = float_to_quat.w;
+	shown_rotation = rotation.ToEulerXYZ();
+	scale = data.GetVector3("scale");
+	//UpdateGlobalMatrix();
 }

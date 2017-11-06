@@ -12,10 +12,15 @@
 #include "PerformanceWindow.h"
 #include "Texture.h"
 #include "Primitive.h"
+#include "ModuleCamera3D.h"
+#include "ModuleWindow.h"
+#include "ModuleInput.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
 	name = "Scene";
+	saving_index = 0;
+	scene_name = "Untitled Scene";
 }
 
 ModuleScene::~ModuleScene()
@@ -204,6 +209,49 @@ void ModuleScene::EraseGoInOctree(AABB& box)
 	octree.Erase(&box);
 }
 
+void ModuleScene::NewScene()
+{
+	gameobjects_to_destroy = root_gameobjects;
+	scene_gameobjects.clear();
+	scene_gameobjects_name_counter.clear();
+	root_gameobjects.clear();
+	selected_gameobjects.clear();
+	App->window->SetTitle(DEFAULT_SCENE_TITLE);
+}
+
+void ModuleScene::LoadScene(std::string path)
+{
+	Data data;
+	if (data.LoadBinary(path)) {
+		NewScene();
+		scene_name = data.GetString("Scene Name");
+		App->window->SetTitle((SCENE_TITLE_PREFIX + scene_name).c_str());
+		int gameObjectsCount = data.GetInt("GameObjects_Count");
+		for (int i = 0; i < gameObjectsCount; i++) {
+			data.EnterSection("GameObject_" + std::to_string(i));
+			GameObject* game_object = new GameObject();
+			game_object->Load(data);
+			data.LeaveSection();
+			scene_gameobjects.push_back(game_object);
+		}
+	}
+	else
+	{
+		CONSOLE_ERROR("Cannot load %s scene", path.c_str());
+	}
+}
+
+void ModuleScene::SaveScene(std::string path) const
+{
+	Data data;
+	data.AddString("Scene Name", scene_name);
+	data.AddInt("GameObjects_Count", scene_gameobjects.size());
+	for (std::list<GameObject*>::const_iterator it = root_gameobjects.begin(); it != root_gameobjects.end(); it++) {
+		(*it)->Save(data);
+	}
+	data.SaveAsBinary(path);
+}
+
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)
 {
 	bool ret = true;
@@ -322,4 +370,16 @@ void ModuleScene::RenameDuplicatedGameObject(GameObject * gameObject, bool justI
 			scene_gameobjects_name_counter[gameObject->GetName()] = 1;
 		}
 	}
+}
+
+GameObject * ModuleScene::FindGameObject(uint id) const
+{
+	for (std::list<GameObject*>::const_iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
+	{
+		if ((*it)->GetUID() == id)
+		{
+			return *it;
+		}
+	}
+	return nullptr;
 }

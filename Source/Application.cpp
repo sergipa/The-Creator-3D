@@ -1,4 +1,18 @@
 #include "Application.h"
+#include "Timer.h"
+#include "Module.h"
+#include "ModuleWindow.h"
+#include "ModuleInput.h"
+#include "ModuleAudio.h"
+#include "ModuleScene.h"
+#include "ModuleRenderer3D.h"
+#include "ModuleCamera3D.h"
+#include "ModulePhysics3D.h"
+#include "ModuleEditor.h"
+#include "ModuleImport.h"
+#include "ModuleResources.h"
+#include "ModuleTime.h"
+#include "ModuleFileSystem.h"
 #include "Data.h"
 #include "TagsAndLayers.h"
 
@@ -21,11 +35,13 @@ Application::Application()
 	import = new ModuleImport(this);
 	resources = new ModuleResources(this);
 	time = new ModuleTime(this);
+	file_system = new ModuleFileSystem(this);
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
 
 	// Main Modules
+	AddModule(file_system);
 	AddModule(window);
 	AddModule(input);
 	AddModule(audio);

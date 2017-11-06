@@ -1,9 +1,9 @@
 #pragma once
 
-typedef unsigned int uint;
-
 #include <string>
 #include "Resource.h"
+
+class Data;
 
 class Texture : public Resource
 {
@@ -29,12 +29,16 @@ public:
 	uint GetHeight() const;
 	void SetSize(uint width, uint height);
 	void GetSize(uint& width, uint& height) const;
-	void SetType(TextureType type);
-	TextureType GetType() const;
+	void SetTextureType(TextureType type);
+	TextureType GetTextureType() const;
 	std::string GetTypeString() const;
 	void SetFormat(TextureFormat format);
 	TextureFormat GetFormat() const;
 	std::string GetFormatString() const;
+
+	void Save(Data& data) const;
+	void Load(Data& data);
+	void CreateMeta() const;
 
 private:
 	uint texture_id;

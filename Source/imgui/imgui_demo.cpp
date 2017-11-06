@@ -1809,31 +1809,31 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
 		Data data;
 		data.CreateSection("Editor_Style");
 		data.AddFloat("Alpha", style.Alpha);
-		data.AddVector2("WindowPadding", style.WindowPadding);
-		data.AddVector2("WindowMinSize", style.WindowMinSize);
+		data.AddImVector2("WindowPadding", style.WindowPadding);
+		data.AddImVector2("WindowMinSize", style.WindowMinSize);
 		data.AddFloat("WindowRounding", style.WindowRounding);
-		data.AddVector2("WindowTitleAlign", style.WindowTitleAlign);
+		data.AddImVector2("WindowTitleAlign", style.WindowTitleAlign);
 		data.AddFloat("ChildWindowRounding", style.ChildWindowRounding);
-		data.AddVector2("FramePadding", style.FramePadding);
+		data.AddImVector2("FramePadding", style.FramePadding);
 		data.AddFloat("FrameRounding", style.FrameRounding);
-		data.AddVector2("ItemSpacing", style.ItemSpacing);
-		data.AddVector2("ItemInnerSpacing", style.ItemInnerSpacing);
-		data.AddVector2("TouchExtraPadding", style.TouchExtraPadding);
+		data.AddImVector2("ItemSpacing", style.ItemSpacing);
+		data.AddImVector2("ItemInnerSpacing", style.ItemInnerSpacing);
+		data.AddImVector2("TouchExtraPadding", style.TouchExtraPadding);
 		data.AddFloat("IndentSpacing", style.IndentSpacing);
 		data.AddFloat("ColumnsMinSpacing", style.ColumnsMinSpacing);
 		data.AddFloat("ScrollbarSize", style.ScrollbarSize);
 		data.AddFloat("ScrollbarRounding", style.ScrollbarRounding);
 		data.AddFloat("GrabMinSize", style.GrabMinSize);
 		data.AddFloat("GrabRounding", style.GrabRounding);
-		data.AddVector2("ButtonTextAlign", style.ButtonTextAlign);
-		data.AddVector2("DisplayWindowPadding", style.DisplayWindowPadding);
-		data.AddVector2("DisplaySafeAreaPadding", style.DisplaySafeAreaPadding);
+		data.AddImVector2("ButtonTextAlign", style.ButtonTextAlign);
+		data.AddImVector2("DisplayWindowPadding", style.DisplayWindowPadding);
+		data.AddImVector2("DisplaySafeAreaPadding", style.DisplaySafeAreaPadding);
 		data.AddBool("Anti-aliased lines", style.AntiAliasedLines);
 		data.AddBool("Anti-aliased shapes", style.AntiAliasedShapes);
 		data.AddFloat("CurveTessellationTol", style.CurveTessellationTol);
 		for (int i = 0; i < ImGuiCol_COUNT; i++) 
 		{
-			data.AddVector4(GetStyleColorName(i), style.Colors[i]);
+			data.AddImVector4(GetStyleColorName(i), style.Colors[i]);
 		}
 		data.CloseSection();
 		data.SaveAsJSON(EDITOR_STYLE_FILE);

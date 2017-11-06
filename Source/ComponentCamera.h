@@ -6,7 +6,7 @@
 #include "Color.h"
 #include "Primitive.h"
 
-class RenderTexture;
+class RenderTextureMSAA;
 
 //MathGeoLib frustum info: http://clb.demon.fi/MathGeoLib/nightly/docs/Frustum_summary.php
 
@@ -40,9 +40,9 @@ public:
 	Rect GetViewport() const;
 	void SetRenderOrder(int position);
 	int GetRenderOrder() const;
-	void SetTargetTexture(RenderTexture* texture);
-	RenderTexture* GetTargetTexture() const;
-	RenderTexture* GetViewportTexture() const;
+	void SetTargetTexture(RenderTextureMSAA* texture);
+	RenderTextureMSAA* GetTargetTexture() const;
+	RenderTextureMSAA* GetViewportTexture() const;
 
 	void Save(Data& data) const;
 	void Load(Data& data);
@@ -52,9 +52,8 @@ public:
 	Frustum camera_frustum;
 
 private:
-	RenderTexture* camera_viewport_texture;
-	RenderTexture* camera_target_texture;
-	
+	RenderTextureMSAA* camera_viewport_texture;
+	RenderTextureMSAA* camera_target_texture;
 	
 	Color background_color;
 	Rect camera_viewport;

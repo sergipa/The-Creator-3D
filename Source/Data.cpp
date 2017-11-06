@@ -449,9 +449,9 @@ std::string Data::GetString(std::string valueName)
 	return "value not found";
 }
 
-ImVec2 Data::GetVector2(std::string valueName)
+float2 Data::GetVector2(std::string valueName)
 {
-	ImVec2 ret;
+	float2 ret;
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 
 	std::vector<std::string> vec_names;
@@ -479,9 +479,9 @@ ImVec2 Data::GetVector2(std::string valueName)
 	return ret;
 }
 
-ImVec3 Data::GetVector3(std::string valueName)
+float3 Data::GetVector3(std::string valueName)
 {
-	ImVec3 ret;
+	float3 ret;
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 
 	std::vector<std::string> vec_names;
@@ -511,9 +511,9 @@ ImVec3 Data::GetVector3(std::string valueName)
 	return ret;
 }
 
-ImVec4 Data::GetVector4(std::string valueName)
+float4 Data::GetVector4(std::string valueName)
 {
-	ImVec4 ret;
+	float4 ret;
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 
 	std::vector<std::string> vec_names;
@@ -543,6 +543,36 @@ ImVec4 Data::GetVector4(std::string valueName)
 		ret.w = -1.0f;
 	}
 	return ret;
+}
+
+ImVec2 Data::GetImVector2(std::string valueName)
+{
+	ImVec2 vec2;
+	float2 f2 = GetVector2(valueName);
+	vec2.x = f2.x;
+	vec2.y = f2.y;
+	return vec2;
+}
+
+ImVec3 Data::GetImVector3(std::string valueName)
+{
+	ImVec3 vec3;
+	float3 f3 = GetVector3(valueName);
+	vec3.x = f3.x;
+	vec3.y = f3.y;
+	vec3.z = f3.z;
+	return vec3;
+}
+
+ImVec4 Data::GetImVector4(std::string valueName)
+{
+	ImVec4 vec4;
+	float4 f4 = GetVector4(valueName);
+	vec4.x = f4.x;
+	vec4.y = f4.y;
+	vec4.z = f4.z;
+	vec4.w = f4.w;
+	return vec4;
 }
 
 void Data::AddBool(std::string valueName, bool value)
@@ -587,7 +617,7 @@ void Data::AddString(std::string valueName, std::string value)
 	data_names.push_back(valueName);
 }
 
-void Data::AddVector2(std::string valueName, ImVec2 value)
+void Data::AddVector2(std::string valueName, float2 value)
 {
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 	CreateSection(valueName);
@@ -598,7 +628,7 @@ void Data::AddVector2(std::string valueName, ImVec2 value)
 	CloseSection();
 }
 
-void Data::AddVector3(std::string valueName, ImVec3 value)
+void Data::AddVector3(std::string valueName, float3 value)
 {
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 	CreateSection(valueName);
@@ -611,7 +641,7 @@ void Data::AddVector3(std::string valueName, ImVec3 value)
 	CloseSection();
 }
 
-void Data::AddVector4(std::string valueName, ImVec4 value)
+void Data::AddVector4(std::string valueName, float4 value)
 {
 	std::replace(valueName.begin(), valueName.end(), ' ', '_');
 	CreateSection(valueName);
@@ -624,4 +654,31 @@ void Data::AddVector4(std::string valueName, ImVec4 value)
 	data_values.push_back(std::to_string(value.w));
 	data_names.push_back("value_W");
 	CloseSection();
+}
+
+void Data::AddImVector2(std::string valueName, ImVec2 value)
+{
+	float2 f2;
+	f2.x = value.x;
+	f2.y = value.y;
+	AddVector2(valueName, f2);
+}
+
+void Data::AddImVector3(std::string valueName, ImVec3 value)
+{
+	float3 f3;
+	f3.x = value.x;
+	f3.y = value.y;
+	f3.z = value.z;
+	AddVector3(valueName, f3);
+}
+
+void Data::AddImVector4(std::string valueName, ImVec4 value)
+{
+	float4 f4;
+	f4.x = value.x;
+	f4.y = value.y;
+	f4.z = value.z;
+	f4.w = value.w;
+	AddVector4(valueName, f4);
 }

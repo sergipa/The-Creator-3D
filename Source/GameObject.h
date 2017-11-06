@@ -41,10 +41,15 @@ public:
 	void UpdateGlobalMatrix();
 	void UpdateCamera();
 
+	void SetParentByID(UID parent_id);
+
 	void Destroy();
 	void OnDestroy();
 
 	UID GetUID() const;
+
+	void Save(Data& data, bool isDuplicated = false);
+	void Load(Data & data, bool isPrefab = false);
 
 public:
 	std::list<GameObject*> childs;

@@ -1,22 +1,23 @@
 #pragma once
 
 #include "Globals.h"
-#include "Timer.h"
-#include "Module.h"
-#include "ModuleWindow.h"
-#include "ModuleInput.h"
-#include "ModuleAudio.h"
-#include "ModuleScene.h"
-#include "ModuleRenderer3D.h"
-#include "ModuleCamera3D.h"
-#include "ModulePhysics3D.h"
 #include "MathGeoLib\Algorithm\Random\LCG.h"
-#include "ModuleEditor.h"
-#include "ModuleImport.h"
-#include "ModuleResources.h"
-#include "ModuleTime.h"
 #include <list>
+#include "Timer.h"
 
+class Module;
+class ModuleWindow;
+class ModuleInput;
+class ModuleAudio;
+class ModuleScene;
+class ModuleRenderer3D;
+class ModuleCamera3D;
+class ModulePhysics3D;
+class ModuleEditor;
+class ModuleImport;
+class ModuleResources;
+class ModuleTime;
+class ModuleFileSystem;
 class Data;
 class TagsAndLayers;
 
@@ -35,6 +36,7 @@ public:
 	ModuleResources* resources;
 	ModuleTime* time;
 	TagsAndLayers* tags_and_layers;
+	ModuleFileSystem* file_system;
 private:
 
 	Timer	ms_timer;

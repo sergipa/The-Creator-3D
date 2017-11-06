@@ -24,7 +24,7 @@ void log(const char file[], const char function[], int line, bool is_warning, bo
 
 
 typedef unsigned int uint;
-typedef unsigned long long UID;
+typedef unsigned int UID;
 
 enum update_status
 {
@@ -59,15 +59,18 @@ enum update_status
 	 }
 
 // Configuration -----------
-#define TITLE "The Creator 3D"
+#define DEFAULT_SCENE_TITLE "The Creator 3D - Untitled Scene"
+#define SCENE_TITLE_PREFIX "The Creator 3D - "
 
 
 #define ASSETS_FOLDER "./Project/Assets/"
+#define ASSETS_FOLDER_PATH "./Project/Assets"
 #define ASSETS_TEXTURES_FOLDER "./Project/Assets/Textures/"
 #define PROJECT_FOLDER "./Project/"
 #define LIBRARY_FOLDER "./Project/Library/"
+#define LIBRARY_FOLDER_PATH "./Project/Library"
 #define LIBRARY_TEXTURES_FOLDER "./Project/Library/Textures/"
-#define LIBRARY_MESHES_FOLDER "./Project/Library/Mesh/"
+#define LIBRARY_MESHES_FOLDER "./Project/Library/Meshes/"
 #define EDITOR_CONFIG_FILE "./Editor_Settings/Editor_Config.json"
 #define EDITOR_LAYOUT_FILE "./Editor_Settings/Editor_Layout"
 #define EDITOR_STYLE_FILE "./Editor_Settings/Editor_Style.json"

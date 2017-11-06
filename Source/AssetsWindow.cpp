@@ -6,6 +6,9 @@
 #include "ModuleImport.h"
 #include "tinyfiledialogs.h"
 #include "Texture.h"
+#include "ModuleFileSystem.h"
+#include "ModuleScene.h"
+#include "Data.h"
 
 AssetsWindow::AssetsWindow()
 {
@@ -16,23 +19,22 @@ AssetsWindow::AssetsWindow()
 	show_new_folder_window = false;
 	file_options_open = true;
 	texture_icon = nullptr;
-	mesh_icon = App->import->LoadEngineImages(EDITOR_IMAGES_FOLDER"mesh_icon.png");
-	font_icon = App->import->LoadEngineImages(EDITOR_IMAGES_FOLDER"font_icon.png");
-	folder_icon = App->import->LoadEngineImages(EDITOR_IMAGES_FOLDER"folder_icon.png");
+	mesh_icon = App->import->LoadTexture(EDITOR_IMAGES_FOLDER"mesh_icon.png");
+	font_icon = App->import->LoadTexture(EDITOR_IMAGES_FOLDER"font_icon.png");
+	folder_icon = App->import->LoadTexture(EDITOR_IMAGES_FOLDER"folder_icon.png");
 
-	if (!fs::exists(ASSETS_FOLDER)) {
-		if (!fs::create_directory(PROJECT_FOLDER"Assets")) {
+	if (!App->file_system->DirectoryExist(ASSETS_FOLDER_PATH)) {
+		if (!App->file_system->Create_Directory(PROJECT_FOLDER"Assets")) {
 			CONSOLE_ERROR("Assets folder is not found and can't create new folder");
 			return;
 		}
 	}
-	selected_folder = ASSETS_FOLDER;
-	FillAssetsLists();
+	assets_folder_path = App->file_system->StringToPathFormat(ASSETS_FOLDER_PATH);
+	selected_folder = assets_folder_path;
 }
 
 AssetsWindow::~AssetsWindow()
 {
-	RELEASE(texture_icon);
 	RELEASE(mesh_icon);
 	RELEASE(font_icon);
 }
@@ -43,41 +45,41 @@ void AssetsWindow::DrawWindow()
 		ImGui::Columns(2);
 		node = 0;
 		ImGui::Spacing();
-		DrawChilds(ASSETS_FOLDER);
+		DrawChilds(assets_folder_path);
 
 		if (ImGui::IsMouseClicked(1) && ImGui::IsMouseHoveringWindow()) {
 			ImGui::SetNextWindowPos(ImGui::GetMousePos());
 			ImGui::OpenPopup("Assets Options");
 		}
 
-		if (!selected_folder.empty()) {
+		if (!App->file_system->DirectoryIsEmpty(selected_folder)) {
 			if (ImGui::BeginPopup("Assets Options"))
 			{
 				if (ImGui::MenuItem("Create Folder")) {
 					show_new_folder_window = true;
 				}
-				if (selected_folder.filename().string() != "Assets") {
+				if (App->file_system->GetDirectoryName(selected_folder) != "Assets") {
 					if (ImGui::MenuItem("Delete")) {
-						fs::remove_all(selected_folder);
+						App->file_system->DeleteDirectory(selected_folder);
 					}
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Import Texture")) {
 					char const * lFilterPatterns[4] = { "*.jpg", "*.png", "*.tga", "*.dds" };
-					const char* spritePath = tinyfd_openFileDialog("Select Texture...", NULL, 4, lFilterPatterns, NULL, 0);
-					if (spritePath != NULL) {
-						fs::path oldPath(spritePath);
-						fs::path newPath(selected_folder.string() + "\\" + oldPath.filename().string());
-						if (!fs::exists(newPath)) {
+					const char* texture_path = tinyfd_openFileDialog("Select Texture...", NULL, 4, lFilterPatterns, NULL, 0);
+					if (texture_path != NULL) {
+						std::string oldPath(texture_path);
+						std::string newPath(selected_folder + "\\" + App->file_system->GetDirectoryName(oldPath));
+						if (!App->file_system->DirectoryExist(newPath)) {
 							if (oldPath != newPath) {
-								fs::copy_file(oldPath, newPath);
+								App->file_system->Copy_File(oldPath, newPath);
 							}
 							else {
 								tinyfd_messageBox("Error", "Open file name is NULL", "ok", "error", 1);
 							}
 						}
 						else {
-							tinyfd_messageBox("Error", "A file with this name exist in current folder", "ok", "error", 1);
+							tinyfd_messageBox("Error", "A file with this name exist in the current folder", "ok", "error", 1);
 						}
 					}
 				}
@@ -101,8 +103,8 @@ void AssetsWindow::DrawWindow()
 			ImGui::Spacing();
 			if (ImGui::Button("Confirm")) {
 				std::string str(inputText);
-				fs::path temp = selected_folder;
-				if (fs::create_directory(selected_folder += ("\\" + str))) {
+				std::string temp = selected_folder;
+				if (App->file_system->Create_Directory(selected_folder += ("\\" + str))) {
 					show_new_folder_window = false;
 				}
 				else {
@@ -124,50 +126,51 @@ void AssetsWindow::DrawWindow()
 		{
 			if (!selected_folder.empty()) 
 			{
-				for (auto & p : fs::directory_iterator(selected_folder)) 
+				std::vector<std::string> files = App->file_system->GetFilesInDirectory(selected_folder);
+				for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
 				{
-					if (!fs::is_directory(p)) 
+					bool selected = false;
+					float font_size = ImGui::GetFontSize();
+					std::string file_extension = App->file_system->GetFileExtension(*it);
+					std::string file_name = App->file_system->GetFileNameWithoutExtension(*it);
+					Resource::ResourceType type = (Resource::ResourceType)App->resources->AssetExtensionToResourceType(file_extension);
+					switch (type)
 					{
-						bool selected = false;
-						float font_size = ImGui::GetFontSize();
-						switch (ExtensionToResourceType(p.path().extension().string()))
-						{
-						case Resource::TextureResource:
-							texture_icon = App->resources->GetTexture(p.path().stem().string());
-							ImGui::Image((ImTextureID)texture_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
-							ImGui::SameLine();
-							break;
-						case Resource::MeshResource:
-							ImGui::Image((ImTextureID)mesh_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
-							ImGui::SameLine();
-							break;
-						case Resource::FontResource:
-							ImGui::Image((ImTextureID)font_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
-							ImGui::SameLine();
-							break;
-						case Resource::Unknown:
-							continue; //if the type is unknown skip and don't draw the file in the panel
-							break;
+					case Resource::TextureResource:
+						texture_icon = App->resources->GetTexture(file_name);
+						ImGui::Image((ImTextureID)texture_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
+						ImGui::SameLine();
+						break;
+					case Resource::MeshResource:
+						ImGui::Image((ImTextureID)mesh_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
+						ImGui::SameLine();
+						break;
+					case Resource::FontResource:
+						ImGui::Image((ImTextureID)font_icon->GetID(), { font_size, font_size }, ImVec2(0, 1), ImVec2(1, 0));
+						ImGui::SameLine();
+						break;
+					case Resource::Unknown:
+						continue; //if the type is unknown skip and don't draw the file in the panel
+						break;
+					}
+
+					if (*it == selected_file_path) {
+						if (App->scene->selected_gameobjects.empty()) {
+							selected = true;
 						}
-						
-						if (p.path() == selected_file_path) {
-							if (App->scene->selected_gameobjects.empty()) {
-								selected = true;
-							}
-							else {
-								selected_file_path.clear();
-							}
+						else {
+							selected_file_path.clear();
 						}
-						ImGui::Selectable(p.path().filename().string().c_str(), &selected);
-						if (ImGui::IsItemHoveredRect()) {
-							if (ImGui::IsItemClicked(0) || ImGui::IsItemClicked(1) && !file_options_open) {
-								selected_file_path = p.path();
-								App->scene->selected_gameobjects.clear();
-								if (ImGui::IsItemClicked(1)) {
-									ImGui::SetNextWindowPos(ImGui::GetMousePos());
-									ImGui::OpenPopup("File Options");
-									file_options_open = true;
-								}
+					}
+					ImGui::Selectable(file_name.c_str(), &selected);
+					if (ImGui::IsItemHoveredRect()) {
+						if (ImGui::IsItemClicked(0) || ImGui::IsItemClicked(1) && !file_options_open) {
+							selected_file_path = *it;
+							App->scene->selected_gameobjects.clear();
+							if (ImGui::IsItemClicked(1)) {
+								ImGui::SetNextWindowPos(ImGui::GetMousePos());
+								ImGui::OpenPopup("File Options");
+								file_options_open = true;
 							}
 						}
 					}
@@ -180,7 +183,7 @@ void AssetsWindow::DrawWindow()
 					file_options_open = false;
 				}
 				if (ImGui::MenuItem("Delete")) {
-					fs::remove(selected_file_path);
+					App->file_system->DeleteDirectory(selected_file_path);
 					file_options_open = false;
 				}
 
@@ -195,44 +198,16 @@ void AssetsWindow::DrawWindow()
 	ImGui::EndDock();
 }
 
-void AssetsWindow::FillAssetsLists()
-{
-	for (auto & p : fs::recursive_directory_iterator(ASSETS_FOLDER))
-	{
-		if (!fs::is_directory(p)) 
-		{
-			switch (ExtensionToResourceType(p.path().extension().string()))
-			{
-			case Resource::TextureResource:
-				App->import->LoadTexture(p.path().string().c_str(), false);
-				break;
-			case Resource::MeshResource:
-				//App->import->LoadMesh(p.path().string().c_str());
-				break;
-			}
-		}
-	}
-}
-
-void AssetsWindow::DrawChilds(fs::path path)
+void AssetsWindow::DrawChilds(std::string path)
 {
 	std::string path_name;
-	if (path == ASSETS_FOLDER) path_name = "Assets"; //The "." in ASSETS_FOLDER causes problems
-	else path_name = path.filename().string();
+	path_name = App->file_system->GetDirectoryName(path);
 	sprintf_s(node_name, 30, "%s##node_%i", path_name.c_str(), node++);
 	uint flag = 0;
 
-	if (fs::is_empty(path)) {
+	if (!App->file_system->DirectoryHasSubDirectories(path))
+	{
 		flag |= ImGuiTreeNodeFlags_Leaf;
-	}
-	else {
-		for (auto & p : fs::directory_iterator(path)) {
-			if (fs::is_directory(p)) {
-				flag = 0;
-				break; //if fodler contains another folder, it can't be a leaf.
-			}
-			flag |= ImGuiTreeNodeFlags_Leaf;
-		}
 	}
 
 	flag |= ImGuiTreeNodeFlags_OpenOnArrow;
@@ -246,10 +221,10 @@ void AssetsWindow::DrawChilds(fs::path path)
 		if (ImGui::IsItemClicked(0) || ImGui::IsItemClicked(1)) {
 			selected_folder = path;
 		}
-		for (auto & p : fs::directory_iterator(path)) {
-			if (fs::is_directory(p)) {
-				DrawChilds(p);
-			}
+		std::vector<std::string> sub_directories = App->file_system->GetSubDirectories(path);
+		for (std::vector<std::string>::iterator it = sub_directories.begin(); it != sub_directories.end(); it++)
+		{
+			DrawChilds(*it);
 		}
 		ImGui::TreePop();
 	}
@@ -258,18 +233,4 @@ void AssetsWindow::DrawChilds(fs::path path)
 			selected_folder = path;
 		}
 	}
-}
-
-int AssetsWindow::ExtensionToResourceType(std::string str)
-{
-	if (str == ".jpg" || str == ".png" || str == ".tga" || str == ".dds") return Resource::TextureResource;
-	else if (str == ".fbx") return Resource::MeshResource;
-	else if (str == ".wav" || str == ".ogg") return Resource::AudioResource;
-	else if (str == ".prefab") return Resource::PrefabResource;
-	else if (str == ".animation") return Resource::AnimationResource;
-	else if (str == ".particleFX") return Resource::ParticleFXResource;
-	else if (str == ".scene") return Resource::SceneResource;
-	else if (str == ".ttf") return Resource::FontResource;
-	
-	return Resource::Unknown;
 }

@@ -1,5 +1,6 @@
 #include "AppWindowConfigWindow.h"
 #include "Application.h"
+#include "ModuleWindow.h"
 
 AppWindowConfigWindow::AppWindowConfigWindow()
 {

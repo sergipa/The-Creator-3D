@@ -6,6 +6,8 @@
 #include "TagsAndLayers.h"
 #include <algorithm>
 #include "GameObject.h"
+#include "ModuleWindow.h"
+#include "RenderTextureMSAA.h"
 
 ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 {
@@ -26,8 +28,8 @@ ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 
 	background_color = Black;
 
-	camera_viewport_texture = new RenderTexture();
-	camera_viewport_texture->Create((uint)camera_frustum.NearPlaneWidth(), (uint)camera_frustum.NearPlaneHeight());
+	camera_viewport_texture = new RenderTextureMSAA();
+	camera_viewport_texture->Create((uint)camera_frustum.NearPlaneWidth(), (uint)camera_frustum.NearPlaneHeight(), 2);
 	//camera_viewport_texture = nullptr;
 	camera_target_texture = nullptr;
 
@@ -164,29 +166,61 @@ int ComponentCamera::GetRenderOrder() const
 	return render_order;
 }
 
-void ComponentCamera::SetTargetTexture(RenderTexture * texture)
+void ComponentCamera::SetTargetTexture(RenderTextureMSAA * texture)
 {
 	camera_target_texture = texture;
 }
 
-RenderTexture * ComponentCamera::GetTargetTexture() const
+RenderTextureMSAA * ComponentCamera::GetTargetTexture() const
 {
 	return camera_target_texture;
 }
 
-RenderTexture * ComponentCamera::GetViewportTexture() const
+RenderTextureMSAA * ComponentCamera::GetViewportTexture() const
 {
 	return camera_viewport_texture;
 }
 
 void ComponentCamera::Save(Data & data) const
 {
+	data.AddInt("Type", GetType());
+	data.AddBool("Active", IsActive());
+	data.AddUInt("UUID", GetUID());
+	data.AddString("RenderTexture_Target", camera_viewport_texture->GetAssetsPath());
+	float4 color_to_float;
+	color_to_float.x = background_color.r;
+	color_to_float.y = background_color.g;
+	color_to_float.z = background_color.b;
+	color_to_float.w = background_color.a;
+	data.AddVector4("background_color", color_to_float);
+	float4 rect_to_float;
+	rect_to_float.x = camera_viewport.left;
+	rect_to_float.y = camera_viewport.top;
+	rect_to_float.z = camera_viewport.right;
+	rect_to_float.w = camera_viewport.bottom;
+	data.AddVector4("viewport_rect", rect_to_float);
+	data.AddInt("render_order", render_order);
 }
 
 void ComponentCamera::Load(Data & data)
 {
-
-	UpdateProjection();
+	SetType((Component::ComponentType)data.GetInt("Type"));
+	SetActive(data.GetBool("Active"));
+	SetUID(data.GetUInt("UUID"));
+	//camera_viewport_texture = LoadRenderTexture
+	float4 float_to_color = data.GetVector4("background_color");
+	background_color.r = float_to_color.x;
+	background_color.g = float_to_color.y;
+	background_color.b = float_to_color.z;
+	background_color.a = float_to_color.w;
+	float4 float_to_rect = data.GetVector4("viewport_rect");
+	camera_viewport.left = float_to_rect.x;
+	camera_viewport.top = float_to_rect.y;
+	camera_viewport.right = float_to_rect.z;
+	camera_viewport.bottom = float_to_rect.w;
+	render_order = data.GetInt("render_order");
+	
+	//UpdateProjection();
 }
 
 void ComponentCamera::SetRenderOrder(int position)

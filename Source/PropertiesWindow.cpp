@@ -8,6 +8,7 @@
 #include "TagsAndLayers.h"
 #include "ModuleEditor.h"
 #include "TagsAndLayersWindow.h"
+#include "ModuleScene.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -215,10 +216,10 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 				return;
 			}
 			ImGui::Text("Texture ID: %d", mesh_renderer->GetTexture()->GetID());
-			ImGui::Text("Texture Path: %s", mesh_renderer->GetTexture()->GetPath().c_str());
-			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Path: " + mesh_renderer->GetTexture()->GetPath()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
+			ImGui::Text("Texture Path: %s", mesh_renderer->GetTexture()->GetAssetsPath().c_str());
+			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Path: " + mesh_renderer->GetTexture()->GetAssetsPath()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
 				ImGui::BeginTooltip();
-				ImGui::Text("%s", mesh_renderer->GetTexture()->GetPath().c_str());
+				ImGui::Text("%s", mesh_renderer->GetTexture()->GetAssetsPath().c_str());
 				ImGui::EndTooltip();
 			}
 			ImGui::Text("Texture Name: %s", mesh_renderer->GetTexture()->GetName().c_str());

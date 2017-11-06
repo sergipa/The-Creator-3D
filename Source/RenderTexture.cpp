@@ -1,6 +1,7 @@
 #include "RenderTexture.h"
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "ModuleRenderer3D.h"
 
 RenderTexture::RenderTexture()
 {

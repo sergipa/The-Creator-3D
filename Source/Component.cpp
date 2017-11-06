@@ -73,6 +73,11 @@ UID Component::GetUID() const
 	return uuid;
 }
 
+void Component::SetUID(UID uid)
+{
+	uuid = uid;
+}
+
 void Component::Save(Data & data) const
 {
 }

@@ -4,7 +4,9 @@
 Resource::Resource()
 {
 	name = "";
-	path = "";
+	assets_path = "";
+	library_path = "";
+	creation_date = "";
 	uuid = App->RandomNumber().Int();
 }
 
@@ -17,9 +19,9 @@ std::string Resource::GetName() const
 	return name;
 }
 
-std::string Resource::GetPath() const
+std::string Resource::GetAssetsPath() const
 {
-	return path;
+	return assets_path;
 }
 
 UID Resource::GetUID() const
@@ -32,9 +34,19 @@ void Resource::SetName(std::string name)
 	this->name = name;
 }
 
-void Resource::SetPath(std::string path)
+void Resource::SetAssetsPath(std::string path)
 {
-	this->path = path;
+	this->assets_path = path;
+}
+
+std::string Resource::GetLibraryPath() const
+{
+	return library_path;
+}
+
+void Resource::SetLibraryPath(std::string path)
+{
+	library_path = path;
 }
 
 void Resource::SetUID(UID uid)
@@ -50,4 +62,14 @@ Resource::ResourceType Resource::GetType() const
 void Resource::SetType(ResourceType type)
 {
 	this->type = type;
+}
+
+std::string Resource::GetTimeCreated() const
+{
+	return creation_date;;
+}
+
+void Resource::SetCreatedTime(std::string time)
+{
+	creation_date = time;
 }

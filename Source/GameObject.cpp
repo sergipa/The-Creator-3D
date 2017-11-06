@@ -202,8 +202,11 @@ void GameObject::SetParent(GameObject * parent)
 
 	this->parent = parent;
 	this->parent->childs.push_back(this);
-	is_root = false;
-	App->scene->root_gameobjects.remove(this);
+	if (is_root)
+	{
+		is_root = false;
+		App->scene->root_gameobjects.remove(this);
+	}
 }
 
 void GameObject::SetName(std::string name)
@@ -272,6 +275,11 @@ void GameObject::UpdateCamera()
 	}
 }
 
+void GameObject::SetParentByID(UID parent_id)
+{
+	SetParent(App->scene->FindGameObject(parent_id));
+}
+
 void GameObject::Destroy()
 {
 	App->scene->AddGameObjectToDestroy(this);
@@ -312,3 +320,117 @@ UID GameObject::GetUID() const
 	return uuid;
 }
 
+
+void GameObject::Save(Data & data, bool is_duplicated)
+{
+	std::string tempName = name;  //<- needed if is a duplicated game_object
+	if (is_duplicated) {
+		App->scene->RenameDuplicatedGameObject(this);
+	}
+
+	data.CreateSection("GameObject_" + std::to_string(App->scene->saving_index++));
+	data.AddUInt("UUID", uuid);
+	data.AddString("Name", name);
+	data.AddString("Tag", tag);
+	data.AddString("Layer", layer);
+	data.AddBool("Active", active);
+
+	data.CreateSection("Components");
+	data.AddInt("Components_Count", components_list.size());
+	int componentIndex = 0;
+	for (std::list<Component*>::const_iterator it = components_list.begin(); it != components_list.end(); it++) {
+		data.CreateSection("Component_" + std::to_string(componentIndex));
+		(*it)->Save(data);
+		data.CloseSection();
+		componentIndex++;
+	}
+	data.CloseSection();
+
+	data.AddUInt("ParentID", parent ? parent->GetUID() : 0);
+	data.AddBool("IsRoot", is_root);
+	data.AddBool("IsStatic", is_static);
+	data.CloseSection();
+
+	//Save all childs recursively
+	for (std::list<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); it++) {
+		(*it)->Save(data, is_duplicated);
+	}
+
+	name = tempName;
+}
+
+void GameObject::Load(Data & data, bool is_prefab)
+{
+	uuid = data.GetUInt("UUID");
+	name = data.GetString("Name");
+	tag = data.GetString("Tag");
+	layer = data.GetString("Layer");
+	active = data.GetBool("Active");
+	data.EnterSection("Components");
+	int componentsCount = data.GetInt("Components_Count");
+	for (int i = 0; i < componentsCount; i++)
+	{
+		data.EnterSection("Component_" + std::to_string(i));
+		Component* component = GetComponent((Component::ComponentType)data.GetInt("Type"));
+		if (component != nullptr) {
+			component->Load(data);
+		}
+		else {
+			AddComponent((Component::ComponentType)data.GetInt("Type"));
+			GetComponent((Component::ComponentType)data.GetInt("Type"))->Load(data);
+		}
+		data.LeaveSection();
+	}
+	data.LeaveSection();
+
+	UID parent_id = data.GetUInt("ParentID");
+	if (parent_id != 0) {
+		SetParentByID(parent_id);
+	}
+
+	is_root = data.GetBool("IsRoot");
+	if (is_root) {
+		App->scene->root_gameobjects.push_back(this);
+	}
+
+	if (!is_prefab) {
+		//Store gameObject name to know the existing gameObjects when loading scene
+		int gameObjectCount = 1;
+		bool inParenthesis = false;
+		std::string str;
+		std::string tempName = name;
+		for (int i = 0; i < name.size(); i++) {
+			if (name[i] == ')') {
+				inParenthesis = false;
+				if (name[i + 1] == '\0') {
+					break;
+				}
+				else {
+					str.clear();
+				}
+			}
+			if (inParenthesis) {
+				str.push_back(name[i]);
+			}
+			if (name[i] == '(') {
+				inParenthesis = true;
+			}
+		}
+		if (atoi(str.c_str()) != 0) {
+			name.erase(name.end() - (str.length() + 2), name.end());
+			gameObjectCount = stoi(str);
+		}
+
+		std::map<std::string, int>::iterator it = App->scene->scene_gameobjects_name_counter.find(name);
+		if (it != App->scene->scene_gameobjects_name_counter.end()) {
+			if (App->scene->scene_gameobjects_name_counter[name] < gameObjectCount) {
+				App->scene->scene_gameobjects_name_counter[name] = gameObjectCount;
+			}
+		}
+		else {
+			App->scene->scene_gameobjects_name_counter[name] = 1;
+		}
+		name = tempName;
+	}
+
+}

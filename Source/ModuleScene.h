@@ -26,6 +26,7 @@ public:
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
 	//GameObject* DuplicateGameObject(GameObject* gameObject);
 	void RenameDuplicatedGameObject(GameObject * gameObject, bool justIncrease = false);
+	GameObject* FindGameObject(uint id) const;
 
 	void AddGameObjectToScene(GameObject* gameobject);
 	void AddGameObjectToDestroy(GameObject* gameobject);
@@ -39,6 +40,10 @@ public:
 	void InsertGoInOctree(AABB& box);
 	void EraseGoInOctree(AABB& box);
 
+	void NewScene();
+	void LoadScene(std::string path);
+	void SaveScene(std::string path) const;
+
 private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
 	void HandleInput();
@@ -47,13 +52,16 @@ public:
 	std::list<GameObject*> selected_gameobjects;
 	std::list<GameObject*> root_gameobjects;
 	std::list<GameObject*> scene_gameobjects;
+	std::map<std::string, int> scene_gameobjects_name_counter;
 	std::list<ComponentCamera*> scene_cameras;
 	std::list<Mesh*> static_meshes;
 	std::list<Mesh*> dynamic_meshes;
 	Octree octree;
 	bool draw_octree;
+	int saving_index;
+	std::string scene_name;
+
 private:
 	
 	std::list<GameObject*> gameobjects_to_destroy;
-	std::map<std::string, int> scene_gameobjects_name_counter;
 };

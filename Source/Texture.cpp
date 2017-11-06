@@ -1,5 +1,6 @@
 #include "Texture.h"
 #include "OpenGL.h"
+#include "Data.h"
 
 Texture::Texture()
 {
@@ -8,6 +9,7 @@ Texture::Texture()
 	height = 0;
 	format = UnknownFormat;
 	type = UnknownType;
+	SetType(Resource::TextureResource);
 }
 
 Texture::~Texture()
@@ -58,12 +60,12 @@ void Texture::GetSize(uint & width, uint & height) const
 	height = this->height;
 }
 
-void Texture::SetType(TextureType type)
+void Texture::SetTextureType(TextureType type)
 {
 	this->type = type;
 }
 
-Texture::TextureType Texture::GetType() const
+Texture::TextureType Texture::GetTextureType() const
 {
 	return type;
 }
@@ -88,4 +90,16 @@ std::string Texture::GetFormatString() const
 {
 	const char* formats[] = {"bmp", "jpg", "png", "tga", "dds", "Unknown"};
 	return formats[format];
+}
+
+void Texture::Save(Data & data) const
+{
+}
+
+void Texture::Load(Data & data)
+{
+}
+
+void Texture::CreateMeta() const
+{
 }

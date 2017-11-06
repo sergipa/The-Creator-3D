@@ -17,6 +17,8 @@
 #include "InputConfigWindow.h"
 #include "TagsAndLayersWindow.h"
 #include "ImportWindow.h"
+#include "tinyfiledialogs.h"
+#include "ModuleScene.h"
 
 ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {
@@ -84,6 +86,43 @@ update_status ModuleEditor::Update(float deltaTime)
 		{
 			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 
+			if (ImGui::MenuItem("New Scene"))
+			{
+				App->scene->NewScene();
+			}
+			if (ImGui::MenuItem("Load Scene"))
+			{
+				char const * lFilterPatterns[1] = { "*.scene" };
+				const char* path = tinyfd_openFileDialog("Load Scene...", NULL, 1, lFilterPatterns, NULL, 0);
+				if (path != NULL) {
+					App->scene->LoadScene(path);
+				}
+			}
+			if (ImGui::MenuItem("Save Scene"))
+			{
+				char const * lFilterPatterns[1] = { "*.scene" };
+				const char* path = tinyfd_saveFileDialog("Save Scene...", (App->scene->scene_name + ".scene").c_str(), 1, lFilterPatterns, NULL);
+				if (path != NULL) {
+					std::string str(path);
+					bool get_char = false;
+					std::string new_scene_name;
+					for (std::string::reverse_iterator it = str.rbegin(); it != str.rend(); it++) {
+						if (*it == '\\') {
+							get_char = false;
+						}
+						if (get_char) {
+							new_scene_name.insert(0, 1, *it);
+						}
+						if (*it == '.') {
+							get_char = true;
+						}
+					}
+					App->window->SetTitle(new_scene_name.c_str());
+					App->scene->SaveScene(path);
+					App->scene->saving_index = 0;
+				}
+			}
+			ImGui::Separator();
 			if (ImGui::MenuItem("Exit")) {
 				return UPDATE_STOP;
 			}
@@ -235,32 +274,32 @@ void ModuleEditor::LoadEditorStyle()
 		if (data.EnterSection("Editor_Style"))
 		{
 			style->Alpha = data.GetFloat("Alpha");
-			style->WindowPadding = data.GetVector2("WindowPadding");
-			style->WindowMinSize = data.GetVector2("WindowMinSize");
+			style->WindowPadding = data.GetImVector2("WindowPadding");
+			style->WindowMinSize = data.GetImVector2("WindowMinSize");
 			style->WindowRounding = data.GetFloat("WindowRounding");
-			style->WindowTitleAlign = data.GetVector2("WindowTitleAlign");
+			style->WindowTitleAlign = data.GetImVector2("WindowTitleAlign");
 			style->ChildWindowRounding = data.GetFloat("ChildWindowRounding");
-			style->FramePadding = data.GetVector2("FramePadding");
+			style->FramePadding = data.GetImVector2("FramePadding");
 			style->FrameRounding = data.GetFloat("FrameRounding");
-			style->ItemSpacing = data.GetVector2("ItemSpacing");
-			style->ItemInnerSpacing = data.GetVector2("ItemInnerSpacing");
-			style->TouchExtraPadding = data.GetVector2("TouchExtraPadding");
+			style->ItemSpacing = data.GetImVector2("ItemSpacing");
+			style->ItemInnerSpacing = data.GetImVector2("ItemInnerSpacing");
+			style->TouchExtraPadding = data.GetImVector2("TouchExtraPadding");
 			style->IndentSpacing = data.GetFloat("IndentSpacing");
 			style->ColumnsMinSpacing = data.GetFloat("ColumnsMinSpacing");
 			style->ScrollbarSize = data.GetFloat("ScrollbarSize");
 			style->ScrollbarRounding = data.GetFloat("ScrollbarRounding");
 			style->GrabMinSize = data.GetFloat("GrabMinSize");
 			style->GrabRounding = data.GetFloat("GrabRounding");
-			style->ButtonTextAlign = data.GetVector2("ButtonTextAlign");
-			style->DisplayWindowPadding = data.GetVector2("DisplayWindowPadding");
-			style->DisplaySafeAreaPadding = data.GetVector2("DisplaySafeAreaPadding");
+			style->ButtonTextAlign = data.GetImVector2("ButtonTextAlign");
+			style->DisplayWindowPadding = data.GetImVector2("DisplayWindowPadding");
+			style->DisplaySafeAreaPadding = data.GetImVector2("DisplaySafeAreaPadding");
 			style->AntiAliasedLines = data.GetBool("AntiAliasedLines");
 			style->AntiAliasedShapes = data.GetBool("AntiAliasedShapes");
 			style->CurveTessellationTol = data.GetFloat("CurveTessellationTol");
 
 			for (int i = 0; i < ImGuiCol_COUNT; i++)
 			{
-				style->Colors[i] = data.GetVector4(ImGui::GetStyleColorName(i));
+				style->Colors[i] = data.GetImVector4(ImGui::GetStyleColorName(i));
 			}
 			data.LeaveSection();
 		}

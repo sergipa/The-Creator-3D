@@ -1,10 +1,9 @@
 #pragma once
 
 #include "OpenGL.h"
+#include "Resource.h"
 
-typedef unsigned int uint;
-
-class RenderTextureMSAA
+class RenderTextureMSAA : public Resource
 {
 public:
 public:
@@ -21,6 +20,10 @@ public:
 	uint GetTexture() const;
 	int GetMaxMSAALevel() const;
 	int GetCurrentMSAALevel() const;
+
+	void Save(Data& data) const;
+	void Load(Data& data);
+	void CreateMeta() const;
 
 private:
 	uint fbo_id;

@@ -23,15 +23,12 @@ public:
 	bool LoadMesh(const char* path);
 	Texture* LoadTexture(const char* path, bool attach_to_gameobject);
 
-	//Loads images used in engine like files icons
-	Texture* LoadEngineImages(const char* path);
+	Texture* LoadTexture(const char* path);
 
 	Mesh* LoadMeshFromLibrary(std::string path);
 
 private:
 	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
-	std::string GetFileName(const char* path);
-	std::string GetFileExtension(const char* path);
 	void GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion& rot, aiVector3D& scale);
 };
 

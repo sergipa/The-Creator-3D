@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "OpenGL.h"
+#include "Data.h"
 
 Mesh::Mesh()
 {
@@ -19,6 +20,8 @@ Mesh::Mesh()
 
 	id_texture_coords = 0;
 	texture_coords = nullptr;
+
+	SetType(Resource::MeshResource);
 
 }
 
@@ -41,4 +44,24 @@ Mesh::~Mesh()
 	id_normals = 0;
 	id_colors = 0;
 	id_texture_coords = 0;
+}
+
+void Mesh::Save(Data & data) const
+{
+	data.AddUInt("UID", GetUID());
+	data.AddInt("Type", GetType());
+	data.AddString("Assets_path", GetAssetsPath());
+	data.AddString("Library_path", GetLibraryPath());
+}
+
+void Mesh::Load(Data & data)
+{
+	SetUID(data.GetUInt("UID"));
+	SetType((Resource::ResourceType)data.GetInt("Type"));
+	SetAssetsPath(data.GetString("Assets_path"));
+	SetLibraryPath(data.GetString("Library_path"));
+}
+
+void Mesh::CreateMeta() const
+{
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Globals.h"
-#include "imgui\imgui.h"
 #include <fstream>
 #include <iostream>
 #include "cereal-1.2.2\include\cereal\archives\xml.hpp"
@@ -9,6 +8,10 @@
 #include "cereal-1.2.2\include\cereal\archives\binary.hpp"
 #include "cereal-1.2.2\include\cereal\types\string.hpp"
 #include "cereal-1.2.2\include\cereal\types\vector.hpp"
+#include "MathGeoLib\Math\float2.h"
+#include "MathGeoLib\Math\float3.h"
+#include "MathGeoLib\Math\float4.h"
+#include "imgui\imgui.h"
 
 class Data
 {
@@ -36,9 +39,12 @@ public:
 	double GetDouble(std::string valueName);
 	float GetFloat(std::string valueName);
 	std::string GetString(std::string valueName);
-	ImVec2 GetVector2(std::string valueName);
-	ImVec3 GetVector3(std::string valueName);
-	ImVec4 GetVector4(std::string valueName);
+	float2 GetVector2(std::string valueName);
+	float3 GetVector3(std::string valueName);
+	float4 GetVector4(std::string valueName);
+	ImVec2 GetImVector2(std::string valueName);
+	ImVec3 GetImVector3(std::string valueName);
+	ImVec4 GetImVector4(std::string valueName);
 
 	void AddBool(std::string valueName, bool value);
 	void AddInt(std::string valueName, int value);
@@ -46,9 +52,12 @@ public:
 	void AddDouble(std::string valueName, double value);
 	void AddFloat(std::string valueName, float value);
 	void AddString(std::string valueName, std::string value);
-	void AddVector2(std::string valueName, ImVec2 value);
-	void AddVector3(std::string valueName, ImVec3 value);
-	void AddVector4(std::string valueName, ImVec4 value);
+	void AddVector2(std::string valueName, float2 value);
+	void AddVector3(std::string valueName, float3 value);
+	void AddVector4(std::string valueName, float4 value);
+	void AddImVector2(std::string valueName, ImVec2 value);
+	void AddImVector3(std::string valueName, ImVec3 value);
+	void AddImVector4(std::string valueName, ImVec4 value);
 
 private:
 

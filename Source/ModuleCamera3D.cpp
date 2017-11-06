@@ -6,6 +6,8 @@
 #include "PerformanceWindow.h"
 #include "Data.h"
 #include "ComponentCamera.h"
+#include "ModuleInput.h"
+#include "ModuleRenderer3D.h"
 
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)

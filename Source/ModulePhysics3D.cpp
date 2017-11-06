@@ -5,6 +5,7 @@
 #include "Primitive.h"
 #include "ModuleEditor.h"
 #include "PerformanceWindow.h"
+#include "ModuleInput.h"
 
 #ifdef _DEBUG
 	#pragma comment (lib, "Bullet/libx86/BulletDynamics_debug.lib")

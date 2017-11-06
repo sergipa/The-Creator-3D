@@ -20,7 +20,7 @@ Application* App = NULL;
 
 int main(int argc, char ** argv)
 {
-	CONSOLE_DEBUG("Starting game '%s'...", TITLE);
+	CONSOLE_DEBUG("Starting Engine");
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;

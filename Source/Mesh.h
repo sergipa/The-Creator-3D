@@ -1,10 +1,10 @@
 #pragma once
 
-typedef unsigned int uint;
-
 #include <string>
 #include "MathGeoLib\Geometry\GeometryAll.h"
 #include "Resource.h"
+
+class Data;
 
 class Mesh : public Resource
 {
@@ -30,5 +30,9 @@ public:
 	float* texture_coords;
 
 	AABB box;
+
+	void Save(Data& data) const;
+	void Load(Data& data);
+	void CreateMeta() const;
 };
 

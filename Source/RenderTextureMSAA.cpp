@@ -10,6 +10,8 @@ RenderTextureMSAA::RenderTextureMSAA()
 	rbo_id = 0;
 	rbo_color_id = 0;
 	rbo_depth_id = 0;
+
+	SetType(Resource::RenderTexture);
 }
 
 RenderTextureMSAA::~RenderTextureMSAA()
@@ -139,4 +141,16 @@ int RenderTextureMSAA::GetMaxMSAALevel() const
 int RenderTextureMSAA::GetCurrentMSAALevel() const
 {
 	return current_msaa_samples;
+}
+
+void RenderTextureMSAA::Save(Data & data) const
+{
+}
+
+void RenderTextureMSAA::Load(Data & data)
+{
+}
+
+void RenderTextureMSAA::CreateMeta() const
+{
 }

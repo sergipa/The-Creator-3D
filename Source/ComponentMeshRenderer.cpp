@@ -50,10 +50,24 @@ void ComponentMeshRenderer::UpdateBoundingBox()
 
 void ComponentMeshRenderer::Save(Data & data) const
 {
+	data.AddInt("Type", GetType());
+	data.AddBool("Active", IsActive());
+	data.AddUInt("UUID", GetUID());
+	data.CreateSection("Mesh");
+	mesh->Save(data);
+	data.CloseSection();
+	data.CreateSection("Texture");
+	texture->Save(data);
+	data.CloseSection();
 }
 
 void ComponentMeshRenderer::Load(Data & data)
 {
+	SetType((Component::ComponentType)data.GetInt("Type"));
+	SetActive(data.GetBool("Active"));
+	SetUID(data.GetUInt("UUID"));
+	data.EnterSection("Mesh");
+
 }
 
 

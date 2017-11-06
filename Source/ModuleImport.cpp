@@ -11,6 +11,7 @@
 #include "ModuleResources.h"
 #include "Data.h"
 #include "ImportWindow.h"
+#include "ModuleFileSystem.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -115,7 +116,7 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 		}
 
 		std::string root_go_name;
-		(s_node_name.find("RootNode") != std::string::npos) ? root_go_name = GetFileName(path) : root_go_name = node->mName.C_Str();
+		(s_node_name.find("RootNode") != std::string::npos) ? root_go_name = App->file_system->GetFileNameWithoutExtension(path) : root_go_name = node->mName.C_Str();
 		root = new GameObject(parent);
 		if (!node->mParent) root->SetRoot(true);
 		root->SetName(root_go_name);
@@ -233,7 +234,7 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 					if (mat_texture_path.length > 0)
 					{
 						std::string full_texture_path;
-						full_texture_path = ASSETS_TEXTURES_FOLDER + GetFileName(mat_texture_path.C_Str()) + GetFileExtension(mat_texture_path.C_Str());
+						full_texture_path = ASSETS_TEXTURES_FOLDER + App->file_system->GetFileName(mat_texture_path.C_Str());
 						material_texture = LoadTexture(full_texture_path.c_str(), false);
 					}
 				}
@@ -281,10 +282,6 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 			delete[] data;
 			data = nullptr;
 
-			LoadMeshFromLibrary((LIBRARY_MESHES_FOLDER + mesh->GetName() + ".mesh"));
-
-			App->resources->AddMesh(mesh);
-
 			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
 			mesh_renderer->LoadMesh(mesh);
@@ -320,9 +317,9 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 	if (App->scene->selected_gameobjects.empty() && attach_to_gameobject) return nullptr;
 
 	//If texture exist. Don't load a new one
-	if (App->resources->TextureExist(GetFileName(path)))
+	Texture* existing_texture = App->resources->GetTexture(App->file_system->GetFileNameWithoutExtension(path));
+	if (existing_texture != nullptr)
 	{
-		Texture* existing_texture = App->resources->GetTexture(GetFileName(path));
 		if(attach_to_gameobject) App->scene->ApplyTextureToSelectedGameObjects(existing_texture);
 		return existing_texture;
 	}
@@ -342,8 +339,8 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 		tmp_texture->SetID(ilutGLBindTexImage());
 		tmp_texture->SetWidth(ImageInfo.Width);
 		tmp_texture->SetHeight(ImageInfo.Height);
-		tmp_texture->SetPath(path);
-		tmp_texture->SetName(GetFileName(path).c_str());
+		tmp_texture->SetAssetsPath(path);
+		tmp_texture->SetName(App->file_system->GetFileNameWithoutExtension(path));
 
 		switch (ImageInfo.Format)
 		{
@@ -359,28 +356,27 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 		}
 		switch (ImageInfo.Type)
 		{
-			case IL_BMP: tmp_texture->SetType(Texture::TextureType::bmp); break;
-			case IL_JPG: tmp_texture->SetType(Texture::TextureType::jpg); break;
-			case IL_PNG: tmp_texture->SetType(Texture::TextureType::png); break;
-			case IL_TGA: tmp_texture->SetType(Texture::TextureType::tga); break;
-			case IL_DDS: tmp_texture->SetType(Texture::TextureType::dds); break;
-			default: tmp_texture->SetType(Texture::TextureType::UnknownType); break;
+			case IL_BMP: tmp_texture->SetTextureType(Texture::TextureType::bmp); break;
+			case IL_JPG: tmp_texture->SetTextureType(Texture::TextureType::jpg); break;
+			case IL_PNG: tmp_texture->SetTextureType(Texture::TextureType::png); break;
+			case IL_TGA: tmp_texture->SetTextureType(Texture::TextureType::tga); break;
+			case IL_DDS: tmp_texture->SetTextureType(Texture::TextureType::dds); break;
+			default: tmp_texture->SetTextureType(Texture::TextureType::UnknownType); break;
 		}
 
 		//save texture library
 		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
-		if (ilSave(IL_DDS, (LIBRARY_TEXTURES_FOLDER + GetFileName(path) + ".dds").c_str()))
+		if (ilSave(IL_DDS, (LIBRARY_TEXTURES_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".dds").c_str()))
 		{
-			CONSOLE_DEBUG("%s library file created.", GetFileName(path).c_str());
+			CONSOLE_DEBUG("%s library file created.", App->file_system->GetFileNameWithoutExtension(path).c_str());
 		}
 		else 
 		{
-			CONSOLE_DEBUG("%s library file cannot be created.", GetFileName(path).c_str());
+			CONSOLE_DEBUG("%s library file cannot be created.", App->file_system->GetFileNameWithoutExtension(path).c_str());
 		}
 
 		ilDeleteImages(1, &image_id);
 		CONSOLE_DEBUG("Texture Loaded: %s", path);
-		App->resources->AddTexture(tmp_texture);
 	}
 	else 
 	{
@@ -392,7 +388,7 @@ Texture* ModuleImport::LoadTexture(const char * path, bool attach_to_gameobject)
 	return tmp_texture;
 }
 
-Texture * ModuleImport::LoadEngineImages(const char * path)
+Texture * ModuleImport::LoadTexture(const char * path)
 {
 	ILuint image_id;
 	ilGenImages(1, &image_id);
@@ -409,8 +405,8 @@ Texture * ModuleImport::LoadEngineImages(const char * path)
 		tmp_texture->SetID(ilutGLBindTexImage());
 		tmp_texture->SetWidth(ImageInfo.Width);
 		tmp_texture->SetHeight(ImageInfo.Height);
-		tmp_texture->SetPath(path);
-		tmp_texture->SetName(GetFileName(path).c_str());
+		tmp_texture->SetAssetsPath(path);
+		tmp_texture->SetName(App->file_system->GetFileNameWithoutExtension(path).c_str());
 
 		switch (ImageInfo.Format)
 		{
@@ -426,12 +422,12 @@ Texture * ModuleImport::LoadEngineImages(const char * path)
 		}
 		switch (ImageInfo.Type)
 		{
-		case IL_BMP: tmp_texture->SetType(Texture::TextureType::bmp); break;
-		case IL_JPG: tmp_texture->SetType(Texture::TextureType::jpg); break;
-		case IL_PNG: tmp_texture->SetType(Texture::TextureType::png); break;
-		case IL_TGA: tmp_texture->SetType(Texture::TextureType::tga); break;
-		case IL_DDS: tmp_texture->SetType(Texture::TextureType::dds); break;
-		default: tmp_texture->SetType(Texture::TextureType::UnknownType); break;
+		case IL_BMP: tmp_texture->SetTextureType(Texture::TextureType::bmp); break;
+		case IL_JPG: tmp_texture->SetTextureType(Texture::TextureType::jpg); break;
+		case IL_PNG: tmp_texture->SetTextureType(Texture::TextureType::png); break;
+		case IL_TGA: tmp_texture->SetTextureType(Texture::TextureType::tga); break;
+		case IL_DDS: tmp_texture->SetTextureType(Texture::TextureType::dds); break;
+		default: tmp_texture->SetTextureType(Texture::TextureType::UnknownType); break;
 		}
 		ilDeleteImages(1, &image_id);
 		CONSOLE_DEBUG("Engine image Loaded: %s", path);
@@ -461,7 +457,7 @@ Mesh * ModuleImport::LoadMeshFromLibrary(std::string path)
 
 		if (file)
 		{
-			CONSOLE_DEBUG("Mesh library file %s read successfully", GetFileName(path.c_str()).c_str());
+			CONSOLE_DEBUG("Mesh library file %s read successfully", App->file_system->GetFileNameWithoutExtension(path.c_str()).c_str());
 
 			char* cursor = buffer;
 			mesh = new Mesh();
@@ -510,39 +506,12 @@ Mesh * ModuleImport::LoadMeshFromLibrary(std::string path)
 		}
 		else
 		{
-			CONSOLE_DEBUG("Mesh library file %s read failed", GetFileName(path.c_str()).c_str());
+			CONSOLE_DEBUG("Mesh library file %s read failed", App->file_system->GetFileNameWithoutExtension(path.c_str()).c_str());
 		}
 		file.close();
 	}
 
 	return mesh;
-}
-
-std::string ModuleImport::GetFileName(const char * path)
-{
-	std::string name;
-	std::string temp_path;
-	temp_path = path;
-	uint pos_bar = (temp_path.find(ASSETS_FOLDER) != std::string::npos) ? temp_path.find_last_of('/') : temp_path.find_last_of('\\');
-	uint pos_point = temp_path.find_last_of('.');
-	for (int i = pos_bar + 1; i < pos_point; i++)
-	{
-		name.push_back(temp_path[i]);
-	}
-	return name;
-}
-
-std::string ModuleImport::GetFileExtension(const char * path)
-{
-	std::string name;
-	std::string temp_path;
-	temp_path = path;
-	uint pos_point = temp_path.find_last_of('.');
-	for (int i = pos_point; i < temp_path.length(); i++)
-	{
-		name.push_back(temp_path[i]);
-	}
-	return name;
 }
 
 void ModuleImport::GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion& rot, aiVector3D& scale)

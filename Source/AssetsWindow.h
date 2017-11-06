@@ -1,9 +1,5 @@
 #pragma once
 #include "Window.h"
-#include <filesystem>
-namespace fs = std::experimental::filesystem;
-
-//C++ filesystem library: http://en.cppreference.com/w/cpp/experimental/fs
 
 class Texture;
 
@@ -19,9 +15,8 @@ public:
 	void DrawWindow();
 
 private:
-	void FillAssetsLists();
-	void DrawChilds(fs::path path);
-	int ExtensionToResourceType(std::string str);
+	void FillResourcesLists();
+	void DrawChilds(std::string path);
 
 private:
 	uint node;
@@ -34,7 +29,8 @@ private:
 	Texture* font_icon;
 	Texture* folder_icon;
 
-	fs::path selected_file_path;
-	fs::path selected_folder;
+	std::string selected_file_path;
+	std::string selected_folder;
+	std::string assets_folder_path;
 };
 

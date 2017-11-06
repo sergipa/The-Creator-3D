@@ -55,14 +55,13 @@ void OctreeNode::EraseInNode(AABB * bounding_box)
 	
 	if (node_childs[0] != nullptr)
 	{
-		bool delete_childs = false;
+		int childs_contents_num = 0;
 		for (int i = 0; i < 8; i++)
 		{
 			node_childs[i]->EraseInNode(bounding_box);
-			delete_childs = node_childs[i]->node_contents.empty();
-			if (!delete_childs) break;
+			childs_contents_num += node_childs[i]->node_contents.size();
 		}
-		if (delete_childs)
+		if (childs_contents_num == 0)
 		{
 			ClearNode();
 		}
