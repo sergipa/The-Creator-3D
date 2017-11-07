@@ -40,6 +40,9 @@ bool ModuleScene::Start()
 	octree.Create(float3::zero, float3::zero);
 	octree.update_tree = true;
 	draw_octree = false;
+
+	mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+	mCurrentGizmoMode = ImGuizmo::LOCAL;
 	return ret;
 }
 
@@ -292,7 +295,22 @@ void ModuleScene::HandleInput()
 		{
 			App->camera->can_update = false;
 		}
-
+		//Gizmo
+		if (App->camera->can_update == false)
+		{
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
+			{
+				mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+			{
+				mCurrentGizmoOperation = ImGuizmo::ROTATE;
+			}
+			if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+			{
+				mCurrentGizmoOperation = ImGuizmo::SCALE;
+			}
+		}
 		//Focus on first selected object
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 		{

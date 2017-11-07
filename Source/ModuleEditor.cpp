@@ -20,6 +20,7 @@
 #include "tinyfiledialogs.h"
 #include "ModuleScene.h"
 #include "ModuleTime.h"
+#include "imgui\ImGuizmo\ImGuizmo.h"
 
 ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {
@@ -69,6 +70,7 @@ bool ModuleEditor::Init(Data* editor_config)
 update_status ModuleEditor::PreUpdate(float delta_time)
 {
 	ImGui_ImplSdl_NewFrame(App->window->window);
+	ImGuizmo::BeginFrame();
 	return UPDATE_CONTINUE;
 }
 

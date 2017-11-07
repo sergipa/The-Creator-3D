@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include "Octree.h"
+#include "imgui\ImGuizmo\ImGuizmo.h"
 
 class GameObject;
 class Texture;
@@ -61,6 +62,8 @@ public:
 	int saving_index;
 	std::string scene_name;
 
+	ImGuizmo::OPERATION mCurrentGizmoOperation;
+	ImGuizmo::MODE mCurrentGizmoMode;
 private:
 	
 	std::list<GameObject*> gameobjects_to_destroy;

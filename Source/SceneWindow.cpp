@@ -6,6 +6,7 @@
 #include "RenderTexture.h"
 #include "ModuleScene.h"
 #include "ModuleTime.h"
+#include "GameObject.h"
 
 SceneWindow::SceneWindow()
 {
@@ -48,6 +49,15 @@ void SceneWindow::DrawWindow()
 			if(is_mouse_hovering_window) is_window_focused = true;
 			else is_window_focused = false;
 		}
+		if (!App->scene->selected_gameobjects.empty())
+		{
+			ImGuiIO& io = ImGui::GetIO();
+
+			//ImGuizmo::Enable(true);
+			ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+			ImGuizmo::Manipulate(App->camera->GetViewMatrix(), App->camera->GetCamera()->GetProjectionMatrix(), App->scene->mCurrentGizmoOperation, App->scene->mCurrentGizmoMode, App->scene->selected_gameobjects.front()->GetGlobalTransfomMatrix().ptr());
+		}
+		
 	}
 
 	ImGui::EndDock();
