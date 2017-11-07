@@ -100,7 +100,7 @@ void SceneWindow::DrawMenuBar()
 		{
 			if (ImGui::SliderFloat("Dt Scale", &App->time->time_scale, 0.0f, 100.0f))
 			{
-				if (App->time->time_scale < 0.0f) App->time->time_scale = 1.0f;
+				if (App->time->time_scale < 0.0f) App->time->time_scale = 0.0f;
 			}
 			ImGui::EndMenu();
 		}

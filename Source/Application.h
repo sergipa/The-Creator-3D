@@ -65,7 +65,7 @@ public:
 	void CapFPS(int max_fps);
 	void SetCursor(SDL_SystemCursor id);
 	void CreateEngineData(Data* data);
-
+	void UpdateStep();
 private:
 
 	void AddModule(Module* mod);
