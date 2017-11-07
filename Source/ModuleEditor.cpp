@@ -19,6 +19,7 @@
 #include "ImportWindow.h"
 #include "tinyfiledialogs.h"
 #include "ModuleScene.h"
+#include "ModuleTime.h"
 
 ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {

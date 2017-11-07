@@ -5,6 +5,7 @@
 #include "ComponentCamera.h"
 #include "RenderTexture.h"
 #include "ModuleScene.h"
+#include "ModuleTime.h"
 
 SceneWindow::SceneWindow()
 {
