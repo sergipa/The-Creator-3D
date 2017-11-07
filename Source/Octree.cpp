@@ -155,6 +155,8 @@ Octree::Octree()
 Octree::~Octree()
 {
 	Clear();
+	/*min_point = float3(0, 0, 0);
+	max_point = float3(0, 0, 0);*/
 }
 
 void Octree::Create(float3 min_point, float3 max_point)
@@ -262,29 +264,36 @@ void Octree::DebugDraw()
 
 void Octree::CalculateNewSize(float3 box_min_point, float3 box_max_point)
 {
-	//If the box that we need to insert is out of the octree, we will need to update the octree.
-	if (box_min_point.x < min_point.x)
+	if (min_point.x == 0 && min_point.y == 0 && min_point.z == 0 && max_point.x == 0 && max_point.y == 0 && max_point.z == 0)
 	{
-		min_point.x = box_min_point.x;
+		min_point = box_min_point;
+		max_point = box_max_point;
 	}
-	if (box_min_point.y < min_point.y)
-	{
-		min_point.y = box_min_point.y;
-	}
-	if (box_min_point.z < min_point.z)
-	{
-		min_point.z = box_min_point.z;
-	}
-	if (box_max_point.x > max_point.x)
-	{
-		max_point.x = box_max_point.x;
-	}
-	if (box_max_point.y > max_point.y)
-	{
-		max_point.y = box_max_point.y;
-	}
-	if (box_max_point.z > max_point.z)
-	{
-		max_point.z = box_max_point.z;
+	else {
+		//If the box that we need to insert is out of the octree, we will need to update the octree.
+		if (box_min_point.x < min_point.x)
+		{
+			min_point.x = box_min_point.x;
+		}
+		if (box_min_point.y < min_point.y)
+		{
+			min_point.y = box_min_point.y;
+		}
+		if (box_min_point.z < min_point.z)
+		{
+			min_point.z = box_min_point.z;
+		}
+		if (box_max_point.x > max_point.x)
+		{
+			max_point.x = box_max_point.x;
+		}
+		if (box_max_point.y > max_point.y)
+		{
+			max_point.y = box_max_point.y;
+		}
+		if (box_max_point.z > max_point.z)
+		{
+			max_point.z = box_max_point.z;
+		}
 	}
 }

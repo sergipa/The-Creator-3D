@@ -216,7 +216,13 @@ void ModuleScene::NewScene()
 	scene_gameobjects_name_counter.clear();
 	root_gameobjects.clear();
 	selected_gameobjects.clear();
+	scene_cameras.clear();
+	static_meshes.clear();
+	dynamic_meshes.clear();
 	App->window->SetTitle(DEFAULT_SCENE_TITLE);
+	octree.Clear();
+	octree.Create(float3::zero, float3::zero);
+	octree.update_tree = true;
 }
 
 void ModuleScene::LoadScene(std::string path)
