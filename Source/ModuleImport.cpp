@@ -133,6 +133,8 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 	{
 		for (int i = 0; i < node->mNumMeshes; i++)
 		{
+			if (!ret) ret = true; //If node have more than 1 mesh and last mesh returned false, we need to restart the return to true for the new mesh.
+
 			aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
 			Mesh* mesh = new Mesh();
 			mesh->SetName((std::string)node->mName.C_Str());
@@ -161,6 +163,7 @@ bool ModuleImport::LoadMeshNode(GameObject * parent, aiNode * node, const aiScen
 				CONSOLE_DEBUG("New mesh ""%s"" with %d triangles.", node->mName.C_Str(), mesh->num_indices /3);
 			}
 			
+			if (!ret) continue;
 			//Focus the camera on the mesh
 			App->camera->can_update = true;
 			App->camera->FocusOnObject(float3(0, 0, 0), mesh->box.Size().Length());
