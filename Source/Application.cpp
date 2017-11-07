@@ -241,6 +241,41 @@ void Application::CreateEngineData(Data * data)
 	data->SaveAsJSON(EDITOR_CONFIG_FILE);
 }
 
+void Application::UpdateStep()
+{
+	update_status ret = UPDATE_CONTINUE;
+
+	std::list<Module*>::iterator item = list_modules.begin();
+
+	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
+	{
+		if ((*item)->is_game)
+			ret = (*item)->PreUpdate(dt);
+
+		++item;
+	}
+
+	item = list_modules.begin();
+
+	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
+	{
+		if ((*item)->is_game)
+			ret = (*item)->Update(dt);
+
+		++item;
+	}
+
+	item = list_modules.begin();
+
+	while (item != list_modules.end() && ret == UPDATE_CONTINUE)
+	{
+		if ((*item)->is_game)
+			ret = (*item)->PostUpdate(dt);
+
+		++item;
+	}
+}
+
 void Application::AddModule(Module* mod)
 {
 	list_modules.push_back(mod);

@@ -218,7 +218,10 @@ update_status ModuleEditor::Update(float deltaTime)
 	if (ImGui::Button("Pause", { 50,40 })) {
 		App->time->time_scale = 0.0f;
 	}
-
+	ImGui::SameLine();
+	if (ImGui::Button("Step", { 50,40 })) {
+		App->UpdateStep();
+	}
 	ImGui::Separator();
 	ImGui::BeginDockspace();
 	for (std::list<Window*>::iterator it = editor_windows.begin(); it != editor_windows.end(); it++) {
