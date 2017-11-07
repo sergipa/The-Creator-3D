@@ -1,6 +1,6 @@
 #pragma once
 #include "Module.h"
-
+#include "Timer.h"
 
 class ModuleTime :
 	public Module
@@ -8,16 +8,15 @@ class ModuleTime :
 public:
 	ModuleTime(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleTime();
-
+	bool Init();
 	update_status PreUpdate(float dt);
 
 	float GetGameDt() const;
-	float GetScale() const;
-	bool SetScale(float new_scale);
+	Uint32 GetTime();
 public:
-	
-private:
 	float time_scale;
+private:
 	float game_dt;
+	Timer time;
 };
 

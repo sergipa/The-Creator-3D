@@ -15,6 +15,12 @@ ModuleTime::~ModuleTime()
 {
 }
 
+bool ModuleTime::Init()
+{
+	time.Start();
+	return true;
+}
+
 update_status ModuleTime::PreUpdate(float dt)
 {
 	game_dt = dt * time_scale;
@@ -28,18 +34,7 @@ float ModuleTime::GetGameDt() const
 	return game_dt;
 }
 
-float ModuleTime::GetScale() const
+Uint32 ModuleTime::GetTime()
 {
-	return time_scale;
-}
-
-bool ModuleTime::SetScale(float new_scale)
-{
-	if (new_scale >= 0.0f)
-	{
-		time_scale = new_scale;
-		return true;
-	}
-	else
-		return false;
+	return time.Read();
 }
