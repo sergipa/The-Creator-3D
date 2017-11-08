@@ -56,7 +56,7 @@ void ModuleResources::FillResourcesLists()
 		{
 			std::string path = GetLibraryFile(*it);
 			resource = CreateResourceFromLibrary(path);
-			resource->CreateMeta();
+			if (resource != nullptr) resource->CreateMeta();
 		}
 		else
 		{
@@ -64,46 +64,12 @@ void ModuleResources::FillResourcesLists()
 			Resource::ResourceType type = AssetExtensionToResourceType(extension);
 			CreateLibraryFile(type, *it);
 			std::string path = GetLibraryFile(*it);
-			//std::string path = App->get
 			resource = CreateResourceFromLibrary(path);
 			if(resource != nullptr) resource->CreateMeta();
 		}
 
 		AddResource(resource);
 	}
-}
-
-Resource* ModuleResources::CreateResource(Resource::ResourceType type)
-{
-	Resource* resource = nullptr;
-
-	switch (type)
-	{
-	case Resource::TextureResource:
-		resource = (Resource*) new Texture();
-		break;
-	case Resource::MeshResource:
-		resource = (Resource*) new Mesh();
-		break;
-	case Resource::SceneResource:
-		break;
-	case Resource::AnimationResource:
-		break;
-	case Resource::PrefabResource:
-		break;
-	case Resource::ScriptResource:
-		break;
-	case Resource::AudioResource:
-		break;
-	case Resource::ParticleFXResource:
-		break;
-	case Resource::FontResource:
-		break;
-	case Resource::Unknown:
-		break;
-	}
-
-	return resource;
 }
 
 void ModuleResources::AddResource(Resource * resource)

@@ -27,12 +27,14 @@ public:
 	void SetLibraryPath(std::string path);
 	ResourceType GetType() const;
 	void SetType(ResourceType type);
-	std::string GetTimeCreated() const;
-	void SetCreatedTime(std::string time);
+	void SetUsedCount(int count);
+	int GetUsedCount() const;
 
 	virtual void Save(Data& data) const = 0;
-	virtual void Load(Data& data) = 0;
+	virtual bool Load(Data& data) = 0;
 	virtual void CreateMeta() const = 0;
+	virtual void LoadToMemory() = 0;
+	virtual void UnloadFromMemory() = 0;
 
 private:
 	std::string name;
@@ -41,5 +43,6 @@ private:
 	UID uuid;
 	ResourceType type;
 	std::string creation_date;
+	int used_count;
 };
 

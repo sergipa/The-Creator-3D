@@ -4,29 +4,25 @@
 #include "Assimp\include\quaternion.h"
 #include "Assimp\include\vector3.h"
 
-class GameObject;
-class Texture;
+class Mesh;
 struct aiNode;
 struct aiScene;
-class Mesh;
+class GameObject;
+class Data;
 
-class ModuleImport :
+class ModuleMeshImporter :
 	public Module
 {
 public:
-	ModuleImport(Application* app, bool start_enabled = true, bool is_game = false);
-	~ModuleImport();
+	ModuleMeshImporter(Application* app, bool start_enabled = true, bool is_game = false);
+	~ModuleMeshImporter();
 
-	
+	bool Init(Data* editor_config = nullptr);
 	bool CleanUp();
 
-	void LoadFile(std::string path);
-	bool LoadMesh(const char* path);
-	Texture* LoadTexture(const char* path, bool attach_to_gameobject);
-
-	Texture* LoadTexture(const char* path);
-
+	bool ImportMesh(std::string path);
 	Mesh* LoadMeshFromLibrary(std::string path);
+	void SaveMeshToLibrary(Mesh& mesh);
 
 private:
 	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
@@ -34,3 +30,4 @@ private:
 };
 
 void Callback(const char* message, char* c);
+

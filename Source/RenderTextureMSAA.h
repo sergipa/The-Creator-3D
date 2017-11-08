@@ -22,8 +22,11 @@ public:
 	int GetCurrentMSAALevel() const;
 
 	void Save(Data& data) const;
-	void Load(Data& data);
+	bool Load(Data& data);
 	void CreateMeta() const;
+
+	void LoadToMemory();
+	void UnloadFromMemory();
 
 private:
 	uint fbo_id;

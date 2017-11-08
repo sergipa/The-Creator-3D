@@ -64,12 +64,12 @@ void Resource::SetType(ResourceType type)
 	this->type = type;
 }
 
-std::string Resource::GetTimeCreated() const
+void Resource::SetUsedCount(int count)
 {
-	return creation_date;;
+	used_count = count;
 }
 
-void Resource::SetCreatedTime(std::string time)
+int Resource::GetUsedCount() const
 {
-	creation_date = time;
+	return used_count;
 }

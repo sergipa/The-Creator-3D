@@ -73,6 +73,7 @@ bool ModuleImport::LoadMesh(const char* path)
 	const aiScene* scene = aiImportFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene != nullptr && scene->HasMeshes())
 	{
+
 		aiNode* root_node = scene->mRootNode;
 		LoadMeshNode(nullptr, root_node, scene, path);
 		CONSOLE_DEBUG("Object succesfully loaded from, %s", path);

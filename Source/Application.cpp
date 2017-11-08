@@ -9,10 +9,11 @@
 #include "ModuleCamera3D.h"
 #include "ModulePhysics3D.h"
 #include "ModuleEditor.h"
-#include "ModuleImport.h"
 #include "ModuleResources.h"
 #include "ModuleTime.h"
 #include "ModuleFileSystem.h"
+#include "ModuleMeshImporter.h"
+#include "ModuleTextureImporter.h"
 #include "Data.h"
 #include "TagsAndLayers.h"
 
@@ -32,10 +33,11 @@ Application::Application()
 	camera = new ModuleCamera3D(this);
 	//physics = new ModulePhysics3D(this);
 	editor = new ModuleEditor(this);
-	import = new ModuleImport(this);
 	resources = new ModuleResources(this);
 	time = new ModuleTime(this);
 	file_system = new ModuleFileSystem(this);
+	mesh_importer = new ModuleMeshImporter(this);
+	texture_importer = new ModuleTextureImporter(this);
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -49,7 +51,8 @@ Application::Application()
 	AddModule(camera);
 	AddModule(scene);
 	AddModule(import);
-	AddModule(editor);
+	AddModule(mesh_importer);
+	AddModule(texture_importer);
 	AddModule(resources);
 	//TIME
 	AddModule(time);

@@ -17,6 +17,11 @@ public:
 	{
 		ColorIndex, alpha, rgb, rgba, bgr, bgra, luminance, luminance_alpha, UnknownFormat
 	};
+	enum CompressionFormat
+	{
+		IL_DXTC_FORMAT, IL_DXT1, IL_DXT2, IL_DXT3, IL_DXT4, IL_DXT5, IL_DXT_NO_COMP, 
+		IL_KEEP_DXTC_DATA, IL_DXTC_DATA_FORMAT, IL_3DC, IL_RXGB, IL_ATI1N, IL_DXT1A
+	};
 
 	Texture();
 	virtual ~Texture();
@@ -34,11 +39,17 @@ public:
 	std::string GetTypeString() const;
 	void SetFormat(TextureFormat format);
 	TextureFormat GetFormat() const;
+	void SetCompression(int compression_format);
+	CompressionFormat GetCompression() const;
+	std::string CompressionToString() const;
+
 	std::string GetFormatString() const;
 
 	void Save(Data& data) const;
-	void Load(Data& data);
+	bool Load(Data& data);
 	void CreateMeta() const;
+	void LoadToMemory();
+	void UnloadFromMemory();
 
 private:
 	uint texture_id;
@@ -46,5 +57,6 @@ private:
 	uint height;
 	TextureFormat format;
 	TextureType type;
+	CompressionFormat compression;
 };
 

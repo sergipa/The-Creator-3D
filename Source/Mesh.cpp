@@ -1,6 +1,10 @@
 #include "Mesh.h"
 #include "OpenGL.h"
 #include "Data.h"
+#include "Application.h"
+#include "ModuleMeshImporter.h"
+#include "ModuleFileSystem.h"
+#include "ModuleResources.h"
 
 Mesh::Mesh()
 {
@@ -33,6 +37,101 @@ Mesh::~Mesh()
 	RELEASE_ARRAY(colors);
 	RELEASE_ARRAY(texture_coords);
 
+	UnloadFromMemory();
+}
+
+void Mesh::Save(Data & data) const
+{
+	data.AddString("library_path", GetLibraryPath());
+	data.AddString("assets_path", GetAssetsPath());
+	data.AddString("mesh_name", GetName());
+	data.AddUInt("UUID", GetUID());
+}
+
+bool Mesh::Load(Data & data)
+{
+	bool ret = true;
+
+	std::string library_path = data.GetString("library_path");
+	Mesh* mesh = App->mesh_importer->LoadMeshFromLibrary(GetLibraryPath());
+	if (!mesh)
+	{
+		std::string assets_path = data.GetString("assets_path");
+		if (App->file_system->FileExist(assets_path))
+		{
+			App->resources->CreateLibraryFile(Resource::TextureResource, assets_path);
+			Load(data);
+		}
+		else
+		{
+			std::string name = data.GetString("mesh_name");
+			CONSOLE_ERROR("Mesh %s not found! fbx is missing!", name.c_str());
+			ret = false;
+		}
+	}
+	else
+	{
+		uint num_indices = mesh->num_indices;
+		uint* indices = mesh->indices;
+		uint num_vertices = mesh->num_vertices;
+		float* vertices = mesh->vertices;
+		float* normals = mesh->normals;
+		float* colors = mesh->colors;
+		float* texture_coords = mesh->texture_coords;
+	}
+
+	SetUID(data.GetUInt("UID"));
+	SetAssetsPath(data.GetString("Assets_path"));
+	SetLibraryPath(data.GetString("Library_path"));
+	SetName(data.GetString("mesh_name"));
+
+	return ret;
+}
+
+void Mesh::CreateMeta() const
+{
+
+}
+
+void Mesh::LoadToMemory()
+{
+	glGenBuffers(1, &id_vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, id_vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertices * 3, vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &id_indices);
+	glBindBuffer(GL_ARRAY_BUFFER, id_indices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uint)*num_indices, indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	if (normals != nullptr)
+	{
+		glGenBuffers(1, &(id_normals));
+		glBindBuffer(GL_ARRAY_BUFFER, id_normals);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, normals, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	if (colors != nullptr)
+	{
+		glGenBuffers(1, &(id_colors));
+		glBindBuffer(GL_ARRAY_BUFFER, id_colors);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 4, colors, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	if (texture_coords != nullptr)
+	{
+		glGenBuffers(1, &(id_texture_coords));
+		glBindBuffer(GL_ARRAY_BUFFER, id_texture_coords);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, texture_coords, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+}
+
+void Mesh::UnloadFromMemory()
+{
 	glDeleteBuffers(1, &id_vertices);
 	glDeleteBuffers(1, &id_indices);
 	glDeleteBuffers(1, &id_normals);
@@ -44,24 +143,4 @@ Mesh::~Mesh()
 	id_normals = 0;
 	id_colors = 0;
 	id_texture_coords = 0;
-}
-
-void Mesh::Save(Data & data) const
-{
-	data.AddUInt("UID", GetUID());
-	data.AddInt("Type", GetType());
-	data.AddString("Assets_path", GetAssetsPath());
-	data.AddString("Library_path", GetLibraryPath());
-}
-
-void Mesh::Load(Data & data)
-{
-	SetUID(data.GetUInt("UID"));
-	SetType((Resource::ResourceType)data.GetInt("Type"));
-	SetAssetsPath(data.GetString("Assets_path"));
-	SetLibraryPath(data.GetString("Library_path"));
-}
-
-void Mesh::CreateMeta() const
-{
 }

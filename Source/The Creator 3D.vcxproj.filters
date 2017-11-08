@@ -423,6 +423,13 @@
     <ClInclude Include="imgui\ImGuizmo\ImGuizmo.h">
       <Filter>Sources\3d Party\imGui\ImGuizmo</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleMeshImporter.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTextureImporter.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Prefab.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -689,6 +696,13 @@
     <ClCompile Include="imgui\ImGuizmo\ImGuizmo.cpp">
       <Filter>Sources\3d Party\imGui\ImGuizmo</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleMeshImporter.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTextureImporter.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Prefab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

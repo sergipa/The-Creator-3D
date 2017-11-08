@@ -32,7 +32,10 @@ public:
 	AABB box;
 
 	void Save(Data& data) const;
-	void Load(Data& data);
+	bool Load(Data& data);
 	void CreateMeta() const;
+	void LoadToMemory();
+	void UnloadFromMemory();
+
 };
 

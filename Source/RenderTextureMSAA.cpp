@@ -154,3 +154,11 @@ void RenderTextureMSAA::Load(Data & data)
 void RenderTextureMSAA::CreateMeta() const
 {
 }
+
+void RenderTextureMSAA::LoadToMemory()
+{
+}
+
+void RenderTextureMSAA::UnloadFromMemory()
+{
+}

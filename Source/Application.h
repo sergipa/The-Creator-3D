@@ -20,6 +20,8 @@ class ModuleTime;
 class ModuleFileSystem;
 class Data;
 class TagsAndLayers;
+class ModuleMeshImporter;
+class ModuleTextureImporter;
 
 class Application
 {
@@ -37,6 +39,9 @@ public:
 	ModuleTime* time;
 	TagsAndLayers* tags_and_layers;
 	ModuleFileSystem* file_system;
+	ModuleMeshImporter* mesh_importer;
+	ModuleTextureImporter* texture_importer;
+
 private:
 
 	Timer	ms_timer;
