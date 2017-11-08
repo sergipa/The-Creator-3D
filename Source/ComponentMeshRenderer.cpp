@@ -54,10 +54,10 @@ void ComponentMeshRenderer::Save(Data & data) const
 	data.AddBool("Active", IsActive());
 	data.AddUInt("UUID", GetUID());
 	data.CreateSection("Mesh");
-	mesh->Save(data);
+	if(mesh) mesh->Save(data);
 	data.CloseSection();
 	data.CreateSection("Texture");
-	texture->Save(data);
+	if(texture)texture->Save(data);
 	data.CloseSection();
 }
 

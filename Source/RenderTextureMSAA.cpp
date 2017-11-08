@@ -147,8 +147,9 @@ void RenderTextureMSAA::Save(Data & data) const
 {
 }
 
-void RenderTextureMSAA::Load(Data & data)
+bool RenderTextureMSAA::Load(Data & data)
 {
+	return true;
 }
 
 void RenderTextureMSAA::CreateMeta() const

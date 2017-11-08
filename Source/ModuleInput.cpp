@@ -3,7 +3,7 @@
 #include "ModuleInput.h"
 #include "ModuleEditor.h"
 #include "ModuleWindow.h"
-#include "ModuleImport.h"
+#include "ModuleResources.h"
 #include "PerformanceWindow.h"
 #include "ModuleRenderer3D.h"
 
@@ -127,7 +127,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			}
 				break;
 			case SDL_DROPFILE:
-				App->import->LoadFile(e.drop.file);
+				App->resources->ImportFile(e.drop.file);
 				SDL_free(e.drop.file);
 				break;
 		}

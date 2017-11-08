@@ -14,7 +14,6 @@ class ModuleRenderer3D;
 class ModuleCamera3D;
 class ModulePhysics3D;
 class ModuleEditor;
-class ModuleImport;
 class ModuleResources;
 class ModuleTime;
 class ModuleFileSystem;
@@ -34,7 +33,6 @@ public:
 	ModuleCamera3D* camera;
 	ModulePhysics3D* physics;
 	ModuleEditor* editor;
-	ModuleImport* import;
 	ModuleResources* resources;
 	ModuleTime* time;
 	TagsAndLayers* tags_and_layers;

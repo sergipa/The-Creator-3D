@@ -13,7 +13,8 @@ public:
 	bool Init(Data* editor_config = nullptr);
 	bool CleanUp();
 
-	bool ImportTexture(std::string path);
+	//Retuns the library path if created or an empty string
+	std::string ImportTexture(std::string path);
 	Texture* LoadTextureFromLibrary(std::string path);
 };
 

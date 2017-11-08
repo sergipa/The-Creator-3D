@@ -3,7 +3,7 @@
 #include "ModuleEditor.h"
 #include "Resource.h"
 #include "ModuleResources.h"
-#include "ModuleImport.h"
+#include "ModuleTextureImporter.h"
 #include "tinyfiledialogs.h"
 #include "Texture.h"
 #include "ModuleFileSystem.h"
@@ -19,9 +19,12 @@ AssetsWindow::AssetsWindow()
 	show_new_folder_window = false;
 	file_options_open = true;
 	texture_icon = nullptr;
-	mesh_icon = App->import->LoadTexture(EDITOR_IMAGES_FOLDER"mesh_icon.png");
-	font_icon = App->import->LoadTexture(EDITOR_IMAGES_FOLDER"font_icon.png");
-	folder_icon = App->import->LoadTexture(EDITOR_IMAGES_FOLDER"folder_icon.png");
+	mesh_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"mesh_icon.png");
+	mesh_icon->LoadToMemory();
+	font_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"font_icon.png");
+	font_icon->LoadToMemory();
+	folder_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"folder_icon.png");
+	folder_icon->LoadToMemory();
 
 	if (!App->file_system->DirectoryExist(ASSETS_FOLDER_PATH)) {
 		if (!App->file_system->Create_Directory(PROJECT_FOLDER"Assets")) {

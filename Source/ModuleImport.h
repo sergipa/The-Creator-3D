@@ -33,4 +33,4 @@ private:
 	void GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion& rot, aiVector3D& scale);
 };
 
-void Callback(const char* message, char* c);
+//void Callback(const char* message, char* c);

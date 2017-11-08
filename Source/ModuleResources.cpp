@@ -5,7 +5,8 @@
 #include "Resource.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
-#include "ModuleImport.h"
+#include "ModuleMeshImporter.h"
+#include "ModuleTextureImporter.h"
 
 ModuleResources::ModuleResources(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -24,7 +25,7 @@ ModuleResources::~ModuleResources()
 
 bool ModuleResources::Init(Data * editor_config)
 {
-	//FillResourcesLists();
+	FillResourcesLists();
 	return true;
 }
 
@@ -101,6 +102,18 @@ void ModuleResources::AddResource(Resource * resource)
 	case Resource::Unknown:
 		break;
 	}
+}
+
+void ModuleResources::ImportFile(std::string path)
+{
+	std::string extension = App->file_system->GetFileExtension(path);
+	Resource::ResourceType type = AssetExtensionToResourceType(extension);
+	
+	CreateLibraryFile(type, path);
+	Resource* resource = nullptr;
+	std::string library_path = GetLibraryFile(path);
+	resource = CreateResourceFromLibrary(library_path);
+	AddResource(resource);
 }
 
 Texture * ModuleResources::GetTexture(std::string name) const
@@ -207,10 +220,10 @@ void ModuleResources::CreateLibraryFile(Resource::ResourceType type, std::string
 	switch (type)
 	{
 	case Resource::TextureResource:
-		App->import->LoadTexture(file_path.c_str(), false);
+		App->texture_importer->ImportTexture(file_path.c_str());
 		break;
 	case Resource::MeshResource:
-		App->import->LoadMesh(file_path.c_str());
+		App->mesh_importer->ImportMesh(file_path.c_str());
 		break;
 	case Resource::SceneResource:
 		break;
@@ -242,7 +255,7 @@ Resource * ModuleResources::CreateResourceFromLibrary(std::string library_path)
 	switch (type)
 	{
 	case Resource::TextureResource:
-		resource = (Resource*)App->import->LoadTexture(library_path.c_str());
+		resource = (Resource*)App->texture_importer->LoadTextureFromLibrary(library_path.c_str());
 		break;
 	case Resource::MeshResource:
 		break;

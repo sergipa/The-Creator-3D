@@ -173,7 +173,7 @@ void Texture::CreateMeta() const
 	data.AddUInt("Height", width);
 	data.AddString("Type", GetTypeString());
 	data.AddString("Format", GetFormatString());
-	data.AddString("Compression", CompressionToString());
+	//data.AddString("Compression", CompressionToString());
 	
 	data.SaveAsJSON(GetAssetsPath() + ".meta");
 }

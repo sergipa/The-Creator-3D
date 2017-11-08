@@ -31,10 +31,10 @@ ModuleImport::ModuleImport(Application* app, bool start_enabled, bool is_game) :
 {
 	name = "Importer";
 
-	struct aiLogStream stream;
+	/*struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	stream.callback = &Callback;
-	aiAttachLogStream(&stream);
+	aiAttachLogStream(&stream);*/
 
 	ilInit();
 	iluInit();
@@ -541,6 +541,6 @@ void ModuleImport::GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion
 }
 
 
-void Callback(const char* message, char* c) {
-	CONSOLE_DEBUG("%s", message);
-}
+//void Callback(const char* message, char* c) {
+//	CONSOLE_DEBUG("%s", message);
+//}

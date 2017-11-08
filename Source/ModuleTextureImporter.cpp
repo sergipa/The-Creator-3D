@@ -25,7 +25,7 @@ ModuleTextureImporter::~ModuleTextureImporter()
 
 bool ModuleTextureImporter::Init(Data * editor_config)
 {
-	return false;
+	return true;
 }
 
 bool ModuleTextureImporter::CleanUp()
@@ -34,9 +34,9 @@ bool ModuleTextureImporter::CleanUp()
 	return true;
 }
 
-bool ModuleTextureImporter::ImportTexture(std::string path)
+std::string ModuleTextureImporter::ImportTexture(std::string path)
 {
-	bool ret = true;
+	std::string ret;
 
 	ILuint image_id;
 	ilGenImages(1, &image_id);
@@ -54,10 +54,10 @@ bool ModuleTextureImporter::ImportTexture(std::string path)
 		if (ilSave(IL_DDS, (LIBRARY_TEXTURES_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".dds").c_str()))
 		{
 			CONSOLE_DEBUG("%s library file created.", App->file_system->GetFileNameWithoutExtension(path).c_str());
+			ret = LIBRARY_TEXTURES_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".dds";
 		}
 		else
 		{
-			ret = false;
 			CONSOLE_DEBUG("%s library file cannot be created.", App->file_system->GetFileNameWithoutExtension(path).c_str());
 		}
 
@@ -66,7 +66,6 @@ bool ModuleTextureImporter::ImportTexture(std::string path)
 	}
 	else
 	{
-		ret = false;
 		CONSOLE_DEBUG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
 	}
 

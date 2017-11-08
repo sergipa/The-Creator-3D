@@ -25,7 +25,8 @@ public:
 	void SaveMeshToLibrary(Mesh& mesh);
 
 private:
-	bool LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
+	//Loads the model and returns the root gameobject
+	GameObject* LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
 	void GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion& rot, aiVector3D& scale);
 };
 

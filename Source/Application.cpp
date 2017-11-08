@@ -50,10 +50,10 @@ Application::Application()
 	AddModule(renderer3D);
 	AddModule(camera);
 	AddModule(scene);
-	AddModule(import);
 	AddModule(mesh_importer);
 	AddModule(texture_importer);
 	AddModule(resources);
+	AddModule(editor);
 	//TIME
 	AddModule(time);
 	//Game Modules

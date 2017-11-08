@@ -17,8 +17,8 @@ public:
 
 	void FillResourcesLists();
 
-	Resource* CreateResource(Resource::ResourceType type);
 	void AddResource(Resource* resource);
+	void ImportFile(std::string path);
 
 	Texture* GetTexture(std::string name) const;
 	Texture* GetTexture(UID uid) const;
@@ -37,7 +37,6 @@ public:
 	std::string GetLibraryFile(std::string file_name);
 	void CreateLibraryFile(Resource::ResourceType type, std::string file_path);
 	Resource* CreateResourceFromLibrary(std::string library_path);
-
 
 private:
 	std::list<Texture*> textures_list;
