@@ -124,6 +124,38 @@ const float * ComponentTransform::GetOpenGLMatrix() const
 	return transform_matrix.Transposed().ptr();
 }
 
+void ComponentTransform::SetMatrix(const float4x4 & matrix)
+{
+	transform_matrix = matrix;
+
+	//transform_matrix.Decompose(position, rotation, scale);
+	//
+	//float3 position, scale,float_rot;
+	//Quat rotation;
+	//matrix.Decompose(position, rotation, scale);
+	//
+	//float_rot = rotation.ToEulerXYZ();
+	//SetPosition(position);
+	//shown_rotation = float_rot;
+	//SetRotation(shown_rotation);
+	//SetScale(scale);
+
+	//this->position = position;
+	//this->rotation = rotation;
+	//this->scale = scale;
+
+
+
+	if (this->GetGameObject()->IsRoot())
+	{
+		for (std::list<GameObject*>::iterator it = this->GetGameObject()->childs.begin(); it != this->GetGameObject()->childs.end(); it++)
+		{
+			ComponentTransform* child_transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
+			child_transform->UpdateGlobalMatrix();
+		}
+	}
+}
+
 void ComponentTransform::Save(Data & data) const
 {
 	data.AddInt("Type", GetType());

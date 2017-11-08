@@ -21,6 +21,7 @@ public:
 	void UpdateGlobalMatrix();
 	const float4x4 GetMatrix() const;
 	const float* GetOpenGLMatrix() const;
+	void SetMatrix(const float4x4 &matrix);
 
 	void Save(Data& data) const;
 	void Load(Data& data);

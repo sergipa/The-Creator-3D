@@ -49,13 +49,28 @@ void SceneWindow::DrawWindow()
 			if(is_mouse_hovering_window) is_window_focused = true;
 			else is_window_focused = false;
 		}
+
 		if (!App->scene->selected_gameobjects.empty())
 		{
 			ImGuiIO& io = ImGui::GetIO();
 
 			//ImGuizmo::Enable(true);
-			ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-			ImGuizmo::Manipulate(App->camera->GetViewMatrix(), App->camera->GetCamera()->GetProjectionMatrix(), App->scene->mCurrentGizmoOperation, App->scene->mCurrentGizmoMode, App->scene->selected_gameobjects.front()->GetGlobalTransfomMatrix().ptr());
+			ImGuizmo::SetRect(0, 0, io.DisplaySize.x - 100, io.DisplaySize.y - 100);
+			//ImGuizmo::SetRect(0, 0, scene_width, scene_height);
+
+
+			float4x4 view_matrix = App->camera->GetCamera()->camera_frustum.ViewMatrix();
+			float4x4 proj_matrix = App->camera->GetCamera()->camera_frustum.ProjectionMatrix();
+			view_matrix.Transpose();
+			proj_matrix.Transpose();
+
+			float4x4 selected_matrix = App->scene->selected_gameobjects.front()->GetGlobalTransfomMatrix();
+			selected_matrix.Transpose();
+
+			ImGuizmo::Manipulate(view_matrix.ptr(), proj_matrix.ptr(), App->scene->mCurrentGizmoOperation, App->scene->mCurrentGizmoMode, selected_matrix.ptr());
+			selected_matrix.Transpose();
+
+			App->scene->selected_gameobjects.front()->SetGlobalTransfomMatrix(selected_matrix);
 		}
 		
 	}

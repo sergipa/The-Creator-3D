@@ -275,6 +275,12 @@ void GameObject::UpdateCamera()
 	}
 }
 
+void GameObject::SetGlobalTransfomMatrix(const float4x4 & matrix)
+{
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	transform->SetMatrix(matrix);
+}
+
 void GameObject::SetParentByID(UID parent_id)
 {
 	SetParent(App->scene->FindGameObject(parent_id));

@@ -40,6 +40,7 @@ public:
 	const float* GetOpenGLMatrix();
 	void UpdateGlobalMatrix();
 	void UpdateCamera();
+	void SetGlobalTransfomMatrix(const float4x4 &matrix);
 
 	void SetParentByID(UID parent_id);
 
