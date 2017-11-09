@@ -25,6 +25,8 @@ public:
 	bool LoadJSON(std::string path);
 	void SaveAsBinary(std::string path);
 	bool LoadBinary(std::string path);
+	void SaveAsMeta(std::string path);
+	bool LoadMeta(std::string path);
 
 	void ClearData();
 

@@ -35,6 +35,8 @@ public:
 	void SetLayer(std::string layer);
 	std::string GetLayer() const;
 
+	int GetAllChildsCount() const;
+
 	void UpdateBoundingBox();
 	math::float4x4 GetGlobalTransfomMatrix();
 	const float* GetOpenGLMatrix();

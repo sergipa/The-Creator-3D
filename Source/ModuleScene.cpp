@@ -261,6 +261,31 @@ void ModuleScene::SaveScene(std::string path) const
 	data.SaveAsBinary(path);
 }
 
+void ModuleScene::LoadPrefab(std::string path)
+{
+	std::vector<GameObject*> createdObjects;
+	bool justIncrease = false;
+	if (scene_gameobjects.empty()) {
+		justIncrease = true;
+	}
+	Data data;
+	if (data.LoadBinary(path)) {
+		int gameObjectsCount = data.GetInt("GameObjectsCount");
+		for (int i = 0; i < gameObjectsCount; i++) {
+			GameObject* go = new GameObject();
+			data.EnterSection("GameObject_" + std::to_string(i));
+			go->Load(data, true);
+			data.LeaveSection();
+			scene_gameobjects.push_back(go);
+			createdObjects.push_back(go);
+		}
+		data.ClearData();
+		for (int i = 0; i < createdObjects.size(); i++) {
+			RenameDuplicatedGameObject(createdObjects[i], justIncrease);
+		}
+	}
+}
+
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)
 {
 	bool ret = true;

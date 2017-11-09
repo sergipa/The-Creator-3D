@@ -45,6 +45,8 @@ public:
 	void LoadScene(std::string path);
 	void SaveScene(std::string path) const;
 
+	void LoadPrefab(std::string path);
+
 private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
 	void HandleInput();

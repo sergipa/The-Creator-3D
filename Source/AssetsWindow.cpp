@@ -20,11 +20,8 @@ AssetsWindow::AssetsWindow()
 	file_options_open = true;
 	texture_icon = nullptr;
 	mesh_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"mesh_icon.png");
-	mesh_icon->LoadToMemory();
 	font_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"font_icon.png");
-	font_icon->LoadToMemory();
 	folder_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"folder_icon.png");
-	folder_icon->LoadToMemory();
 
 	if (!App->file_system->DirectoryExist(ASSETS_FOLDER_PATH)) {
 		if (!App->file_system->Create_Directory(PROJECT_FOLDER"Assets")) {
@@ -135,8 +132,9 @@ void AssetsWindow::DrawWindow()
 					bool selected = false;
 					float font_size = ImGui::GetFontSize();
 					std::string file_extension = App->file_system->GetFileExtension(*it);
-					std::string file_name = App->file_system->GetFileNameWithoutExtension(*it);
+					std::string file_name = App->file_system->GetFileName(*it);
 					Resource::ResourceType type = (Resource::ResourceType)App->resources->AssetExtensionToResourceType(file_extension);
+					if (type == Resource::MeshResource) continue;
 					switch (type)
 					{
 					case Resource::TextureResource:
@@ -188,6 +186,13 @@ void AssetsWindow::DrawWindow()
 				if (ImGui::MenuItem("Delete")) {
 					App->file_system->DeleteDirectory(selected_file_path);
 					file_options_open = false;
+				}
+
+				if (App->file_system->GetFileExtension(selected_file_path) == ".prefab")
+				{
+					if (ImGui::MenuItem("Load to scene")) {
+						App->scene->LoadPrefab(selected_file_path);
+					}
 				}
 
 				ImGui::EndPopup();

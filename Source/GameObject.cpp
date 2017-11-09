@@ -239,6 +239,17 @@ std::string GameObject::GetLayer() const
 	return layer;
 }
 
+int GameObject::GetAllChildsCount() const
+{
+	int count = childs.size();
+	for (std::list<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); it++)
+	{
+		count += (*it)->GetAllChildsCount();
+	}
+
+	return count;
+}
+
 void GameObject::UpdateBoundingBox()
 {
 	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);

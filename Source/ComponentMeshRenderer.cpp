@@ -66,7 +66,7 @@ void ComponentMeshRenderer::Load(Data & data)
 	SetType((Component::ComponentType)data.GetInt("Type"));
 	SetActive(data.GetBool("Active"));
 	SetUID(data.GetUInt("UUID"));
-	data.EnterSection("Mesh");
+	//data.EnterSection("Mesh");
 
 }
 

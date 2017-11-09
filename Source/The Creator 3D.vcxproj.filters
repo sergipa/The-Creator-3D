@@ -429,7 +429,9 @@
     <ClInclude Include="ModuleTextureImporter.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="Prefab.h" />
+    <ClInclude Include="Prefab.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -702,7 +704,9 @@
     <ClCompile Include="ModuleTextureImporter.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Prefab.cpp" />
+    <ClCompile Include="Prefab.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

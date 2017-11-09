@@ -213,6 +213,13 @@ bool ModuleFileSystem::FileExistInDirectory(std::string file_name, std::string d
 	return false;
 }
 
+std::string ModuleFileSystem::ChangeFileExtension(std::string& file_path, std::string new_extension)
+{
+	fs::path file(file_path);
+	file.replace_extension(new_extension);
+	return file.string();
+}
+
 std::string ModuleFileSystem::StringToPathFormat(std::string path)
 {
 	fs::path new_path(path);

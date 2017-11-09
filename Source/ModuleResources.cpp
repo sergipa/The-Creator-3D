@@ -25,6 +25,9 @@ ModuleResources::~ModuleResources()
 
 bool ModuleResources::Init(Data * editor_config)
 {
+	if (!App->file_system->DirectoryExist(LIBRARY_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_FOLDER_PATH);
+	if (!App->file_system->DirectoryExist(LIBRARY_TEXTURES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_TEXTURES_FOLDER_PATH);
+	if (!App->file_system->DirectoryExist(LIBRARY_MESHES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MESHES_FOLDER_PATH);
 	FillResourcesLists();
 	return true;
 }
@@ -90,6 +93,7 @@ void ModuleResources::AddResource(Resource * resource)
 	case Resource::AnimationResource:
 		break;
 	case Resource::PrefabResource:
+
 		break;
 	case Resource::ScriptResource:
 		break;

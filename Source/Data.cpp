@@ -225,6 +225,34 @@ bool Data::LoadBinary(std::string path)
 	return ret;
 }
 
+void Data::SaveAsMeta(std::string path)
+{
+	if (path.find(".meta") == std::string::npos) { //meta extension is not especified
+		path += ".meta";
+	}
+	std::ofstream file(path);
+	cereal::JSONOutputArchive archive(file);
+	for (int i = 0; i < data_names.size(); i++) {
+		if (data_names[i] == "New_Section") {
+			std::replace(data_names[i + 1].begin(), data_names[i + 1].end(), ' ', '_');
+			archive.setNextName(data_names[i + 1].c_str());
+			archive.startNode();
+			i++;
+		}
+		else if (data_names[i] == "Section_Close") {
+			archive.finishNode();
+		}
+		else {
+			archive(cereal::make_nvp(data_names[i], data_values[i]));
+		}
+	}
+}
+
+bool Data::LoadMeta(std::string path)
+{
+	return LoadJSON(path);
+}
+
 void Data::ClearData()
 {
 	data_names.clear();

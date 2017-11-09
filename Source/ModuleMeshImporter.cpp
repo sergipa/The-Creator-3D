@@ -52,7 +52,13 @@ bool ModuleMeshImporter::ImportMesh(std::string path)
 		GameObject* root_gameobject = LoadMeshNode(nullptr, root_node, scene, path.c_str());
 		Data data;
 		root_gameobject->Save(data);
-		//data.AddInt("GameObjectsCount", App->scene->savingIndex);
+		data.AddInt("GameObjectsCount", App->scene->saving_index);
+		std::string prefab_path = App->file_system->ChangeFileExtension(path, "prefab");
+		data.SaveAsBinary(prefab_path);
+		data.SaveAsJSON(prefab_path);
+		if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
+		data.SaveAsBinary(LIBRARY_PREFABS_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".prefab");
+		App->scene->saving_index = 0;
 
 		CONSOLE_DEBUG("Object succesfully loaded from, %s", path);
 		aiReleaseImport(scene);
@@ -189,10 +195,21 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 						if (!library_path.empty())
 						{
 							material_texture = App->texture_importer->LoadTextureFromLibrary(library_path);
+							if (material_texture)
+							{
+								aiColor3D color;
+								mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+								material_texture->color.r = color.r;
+								material_texture->color.g = color.g;
+								material_texture->color.b = color.b;
+								material_texture->color.a = 1;
+							}
 						}
 					}
 				}
 			}
+
+			SaveMeshToLibrary(*mesh);
 
 			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);

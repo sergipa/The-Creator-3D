@@ -104,8 +104,52 @@ Texture::CompressionFormat Texture::GetCompression() const
 
 std::string Texture::CompressionToString() const
 {
-	const char* compressions[] = { "IL_DXTC_FORMAT, IL_DXT1, IL_DXT2, IL_DXT3, IL_DXT4, IL_DXT5, IL_DXT_NO_COMP, IL_KEEP_DXTC_DATA, IL_DXTC_DATA_FORMAT, IL_3DC, IL_RXGB, IL_ATI1N, IL_DXT1A" };
-	return compressions[compression];
+	std::string ret;
+	switch (compression)
+	{
+	case Texture::IL_DXTC_FORMAT:
+		ret = "IL_DXTC_FORMAT";
+		break;
+	case Texture::IL_DXT1:
+		ret = "IL_DXT1";
+		break;
+	case Texture::IL_DXT2:
+		ret = "IL_DXT2";
+		break;
+	case Texture::IL_DXT3:
+		ret = "IL_DXT3";
+		break;
+	case Texture::IL_DXT4:
+		ret = "IL_DXT4";
+		break;
+	case Texture::IL_DXT5:
+		ret = "IL_DXT5";
+		break;
+	case Texture::IL_DXT_NO_COMP:
+		ret = "IL_DXT_NO_COMP";
+		break;
+	case Texture::IL_KEEP_DXTC_DATA:
+		ret = "IL_KEEP_DXTC_DATA";
+		break;
+	case Texture::IL_DXTC_DATA_FORMAT:
+		ret = "IL_DXTC_DATA_FORMAT";
+		break;
+	case Texture::IL_3DC:
+		ret = "IL_3DC";
+		break;
+	case Texture::IL_RXGB:
+		ret = "IL_RXGB";
+		break;
+	case Texture::IL_ATI1N:
+		ret = "IL_ATI1N";
+		break;
+	case Texture::IL_DXT1A:
+		ret = "IL_DXT1A";
+		break;
+	default:
+		break;
+	}
+	return ret;
 }
 
 std::string Texture::GetFormatString() const
@@ -173,9 +217,9 @@ void Texture::CreateMeta() const
 	data.AddUInt("Height", width);
 	data.AddString("Type", GetTypeString());
 	data.AddString("Format", GetFormatString());
-	//data.AddString("Compression", CompressionToString());
+	data.AddString("Compression", CompressionToString());
 	
-	data.SaveAsJSON(GetAssetsPath() + ".meta");
+	data.SaveAsMeta(GetAssetsPath());
 }
 
 void Texture::LoadToMemory()
