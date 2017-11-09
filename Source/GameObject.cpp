@@ -410,6 +410,12 @@ void GameObject::Load(Data & data, bool is_prefab)
 		App->scene->root_gameobjects.push_back(this);
 	}
 
+	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+	if (mesh_renderer)
+	{
+		//mesh_renderer->LoadToMemory();
+	}
+
 	if (!is_prefab) {
 		//Store gameObject name to know the existing gameObjects when loading scene
 		int gameObjectCount = 1;

@@ -258,50 +258,103 @@ Mesh * ModuleMeshImporter::LoadMeshFromLibrary(std::string path)
 		{
 			CONSOLE_DEBUG("Mesh library file %s read successfully", App->file_system->GetFileNameWithoutExtension(path.c_str()).c_str());
 
+			//char* cursor = buffer;
+			//mesh = new Mesh();
+			//// amount of indices / vertices / colors / normals / texture_coords
+			//uint ranges[5];
+			//uint bytes = sizeof(ranges);
+			//memcpy(ranges, cursor, bytes);
+			//mesh->num_indices = ranges[0];
+			//mesh->num_vertices = ranges[1];
+			//uint color_size = ranges[2];
+			//uint normal_size = ranges[3];
+			//uint uvs_size = ranges[4];
+			//cursor += bytes;
+			//// Load indices
+			//bytes = sizeof(uint) * mesh->num_indices;
+			//mesh->indices = new uint[mesh->num_indices];
+			//memcpy(mesh->indices, cursor, bytes);
+			//cursor += bytes;
+			//// Load vertices
+			//bytes = sizeof(float) * mesh->num_vertices;
+			//mesh->vertices = new float[mesh->num_vertices];
+			//memcpy(mesh->vertices, cursor, bytes);
+			//cursor += bytes;
+			//// Load colors
+			//if (ranges[2] != 0)
+			//{
+			//	bytes = sizeof(float) * color_size;
+			//	mesh->colors = new float[color_size];
+			//	memcpy(mesh->colors, cursor, bytes);
+			//	cursor += bytes;
+			//}
+			//if (ranges[3] != 0)
+			//{
+			//	bytes = sizeof(float) * normal_size;
+			//	mesh->normals = new float[normal_size];
+			//	memcpy(mesh->normals, cursor, bytes);
+			//	cursor += bytes;
+			//}
+			//if (ranges[4] != 0)
+			//{
+			//	bytes = sizeof(float) * uvs_size;
+			//	mesh->texture_coords = new float[uvs_size];
+			//	memcpy(mesh->texture_coords, cursor, bytes);
+			//	cursor += bytes;
+			//}
+
 			char* cursor = buffer;
 			mesh = new Mesh();
 			// amount of indices / vertices / colors / normals / texture_coords
 			uint ranges[5];
 			uint bytes = sizeof(ranges);
 			memcpy(ranges, cursor, bytes);
+
 			mesh->num_indices = ranges[0];
 			mesh->num_vertices = ranges[1];
-			uint color_size = ranges[2];
-			uint normal_size = ranges[3];
-			uint uvs_size = ranges[4];
-			cursor += bytes;
+
 			// Load indices
+			cursor += bytes;
 			bytes = sizeof(uint) * mesh->num_indices;
 			mesh->indices = new uint[mesh->num_indices];
 			memcpy(mesh->indices, cursor, bytes);
-			cursor += bytes;
+
 			// Load vertices
-			bytes = sizeof(float) * mesh->num_vertices;
-			mesh->vertices = new float[mesh->num_vertices];
-			memcpy(mesh->vertices, cursor, bytes);
 			cursor += bytes;
+			bytes = sizeof(float) * mesh->num_vertices * 3;
+			mesh->vertices = new float[mesh->num_vertices * 3];
+			memcpy(mesh->vertices, cursor, bytes);
+
 			// Load colors
-			if (ranges[2] != 0)
+			if (ranges[2] > 0)
 			{
-				bytes = sizeof(float) * color_size;
-				mesh->colors = new float[color_size];
+				cursor += bytes;
+				mesh->colors = new float[mesh->num_vertices * 3];
 				memcpy(mesh->colors, cursor, bytes);
-				cursor += bytes;
 			}
-			if (ranges[3] != 0)
+
+			// Load normals
+			if (ranges[3] > 0)
 			{
-				bytes = sizeof(float) * normal_size;
-				mesh->normals = new float[normal_size];
+				cursor += bytes;
+				mesh->normals = new float[mesh->num_vertices * 3];
 				memcpy(mesh->normals, cursor, bytes);
-				cursor += bytes;
 			}
-			if (ranges[4] != 0)
+
+			// Load texture coords
+			if (ranges[4] > 0)
 			{
-				bytes = sizeof(float) * uvs_size;
-				mesh->texture_coords = new float[uvs_size];
-				memcpy(mesh->texture_coords, cursor, bytes);
 				cursor += bytes;
+				mesh->texture_coords = new float[mesh->num_vertices * 3];
+				memcpy(mesh->texture_coords, cursor, bytes);
 			}
+
+			// AABB
+			cursor += bytes;
+			bytes = sizeof(AABB);
+			memcpy(&mesh->box.minPoint.x, cursor, bytes);
+
+			RELEASE_ARRAY(buffer);
 		}
 		else
 		{
@@ -315,44 +368,111 @@ Mesh * ModuleMeshImporter::LoadMeshFromLibrary(std::string path)
 
 void ModuleMeshImporter::SaveMeshToLibrary(Mesh& mesh)
 {
-	uint ranges[5] = { mesh.num_indices, mesh.num_vertices * 3, (mesh.colors) ? mesh.num_vertices * 4 : 0, (mesh.normals) ? mesh.num_vertices * 3 : 0, (mesh.texture_coords) ? mesh.num_vertices * 3 : 0 };
-	uint size = sizeof(ranges) + sizeof(uint) * ranges[0] + sizeof(float) * ranges[1];
-	if (mesh.colors) size += sizeof(float) * ranges[2];
-	if (mesh.normals) size += sizeof(float) * ranges[3];
-	if (mesh.texture_coords) size += sizeof(float) * ranges[4];
-	char* data = new char[size]; // Allocate
+	//uint ranges[5] = { mesh.num_indices, mesh.num_vertices * 3, (mesh.colors) ? mesh.num_vertices * 4 : 0, (mesh.normals) ? mesh.num_vertices * 3 : 0, (mesh.texture_coords) ? mesh.num_vertices * 3 : 0 };
+	//uint size = sizeof(ranges) + sizeof(uint) * ranges[0] + sizeof(float) * ranges[1];
+	//if (mesh.colors) size += sizeof(float) * ranges[2];
+	//if (mesh.normals) size += sizeof(float) * ranges[3];
+	//if (mesh.texture_coords) size += sizeof(float) * ranges[4];
+	//char* data = new char[size]; // Allocate
+	//char* cursor = data;
+	//uint bytes = sizeof(ranges); // First store ranges
+	//memcpy(cursor, ranges, bytes);
+	//cursor += bytes; // Store indices
+	//bytes = sizeof(uint) * ranges[0];
+	//memcpy(cursor, mesh.indices, bytes);
+	//cursor += bytes; // Store vertex
+	//bytes = sizeof(float) * ranges[1];
+	//memcpy(cursor, mesh.vertices, bytes);
+	//cursor += bytes; // Store colors
+	//if (ranges[2] != 0)
+	//{
+	//	bytes = sizeof(float) * ranges[2];
+	//	memcpy(cursor, mesh.colors, bytes);
+	//	cursor += bytes;
+	//}
+	//if (ranges[3] != 0) // Store normals
+	//{
+	//	bytes = sizeof(float) * ranges[3];
+	//	memcpy(cursor, mesh.normals, bytes);
+	//	cursor += bytes;
+	//}
+	//if (ranges[4] != 0) // Store uvs
+	//{
+	//	bytes = sizeof(float) * ranges[4];
+	//	memcpy(cursor, mesh.texture_coords, bytes);
+	//	cursor += bytes;
+	//}
+
+	// amount of indices / vertices / colors / normals / texture_coords / AABB
+	uint ranges[5] = {
+		mesh.num_indices,
+		mesh.num_vertices,
+		(mesh.colors) ? mesh.num_vertices : 0,
+		(mesh.normals) ? mesh.num_vertices : 0,
+		(mesh.texture_coords) ? mesh.num_vertices : 0
+	};
+
+	uint size = sizeof(ranges);
+	size += sizeof(uint) * mesh.num_indices;
+	size += sizeof(float) * mesh.num_vertices * 3;
+	if (mesh.colors != nullptr)
+		size += sizeof(float) * mesh.num_vertices * 3;
+	if (mesh.normals != nullptr)
+		size += sizeof(float) * mesh.num_vertices * 3;
+	if (mesh.texture_coords != nullptr)
+		size += sizeof(float) * mesh.num_vertices * 3;
+	size += sizeof(AABB);
+
+	// allocate and fill
+	char* data = new char[size];
 	char* cursor = data;
-	uint bytes = sizeof(ranges); // First store ranges
+
+	// First store ranges
+	uint bytes = sizeof(ranges);
 	memcpy(cursor, ranges, bytes);
-	cursor += bytes; // Store indices
-	bytes = sizeof(uint) * ranges[0];
+
+	// Store indices
+	cursor += bytes;
+	bytes = sizeof(uint) * mesh.num_indices;
 	memcpy(cursor, mesh.indices, bytes);
-	cursor += bytes; // Store vertex
-	bytes = sizeof(float) * ranges[1];
+
+	// Store vertices
+	cursor += bytes;
+	bytes = sizeof(float) * mesh.num_vertices * 3;
 	memcpy(cursor, mesh.vertices, bytes);
-	cursor += bytes; // Store colors
-	if (ranges[2] != 0)
+
+	// Store colors
+	if (mesh.colors != nullptr)
 	{
-		bytes = sizeof(float) * ranges[2];
+		cursor += bytes;
 		memcpy(cursor, mesh.colors, bytes);
-		cursor += bytes;
-	}
-	if (ranges[3] != 0) // Store normals
-	{
-		bytes = sizeof(float) * ranges[3];
-		memcpy(cursor, mesh.normals, bytes);
-		cursor += bytes;
-	}
-	if (ranges[4] != 0) // Store uvs
-	{
-		bytes = sizeof(float) * ranges[4];
-		memcpy(cursor, mesh.texture_coords, bytes);
-		cursor += bytes;
 	}
 
-	std::ofstream outfile((LIBRARY_MESHES_FOLDER + mesh.GetName() + ".mesh").c_str(), std::ofstream::binary);
+	// Store normals
+	if (mesh.normals != nullptr)
+	{
+		cursor += bytes;
+		memcpy(cursor, mesh.normals, bytes);
+	}
+
+	// Store texture coords
+	if (mesh.texture_coords != nullptr)
+	{
+		cursor += bytes;
+		memcpy(cursor, mesh.texture_coords, bytes);
+	}
+
+	// Store AABB
+	cursor += bytes;
+	bytes = sizeof(AABB);
+	memcpy(cursor, &mesh.box.minPoint.x, bytes);
+
+	std::string library_path = LIBRARY_MESHES_FOLDER + mesh.GetName() + ".mesh";
+	std::ofstream outfile(library_path.c_str(), std::ofstream::binary);
 	outfile.write(data, size);
 	outfile.close();
+
+	mesh.SetLibraryPath(library_path);
 
 	delete[] data;
 	data = nullptr;

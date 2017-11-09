@@ -18,6 +18,8 @@ public:
 
 	void UpdateBoundingBox();
 
+	void LoadToMemory();
+
 	void Save(Data& data) const;
 	void Load(Data& data);
 

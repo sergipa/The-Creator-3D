@@ -252,8 +252,8 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
 			{
 				glBindTexture(GL_TEXTURE_2D, (*it)->GetTexture()->GetID());
 				//glEnable(GL_COLOR_MATERIAL);
-				glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-				glColor4f((*it)->GetTexture()->color.r, (*it)->GetTexture()->color.g, (*it)->GetTexture()->color.b, 1.0);
+				//glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+				//glColor4f((*it)->GetTexture()->color.r, (*it)->GetTexture()->color.g, (*it)->GetTexture()->color.b, 1.0);
 				//glDisable(GL_COLOR_MATERIAL);
 			}
 			//VERTICES

@@ -1,5 +1,7 @@
 #include "ComponentMeshRenderer.h"
 #include "GameObject.h"
+#include "ModuleResources.h"
+#include "Application.h"
 
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* attached_gameobject)
 {
@@ -48,6 +50,12 @@ void ComponentMeshRenderer::UpdateBoundingBox()
 	}
 }
 
+void ComponentMeshRenderer::LoadToMemory()
+{
+	if (mesh) mesh->LoadToMemory();
+	if (texture) texture->LoadToMemory();
+}
+
 void ComponentMeshRenderer::Save(Data & data) const
 {
 	data.AddInt("Type", GetType());
@@ -66,8 +74,15 @@ void ComponentMeshRenderer::Load(Data & data)
 	SetType((Component::ComponentType)data.GetInt("Type"));
 	SetActive(data.GetBool("Active"));
 	SetUID(data.GetUInt("UUID"));
-	//data.EnterSection("Mesh");
-
+	data.EnterSection("Mesh");
+	mesh = new Mesh();
+	mesh->Load(data);
+	data.LeaveSection();
+	data.EnterSection("Texture");
+	//uint uid = get
+	//texture = App->resources->GetTexture(;
+	texture->Load(data);
+	data.LeaveSection();
 }
 
 

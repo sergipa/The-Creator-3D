@@ -53,7 +53,7 @@ bool Mesh::Load(Data & data)
 	bool ret = true;
 
 	std::string library_path = data.GetString("library_path");
-	Mesh* mesh = App->mesh_importer->LoadMeshFromLibrary(GetLibraryPath());
+	Mesh* mesh = App->mesh_importer->LoadMeshFromLibrary(library_path);
 	if (!mesh)
 	{
 		std::string assets_path = data.GetString("assets_path");
@@ -71,13 +71,13 @@ bool Mesh::Load(Data & data)
 	}
 	else
 	{
-		uint num_indices = mesh->num_indices;
-		uint* indices = mesh->indices;
-		uint num_vertices = mesh->num_vertices;
-		float* vertices = mesh->vertices;
-		float* normals = mesh->normals;
-		float* colors = mesh->colors;
-		float* texture_coords = mesh->texture_coords;
+		num_indices = mesh->num_indices;
+		indices = mesh->indices;
+		num_vertices = mesh->num_vertices;
+		vertices = mesh->vertices;
+		normals = mesh->normals;
+		colors = mesh->colors;
+		texture_coords = mesh->texture_coords;
 	}
 
 	SetUID(data.GetUInt("UID"));

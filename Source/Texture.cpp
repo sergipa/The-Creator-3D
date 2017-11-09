@@ -20,8 +20,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &texture_id);
-	texture_id = 0;
+	UnloadFromMemory();
 }
 
 void Texture::SetID(uint id)
@@ -171,7 +170,7 @@ bool Texture::Load(Data & data)
 	bool ret = true;
 
 	std::string library_path = data.GetString("library_path");
-	Texture* text = App->texture_importer->LoadTextureFromLibrary(GetLibraryPath());
+	Texture* text = App->texture_importer->LoadTextureFromLibrary(library_path);
 	if (!text)
 	{
 		std::string assets_path = data.GetString("assets_path");
@@ -189,6 +188,7 @@ bool Texture::Load(Data & data)
 	}
 	else
 	{
+		SetID(text->GetID());
 		width = text->width;
 		height = text->height;
 		format = text->format;
@@ -199,6 +199,8 @@ bool Texture::Load(Data & data)
 		SetUID(data.GetUInt("UUID"));
 		SetCompression(text->compression);
 	}
+
+	//text->UnloadFromMemory();
 
 	return ret;
 }
