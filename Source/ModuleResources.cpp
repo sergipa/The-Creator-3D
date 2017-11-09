@@ -205,8 +205,54 @@ bool ModuleResources::HasMetaFile(std::string file_path)
 
 bool ModuleResources::HasLibraryFile(std::string file_path)
 {
-	std::string directory = App->file_system->StringToPathFormat(LIBRARY_FOLDER_PATH);
-	return App->file_system->FileExistInDirectory(file_path, directory, true);
+	std::string extension = App->file_system->GetFileExtension(file_path);
+	Resource::ResourceType type = LibraryExtensionToResourceType(extension);
+	Resource* resource = nullptr;
+
+	bool ret = false;
+	std::string directory;
+
+	switch (type)
+	{
+	case Resource::TextureResource:
+		directory = App->file_system->StringToPathFormat(LIBRARY_TEXTURES_FOLDER_PATH);
+		ret = App->file_system->FileExistInDirectory(file_path, directory, false);
+		break;
+	case Resource::MeshResource:
+		if (extension != ".fbx" || extension != ".FBX")
+		{
+			directory = App->file_system->StringToPathFormat(LIBRARY_MESHES_FOLDER_PATH);
+			ret = App->file_system->FileExistInDirectory(file_path, directory, false);
+		}
+		else
+		{
+			//file_path -= ".fbx";
+			//if(App->file_system->FileExist(file_path))
+		}
+		break;
+	case Resource::SceneResource:
+		break;
+	case Resource::AnimationResource:
+		break;
+	case Resource::PrefabResource:
+		directory = App->file_system->StringToPathFormat(LIBRARY_PREFABS_FOLDER_PATH);
+		ret = App->file_system->FileExistInDirectory(file_path, directory, false);
+		break;
+	case Resource::ScriptResource:
+		break;
+	case Resource::AudioResource:
+		break;
+	case Resource::ParticleFXResource:
+		break;
+	case Resource::FontResource:
+		break;
+	case Resource::Unknown:
+		break;
+	default:
+		break;
+	}
+
+	return ret;
 }
 
 std::string ModuleResources::GetLibraryFile(std::string file_name)

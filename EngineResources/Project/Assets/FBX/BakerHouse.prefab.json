@@ -1,0 +1,139 @@
+{
+    "GameObject_0": {
+        "UUID": "1167923452",
+        "Name": "BakerHouse",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "540396345",
+                "position": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "0",
+        "IsRoot": "1",
+        "IsStatic": "0"
+    },
+    "GameObject_1": {
+        "UUID": "569687894",
+        "Name": "Chimney",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1677717251",
+                "position": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "-0.707107",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "100.000000",
+                    "value_Y": "100.000000",
+                    "value_Z": "100.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "365391731",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/Chimney.mesh",
+                    "assets_path": "",
+                    "mesh_name": "Chimney",
+                    "UUID": "1825325331"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Baker_house.dds",
+                    "assets_path": "",
+                    "texture_name": "Baker_house",
+                    "UUID": "1482574679"
+                }
+            }
+        },
+        "ParentID": "1167923452",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_2": {
+        "UUID": "1971979804",
+        "Name": "Baker_house",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "24241919",
+                "position": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "-0.707107",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "100.000000",
+                    "value_Y": "100.000000",
+                    "value_Z": "100.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "428897927",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/Baker_house.mesh",
+                    "assets_path": "",
+                    "mesh_name": "Baker_house",
+                    "UUID": "1993905236"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Baker_house.dds",
+                    "assets_path": "",
+                    "texture_name": "Baker_house",
+                    "UUID": "38526182"
+                }
+            }
+        },
+        "ParentID": "1167923452",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObjectsCount": "3"
+}

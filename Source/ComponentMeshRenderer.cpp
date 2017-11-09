@@ -79,8 +79,8 @@ void ComponentMeshRenderer::Load(Data & data)
 	mesh->Load(data);
 	data.LeaveSection();
 	data.EnterSection("Texture");
-	//uint uid = get
-	//texture = App->resources->GetTexture(;
+	uint uid = data.GetUInt("UUID");
+	texture = App->resources->GetTexture(uid);
 	texture->Load(data);
 	data.LeaveSection();
 }

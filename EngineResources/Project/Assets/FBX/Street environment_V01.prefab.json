@@ -1,0 +1,1741 @@
+{
+    "GameObject_0": {
+        "UUID": "1194752321",
+        "Name": "Street environment_V01",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "2106908336",
+                "position": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "0",
+        "IsRoot": "1",
+        "IsStatic": "0"
+    },
+    "GameObject_1": {
+        "UUID": "1479273615",
+        "Name": "Sky001",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1367241090",
+                "position": {
+                    "value_X": "18.153732",
+                    "value_Y": "0.000000",
+                    "value_Z": "58.960911"
+                },
+                "rotation": {
+                    "value_X": "-1.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "-0.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "1194752321",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_2": {
+        "UUID": "691487233",
+        "Name": "Dummy001",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1635090736",
+                "position": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "-0.707107",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "1194752321",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_3": {
+        "UUID": "897816020",
+        "Name": "City_building_004",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1717697529",
+                "position": {
+                    "value_X": "-41.475891",
+                    "value_Y": "21.014099",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "42615191",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_004.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_004",
+                    "UUID": "1891733894"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building03_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building03_c",
+                    "UUID": "1380847311"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_4": {
+        "UUID": "1313874426",
+        "Name": "City_building_001",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1387966785",
+                "position": {
+                    "value_X": "17.707165",
+                    "value_Y": "20.053276",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1185468581",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_001.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_001",
+                    "UUID": "1237296104"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V02_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V02_C",
+                    "UUID": "1928008120"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_5": {
+        "UUID": "139880598",
+        "Name": "City_building_007",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1016047618",
+                "position": {
+                    "value_X": "16.010492",
+                    "value_Y": "37.493286",
+                    "value_Z": "-0.000002"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1936257860",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_007.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_007",
+                    "UUID": "1416556297"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building_016_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building_016_c",
+                    "UUID": "1026948609"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_6": {
+        "UUID": "275226877",
+        "Name": "City_building_008",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1088011748",
+                "position": {
+                    "value_X": "40.979996",
+                    "value_Y": "18.270824",
+                    "value_Z": "-0.000002"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1721305083",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_008.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_008",
+                    "UUID": "217497929"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building_025_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building_025_c",
+                    "UUID": "516119912"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_7": {
+        "UUID": "242818041",
+        "Name": "Line002",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "643591576",
+                "position": {
+                    "value_X": "-2.159772",
+                    "value_Y": "1.853838",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "243563277",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/Line002.mesh",
+                    "assets_path": "",
+                    "mesh_name": "Line002",
+                    "UUID": "803746355"
+                },
+                "Texture": {}
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_8": {
+        "UUID": "831252034",
+        "Name": "Plane001",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1846722644",
+                "position": {
+                    "value_X": "-0.028603",
+                    "value_Y": "0.026032",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "0.996635",
+                    "value_Y": "0.970616",
+                    "value_Z": "0.996635"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "61056111",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/Plane001.mesh",
+                    "assets_path": "",
+                    "mesh_name": "Plane001",
+                    "UUID": "588031305"
+                },
+                "Texture": {}
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_9": {
+        "UUID": "1009909142",
+        "Name": "City_building_010",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "719512984",
+                "position": {
+                    "value_X": "25.154011",
+                    "value_Y": "-39.153721",
+                    "value_Z": "0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "122288755",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_010.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_010",
+                    "UUID": "1810687898"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building 01_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building 01_c",
+                    "UUID": "317100464"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_10": {
+        "UUID": "744358839",
+        "Name": "City_building_011",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "594554684",
+                "position": {
+                    "value_X": "30.134541",
+                    "value_Y": "37.493286",
+                    "value_Z": "-0.000002"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "2078844262",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_011.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_011",
+                    "UUID": "1240235147"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building_016_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building_016_c",
+                    "UUID": "388690711"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_11": {
+        "UUID": "2056992067",
+        "Name": "City_building_013",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "879923809",
+                "position": {
+                    "value_X": "-42.288055",
+                    "value_Y": "33.201576",
+                    "value_Z": "0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "602729118",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_013.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_013",
+                    "UUID": "1555975137"
+                },
+                "Texture": {}
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_12": {
+        "UUID": "140517887",
+        "Name": "City_building_014",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "371842632",
+                "position": {
+                    "value_X": "-19.439707",
+                    "value_Y": "32.061729",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-1.000000",
+                    "value_W": "0.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1207798742",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_014.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_014",
+                    "UUID": "773461898"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building03_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building03_c",
+                    "UUID": "1038352133"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_13": {
+        "UUID": "1032042186",
+        "Name": "City_building_016",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1490215050",
+                "position": {
+                    "value_X": "34.270424",
+                    "value_Y": "-41.972748",
+                    "value_Z": "0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-1.000000",
+                    "value_W": "0.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1301170180",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_016.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_016",
+                    "UUID": "447359127"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building 01_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building 01_c",
+                    "UUID": "634448426"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_14": {
+        "UUID": "96691522",
+        "Name": "City_building_017",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "947076810",
+                "position": {
+                    "value_X": "44.260082",
+                    "value_Y": "-39.153721",
+                    "value_Z": "0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1546703464",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_017.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_017",
+                    "UUID": "133144332"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building 01_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building 01_c",
+                    "UUID": "1102117720"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_15": {
+        "UUID": "782937985",
+        "Name": "City_building_022",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "270740824",
+                "position": {
+                    "value_X": "-20.831324",
+                    "value_Y": "-27.426489",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "1.000000",
+                    "value_W": "0.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1495525531",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_022.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_022",
+                    "UUID": "1769355623"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building05 _c.dds",
+                    "assets_path": "",
+                    "texture_name": "building05 _c",
+                    "UUID": "350869669"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_16": {
+        "UUID": "1857303473",
+        "Name": "City_building_023",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "68996865",
+                "position": {
+                    "value_X": "42.130642",
+                    "value_Y": "37.493286",
+                    "value_Z": "-0.000002"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "892256922",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_023.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_023",
+                    "UUID": "1385852603"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building_016_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building_016_c",
+                    "UUID": "151297400"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_17": {
+        "UUID": "883162091",
+        "Name": "City_building_024",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "100074979",
+                "position": {
+                    "value_X": "-20.572771",
+                    "value_Y": "43.060829",
+                    "value_Z": "-0.069194"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "1.000000",
+                    "value_W": "0.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "2023640254",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_024.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_024",
+                    "UUID": "1707193440"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building_025_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building_025_c",
+                    "UUID": "1884559378"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_18": {
+        "UUID": "1963661217",
+        "Name": "City_building_026",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "129763719",
+                "position": {
+                    "value_X": "31.511889",
+                    "value_Y": "-16.446016",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "1.000000",
+                    "value_W": "0.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1101137090",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_026.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_026",
+                    "UUID": "45978652"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building05 _c.dds",
+                    "assets_path": "",
+                    "texture_name": "building05 _c",
+                    "UUID": "1329096862"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_19": {
+        "UUID": "826218317",
+        "Name": "City_building_028",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1039129793",
+                "position": {
+                    "value_X": "13.387990",
+                    "value_Y": "-33.755039",
+                    "value_Z": "-0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1795962962",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_028.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_028",
+                    "UUID": "1394112284"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V01_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V01_C",
+                    "UUID": "1820414552"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_20": {
+        "UUID": "1098732176",
+        "Name": "Object010",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "2011687382",
+                "position": {
+                    "value_X": "-2.503353",
+                    "value_Y": "15.800846",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1465319156",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/Object010.mesh",
+                    "assets_path": "",
+                    "mesh_name": "Object010",
+                    "UUID": "1649514474"
+                },
+                "Texture": {}
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_21": {
+        "UUID": "454666257",
+        "Name": "City_building_030",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1456616178",
+                "position": {
+                    "value_X": "-42.807240",
+                    "value_Y": "-41.835564",
+                    "value_Z": "-0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "410521817",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_030.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_030",
+                    "UUID": "774309141"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V01_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V01_C",
+                    "UUID": "2042198567"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_22": {
+        "UUID": "1660504449",
+        "Name": "City_building_031",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "2034335933",
+                "position": {
+                    "value_X": "-34.679482",
+                    "value_Y": "-41.835564",
+                    "value_Z": "-0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "493074878",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_031.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_031",
+                    "UUID": "79563434"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V01_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V01_C",
+                    "UUID": "925512901"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_23": {
+        "UUID": "1256520895",
+        "Name": "City_building_032",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "696228292",
+                "position": {
+                    "value_X": "-29.478403",
+                    "value_Y": "21.014099",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "347386603",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_032.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_032",
+                    "UUID": "839983943"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building03_c.dds",
+                    "assets_path": "",
+                    "texture_name": "building03_c",
+                    "UUID": "247420499"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_24": {
+        "UUID": "1898159924",
+        "Name": "City_building_033",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1827644701",
+                "position": {
+                    "value_X": "-32.361496",
+                    "value_Y": "42.370422",
+                    "value_Z": "0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "2090883365",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_033.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_033",
+                    "UUID": "441854949"
+                },
+                "Texture": {}
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_25": {
+        "UUID": "553192967",
+        "Name": "City_building_034",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1492089738",
+                "position": {
+                    "value_X": "16.049517",
+                    "value_Y": "-16.696884",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "875830209",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_034.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_034",
+                    "UUID": "64259123"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building05 _c.dds",
+                    "assets_path": "",
+                    "texture_name": "building05 _c",
+                    "UUID": "575965682"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_26": {
+        "UUID": "558330829",
+        "Name": "City_building_035",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1955170951",
+                "position": {
+                    "value_X": "13.387990",
+                    "value_Y": "-40.802517",
+                    "value_Z": "-0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "2096635109",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_035.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_035",
+                    "UUID": "524307871"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V01_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V01_C",
+                    "UUID": "2058738832"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_27": {
+        "UUID": "2078381943",
+        "Name": "City_building_036",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "216934307",
+                "position": {
+                    "value_X": "-31.216331",
+                    "value_Y": "33.201576",
+                    "value_Z": "0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1581118743",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_036.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_036",
+                    "UUID": "1074469805"
+                },
+                "Texture": {}
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_28": {
+        "UUID": "1718830683",
+        "Name": "City_building_037",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1373814589",
+                "position": {
+                    "value_X": "-20.317694",
+                    "value_Y": "-16.163609",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "1.000000",
+                    "value_W": "0.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "332235715",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_037.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_037",
+                    "UUID": "1203744830"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building05 _c.dds",
+                    "assets_path": "",
+                    "texture_name": "building05 _c",
+                    "UUID": "369485255"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_29": {
+        "UUID": "653165899",
+        "Name": "City_building_038",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "449888714",
+                "position": {
+                    "value_X": "-41.649002",
+                    "value_Y": "-16.495394",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1096829054",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_038.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_038",
+                    "UUID": "36352178"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/building05 _c.dds",
+                    "assets_path": "",
+                    "texture_name": "building05 _c",
+                    "UUID": "1139248372"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_30": {
+        "UUID": "303190522",
+        "Name": "City_building_039",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1700878276",
+                "position": {
+                    "value_X": "-42.807240",
+                    "value_Y": "-30.643888",
+                    "value_Z": "-0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "810565799",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_039.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_039",
+                    "UUID": "2112048508"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V01_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V01_C",
+                    "UUID": "428898084"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_31": {
+        "UUID": "1846915516",
+        "Name": "City_building_040",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1162433291",
+                "position": {
+                    "value_X": "-34.679482",
+                    "value_Y": "-30.643888",
+                    "value_Z": "-0.000001"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "-0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "1374291664",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_040.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_040",
+                    "UUID": "826216313"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V01_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V01_C",
+                    "UUID": "1656442478"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_32": {
+        "UUID": "1121013072",
+        "Name": "City_building_041",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "2",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "588175108",
+                "position": {
+                    "value_X": "30.695278",
+                    "value_Y": "21.612646",
+                    "value_Z": "0.000000"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.707107",
+                    "value_W": "0.707107"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            },
+            "Component_1": {
+                "Type": "3",
+                "Active": "1",
+                "UUID": "52902791",
+                "Mesh": {
+                    "library_path": "./Project/Library/Meshes/City_building_041.mesh",
+                    "assets_path": "",
+                    "mesh_name": "City_building_041",
+                    "UUID": "573530906"
+                },
+                "Texture": {
+                    "library_path": "./Project/Library/Textures/Building_V02_C.dds",
+                    "assets_path": "",
+                    "texture_name": "Building_V02_C",
+                    "UUID": "1631757955"
+                }
+            }
+        },
+        "ParentID": "691487233",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_33": {
+        "UUID": "1547011022",
+        "Name": "Camera001",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "210757606",
+                "position": {
+                    "value_X": "-78.312431",
+                    "value_Y": "45.251217",
+                    "value_Z": "-97.031113"
+                },
+                "rotation": {
+                    "value_X": "-0.049340",
+                    "value_Y": "-0.932287",
+                    "value_Z": "-0.139331",
+                    "value_W": "0.330140"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "1194752321",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_34": {
+        "UUID": "175901064",
+        "Name": "Camera001.Target",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1707014671",
+                "position": {
+                    "value_X": "-28.132622",
+                    "value_Y": "20.873329",
+                    "value_Z": "-35.064213"
+                },
+                "rotation": {
+                    "value_X": "-0.049340",
+                    "value_Y": "-0.932287",
+                    "value_Z": "-0.139331",
+                    "value_W": "0.330141"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "1194752321",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_35": {
+        "UUID": "897557680",
+        "Name": "Spot001",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1456221550",
+                "position": {
+                    "value_X": "-66.721268",
+                    "value_Y": "141.934128",
+                    "value_Z": "0.000006"
+                },
+                "rotation": {
+                    "value_X": "-0.690035",
+                    "value_Y": "-0.154439",
+                    "value_Z": "-0.690035",
+                    "value_W": "0.154440"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "1194752321",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObject_36": {
+        "UUID": "1216562217",
+        "Name": "Spot001.Target",
+        "Tag": "Default",
+        "Layer": "Default",
+        "Active": "1",
+        "Components": {
+            "Components_Count": "1",
+            "Component_0": {
+                "Type": "0",
+                "Active": "1",
+                "UUID": "1384078874",
+                "position": {
+                    "value_X": "28.890945",
+                    "value_Y": "-60.963882",
+                    "value_Z": "-0.000003"
+                },
+                "rotation": {
+                    "value_X": "0.000000",
+                    "value_Y": "0.000000",
+                    "value_Z": "0.000000",
+                    "value_W": "1.000000"
+                },
+                "scale": {
+                    "value_X": "1.000000",
+                    "value_Y": "1.000000",
+                    "value_Z": "1.000000"
+                }
+            }
+        },
+        "ParentID": "1194752321",
+        "IsRoot": "0",
+        "IsStatic": "0"
+    },
+    "GameObjectsCount": "37"
+}
