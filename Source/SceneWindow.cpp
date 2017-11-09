@@ -7,6 +7,7 @@
 #include "ModuleScene.h"
 #include "ModuleTime.h"
 #include "GameObject.h"
+#include "ComponentTransform.h"
 
 SceneWindow::SceneWindow()
 {
@@ -59,18 +60,58 @@ void SceneWindow::DrawWindow()
 			//ImGuizmo::SetRect(0, 0, scene_width, scene_height);
 
 
+
 			float4x4 view_matrix = App->camera->GetCamera()->camera_frustum.ViewMatrix();
 			float4x4 proj_matrix = App->camera->GetCamera()->camera_frustum.ProjectionMatrix();
 			view_matrix.Transpose();
 			proj_matrix.Transpose();
 
 			float4x4 selected_matrix = App->scene->selected_gameobjects.front()->GetGlobalTransfomMatrix();
+			float4x4 last_matrix;//tmp
+			last_matrix = selected_matrix;//tmp
+			float3 tmp_pos, tmp_scale;
+			Quat tmp_rot;
+			last_matrix.Decompose(tmp_pos, tmp_rot, tmp_scale);
+
+			selected_matrix.Transpose();
+			float3 snap;
+			snap.x = 2;
+			snap.y = 2;
+			snap.z = 2;
+			ImGuizmo::Manipulate(view_matrix.ptr(), proj_matrix.ptr(), App->scene->mCurrentGizmoOperation, App->scene->mCurrentGizmoMode, selected_matrix.ptr(), NULL, snap.ptr());
 			selected_matrix.Transpose();
 
-			ImGuizmo::Manipulate(view_matrix.ptr(), proj_matrix.ptr(), App->scene->mCurrentGizmoOperation, App->scene->mCurrentGizmoMode, selected_matrix.ptr());
-			selected_matrix.Transpose();
+			if (ImGuizmo::IsUsing())
+			{
+				float3 pos, scale;
+				Quat rot;
+				selected_matrix.Decompose(pos, rot, scale);
 
-			App->scene->selected_gameobjects.front()->SetGlobalTransfomMatrix(selected_matrix);
+				if (App->scene->mCurrentGizmoOperation == ImGuizmo::ROTATE)
+				{
+					ComponentTransform* transform = (ComponentTransform*)App->scene->selected_gameobjects.front()->GetComponent(Component::Transform);
+					float3 shown_rotation;
+					shown_rotation = rot.ToEulerXYZ();
+					shown_rotation.x *= RADTODEG;
+					shown_rotation.y *= RADTODEG;
+					shown_rotation.z *= RADTODEG;
+					if (tmp_rot.x != rot.x || tmp_rot.y != rot.y || tmp_rot.z != rot.z)
+						transform->SetRotation(shown_rotation);
+				}
+				//App->scene->selected_gameobjects.front()->SetGlobalTransfomMatrix(pos,rot,scale);
+
+				if (App->scene->mCurrentGizmoOperation == ImGuizmo::TRANSLATE)
+				{
+					ComponentTransform* transform = (ComponentTransform*)App->scene->selected_gameobjects.front()->GetComponent(Component::Transform);
+					if (tmp_pos.x != pos.x || tmp_pos.y != pos.y || tmp_pos.z != pos.z)
+						transform->SetPosition(pos);
+				}
+				if (App->scene->mCurrentGizmoOperation == ImGuizmo::SCALE)
+				{
+					ComponentTransform* transform = (ComponentTransform*)App->scene->selected_gameobjects.front()->GetComponent(Component::Transform);
+					transform->SetScale(scale);
+				}
+			}
 		}
 		
 	}
