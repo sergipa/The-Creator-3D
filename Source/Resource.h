@@ -11,7 +11,7 @@ public:
 
 	enum ResourceType {
 		TextureResource, MeshResource, SceneResource, AnimationResource, PrefabResource, ScriptResource, 
-		AudioResource, ParticleFXResource, FontResource, RenderTexture, Unknown
+		AudioResource, ParticleFXResource, FontResource, RenderTextureResource, GameObjectResource, Unknown
 	};
 
 	Resource();

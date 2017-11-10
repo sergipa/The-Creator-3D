@@ -118,7 +118,7 @@ void Mesh::LoadToMemory()
 	{
 		glGenBuffers(1, &(id_colors));
 		glBindBuffer(GL_ARRAY_BUFFER, id_colors);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 4, colors, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, colors, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 

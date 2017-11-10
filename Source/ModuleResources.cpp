@@ -9,6 +9,7 @@
 #include "ModuleMeshImporter.h"
 #include "ModuleTextureImporter.h"
 #include "ModulePrefabImporter.h"
+#include "GameObject.h"
 
 ModuleResources::ModuleResources(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -55,6 +56,7 @@ void ModuleResources::FillResourcesLists()
 				Resource::ResourceType type = (Resource::ResourceType)data.GetInt("Type");
 				if (!App->file_system->FileExist(library_path))
 				{
+					if (extension == ".fbx" || extension == ".FBX") type = Resource::MeshResource;
 					CreateLibraryFile(type, *it);
 				}
 				resource = CreateResourceFromLibrary(library_path);
@@ -220,6 +222,35 @@ void ModuleResources::AddPrefab(Prefab * prefab)
 	}
 }
 
+GameObject * ModuleResources::GetGameObject(std::string name) const
+{
+	for (std::list<GameObject*>::const_iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); it++)
+	{
+		if ((*it) != nullptr && (*it)->GetName() == name) return (*it);
+	}
+	return nullptr;
+}
+
+GameObject * ModuleResources::GetGameObject(UID uid) const
+{
+	for (std::list<GameObject*>::const_iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); it++)
+	{
+		if ((*it) != nullptr && (*it)->GetUID() == uid) return (*it);
+	}
+	return nullptr;
+}
+
+void ModuleResources::AddGameObject(GameObject * gameobject)
+{
+	if (gameobject != nullptr)
+	{
+		if (std::find(gameobjects_list.begin(), gameobjects_list.end(), gameobject) == gameobjects_list.end())
+		{
+			gameobjects_list.push_back(gameobject);
+		}
+	}
+}
+
 Resource::ResourceType ModuleResources::AssetExtensionToResourceType(std::string str)
 {
 	if (str == ".jpg" || str == ".png" || str == ".tga" || str == ".dds") return Resource::TextureResource;
@@ -262,7 +293,10 @@ bool ModuleResources::HasMetaFile(std::string file_path)
 std::string ModuleResources::GetLibraryFile(std::string file_path)
 {
 	std::string extension = App->file_system->GetFileExtension(file_path);
-	Resource::ResourceType type = AssetExtensionToResourceType(extension);
+
+	Resource::ResourceType type = AssetExtensionToResourceType(file_path);
+
+	if (extension == ".fbx" || extension == ".FBX") type = Resource::PrefabResource;
 
 	std::string library_file;
 	std::string directory;

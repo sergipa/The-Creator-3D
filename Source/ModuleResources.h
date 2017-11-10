@@ -6,6 +6,7 @@
 class Texture;
 class Mesh;
 class Prefab;
+class GameObject;
 
 class ModuleResources :
 	public Module
@@ -33,6 +34,10 @@ public:
 	Prefab* GetPrefab(UID uid) const;
 	void AddPrefab(Prefab* prefab);
 
+	GameObject* GetGameObject(std::string name) const;
+	GameObject* GetGameObject(UID uid) const;
+	void AddGameObject(GameObject* gameobject);
+
 	Resource::ResourceType AssetExtensionToResourceType(std::string str);
 	Resource::ResourceType LibraryExtensionToResourceType(std::string str);
 	std::string ResourceTypeToLibraryExtension(Resource::ResourceType type);
@@ -46,5 +51,6 @@ private:
 	std::list<Texture*> textures_list;
 	std::list<Mesh*> meshes_list;
 	std::list<Prefab*> prefabs_list;
+	std::list<GameObject*> gameobjects_list;
 };
 

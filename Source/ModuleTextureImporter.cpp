@@ -87,7 +87,6 @@ Texture * ModuleTextureImporter::LoadTextureFromLibrary(std::string path)
 		tmp_texture->SetLibraryPath(path);
 		tmp_texture->SetName(App->file_system->GetFileNameWithoutExtension(path).c_str());
 		tmp_texture->SetCompression(ilGetInteger(IL_DXTC_FORMAT));
-		//tmp_texture->SetAssetsPath(App->file_system->GetFilePathInDirectory(App->file_system->GetFileName()))
 
 		switch (ImageInfo.Format)
 		{

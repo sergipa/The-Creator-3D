@@ -297,7 +297,7 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
 			glDisableClientState(GL_COLOR_ARRAY);
 			glPopMatrix();
 
-			(*it)->GetGameObject()->UpdateGlobalMatrix();
+			//(*it)->GetGameObject()->UpdateGlobalMatrix();
 
 		}
 		//active_camera->GetViewportTexture()->Unbind();

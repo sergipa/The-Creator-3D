@@ -53,7 +53,6 @@ void ComponentMeshRenderer::UpdateBoundingBox()
 void ComponentMeshRenderer::LoadToMemory()
 {
 	if (mesh) mesh->LoadToMemory();
-	if (texture) texture->LoadToMemory();
 }
 
 void ComponentMeshRenderer::Save(Data & data) const
@@ -76,13 +75,21 @@ void ComponentMeshRenderer::Load(Data & data)
 	SetUID(data.GetUInt("UUID"));
 	data.EnterSection("Mesh");
 	uint mesh_uid = data.GetUInt("UUID");
-	mesh = new Mesh();
-	mesh->Load(data);
+	mesh = App->resources->GetMesh(mesh_uid);
+	if (!mesh)
+	{
+		mesh = new Mesh();
+		mesh->Load(data);
+	}
 	data.LeaveSection();
 	data.EnterSection("Texture");
 	uint texture_uid = data.GetUInt("UUID");
-	texture = new Texture();
-	texture->Load(data);
+	texture = App->resources->GetTexture(texture_uid);
+	if (!texture)
+	{
+		texture = new Texture();
+		texture->Load(data);
+	}
 	data.LeaveSection();
 }
 

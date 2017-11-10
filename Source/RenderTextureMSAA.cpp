@@ -11,7 +11,7 @@ RenderTextureMSAA::RenderTextureMSAA()
 	rbo_color_id = 0;
 	rbo_depth_id = 0;
 
-	SetType(Resource::RenderTexture);
+	SetType(Resource::RenderTextureResource);
 }
 
 RenderTextureMSAA::~RenderTextureMSAA()

@@ -16,6 +16,7 @@
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "Prefab.h"
+#include "ModuleResources.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -275,6 +276,10 @@ void ModuleScene::LoadPrefab(Prefab* prefab)
 	{
 		AddGameObjectToScene(*it);
 		createdObjects.push_back(*it);
+		ComponentTransform* transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
+		if (transform) transform->UpdateGlobalMatrix();
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+		if (mesh_renderer) mesh_renderer->LoadToMemory();
 	}
 
 	for (int i = 0; i < createdObjects.size(); i++) {
@@ -419,12 +424,5 @@ void ModuleScene::RenameDuplicatedGameObject(GameObject * gameObject, bool justI
 
 GameObject * ModuleScene::FindGameObject(uint id) const
 {
-	for (std::list<GameObject*>::const_iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
-	{
-		if ((*it)->GetUID() == id)
-		{
-			return *it;
-		}
-	}
-	return nullptr;
+	return App->resources->GetGameObject(id);
 }

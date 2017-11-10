@@ -429,12 +429,6 @@ void GameObject::Load(Data & data, bool is_prefab)
 
 	is_root = data.GetBool("IsRoot");
 
-	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
-	if (mesh_renderer)
-	{
-		//mesh_renderer->LoadToMemory();
-	}
-
 	if (!is_prefab) {
 		//Store gameObject name to know the existing gameObjects when loading scene
 		int gameObjectCount = 1;

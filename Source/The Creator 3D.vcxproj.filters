@@ -58,6 +58,9 @@
     <Filter Include="Sources\3d Party\imGui\ImGuizmo">
       <UniqueIdentifier>{394f6fe7-3bd6-499d-ae70-df52919e040a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Modules\Importers">
+      <UniqueIdentifier>{cd077c20-cdec-40a1-b020-9c69a26de40f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -423,16 +426,18 @@
     <ClInclude Include="imgui\ImGuizmo\ImGuizmo.h">
       <Filter>Sources\3d Party\imGui\ImGuizmo</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleMeshImporter.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleTextureImporter.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Prefab.h">
       <Filter>Sources\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="ModulePrefabImporter.h" />
+    <ClInclude Include="ModuleMeshImporter.h">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleTextureImporter.h">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulePrefabImporter.h">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -699,16 +704,18 @@
     <ClCompile Include="imgui\ImGuizmo\ImGuizmo.cpp">
       <Filter>Sources\3d Party\imGui\ImGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleMeshImporter.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleTextureImporter.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Prefab.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="ModulePrefabImporter.cpp" />
+    <ClCompile Include="ModuleMeshImporter.cpp">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTextureImporter.cpp">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ModulePrefabImporter.cpp">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

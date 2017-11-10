@@ -183,6 +183,6 @@ void ComponentTransform::Load(Data & data)
 	rotation.z = float_to_quat.z;
 	rotation.w = float_to_quat.w;
 	shown_rotation = rotation.ToEulerXYZ();
+	shown_rotation *= RADTODEG;
 	scale = data.GetVector3("scale");
-	//UpdateGlobalMatrix();
 }
