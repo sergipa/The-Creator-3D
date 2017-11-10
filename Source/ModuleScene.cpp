@@ -15,6 +15,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "Prefab.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -261,28 +262,23 @@ void ModuleScene::SaveScene(std::string path) const
 	data.SaveAsBinary(path);
 }
 
-void ModuleScene::LoadPrefab(std::string path)
+void ModuleScene::LoadPrefab(Prefab* prefab)
 {
 	std::vector<GameObject*> createdObjects;
 	bool justIncrease = false;
 	if (scene_gameobjects.empty()) {
 		justIncrease = true;
 	}
-	Data data;
-	if (data.LoadBinary(path)) {
-		int gameObjectsCount = data.GetInt("GameObjectsCount");
-		for (int i = 0; i < gameObjectsCount; i++) {
-			GameObject* go = new GameObject();
-			data.EnterSection("GameObject_" + std::to_string(i));
-			go->Load(data, true);
-			data.LeaveSection();
-			scene_gameobjects.push_back(go);
-			createdObjects.push_back(go);
-		}
-		data.ClearData();
-		for (int i = 0; i < createdObjects.size(); i++) {
-			RenameDuplicatedGameObject(createdObjects[i], justIncrease);
-		}
+
+	std::vector<GameObject*> prefab_gameobjects = prefab->GetGameObjects();
+	for (std::vector<GameObject*>::iterator it = prefab_gameobjects.begin(); it != prefab_gameobjects.end(); it++)
+	{
+		AddGameObjectToScene(*it);
+		createdObjects.push_back(*it);
+	}
+
+	for (int i = 0; i < createdObjects.size(); i++) {
+		RenameDuplicatedGameObject(createdObjects[i], justIncrease);
 	}
 }
 

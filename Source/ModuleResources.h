@@ -5,6 +5,7 @@
 
 class Texture;
 class Mesh;
+class Prefab;
 
 class ModuleResources :
 	public Module
@@ -28,18 +29,22 @@ public:
 	Mesh* GetMesh(UID uid) const;
 	void AddMesh(Mesh* mesh);
 
+	Prefab* GetPrefab(std::string name) const;
+	Prefab* GetPrefab(UID uid) const;
+	void AddPrefab(Prefab* prefab);
+
 	Resource::ResourceType AssetExtensionToResourceType(std::string str);
 	Resource::ResourceType LibraryExtensionToResourceType(std::string str);
 	std::string ResourceTypeToLibraryExtension(Resource::ResourceType type);
 
 	bool HasMetaFile(std::string file_path);
-	bool HasLibraryFile(std::string file_path);
-	std::string GetLibraryFile(std::string file_name);
-	void CreateLibraryFile(Resource::ResourceType type, std::string file_path);
+	std::string GetLibraryFile(std::string file_path);
+	std::string CreateLibraryFile(Resource::ResourceType type, std::string file_path);
 	Resource* CreateResourceFromLibrary(std::string library_path);
 
 private:
 	std::list<Texture*> textures_list;
 	std::list<Mesh*> meshes_list;
+	std::list<Prefab*> prefabs_list;
 };
 

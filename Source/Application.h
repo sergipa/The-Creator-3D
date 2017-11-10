@@ -21,6 +21,7 @@ class Data;
 class TagsAndLayers;
 class ModuleMeshImporter;
 class ModuleTextureImporter;
+class ModulePrefabImporter;
 
 class Application
 {
@@ -39,6 +40,7 @@ public:
 	ModuleFileSystem* file_system;
 	ModuleMeshImporter* mesh_importer;
 	ModuleTextureImporter* texture_importer;
+	ModulePrefabImporter* prefab_importer;
 
 private:
 

@@ -75,12 +75,13 @@ void ComponentMeshRenderer::Load(Data & data)
 	SetActive(data.GetBool("Active"));
 	SetUID(data.GetUInt("UUID"));
 	data.EnterSection("Mesh");
+	uint mesh_uid = data.GetUInt("UUID");
 	mesh = new Mesh();
 	mesh->Load(data);
 	data.LeaveSection();
 	data.EnterSection("Texture");
-	uint uid = data.GetUInt("UUID");
-	texture = App->resources->GetTexture(uid);
+	uint texture_uid = data.GetUInt("UUID");
+	texture = new Texture();
 	texture->Load(data);
 	data.LeaveSection();
 }

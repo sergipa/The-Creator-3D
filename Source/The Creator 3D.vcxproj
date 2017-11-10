@@ -175,6 +175,7 @@
     <ClInclude Include="ModuleImport.h" />
     <ClInclude Include="ModuleMeshImporter.h" />
     <ClInclude Include="ModulePhysics3D.h" />
+    <ClInclude Include="ModulePrefabImporter.h" />
     <ClInclude Include="ModuleRenderer3D.h" />
     <ClInclude Include="ModuleResources.h" />
     <ClInclude Include="ModuleTextureImporter.h" />
@@ -272,6 +273,7 @@
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleMeshImporter.cpp" />
     <ClCompile Include="ModulePhysics3D.cpp" />
+    <ClCompile Include="ModulePrefabImporter.cpp" />
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleResources.cpp" />
     <ClCompile Include="ModuleScene.cpp" />

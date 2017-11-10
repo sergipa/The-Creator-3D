@@ -26,6 +26,7 @@ Mesh::Mesh()
 	texture_coords = nullptr;
 
 	SetType(Resource::MeshResource);
+	SetUsedCount(0);
 
 }
 

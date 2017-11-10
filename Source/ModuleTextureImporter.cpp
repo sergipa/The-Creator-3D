@@ -23,11 +23,6 @@ ModuleTextureImporter::~ModuleTextureImporter()
 {
 }
 
-bool ModuleTextureImporter::Init(Data * editor_config)
-{
-	return true;
-}
-
 bool ModuleTextureImporter::CleanUp()
 {
 	ilShutDown();
@@ -116,7 +111,8 @@ Texture * ModuleTextureImporter::LoadTextureFromLibrary(std::string path)
 		default: tmp_texture->SetTextureType(Texture::TextureType::UnknownType); break;
 		}
 		ilDeleteImages(1, &image_id);
-		CONSOLE_DEBUG("Engine image Loaded: %s", path);
+		CONSOLE_DEBUG("Image Loaded: %s", path);
+		tmp_texture->SetLibraryPath(path);
 	}
 	else
 	{

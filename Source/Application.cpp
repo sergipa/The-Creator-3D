@@ -14,6 +14,7 @@
 #include "ModuleFileSystem.h"
 #include "ModuleMeshImporter.h"
 #include "ModuleTextureImporter.h"
+#include "ModulePrefabImporter.h"
 #include "Data.h"
 #include "TagsAndLayers.h"
 
@@ -38,6 +39,7 @@ Application::Application()
 	file_system = new ModuleFileSystem(this);
 	mesh_importer = new ModuleMeshImporter(this);
 	texture_importer = new ModuleTextureImporter(this);
+	prefab_importer = new ModulePrefabImporter(this);
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -52,6 +54,7 @@ Application::Application()
 	AddModule(scene);
 	AddModule(mesh_importer);
 	AddModule(texture_importer);
+	AddModule(prefab_importer);
 	AddModule(resources);
 	AddModule(editor);
 	//TIME

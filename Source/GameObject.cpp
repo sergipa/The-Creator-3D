@@ -250,6 +250,28 @@ int GameObject::GetAllChildsCount() const
 	return count;
 }
 
+void GameObject::GetAllChildsName(std::vector<std::string>& names)
+{
+	for (std::list<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); it++)
+	{
+		(*it)->GetAllChildsName(names);
+		names.push_back((*it)->name);
+	}
+}
+
+void GameObject::GetAllChildsMeshesNames(std::vector<std::string>& names)
+{
+	for (std::list<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); it++)
+	{
+		(*it)->GetAllChildsName(names);
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+		if (mesh_renderer != nullptr)
+		{
+			names.push_back((*it)->name);
+		}
+	}
+}
+
 void GameObject::UpdateBoundingBox()
 {
 	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
@@ -406,9 +428,6 @@ void GameObject::Load(Data & data, bool is_prefab)
 	}
 
 	is_root = data.GetBool("IsRoot");
-	if (is_root) {
-		App->scene->root_gameobjects.push_back(this);
-	}
 
 	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
 	if (mesh_renderer)

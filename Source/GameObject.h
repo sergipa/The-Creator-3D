@@ -36,6 +36,8 @@ public:
 	std::string GetLayer() const;
 
 	int GetAllChildsCount() const;
+	void GetAllChildsName(std::vector<std::string>& names);
+	void GetAllChildsMeshesNames(std::vector<std::string>& names);
 
 	void UpdateBoundingBox();
 	math::float4x4 GetGlobalTransfomMatrix();

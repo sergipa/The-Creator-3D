@@ -211,13 +211,14 @@ void Texture::CreateMeta() const
 	char* dt = ctime(&now);
 
 	Data data;
+	data.AddInt("Type", GetType());
 	data.AddUInt("UUID", GetUID());
 	data.AddString("Time_Created", dt);
-	data.AddString("library_path", GetLibraryPath());
+	data.AddString("Library_path", GetLibraryPath());
 	data.AddString("Name", GetName());
 	data.AddUInt("Width", width);
 	data.AddUInt("Height", width);
-	data.AddString("Type", GetTypeString());
+	data.AddString("Texture_Type", GetTypeString());
 	data.AddString("Format", GetFormatString());
 	data.AddString("Compression", CompressionToString());
 	

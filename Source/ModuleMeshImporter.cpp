@@ -8,6 +8,7 @@
 #include "ModuleCamera3D.h"
 #include "ModuleTextureImporter.h"
 #include "ComponentMeshRenderer.h"
+#include "ModuleResources.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -41,9 +42,9 @@ bool ModuleMeshImporter::CleanUp()
 	return true;
 }
 
-bool ModuleMeshImporter::ImportMesh(std::string path)
+std::string ModuleMeshImporter::ImportMesh(std::string path)
 {
-	bool ret = true;
+	std::string ret;
 
 	const aiScene* scene = aiImportFile(path.c_str(), aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene != nullptr && scene->HasMeshes())
@@ -53,12 +54,13 @@ bool ModuleMeshImporter::ImportMesh(std::string path)
 		Data data;
 		root_gameobject->Save(data);
 		data.AddInt("GameObjectsCount", App->scene->saving_index);
-		std::string prefab_path = App->file_system->ChangeFileExtension(path, "prefab");
-		data.SaveAsBinary(prefab_path);
-		data.SaveAsJSON(prefab_path);
+		data.AddString("Name", App->file_system->GetFileNameWithoutExtension(path));
 		if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
-		data.SaveAsBinary(LIBRARY_PREFABS_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".prefab");
+		std::string library_path = LIBRARY_PREFABS_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".prefab";
+		data.SaveAsBinary(library_path);
 		App->scene->saving_index = 0;
+
+		ret = library_path;
 
 		CONSOLE_DEBUG("Object succesfully loaded from, %s", path);
 		aiReleaseImport(scene);
@@ -67,6 +69,7 @@ bool ModuleMeshImporter::ImportMesh(std::string path)
 	{
 		CONSOLE_ERROR("Cannot load object from %s", path);
 	}
+
 	return ret;
 }
 
@@ -186,23 +189,29 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 				{
 					aiString mat_texture_path;
 					mat->GetTexture(aiTextureType_DIFFUSE, 0, &mat_texture_path);
-
-					if (mat_texture_path.length > 0)
+					std::string texture_name = App->file_system->GetFileNameWithoutExtension(std::string(mat_texture_path.C_Str()));
+					material_texture = App->resources->GetTexture(texture_name);
+					if (material_texture == nullptr)
 					{
-						std::string full_texture_path = ASSETS_TEXTURES_FOLDER + App->file_system->GetFileName(mat_texture_path.C_Str());
-						std::string library_path = App->texture_importer->ImportTexture(full_texture_path);
-
-						if (!library_path.empty())
+						if (mat_texture_path.length > 0)
 						{
-							material_texture = App->texture_importer->LoadTextureFromLibrary(library_path);
-							if (material_texture)
+							std::string full_texture_path = ASSETS_TEXTURES_FOLDER + App->file_system->GetFileName(mat_texture_path.C_Str());
+							std::string library_path = App->texture_importer->ImportTexture(full_texture_path);
+
+							if (!library_path.empty())
 							{
-								aiColor3D color;
-								mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-								material_texture->color.r = color.r;
-								material_texture->color.g = color.g;
-								material_texture->color.b = color.b;
-								material_texture->color.a = 1;
+								material_texture = App->texture_importer->LoadTextureFromLibrary(library_path);
+								if (material_texture)
+								{
+									material_texture->SetAssetsPath(full_texture_path);
+									App->resources->AddTexture(material_texture);
+									aiColor3D color;
+									mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+									material_texture->color.r = color.r;
+									material_texture->color.g = color.g;
+									material_texture->color.b = color.b;
+									material_texture->color.a = 1;
+								}
 							}
 						}
 					}
@@ -210,6 +219,7 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 			}
 
 			SaveMeshToLibrary(*mesh);
+			App->resources->AddMesh(mesh);
 
 			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
@@ -363,6 +373,7 @@ Mesh * ModuleMeshImporter::LoadMeshFromLibrary(std::string path)
 		file.close();
 	}
 
+	mesh->SetLibraryPath(path);
 	return mesh;
 }
 

@@ -10,7 +10,6 @@ public:
 	ModuleTextureImporter(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleTextureImporter();
 
-	bool Init(Data* editor_config = nullptr);
 	bool CleanUp();
 
 	//Retuns the library path if created or an empty string

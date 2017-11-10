@@ -20,7 +20,7 @@ public:
 	bool Init(Data* editor_config = nullptr);
 	bool CleanUp();
 
-	bool ImportMesh(std::string path);
+	std::string ImportMesh(std::string path);
 	Mesh* LoadMeshFromLibrary(std::string path);
 	void SaveMeshToLibrary(Mesh& mesh);
 

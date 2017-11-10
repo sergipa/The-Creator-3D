@@ -12,6 +12,7 @@ class GameObject;
 class Texture;
 class ComponentCamera;
 class Mesh;
+class Prefab;
 
 class ModuleScene : public Module
 {
@@ -45,7 +46,7 @@ public:
 	void LoadScene(std::string path);
 	void SaveScene(std::string path) const;
 
-	void LoadPrefab(std::string path);
+	void LoadPrefab(Prefab* prefab);
 
 private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
