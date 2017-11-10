@@ -55,8 +55,8 @@ Application::Application()
 	AddModule(mesh_importer);
 	AddModule(texture_importer);
 	AddModule(prefab_importer);
-	AddModule(resources);
 	AddModule(editor);
+	AddModule(resources);
 	//TIME
 	AddModule(time);
 	//Game Modules

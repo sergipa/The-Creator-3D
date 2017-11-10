@@ -57,11 +57,11 @@ std::string ModuleTextureImporter::ImportTexture(std::string path)
 		}
 
 		ilDeleteImages(1, &image_id);
-		CONSOLE_DEBUG("Texture Loaded: %s", path);
+		CONSOLE_DEBUG("Texture Loaded: %s", path.c_str());
 	}
 	else
 	{
-		CONSOLE_DEBUG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
+		CONSOLE_DEBUG("Cannot load image %s. Error: %s", path.c_str(), iluErrorString(ilGetError()));
 	}
 
 	return ret;
@@ -110,12 +110,12 @@ Texture * ModuleTextureImporter::LoadTextureFromLibrary(std::string path)
 		default: tmp_texture->SetTextureType(Texture::TextureType::UnknownType); break;
 		}
 		ilDeleteImages(1, &image_id);
-		CONSOLE_DEBUG("Image Loaded: %s", path);
+		CONSOLE_DEBUG("Image loaded from library: %s", path.c_str());
 		tmp_texture->SetLibraryPath(path);
 	}
 	else
 	{
-		CONSOLE_DEBUG("Cannot load image %s. Error: %s", path, iluErrorString(ilGetError()));
+		CONSOLE_DEBUG("Cannot load image %s. Error: %s", path.c_str(), iluErrorString(ilGetError()));
 	}
 
 	return tmp_texture;

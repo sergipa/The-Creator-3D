@@ -168,21 +168,22 @@ void Texture::Save(Data & data) const
 bool Texture::Load(Data & data)
 {
 	bool ret = true;
-
 	std::string library_path = data.GetString("library_path");
+
 	Texture* text = App->texture_importer->LoadTextureFromLibrary(library_path);
 	if (!text)
 	{
 		std::string assets_path = data.GetString("assets_path");
 		if (App->file_system->FileExist(assets_path))
 		{
-			App->resources->CreateLibraryFile(Resource::TextureResource, assets_path);
-			Load(data);
+			library_path = App->resources->CreateLibraryFile(Resource::TextureResource, assets_path);
+			if (!library_path.empty())
+			{
+				Load(data);
+			}
 		}
 		else
 		{
-			std::string name = data.GetString("texture_name");
-			CONSOLE_ERROR("Texture %s not found!", name.c_str());
 			ret = false;
 		}
 	}

@@ -84,12 +84,16 @@ void ComponentMeshRenderer::Load(Data & data)
 	data.LeaveSection();
 	data.EnterSection("Texture");
 	uint texture_uid = data.GetUInt("UUID");
-	texture = App->resources->GetTexture(texture_uid);
-	if (!texture)
+	if (texture_uid != 0)
 	{
-		texture = new Texture();
-		texture->Load(data);
+		texture = App->resources->GetTexture(texture_uid);
+		if (!texture)
+		{
+			texture = new Texture();
+			texture->Load(data);
+		}
 	}
+	
 	data.LeaveSection();
 }
 

@@ -58,6 +58,7 @@ std::string ModuleMeshImporter::ImportMesh(std::string path)
 		if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
 		std::string library_path = LIBRARY_PREFABS_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".prefab";
 		data.SaveAsBinary(library_path);
+		data.SaveAsJSON(library_path);
 		App->scene->saving_index = 0;
 
 		ret = library_path;
@@ -142,7 +143,7 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 				{
 					if (ai_mesh->mFaces[j].mNumIndices != 3)
 					{
-						CONSOLE_DEBUG("WARNING, geometry face %d with != 3 indices!", j);
+						CONSOLE_DEBUG("WARNING, geometry face %d with != 3 indices! Not imported", j);
 						mesh_crreated = false;
 					}
 					else
@@ -205,15 +206,16 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 								{
 									material_texture->SetAssetsPath(full_texture_path);
 									App->resources->AddTexture(material_texture);
-									aiColor3D color;
-									mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-									material_texture->color.r = color.r;
-									material_texture->color.g = color.g;
-									material_texture->color.b = color.b;
-									material_texture->color.a = 1;
 								}
 							}
 						}
+						if(!material_texture) material_texture = new Texture();
+						aiColor3D color;
+						mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+						material_texture->color.r = color.r;
+						material_texture->color.g = color.g;
+						material_texture->color.b = color.b;
+						material_texture->color.a = 1;
 					}
 				}
 			}
@@ -512,5 +514,5 @@ void ModuleMeshImporter::GetDummyTransform(aiNode & node, aiVector3D & pos, aiQu
 }
 
 void Callback(const char* message, char* c) {
-	CONSOLE_DEBUG("%s", message);
+	CONSOLE_DEBUG("ASSIMP: %s", message);
 }
