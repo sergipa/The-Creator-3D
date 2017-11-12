@@ -34,6 +34,8 @@ public:
 	std::string GetTag() const;
 	void SetLayer(std::string layer);
 	std::string GetLayer() const;
+	void SetIsUsedInPrefab(bool used);
+	bool GetIsUsedInPrefab()const;
 
 	int GetAllChildsCount() const;
 	void GetAllChildsName(std::vector<std::string>& names);
@@ -71,5 +73,6 @@ private:
 	UID uuid;
 	bool is_selected;
 	bool is_static;
+	bool is_used_in_prefab;
 };
 

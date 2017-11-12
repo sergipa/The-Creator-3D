@@ -3,8 +3,6 @@
 #include "Application.h"
 #include "ModuleFileSystem.h"
 #include "Data.h"
-#include "GameObject.h"
-#include "ModuleResources.h"
 
 ModulePrefabImporter::ModulePrefabImporter(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -28,17 +26,7 @@ Prefab * ModulePrefabImporter::LoadPrefabFromLibrary(std::string path)
 
 	Data data;
 	if (data.LoadBinary(path)) {
-		int gameObjectsCount = data.GetInt("GameObjectsCount");
-		for (int i = 0; i < gameObjectsCount; i++) {
-			GameObject* go = new GameObject();
-			data.EnterSection("GameObject_" + std::to_string(i));
-			go->Load(data, true);
-			data.LeaveSection();
-			prefab->AddGameObject(go);
-			App->resources->AddGameObject(go);
-		}
-		prefab->SetLibraryPath(path);
-		prefab->SetName(data.GetString("Name"));
+		prefab->Load(data);
 	}
 	return prefab;
 }

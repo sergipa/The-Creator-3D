@@ -14,6 +14,8 @@ public:
 
 	void AddGameObject(GameObject* game_object);
 	std::vector<GameObject*> GetGameObjects() const;
+	void SetRootGameObject(GameObject* root);
+	GameObject* GetRootGameObject() const;
 
 	void Save(Data& data) const;
 	bool Load(Data& data);
@@ -23,5 +25,6 @@ public:
 
 private:
 	std::vector<GameObject*> prefab_gameobjects;
+	GameObject* root_gameobject;
 };
 

@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "ModuleResources.h"
 #include "Application.h"
+#include "Mesh.h"
+#include "Material.h"
 
 ComponentMeshRenderer::ComponentMeshRenderer(GameObject* attached_gameobject)
 {
@@ -10,7 +12,7 @@ ComponentMeshRenderer::ComponentMeshRenderer(GameObject* attached_gameobject)
 	SetType(ComponentType::MeshRenderer);
 	SetGameObject(attached_gameobject);
 	mesh = nullptr;
-	texture = nullptr;
+	material = nullptr;
 }
 
 ComponentMeshRenderer::~ComponentMeshRenderer()
@@ -23,20 +25,20 @@ Mesh* ComponentMeshRenderer::GetMesh() const
 	return mesh;
 }
 
-void ComponentMeshRenderer::LoadMesh(Mesh * mesh)
+void ComponentMeshRenderer::SetMesh(Mesh * mesh)
 {
 	this->mesh = mesh;
 	UpdateBoundingBox();
 }
 
-Texture * ComponentMeshRenderer::GetTexture() const
+Material * ComponentMeshRenderer::GetMaterial() const
 {
-	return texture;
+	return material;
 }
 
-void ComponentMeshRenderer::LoadTexture(Texture * texture)
+void ComponentMeshRenderer::SetMaterial(Material * material)
 {
-	this->texture = texture;
+	this->material = material;
 }
 
 void ComponentMeshRenderer::UpdateBoundingBox()
@@ -53,7 +55,15 @@ void ComponentMeshRenderer::UpdateBoundingBox()
 void ComponentMeshRenderer::LoadToMemory()
 {
 	if (mesh) mesh->LoadToMemory();
+	if (material) material->LoadToMemory();
 }
+
+void ComponentMeshRenderer::UnloadFromMemory()
+{
+	if (mesh) mesh->UnloadFromMemory();
+	if (material) material->UnloadFromMemory();
+}
+
 
 void ComponentMeshRenderer::Save(Data & data) const
 {
@@ -63,8 +73,8 @@ void ComponentMeshRenderer::Save(Data & data) const
 	data.CreateSection("Mesh");
 	if(mesh) mesh->Save(data);
 	data.CloseSection();
-	data.CreateSection("Texture");
-	if(texture)texture->Save(data);
+	data.CreateSection("Material");
+	if(material)material->Save(data);
 	data.CloseSection();
 }
 
@@ -82,15 +92,15 @@ void ComponentMeshRenderer::Load(Data & data)
 		mesh->Load(data);
 	}
 	data.LeaveSection();
-	data.EnterSection("Texture");
-	uint texture_uid = data.GetUInt("UUID");
-	if (texture_uid != 0)
+	data.EnterSection("Material");
+	uint material_uid = data.GetUInt("UUID");
+	if (material_uid != 0)
 	{
-		texture = App->resources->GetTexture(texture_uid);
-		if (!texture)
+		material = App->resources->GetMaterial(material_uid);
+		if (!material)
 		{
-			texture = new Texture();
-			texture->Load(data);
+			material = new Material();
+			material->Load(data);
 		}
 	}
 	

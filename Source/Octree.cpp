@@ -1,6 +1,7 @@
 #include "Octree.h"
 #include "Globals.h"
 #include "Primitive.h"
+#include "MathGeoLib\Geometry\OBB.h"
 
 OctreeNode::OctreeNode(AABB& box)
 {
@@ -98,6 +99,18 @@ void OctreeNode::DivideNode()
 				child_index++;
 			}
 		}
+	}
+
+	for (std::list<AABB*>::iterator it = node_contents.begin(); it != node_contents.end();)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (node_childs[i]->node_box.Intersects((*it)->ToOBB().MinimalEnclosingAABB()))
+			{
+				node_childs[i]->InsertInNode(*it);
+			}
+		}
+		it = node_contents.erase(it);
 	}
 }
 

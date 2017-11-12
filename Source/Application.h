@@ -22,6 +22,7 @@ class TagsAndLayers;
 class ModuleMeshImporter;
 class ModuleTextureImporter;
 class ModulePrefabImporter;
+class ModuleMaterialImporter;
 
 class Application
 {
@@ -41,6 +42,7 @@ public:
 	ModuleMeshImporter* mesh_importer;
 	ModuleTextureImporter* texture_importer;
 	ModulePrefabImporter* prefab_importer;
+	ModuleMaterialImporter* material_importer;
 
 private:
 

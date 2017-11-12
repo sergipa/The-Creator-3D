@@ -9,6 +9,9 @@
 #include "ModuleTextureImporter.h"
 #include "ComponentMeshRenderer.h"
 #include "ModuleResources.h"
+#include "Material.h"
+#include "Texture.h"
+#include "Prefab.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -50,16 +53,16 @@ std::string ModuleMeshImporter::ImportMesh(std::string path)
 	if (scene != nullptr && scene->HasMeshes())
 	{
 		aiNode* root_node = scene->mRootNode;
-		GameObject* root_gameobject = LoadMeshNode(nullptr, root_node, scene, path.c_str());
-		Data data;
-		root_gameobject->Save(data);
-		data.AddInt("GameObjectsCount", App->scene->saving_index);
-		data.AddString("Name", App->file_system->GetFileNameWithoutExtension(path));
 		if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
 		std::string library_path = LIBRARY_PREFABS_FOLDER + App->file_system->GetFileNameWithoutExtension(path) + ".prefab";
+		Data data;
+		Prefab* prefab = new Prefab();
+		prefab->SetRootGameObject(LoadMeshNode(nullptr, root_node, *scene, path.c_str()));
+		prefab->SetAssetsPath(path);
+		prefab->SetLibraryPath(library_path);
+		prefab->SetName(App->file_system->GetFileNameWithoutExtension(path));
+		prefab->Save(data);
 		data.SaveAsBinary(library_path);
-		data.SaveAsJSON(library_path);
-		App->scene->saving_index = 0;
 
 		ret = library_path;
 
@@ -74,7 +77,7 @@ std::string ModuleMeshImporter::ImportMesh(std::string path)
 	return ret;
 }
 
-GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node, const aiScene * scene, const char * path)
+GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node, const aiScene & scene, const char * path)
 {
 	GameObject* ret = nullptr;
 
@@ -124,9 +127,9 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 	{
 		for (int i = 0; i < node->mNumMeshes; i++)
 		{
-			bool mesh_crreated = true; //If node have more than 1 mesh and last mesh returned false, we need to restart the return to true for the new mesh.
+			bool mesh_created = true; //If node have more than 1 mesh and last mesh returned false, we need to reset the return for the new mesh.
 
-			aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
+			aiMesh* ai_mesh = scene.mMeshes[node->mMeshes[i]];
 			Mesh* mesh = new Mesh();
 			mesh->SetName((std::string)node->mName.C_Str());
 			mesh->num_vertices = ai_mesh->mNumVertices;
@@ -144,7 +147,7 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 					if (ai_mesh->mFaces[j].mNumIndices != 3)
 					{
 						CONSOLE_DEBUG("WARNING, geometry face %d with != 3 indices! Not imported", j);
-						mesh_crreated = false;
+						mesh_created = false;
 					}
 					else
 					{
@@ -154,7 +157,8 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 				CONSOLE_DEBUG("New mesh ""%s"" with %d triangles.", node->mName.C_Str(), mesh->num_indices / 3);
 			}
 
-			if (!mesh_crreated) continue;
+			if (!mesh_created) continue;
+
 			//Focus the camera on the mesh
 			App->camera->can_update = true;
 			App->camera->FocusOnObject(float3(0, 0, 0), mesh->box.Size().Length());
@@ -181,41 +185,37 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 				CONSOLE_DEBUG("Mesh ""%s"" has UVs", node->mName.C_Str());
 			}
 
-			Texture* material_texture = nullptr;
-			if (scene->HasMaterials())
+			Material* material = nullptr;
+			if (scene.HasMaterials())
 			{
-				aiMaterial* mat = scene->mMaterials[ai_mesh->mMaterialIndex];
+				aiMaterial* ai_mat = scene.mMaterials[ai_mesh->mMaterialIndex];
 
-				if (mat != nullptr)
+				if (ai_mat != nullptr)
 				{
-					aiString mat_texture_path;
-					mat->GetTexture(aiTextureType_DIFFUSE, 0, &mat_texture_path);
-					std::string texture_name = App->file_system->GetFileNameWithoutExtension(std::string(mat_texture_path.C_Str()));
-					material_texture = App->resources->GetTexture(texture_name);
-					if (material_texture == nullptr)
+					aiString mat_name;
+					ai_mat->Get(AI_MATKEY_NAME, mat_name);
+					material = App->resources->GetMaterial(mat_name.C_Str());
+					if (material == nullptr)
 					{
-						if (mat_texture_path.length > 0)
+						material = new Material();
+						material->SetName(mat_name.C_Str());
+						LoadMaterial(*material, *ai_mat);
+						std::string model_name = App->file_system->GetFileNameWithoutExtension(path);
+						std::string directory = App->file_system->GetFileDirectory(path);
+						std::string materials_directory = directory + "/" + model_name + " - materials";
+						std::string material_library_path = LIBRARY_MATERIALS_FOLDER + material->GetName() + ".mat";
+						std::string material_assets_path = materials_directory + "/" + material->GetName() + ".mat";
+						material->SetAssetsPath(material_assets_path);
+						material->SetLibraryPath(material_library_path);
+						if (!App->file_system->DirectoryExist(materials_directory))
 						{
-							std::string full_texture_path = ASSETS_TEXTURES_FOLDER + App->file_system->GetFileName(mat_texture_path.C_Str());
-							std::string library_path = App->texture_importer->ImportTexture(full_texture_path);
-
-							if (!library_path.empty())
-							{
-								material_texture = App->texture_importer->LoadTextureFromLibrary(library_path);
-								if (material_texture)
-								{
-									material_texture->SetAssetsPath(full_texture_path);
-									App->resources->AddTexture(material_texture);
-								}
-							}
+							App->file_system->Create_Directory(materials_directory);
 						}
-						if(!material_texture) material_texture = new Texture();
-						aiColor3D color;
-						mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-						material_texture->color.r = color.r;
-						material_texture->color.g = color.g;
-						material_texture->color.b = color.b;
-						material_texture->color.a = 1;
+						App->resources->AddMaterial(material);
+						Data material_data;
+						material->Save(material_data);
+						material_data.SaveAsBinary(material_assets_path);
+						material_data.SaveAsBinary(material_library_path);
 					}
 				}
 			}
@@ -225,8 +225,8 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 
 			GameObject* go = new GameObject(parent);
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
-			mesh_renderer->LoadMesh(mesh);
-			mesh_renderer->LoadTexture(material_texture);
+			mesh_renderer->SetMesh(mesh);
+			mesh_renderer->SetMaterial(material);
 			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::Transform);
 			aiVector3D position;
 			aiQuaternion rotation_quat;
@@ -249,6 +249,129 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 	}
 
 	return ret;
+}
+
+void ModuleMeshImporter::GetDummyTransform(aiNode & node, aiVector3D & pos, aiQuaternion & rot, aiVector3D & scale)
+{
+	if (node.mChildren)
+	{
+		std::string s_node_name(node.mName.C_Str());
+		if (s_node_name.find("$AssimpFbx$_PreRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Rotation") != std::string::npos ||
+			s_node_name.find("$AssimpFbx$_PostRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Scaling") != std::string::npos ||
+			s_node_name.find("$AssimpFbx$_Translation") != std::string::npos)
+		{
+			aiVector3D node_pos;
+			aiQuaternion node_quat;
+			aiVector3D node_scale;
+			node.mTransformation.Decompose(node_scale, node_quat, node_pos);
+			pos += node_pos;
+			rot = rot * node_quat;
+			scale = aiVector3D(scale * node_scale);
+			node = *node.mChildren[0];
+			GetDummyTransform(node, pos, rot, scale);
+		}
+	}
+}
+
+void ModuleMeshImporter::LoadMaterial(Material & material, const aiMaterial& ai_material)
+{
+	aiColor3D diffuse;
+	aiColor3D specular;
+	aiColor3D ambient;
+	aiColor3D emissive;
+	aiColor3D transparent;
+	aiColor3D reflective;
+	aiString texture_path;
+	bool wireframe = false;
+	bool two_sided = false;
+	int shading_model = 0;
+	int blend_mode = 0;
+	float opacity = 1;
+	float shininess = 0;
+	float shininess_strength = 1;
+	float refraction = 1;
+	float reflectivity = 0;
+	float bump_scaling = 1;
+
+
+	//COLOR
+	ai_material.Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+	ai_material.Get(AI_MATKEY_COLOR_SPECULAR, specular);
+	ai_material.Get(AI_MATKEY_COLOR_AMBIENT, ambient);
+	ai_material.Get(AI_MATKEY_COLOR_EMISSIVE, emissive);
+	ai_material.Get(AI_MATKEY_COLOR_TRANSPARENT, transparent);
+	ai_material.Get(AI_MATKEY_COLOR_REFLECTIVE, reflective);
+
+	material.SetDiffuseColor(diffuse.r, diffuse.g, diffuse.b);
+	material.SetSpecularColor(specular.r, specular.g, specular.b);
+	material.SetAmbientColor(ambient.r, ambient.g, ambient.b);
+	material.SetEmissiveColor(emissive.r, emissive.g, emissive.b);
+	material.SetTransparentColor(transparent.r, transparent.g, transparent.b);
+	material.SetReflectiveColor(reflective.r, reflective.g, reflective.b);
+
+	//TEXTURES
+	for (int i = aiTextureType_DIFFUSE; i < aiTextureType_UNKNOWN; i++)
+	{
+		for (int j = 0; j < ai_material.GetTextureCount((aiTextureType)i); j++)
+		{
+			ai_material.GetTexture((aiTextureType)i, j, &texture_path);
+			Texture* texture = CreateTexture(texture_path.C_Str());
+			material.SetDiffuseTexture(texture);
+			App->resources->AddTexture(texture);
+		}
+	}
+
+	//PROPERTIES
+	ai_material.Get(AI_MATKEY_ENABLE_WIREFRAME, wireframe);
+	ai_material.Get(AI_MATKEY_TWOSIDED, two_sided);
+	ai_material.Get(AI_MATKEY_SHADING_MODEL, shading_model);
+	ai_material.Get(AI_MATKEY_BLEND_FUNC, blend_mode);
+	ai_material.Get(AI_MATKEY_OPACITY, opacity);
+	ai_material.Get(AI_MATKEY_SHININESS, shininess);
+	ai_material.Get(AI_MATKEY_SHININESS_STRENGTH, shininess_strength);
+	ai_material.Get(AI_MATKEY_REFRACTI, refraction);
+	ai_material.Get(AI_MATKEY_COLOR_REFLECTIVE, reflectivity);
+	ai_material.Get(AI_MATKEY_BUMPSCALING, bump_scaling);
+
+	material.SetWireframe(wireframe);
+	material.SetTwoSided(two_sided);
+	material.SetShadingModel(shading_model);
+	material.SetBlendMode(blend_mode);
+	material.SetOpacity(opacity);
+	material.SetShininess(shininess);
+	material.SetShininessStrength(shininess_strength);
+	material.SetRefraction(refraction);
+	material.SetReflectivity(reflectivity);
+	material.SetBumpScaling(bump_scaling);
+
+}
+
+Texture* ModuleMeshImporter::CreateTexture(std::string mat_texture_name)
+{
+	Texture* material_texture = nullptr;
+	if (mat_texture_name.length() > 0)
+	{
+		std::string full_texture_path = App->file_system->StringToPathFormat(ASSETS_TEXTURES_FOLDER + App->file_system->GetFileName(mat_texture_name));
+		std::string texture_name = App->file_system->GetFileNameWithoutExtension(mat_texture_name);
+		material_texture = App->resources->GetTexture(texture_name);
+		if (!material_texture)
+		{
+			std::string library_path = App->texture_importer->ImportTexture(full_texture_path);
+
+			if (!library_path.empty())
+			{
+				material_texture = App->texture_importer->LoadTextureFromLibrary(library_path);
+				if (material_texture)
+				{
+					material_texture->SetAssetsPath(full_texture_path);
+				}
+			}
+		}
+	}
+
+	if (!material_texture) material_texture = new Texture();
+
+	return material_texture;
 }
 
 Mesh * ModuleMeshImporter::LoadMeshFromLibrary(std::string path)
@@ -480,6 +603,11 @@ void ModuleMeshImporter::SaveMeshToLibrary(Mesh& mesh)
 	bytes = sizeof(AABB);
 	memcpy(cursor, &mesh.box.minPoint.x, bytes);
 
+	std::string mesh_name = mesh.GetName();
+	if (App->resources->CheckResourceName(mesh_name))
+	{
+		mesh.SetName(mesh_name);
+	}
 	std::string library_path = LIBRARY_MESHES_FOLDER + mesh.GetName() + ".mesh";
 	std::ofstream outfile(library_path.c_str(), std::ofstream::binary);
 	outfile.write(data, size);
@@ -489,28 +617,6 @@ void ModuleMeshImporter::SaveMeshToLibrary(Mesh& mesh)
 
 	delete[] data;
 	data = nullptr;
-}
-
-void ModuleMeshImporter::GetDummyTransform(aiNode & node, aiVector3D & pos, aiQuaternion & rot, aiVector3D & scale)
-{
-	if (node.mChildren)
-	{
-		std::string s_node_name(node.mName.C_Str());
-		if (s_node_name.find("$AssimpFbx$_PreRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Rotation") != std::string::npos ||
-			s_node_name.find("$AssimpFbx$_PostRotation") != std::string::npos || s_node_name.find("$AssimpFbx$_Scaling") != std::string::npos ||
-			s_node_name.find("$AssimpFbx$_Translation") != std::string::npos)
-		{
-			aiVector3D node_pos;
-			aiQuaternion node_quat;
-			aiVector3D node_scale;
-			node.mTransformation.Decompose(node_scale, node_quat, node_pos);
-			pos += node_pos;
-			rot = rot * node_quat;
-			scale = aiVector3D(scale * node_scale);
-			node = *node.mChildren[0];
-			GetDummyTransform(node, pos, rot, scale);
-		}
-	}
 }
 
 void Callback(const char* message, char* c) {

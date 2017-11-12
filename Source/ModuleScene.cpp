@@ -17,6 +17,7 @@
 #include "ModuleInput.h"
 #include "Prefab.h"
 #include "ModuleResources.h"
+#include "Mesh.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -66,30 +67,60 @@ GameObject * ModuleScene::CreateGameObject(GameObject * parent)
 	GameObject* ret = new GameObject(parent);
 	RenameDuplicatedGameObject(ret);
 	AddGameObjectToScene(ret);
+	App->resources->AddGameObject(ret);
 	return ret;
 }
 
-//GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
-//{
-//	GameObject* ret = nullptr;
-//
-//	return ret;
-//}
+GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
+{
+	GameObject* ret = nullptr;
+
+	if (gameObject != nullptr) {
+		Data data;
+		gameObject->Save(data, true);
+		for (int i = 0; i < saving_index; i++) {
+			GameObject* go = new GameObject();
+			data.EnterSection("GameObject_" + std::to_string(i));
+			go->Load(data, true);
+			data.LeaveSection();
+			scene_gameobjects.push_back(go);
+			if (go->IsRoot()) root_gameobjects.push_back(go);
+			if (i == 0) { //return the first object (parent)
+				ret = go;
+			}
+			App->resources->AddGameObject(go);
+			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::Transform);
+			if (transform) transform->UpdateGlobalMatrix();
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->GetComponent(Component::MeshRenderer);
+			if (mesh_renderer) mesh_renderer->LoadToMemory();
+		}
+		data.ClearData();
+		saving_index = 0;
+	}
+
+	return ret;
+}
 
 update_status ModuleScene::PreUpdate(float dt)
 {
 	for (std::list<GameObject*>::iterator it = gameobjects_to_destroy.begin(); it != gameobjects_to_destroy.end();) {
-		if (*it != nullptr) {
-			(*it)->OnDestroy();
-			if ((*it)->IsRoot()) {
-				root_gameobjects.remove(*it);
+		if (*it != nullptr)
+		{
+			if(!(*it)->GetIsUsedInPrefab()) {
+				(*it)->OnDestroy();
+				if ((*it)->IsRoot()) {
+					root_gameobjects.remove(*it);
+				}
+				CONSOLE_DEBUG("GameObject Destroyed: %s", (*it)->GetName().c_str());
+				RELEASE(*it);
 			}
-			CONSOLE_DEBUG("GameObject Destroyed: %s", (*it)->GetName().c_str());
-			RELEASE(*it);
+			else
+			{
+				RemoveWithoutDelete(*it);
+			}
 			it = gameobjects_to_destroy.erase(it);
 		}
 	}
-
 
 	return UPDATE_CONTINUE;
 }
@@ -177,6 +208,60 @@ void ModuleScene::DestroyAllGameObjects()
 	}
 }
 
+void ModuleScene::RemoveWithoutDelete(GameObject * gameobject)
+{
+	if (gameobject->IsRoot())
+	{
+		root_gameobjects.remove(gameobject);
+	}
+	scene_gameobjects.remove(gameobject);
+	if (std::find(selected_gameobjects.begin(), selected_gameobjects.end(), gameobject) != selected_gameobjects.end()) {
+		selected_gameobjects.remove(gameobject);
+	}
+
+	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::MeshRenderer);
+	if (mesh_renderer)
+	{
+		Mesh* mesh = mesh_renderer->GetMesh();
+		if (mesh)
+		{
+			if (gameobject->IsStatic())
+			{
+				if (std::find(static_meshes.begin(), static_meshes.end(), mesh) != static_meshes.end())
+				{
+					static_meshes.remove(mesh);
+				}
+			}
+			else
+			{
+				if (std::find(dynamic_meshes.begin(), dynamic_meshes.end(), mesh) != dynamic_meshes.end())
+				{
+					dynamic_meshes.remove(mesh);
+				}
+			}
+		}
+		mesh_renderer->UnloadFromMemory();
+	}
+
+	ComponentCamera* camera = (ComponentCamera*)gameobject->GetComponent(Component::Camera);
+	if (camera)
+	{
+		if (std::find(scene_cameras.begin(), scene_cameras.end(), camera) != scene_cameras.end())
+		{
+			scene_cameras.remove(camera);
+		}
+	}
+
+	//std::string object_name = gameobject->GetName();
+	//scene_gameobjects_name_counter[object_name] -= 1;
+	//if (scene_gameobjects_name_counter[object_name] == 0) scene_gameobjects_name_counter.erase(object_name);
+
+	for (std::list<GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); it++)
+	{
+		RemoveWithoutDelete(*it);
+	}
+}
+
 void ModuleScene::ApplyTextureToSelectedGameObjects(Texture * texture)
 {
 	for (std::list<GameObject*>::iterator it = selected_gameobjects.begin(); it != selected_gameobjects.end(); it++)
@@ -193,7 +278,7 @@ void ModuleScene::ApplyTextureToGameObject(GameObject * gameobject, Texture* tex
 
 		if (mesh_renderer != nullptr)
 		{
-			mesh_renderer->LoadTexture(texture);
+			//mesh_renderer->SetTexture(texture);
 			CONSOLE_DEBUG("Texture %s attached to %s", texture->GetName().c_str(), gameobject->GetName().c_str());
 		}
 	}
@@ -244,6 +329,12 @@ void ModuleScene::LoadScene(std::string path)
 			game_object->Load(data);
 			data.LeaveSection();
 			scene_gameobjects.push_back(game_object);
+			if (game_object->IsRoot()) root_gameobjects.push_back(game_object);
+			App->resources->AddGameObject(game_object);
+			ComponentTransform* transform = (ComponentTransform*)game_object->GetComponent(Component::Transform);
+			if (transform) transform->UpdateGlobalMatrix();
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)game_object->GetComponent(Component::MeshRenderer);
+			if (mesh_renderer) mesh_renderer->LoadToMemory();
 		}
 	}
 	else
@@ -265,25 +356,34 @@ void ModuleScene::SaveScene(std::string path) const
 
 void ModuleScene::LoadPrefab(Prefab* prefab)
 {
-	std::vector<GameObject*> createdObjects;
-	bool justIncrease = false;
-	if (scene_gameobjects.empty()) {
-		justIncrease = true;
-	}
-
-	std::vector<GameObject*> prefab_gameobjects = prefab->GetGameObjects();
-	for (std::vector<GameObject*>::iterator it = prefab_gameobjects.begin(); it != prefab_gameobjects.end(); it++)
+	GameObject* prefab_root = prefab->GetRootGameObject();
+	if (std::find(root_gameobjects.begin(), root_gameobjects.end(), prefab_root) == root_gameobjects.end())
 	{
+		std::vector<GameObject*> createdObjects;
+		bool justIncrease = false;
+		if (scene_gameobjects.empty()) {
+		justIncrease = true;
+		}
+
+		std::vector<GameObject*> prefab_gameobjects = prefab->GetGameObjects();
+		for (std::vector<GameObject*>::iterator it = prefab_gameobjects.begin(); it != prefab_gameobjects.end(); it++)
+		{
+
 		AddGameObjectToScene(*it);
 		createdObjects.push_back(*it);
 		ComponentTransform* transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
 		if (transform) transform->UpdateGlobalMatrix();
 		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
 		if (mesh_renderer) mesh_renderer->LoadToMemory();
-	}
+		}
 
-	for (int i = 0; i < createdObjects.size(); i++) {
+		for (int i = 0; i < createdObjects.size(); i++) {
 		RenameDuplicatedGameObject(createdObjects[i], justIncrease);
+		}
+	}
+	else
+	{
+		DuplicateGameObject(prefab_root);
 	}
 }
 
@@ -378,11 +478,12 @@ void ModuleScene::RenameDuplicatedGameObject(GameObject * gameObject, bool justI
 	int gameObjectCount = 1;
 	//Rename if name exist
 	bool inParenthesis = false;
+	std::string object_name = gameObject->GetName();
 	std::string str;
-	for (int i = 0; i < gameObject->GetName().size(); i++) {
-		if (gameObject->GetName()[i] == ')') {
+	for (int i = 0; i < object_name.size(); i++) {
+		if (object_name[i] == ')') {
 			inParenthesis = false;
-			if (gameObject->GetName()[i + 1] == '\0') {
+			if (object_name[i + 1] == '\0') {
 				break;
 			}
 			else {
@@ -390,34 +491,34 @@ void ModuleScene::RenameDuplicatedGameObject(GameObject * gameObject, bool justI
 			}
 		}
 		if (inParenthesis) {
-			str.push_back(gameObject->GetName()[i]);
+			str.push_back(object_name[i]);
 		}
-		if (gameObject->GetName()[i] == '(') {
+		if (object_name[i] == '(') {
 			inParenthesis = true;
 		}
 	}
 	if (atoi(str.c_str()) != 0) {
-		gameObject->GetName().erase(gameObject->GetName().end() - (str.length() + 2), gameObject->GetName().end());
+		object_name.erase(object_name.end() - (str.length() + 2), object_name.end());
 		gameObjectCount = stoi(str);
 	}
 
-	std::map<std::string, int>::iterator it = scene_gameobjects_name_counter.find(gameObject->GetName());
+	std::map<std::string, int>::iterator it = scene_gameobjects_name_counter.find(object_name);
 	if (it != scene_gameobjects_name_counter.end()) {
-		if (scene_gameobjects_name_counter[gameObject->GetName()] < gameObjectCount && !justIncrease) {
-			scene_gameobjects_name_counter[gameObject->GetName()] = gameObjectCount;
+		if (scene_gameobjects_name_counter[object_name] < gameObjectCount && !justIncrease) {
+			scene_gameobjects_name_counter[object_name] = gameObjectCount;
 		}
 		else {
-			scene_gameobjects_name_counter[gameObject->GetName()] += 1;
+			scene_gameobjects_name_counter[object_name] += 1;
 		}
-		gameObject->SetName(gameObject->GetName() + "(" + std::to_string(it->second) + ")");
+		gameObject->SetName(object_name + "(" + std::to_string(it->second) + ")");
 	}
 	else {
 		if (gameObjectCount > 1) {
-			scene_gameobjects_name_counter[gameObject->GetName()] = gameObjectCount;
-			gameObject->SetName(gameObject->GetName() + "(" + std::to_string(gameObjectCount) + ")");
+			scene_gameobjects_name_counter[object_name] = gameObjectCount;
+			gameObject->SetName(object_name + "(" + std::to_string(gameObjectCount) + ")");
 		}
 		else {
-			scene_gameobjects_name_counter[gameObject->GetName()] = 1;
+			scene_gameobjects_name_counter[object_name] = 1;
 		}
 	}
 }

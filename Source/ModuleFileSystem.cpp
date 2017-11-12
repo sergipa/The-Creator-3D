@@ -109,7 +109,7 @@ void ModuleFileSystem::DeleteFile(std::string file_path)
 
 void ModuleFileSystem::Copy_File(std::string old_path, std::string new_path)
 {
-	fs::copy_file(old_path, new_path);
+	fs::copy_file(old_path, new_path, fs::copy_options::overwrite_existing);
 }
 
 std::string ModuleFileSystem::GetFileName(std::string file_path)

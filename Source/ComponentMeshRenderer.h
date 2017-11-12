@@ -1,7 +1,8 @@
 #pragma once
 #include "Component.h"
-#include "Mesh.h"
-#include "Texture.h"
+
+class Mesh;
+class Material;
 
 class ComponentMeshRenderer :
 	public Component
@@ -11,20 +12,21 @@ public:
 	virtual ~ComponentMeshRenderer();
 
 	Mesh* GetMesh() const;
-	void LoadMesh(Mesh* mesh);
+	void SetMesh(Mesh* mesh);
 
-	Texture* GetTexture() const;
-	void LoadTexture(Texture* texture);
+	Material* GetMaterial() const;
+	void SetMaterial(Material* texture);
 
 	void UpdateBoundingBox();
 
 	void LoadToMemory();
+	void UnloadFromMemory();
 
 	void Save(Data& data) const;
 	void Load(Data& data);
 
 private:
 	Mesh* mesh;
-	Texture* texture;
+	Material* material;
 };
 

@@ -4,6 +4,8 @@
 #include "ModuleScene.h"
 #include "ComponentTransform.h"
 #include "ComponentCamera.h"
+#include "Mesh.h"
+#include "ModuleResources.h"
 
 GameObject::GameObject(GameObject* parent)
 {
@@ -23,6 +25,7 @@ GameObject::GameObject(GameObject* parent)
 	is_on_destroy = false;
 	is_selected = false;
 	is_static = false;
+	is_used_in_prefab = false;
 	AddComponent(Component::Transform);
 
 	uuid = App->RandomNumber().Int();
@@ -202,6 +205,7 @@ void GameObject::SetParent(GameObject * parent)
 
 	this->parent = parent;
 	this->parent->childs.push_back(this);
+
 	if (is_root)
 	{
 		is_root = false;
@@ -237,6 +241,16 @@ void GameObject::SetLayer(std::string layer)
 std::string GameObject::GetLayer() const
 {
 	return layer;
+}
+
+void GameObject::SetIsUsedInPrefab(bool used)
+{
+	is_used_in_prefab = used;
+}
+
+bool GameObject::GetIsUsedInPrefab() const
+{
+	return is_used_in_prefab;
 }
 
 int GameObject::GetAllChildsCount() const
@@ -338,6 +352,13 @@ void GameObject::OnDestroy()
 	if (it2 != App->scene->scene_gameobjects.end()) {
 		App->scene->scene_gameobjects.erase(it2);
 	}
+	App->resources->RemoveGameObject(this);
+
+	//App->scene->scene_gameobjects_name_counter[name] -= 1;
+	//if (App->scene->scene_gameobjects_name_counter[name] == 0) App->scene->scene_gameobjects_name_counter.erase(name);
+
+	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+	if (mesh_renderer) mesh_renderer->UnloadFromMemory();
 	
 	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end();) {
 		if (*it != nullptr) {
@@ -368,6 +389,21 @@ void GameObject::Save(Data & data, bool is_duplicated)
 	}
 
 	data.CreateSection("GameObject_" + std::to_string(App->scene->saving_index++));
+	uint new_uuid = uuid;
+	bool temp_active = active;
+	bool temp_static = is_static;
+	bool temp_selected = is_selected;
+	std::string temp_tag = tag;
+	std::string temp_layer = layer;
+	if (is_duplicated)
+	{
+		uuid = App->RandomNumber().Int();
+		active = true;
+		is_static = false;
+		is_selected = false;
+		tag = "Default";
+		layer = "Default";
+	}
 	data.AddUInt("UUID", uuid);
 	data.AddString("Name", name);
 	data.AddString("Tag", tag);
@@ -396,6 +432,12 @@ void GameObject::Save(Data & data, bool is_duplicated)
 	}
 
 	name = tempName;
+	uuid = new_uuid;
+	active = temp_active;
+	is_static = temp_static;
+	is_selected = temp_selected;
+	tag = temp_tag;
+	layer = temp_layer;
 }
 
 void GameObject::Load(Data & data, bool is_prefab)

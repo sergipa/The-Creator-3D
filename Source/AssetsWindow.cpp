@@ -64,7 +64,7 @@ void AssetsWindow::DrawWindow()
 					}
 				}
 				ImGui::Separator();
-				if (ImGui::MenuItem("Import Texture")) {
+				/*if (ImGui::MenuItem("Import Texture")) {
 					char const * lFilterPatterns[4] = { "*.jpg", "*.png", "*.tga", "*.dds" };
 					const char* texture_path = tinyfd_openFileDialog("Select Texture...", NULL, 4, lFilterPatterns, NULL, 0);
 					if (texture_path != NULL) {
@@ -82,7 +82,7 @@ void AssetsWindow::DrawWindow()
 							tinyfd_messageBox("Error", "A file with this name exist in the current folder", "ok", "error", 1);
 						}
 					}
-				}
+				}*/
 				ImGui::EndPopup();
 			}
 		}
@@ -212,7 +212,7 @@ void AssetsWindow::DrawChilds(std::string path)
 {
 	std::string path_name;
 	path_name = App->file_system->GetDirectoryName(path);
-	sprintf_s(node_name, 30, "%s##node_%i", path_name.c_str(), node++);
+	sprintf_s(node_name, 150, "%s##node_%i", path_name.c_str(), node++);
 	uint flag = 0;
 
 	if (!App->file_system->DirectoryHasSubDirectories(path))

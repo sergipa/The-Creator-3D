@@ -2,7 +2,6 @@
 
 #include <string>
 #include "Resource.h"
-#include "Color.h"
 
 class Data;
 
@@ -51,8 +50,6 @@ public:
 	void CreateMeta() const;
 	void LoadToMemory();
 	void UnloadFromMemory();
-
-	Color color;
 
 private:
 	uint texture_id;

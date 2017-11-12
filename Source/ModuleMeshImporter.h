@@ -7,8 +7,11 @@
 class Mesh;
 struct aiNode;
 struct aiScene;
+struct aiMaterial;
 class GameObject;
 class Data;
+class Material;
+class Texture;
 
 class ModuleMeshImporter :
 	public Module
@@ -26,8 +29,10 @@ public:
 
 private:
 	//Loads the model and returns the root gameobject
-	GameObject* LoadMeshNode(GameObject* parent, aiNode* node, const aiScene* scene, const char* path);
+	GameObject* LoadMeshNode(GameObject* parent, aiNode* node, const aiScene& scene, const char* path);
 	void GetDummyTransform(aiNode& node, aiVector3D& pos, aiQuaternion& rot, aiVector3D& scale);
+	void LoadMaterial(Material& material, const aiMaterial& ai_material);
+	Texture* CreateTexture(std::string mat_texture_path);
 };
 
 void Callback(const char* message, char* c);

@@ -9,6 +9,8 @@
 #include "ModuleEditor.h"
 #include "TagsAndLayersWindow.h"
 #include "ModuleScene.h"
+#include "Mesh.h"
+#include "Material.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -191,6 +193,7 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 		{
 			mesh_renderer->SetActive(is_active);
 		}
+
 		if(ImGui::TreeNodeEx("Mesh Info", ImGuiTreeNodeFlags_OpenOnArrow))
 		{
 			if (mesh_renderer->GetMesh() == nullptr)
@@ -209,28 +212,28 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 		}
 		if (ImGui::TreeNodeEx("Texture Info", ImGuiTreeNodeFlags_OpenOnArrow))
 		{
-			if (mesh_renderer->GetTexture() == nullptr)
+			if (mesh_renderer->GetMaterial() == nullptr)
 			{
 				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Not using a Texture");
 				ImGui::TreePop();
 				return;
 			}
-			ImGui::Text("Texture ID: %d", mesh_renderer->GetTexture()->GetID());
-			ImGui::Text("Texture Path: %s", mesh_renderer->GetTexture()->GetAssetsPath().c_str());
-			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Path: " + mesh_renderer->GetTexture()->GetAssetsPath()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
+			/*ImGui::Text("Texture ID: %d", mesh_renderer->GetMaterial()->GetID());
+			ImGui::Text("Texture Path: %s", mesh_renderer->GetMaterial()->GetAssetsPath().c_str());
+			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Path: " + mesh_renderer->GetMaterial()->GetAssetsPath()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
 				ImGui::BeginTooltip();
-				ImGui::Text("%s", mesh_renderer->GetTexture()->GetAssetsPath().c_str());
+				ImGui::Text("%s", mesh_renderer->GetMaterial()->GetAssetsPath().c_str());
 				ImGui::EndTooltip();
 			}
-			ImGui::Text("Texture Name: %s", mesh_renderer->GetTexture()->GetName().c_str());
-			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Name: " + mesh_renderer->GetTexture()->GetName()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
+			ImGui::Text("Texture Name: %s", mesh_renderer->GetMaterial()->GetName().c_str());
+			if (ImGui::IsItemHoveredRect() && ImGui::CalcTextSize(("Texture Name: " + mesh_renderer->GetMaterial()->GetName()).c_str()).x > ImGui::GetContentRegionAvailWidth()) {
 				ImGui::BeginTooltip();
-				ImGui::Text("%s", mesh_renderer->GetTexture()->GetName().c_str());
+				ImGui::Text("%s", mesh_renderer->GetMaterial()->GetName().c_str());
 				ImGui::EndTooltip();
 			}
-			ImGui::Text("Texture Size: %d x %d", mesh_renderer->GetTexture()->GetWidth(), mesh_renderer->GetTexture()->GetHeight());
-			ImGui::Text("Texture Format: %s", mesh_renderer->GetTexture()->GetFormatString().c_str());
-			ImGui::Text("Texture Type: %s", mesh_renderer->GetTexture()->GetTypeString().c_str());
+			ImGui::Text("Texture Size: %d x %d", mesh_renderer->GetMaterial()->GetWidth(), mesh_renderer->GetMaterial()->GetHeight());
+			ImGui::Text("Texture Format: %s", mesh_renderer->GetMaterial()->GetFormatString().c_str());
+			ImGui::Text("Texture Type: %s", mesh_renderer->GetMaterial()->GetTypeString().c_str());*/
 			ImGui::TreePop();
 		}
 

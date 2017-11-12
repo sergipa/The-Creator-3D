@@ -79,11 +79,12 @@ bool Mesh::Load(Data & data)
 		normals = mesh->normals;
 		colors = mesh->colors;
 		texture_coords = mesh->texture_coords;
+		App->resources->AddMesh(mesh);
 	}
 
 	SetUID(data.GetUInt("UID"));
-	SetAssetsPath(data.GetString("Assets_path"));
-	SetLibraryPath(data.GetString("Library_path"));
+	SetAssetsPath(data.GetString("assets_path"));
+	SetLibraryPath(data.GetString("library_path"));
 	SetName(data.GetString("mesh_name"));
 
 	return ret;

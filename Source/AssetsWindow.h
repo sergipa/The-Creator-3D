@@ -15,12 +15,11 @@ public:
 	void DrawWindow();
 
 private:
-	void FillResourcesLists();
 	void DrawChilds(std::string path);
 
 private:
 	uint node;
-	char node_name[30];
+	char node_name[150];
 	bool show_new_folder_window;
 	bool file_options_open;
 

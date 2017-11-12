@@ -363,9 +363,6 @@
     <ClInclude Include="PerfTimer.h">
       <Filter>Sources\Tools</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleImport.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Sources\GameObject</Filter>
     </ClInclude>
@@ -436,6 +433,12 @@
       <Filter>Sources\Modules\Importers</Filter>
     </ClInclude>
     <ClInclude Include="ModulePrefabImporter.h">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleMaterialImporter.h">
       <Filter>Sources\Modules\Importers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -641,9 +644,6 @@
     <ClCompile Include="PerfTimer.cpp">
       <Filter>Sources\Tools</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleImport.cpp">
-      <Filter>Sources\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Sources\GameObject</Filter>
     </ClCompile>
@@ -714,6 +714,12 @@
       <Filter>Sources\Modules\Importers</Filter>
     </ClCompile>
     <ClCompile Include="ModulePrefabImporter.cpp">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleMaterialImporter.cpp">
       <Filter>Sources\Modules\Importers</Filter>
     </ClCompile>
   </ItemGroup>

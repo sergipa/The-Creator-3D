@@ -14,6 +14,8 @@
 #include "ComponentCamera.h"
 #include "RenderTexture.h"
 #include "ModuleCamera3D.h"
+#include "Mesh.h"
+#include "Material.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -157,24 +159,24 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-	ms_timer.Start();
-	glEnable(GL_LIGHTING);
+ms_timer.Start();
+glEnable(GL_LIGHTING);
 
-	textureMSAA->Bind();
+textureMSAA->Bind();
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glLoadIdentity();
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
+glMatrixMode(GL_MODELVIEW);
+glLoadMatrixf(App->camera->GetViewMatrix());
 
-	// light 0 on cam pos
-	lights[0].SetPos(App->camera->GetPosition().x, App->camera->GetPosition().y, App->camera->GetPosition().z);
+// light 0 on cam pos
+lights[0].SetPos(App->camera->GetPosition().x, App->camera->GetPosition().y, App->camera->GetPosition().z);
 
-	for(uint i = 0; i < MAX_LIGHTS; ++i)
-		lights[i].Render();
+for (uint i = 0; i < MAX_LIGHTS; ++i)
+	lights[i].Render();
 
-	return UPDATE_CONTINUE;
+return UPDATE_CONTINUE;
 }
 
 // PostUpdate present buffer to screen
@@ -208,7 +210,7 @@ void ModuleRenderer3D::DrawScene()
 	//Wihout this, the dragged texture will be drawn on the grid if scene doesn't have gameobjects
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	pPlane pl(0,1,0,0);
+	pPlane pl(0, 1, 0, 0);
 	pl.axis = true;
 	pl.color = { 0.3f,0.3f,0.3f,1 };
 	pl.Render();
@@ -232,74 +234,71 @@ void ModuleRenderer3D::DrawScene()
 	}
 	DrawSceneGameObjects(active_camera);
 	rendering_cameras.clear();
-	
+
 }
 
 void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
 {
-		/*this->active_camera = active_camera;
-		active_camera->GetViewportTexture()->Bind();*/
-		for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
+	/*this->active_camera = active_camera;
+	active_camera->GetViewportTexture()->Bind();*/
+	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
+	{
+		if (active_camera->GetGameObject())
 		{
-			if (active_camera->GetGameObject())
-			{
-				if (!active_camera->ContainsGameObjectAABB((*it)->GetMesh()->box)) continue;
-			}
-
-			glPushMatrix();
-			glMultMatrixf((*it)->GetGameObject()->GetOpenGLMatrix());
-			if ((*it)->GetTexture() != nullptr && (*it)->GetTexture()->GetID() > 0)
-			{
-				glBindTexture(GL_TEXTURE_2D, (*it)->GetTexture()->GetID());
-				//glEnable(GL_COLOR_MATERIAL);
-				//glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-				//glColor4f((*it)->GetTexture()->color.r, (*it)->GetTexture()->color.g, (*it)->GetTexture()->color.b, 1.0);
-				//glDisable(GL_COLOR_MATERIAL);
-			}
-			//VERTICES
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_vertices);
-			glVertexPointer(3, GL_FLOAT, 0, NULL);
-			//NORMALS
-			if ((*it)->GetMesh()->id_normals > 0)
-			{
-				glEnableClientState(GL_NORMAL_ARRAY);
-				glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_normals);
-				glNormalPointer(GL_FLOAT, 0, NULL);
-			}
-			//TEXTURE_COORDS
-			if ((*it)->GetMesh()->id_texture_coords > 0)
-			{
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_texture_coords);
-				glTexCoordPointer(3, GL_FLOAT, 0, NULL);
-			}
-			//COLORS
-			if ((*it)->GetMesh()->id_colors > 0)
-			{
-				glEnableClientState(GL_COLOR_ARRAY);
-				glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_colors);
-				glColorPointer(3, GL_FLOAT, 0, NULL);
-			}
-			//INDICES
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->GetMesh()->id_indices);
-			glDrawElements(GL_TRIANGLES, (*it)->GetMesh()->num_indices, GL_UNSIGNED_INT, NULL);
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			if ((*it)->GetTexture() != nullptr && (*it)->GetTexture() > 0)
-			{
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
-			glDisableClientState(GL_VERTEX_ARRAY);
-			glDisableClientState(GL_NORMAL_ARRAY);
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			glDisableClientState(GL_COLOR_ARRAY);
-			glPopMatrix();
-
-			//(*it)->GetGameObject()->UpdateGlobalMatrix();
-
+			if (!active_camera->ContainsGameObjectAABB((*it)->GetMesh()->box)) continue;
 		}
+
+		glPushMatrix();
+		glMultMatrixf((*it)->GetGameObject()->GetOpenGLMatrix());
+		Material* material = (*it)->GetMaterial();
+		if (material != nullptr)
+		{
+			material->LoadToMemory();
+		}
+		//VERTICES
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_vertices);
+		glVertexPointer(3, GL_FLOAT, 0, NULL);
+		//NORMALS
+		if ((*it)->GetMesh()->id_normals > 0)
+		{
+			glEnableClientState(GL_NORMAL_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_normals);
+			glNormalPointer(GL_FLOAT, 0, NULL);
+		}
+		//TEXTURE_COORDS
+		if ((*it)->GetMesh()->id_texture_coords > 0)
+		{
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_texture_coords);
+			glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+		}
+		//COLORS
+		if ((*it)->GetMesh()->id_colors > 0)
+		{
+			glEnableClientState(GL_COLOR_ARRAY);
+			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_colors);
+			glColorPointer(3, GL_FLOAT, 0, NULL);
+		}
+		//INDICES
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->GetMesh()->id_indices);
+		glDrawElements(GL_TRIANGLES, (*it)->GetMesh()->num_indices, GL_UNSIGNED_INT, NULL);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		if (material != nullptr)
+		{
+			material->UnloadFromMemory();
+		}
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
+		glPopMatrix();
+
+		//(*it)->GetGameObject()->UpdateGlobalMatrix();
+
+	}
 		//active_camera->GetViewportTexture()->Unbind();
 	mesh_to_draw.clear();
 }

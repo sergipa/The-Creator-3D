@@ -26,13 +26,14 @@ public:
 	bool CleanUp();
 
 	GameObject* CreateGameObject(GameObject* parent = nullptr);
-	//GameObject* DuplicateGameObject(GameObject* gameObject);
+	GameObject* DuplicateGameObject(GameObject* gameObject);
 	void RenameDuplicatedGameObject(GameObject * gameObject, bool justIncrease = false);
 	GameObject* FindGameObject(uint id) const;
 
 	void AddGameObjectToScene(GameObject* gameobject);
 	void AddGameObjectToDestroy(GameObject* gameobject);
 	void DestroyAllGameObjects();
+	void RemoveWithoutDelete(GameObject* gameobject);
 
 	void ApplyTextureToSelectedGameObjects(Texture* texture);
 	void ApplyTextureToGameObject(GameObject* gameobject, Texture* texture);

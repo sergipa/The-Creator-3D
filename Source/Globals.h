@@ -62,11 +62,17 @@ enum update_status
 #define DEFAULT_SCENE_TITLE "The Creator 3D - Untitled Scene"
 #define SCENE_TITLE_PREFIX "The Creator 3D - "
 
+#define PROJECT_FOLDER "./Project/"
 
 #define ASSETS_FOLDER "./Project/Assets/"
 #define ASSETS_FOLDER_PATH "./Project/Assets"
 #define ASSETS_TEXTURES_FOLDER "./Project/Assets/Textures/"
-#define PROJECT_FOLDER "./Project/"
+#define ASSETS_TEXTURES_FOLDER_PATH "./Project/Assets/Textures"
+#define ASSETS_PREFABS_FOLDER "./Project/Assets/Prefabs/"
+#define ASSETS_PREFABS_FOLDER_PATH "./Project/Assets/Prefabs"
+#define ASSETS_FBX_FOLDER "./Project/Assets/FBX/"
+#define ASSETS_FBX_FOLDER_PATH "./Project/Assets/FBX"
+
 #define LIBRARY_FOLDER "./Project/Library/"
 #define LIBRARY_FOLDER_PATH "./Project/Library"
 #define LIBRARY_TEXTURES_FOLDER "./Project/Library/Textures/"
@@ -75,9 +81,13 @@ enum update_status
 #define LIBRARY_MESHES_FOLDER_PATH "./Project/Library/Meshes"
 #define LIBRARY_PREFABS_FOLDER "./Project/Library/Prefabs/"
 #define LIBRARY_PREFABS_FOLDER_PATH "./Project/Library/Prefabs"
+#define LIBRARY_MATERIALS_FOLDER "./Project/Library/Materials/"
+#define LIBRARY_MATERIALS_FOLDER_PATH "./Project/Library/Materials"
+
 #define EDITOR_CONFIG_FILE "./Editor_Settings/Editor_Config.json"
 #define EDITOR_LAYOUT_FILE "./Editor_Settings/Editor_Layout"
 #define EDITOR_STYLE_FILE "./Editor_Settings/Editor_Style.json"
 #define EDITOR_IMAGES_FOLDER "./Editor_Settings/Images/"
 #define EDITOR_FONTS_FOLDER "./Editor_Settings/Fonts/"
+
 #define LOGS_FOLDER "./Logs/"
