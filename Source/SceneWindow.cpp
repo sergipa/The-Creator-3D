@@ -28,14 +28,14 @@ void SceneWindow::DrawWindow()
 		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_MenuBar)) {
 
 
-		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (scene_width != size.x && scene_height != size.y) {
-			App->renderer3D->OnResize(size.x, size.y);
+		window_size = ImGui::GetContentRegionAvail();
+		if (scene_width != window_size.x && scene_height != window_size.y) {
+			App->renderer3D->OnResize(window_size.x, window_size.y);
 		}
 
 		DrawMenuBar();
 
-		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTexture(), window_size, ImVec2(0, 1), ImVec2(1, 0));
 		
 		if (App->renderer3D->active_camera != nullptr)
 		{
@@ -74,11 +74,7 @@ void SceneWindow::DrawWindow()
 			last_matrix.Decompose(tmp_pos, tmp_rot, tmp_scale);
 
 			selected_matrix.Transpose();
-			float3 snap;
-			snap.x = 2;
-			snap.y = 2;
-			snap.z = 2;
-			ImGuizmo::Manipulate(view_matrix.ptr(), proj_matrix.ptr(), App->scene->mCurrentGizmoOperation, App->scene->mCurrentGizmoMode, selected_matrix.ptr(), NULL, snap.ptr());
+			ImGuizmo::Manipulate(view_matrix.ptr(), proj_matrix.ptr(), App->scene->mCurrentGizmoOperation, App->scene->mCurrentGizmoMode, selected_matrix.ptr());
 			selected_matrix.Transpose();
 
 			if (ImGuizmo::IsUsing())
@@ -189,4 +185,9 @@ bool SceneWindow::IsWindowFocused() const
 bool SceneWindow::IsMouseHoveringWindow() const
 {
 	return is_mouse_hovering_window;
+}
+
+ImVec2 SceneWindow::GetWindowSize() const
+{
+	return window_size;
 }

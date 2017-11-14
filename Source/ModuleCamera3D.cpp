@@ -12,6 +12,7 @@
 #include "GameObject.h"
 #include "ModuleWindow.h"
 #include "Mesh.h"
+#include <vector>
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -126,14 +127,17 @@ update_status ModuleCamera3D::Update(float dt)
 		}
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 		{
-
-			float normalized_mouse_x = -(1.0f - ((float)App->input->GetMouseX()) / ((float)(App->window->GetWidth())));
-			float normalized_mouse_y = 1.0f - ((float)App->input->GetMouseY()) / ((float)(App->window->GetHeight()));
+			float normalized_mouse_x = -(1.0f - ((float)App->input->GetMouseX()) / (float)(App->editor->scene_window->GetWindowSize().x));
+			float normalized_mouse_y = 1.0f - ((float)App->input->GetMouseY()) / ((float)(App->editor->scene_window->GetWindowSize().y));
 
 			Ray ray = this->GetCamera()->camera_frustum.UnProject(normalized_mouse_x, normalized_mouse_y);
 
 			float min_dist = NULL;
 			GameObject* closest_object = nullptr;
+			if (!App->scene->selected_gameobjects.empty())
+			{
+				closest_object = App->scene->selected_gameobjects.front();
+			}
 			for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
 			{
 
@@ -144,10 +148,43 @@ update_status ModuleCamera3D::Update(float dt)
 					float dist_far;
 					if (ray.Intersects(mesh_renderer->GetMesh()->box, dist_near, dist_far))
 					{
-						if (min_dist == NULL || dist_near < min_dist)
+						std::vector<float> vertices_vec;
+						std::vector<float> indices_vec;
+						std::vector<Triangle> mesh_triangles_vec;
+						for (int i = 0; i < mesh_renderer->GetMesh()->num_vertices * 3; i++)
 						{
-							min_dist = dist_near;
-							closest_object = *it;
+							vertices_vec.push_back(mesh_renderer->GetMesh()->vertices[i]);
+						}
+						for (int i = 0; i < mesh_renderer->GetMesh()->num_indices; i++)
+						{
+							indices_vec.push_back(mesh_renderer->GetMesh()->indices[i]);
+						}
+						for (int i = 0; i < mesh_renderer->GetMesh()->num_indices; i++)
+						{
+							Triangle temp;
+							temp.a = float3(vertices_vec[indices_vec[i]], vertices_vec[indices_vec[i] + 1], vertices_vec[indices_vec[i] + 2]);
+							i++;
+							temp.b = float3(vertices_vec[indices_vec[i]], vertices_vec[indices_vec[i] + 1], vertices_vec[indices_vec[i] + 2]);
+							i++;
+							temp.c = float3(vertices_vec[indices_vec[i]], vertices_vec[indices_vec[i] + 1], vertices_vec[indices_vec[i] + 2]);
+
+							mesh_triangles_vec.push_back(temp);
+						}
+						for (int i = 0; i < mesh_triangles_vec.size(); i++)
+						{
+							if (ray.Intersects(mesh_triangles_vec[i]))
+							{
+								if (min_dist == NULL || dist_near < min_dist)
+								{
+									min_dist = dist_near;
+									if (closest_object != nullptr)
+									{
+										closest_object->SetSelected(false);
+									}
+									closest_object = *it;
+								}
+							}
+							
 						}
 					}
 				}
@@ -155,6 +192,7 @@ update_status ModuleCamera3D::Update(float dt)
 			if (closest_object != nullptr)
 			{
 				App->scene->selected_gameobjects.clear();
+				closest_object->SetSelected(true);
 				App->scene->selected_gameobjects.push_back(closest_object);
 			}
 
