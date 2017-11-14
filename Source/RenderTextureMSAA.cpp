@@ -163,3 +163,13 @@ void RenderTextureMSAA::LoadToMemory()
 void RenderTextureMSAA::UnloadFromMemory()
 {
 }
+
+uint RenderTextureMSAA::GetWidth() const
+{
+	return width;
+}
+
+uint RenderTextureMSAA::GetHeight() const
+{
+	return height;
+}

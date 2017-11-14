@@ -28,6 +28,9 @@ public:
 	void LoadToMemory();
 	void UnloadFromMemory();
 
+	uint GetWidth() const;
+	uint GetHeight() const;
+
 private:
 	uint fbo_id;
 	uint fbo_msaa_id;

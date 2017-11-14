@@ -162,11 +162,6 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 
 			if (!mesh_created) continue;
 
-			//Focus the camera on the mesh
-			App->camera->can_update = true;
-			App->camera->FocusOnObject(float3(0, 0, 0), mesh->box.Size().Length());
-			App->camera->can_update = false;
-
 			if (ai_mesh->HasNormals())
 			{
 				mesh->normals = new float[mesh->num_vertices * 3];

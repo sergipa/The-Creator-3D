@@ -29,8 +29,10 @@ void SceneWindow::DrawWindow()
 
 
 		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (scene_width != size.x && scene_height != size.y) {
+		if (scene_width != size.x || scene_height != size.y) {
 			App->renderer3D->OnResize(size.x, size.y);
+			scene_width = size.x;
+			scene_height = size.y;
 		}
 
 		DrawMenuBar();

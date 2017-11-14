@@ -110,15 +110,19 @@ void ModuleResources::ImportFile(std::string path)
 	std::string file_name = App->file_system->GetFileName(path);
 	Resource::ResourceType type = AssetExtensionToResourceType(extension);
 
+	bool exist = false;
+
 	switch (type)
 	{
 	case Resource::TextureResource:
 		if (!App->file_system->DirectoryExist(ASSETS_TEXTURES_FOLDER_PATH)) App->file_system->Create_Directory(ASSETS_TEXTURES_FOLDER_PATH);
+		if (App->file_system->FileExist(ASSETS_TEXTURES_FOLDER + file_name)) exist = true; break;
 		App->file_system->Copy_File(path, ASSETS_TEXTURES_FOLDER + file_name);
 		path = ASSETS_TEXTURES_FOLDER + file_name;
 		break;
 	case Resource::MeshResource:
 		if (!App->file_system->DirectoryExist(ASSETS_FBX_FOLDER_PATH)) App->file_system->Create_Directory(ASSETS_FBX_FOLDER_PATH);
+		if (App->file_system->FileExist(ASSETS_FBX_FOLDER + file_name)) exist = true; break;
 		App->file_system->Copy_File(path, ASSETS_FBX_FOLDER + file_name);
 		path = ASSETS_FBX_FOLDER + file_name;
 		break;
@@ -128,6 +132,7 @@ void ModuleResources::ImportFile(std::string path)
 		break;
 	case Resource::PrefabResource:
 		if (!App->file_system->DirectoryExist(ASSETS_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(ASSETS_PREFABS_FOLDER_PATH);
+		if (App->file_system->FileExist(ASSETS_PREFABS_FOLDER + file_name)) exist = true; break;
 		App->file_system->Copy_File(path, ASSETS_PREFABS_FOLDER + file_name);
 		path = ASSETS_PREFABS_FOLDER + file_name;
 		break;
@@ -151,7 +156,7 @@ void ModuleResources::ImportFile(std::string path)
 		break;
 	}
 
-	CreateResource(path);
+	if (!exist)CreateResource(path);
 }
 
 Texture * ModuleResources::GetTexture(std::string name) const

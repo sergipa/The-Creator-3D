@@ -88,7 +88,14 @@ GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
 			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::Transform);
 			if (transform) transform->UpdateGlobalMatrix();
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->GetComponent(Component::MeshRenderer);
-			if (mesh_renderer) mesh_renderer->LoadToMemory();
+			if (mesh_renderer)
+			{
+				//Focus the camera on the mesh
+				App->camera->can_update = true;
+				App->camera->FocusOnObject(mesh_renderer->GetMesh()->box);
+				App->camera->can_update = false;
+				mesh_renderer->LoadToMemory();
+			}
 		}
 		data.ClearData();
 		saving_index = 0;
@@ -349,6 +356,7 @@ void ModuleScene::SaveScene(std::string path) const
 void ModuleScene::LoadPrefab(Prefab* prefab)
 {
 	GameObject* prefab_root = prefab->GetRootGameObject();
+
 	if (std::find(root_gameobjects.begin(), root_gameobjects.end(), prefab_root) == root_gameobjects.end())
 	{
 		std::vector<GameObject*> createdObjects;
@@ -360,17 +368,23 @@ void ModuleScene::LoadPrefab(Prefab* prefab)
 		std::vector<GameObject*> prefab_gameobjects = prefab->GetGameObjects();
 		for (std::vector<GameObject*>::iterator it = prefab_gameobjects.begin(); it != prefab_gameobjects.end(); it++)
 		{
-
-		AddGameObjectToScene(*it);
-		createdObjects.push_back(*it);
-		ComponentTransform* transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
-		if (transform) transform->UpdateGlobalMatrix();
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-		if (mesh_renderer) mesh_renderer->LoadToMemory();
+			AddGameObjectToScene(*it);
+			createdObjects.push_back(*it);
+			ComponentTransform* transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
+			if (transform) transform->UpdateGlobalMatrix();
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+			if (mesh_renderer)
+			{
+				mesh_renderer->LoadToMemory();
+				//Focus the camera on the mesh
+				App->camera->can_update = true;
+				App->camera->FocusOnObject(mesh_renderer->GetMesh()->box);
+				App->camera->can_update = false;
+			}
 		}
 
 		for (int i = 0; i < createdObjects.size(); i++) {
-		RenameDuplicatedGameObject(createdObjects[i], justIncrease);
+			RenameDuplicatedGameObject(createdObjects[i], justIncrease);
 		}
 	}
 	else
