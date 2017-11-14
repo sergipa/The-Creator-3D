@@ -33,6 +33,7 @@ GameObject::GameObject(GameObject* parent)
 
 GameObject::~GameObject()
 {
+	App->resources->RemoveGameObject(this);
 	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); ++it) {
 		RELEASE(*it);
 	}
@@ -353,9 +354,6 @@ void GameObject::OnDestroy()
 		App->scene->scene_gameobjects.erase(it2);
 	}
 	App->resources->RemoveGameObject(this);
-
-	//App->scene->scene_gameobjects_name_counter[name] -= 1;
-	//if (App->scene->scene_gameobjects_name_counter[name] == 0) App->scene->scene_gameobjects_name_counter.erase(name);
 
 	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
 	if (mesh_renderer) mesh_renderer->UnloadFromMemory();

@@ -22,21 +22,32 @@ ModuleResources::ModuleResources(Application* app, bool start_enabled, bool is_g
 
 ModuleResources::~ModuleResources()
 {
-	for (std::vector<Texture*>::iterator it = textures_list.begin(); it != textures_list.end(); ++it) {
-		RELEASE(*it);
+	for (std::map<uint, GameObject*>::iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); ++it) {
+		if(it->second->IsRoot()) RELEASE(it->second);
 	}
-	for (std::vector<Mesh*>::iterator it = meshes_list.begin(); it != meshes_list.end(); ++it) {
-		RELEASE(*it);
+	gameobjects_list.clear();
+
+	for (std::map<uint, Texture*>::iterator it = textures_list.begin(); it != textures_list.end(); ++it) {
+		RELEASE(it->second);
 	}
+	textures_list.clear();
+	for (std::map<uint, Mesh*>::iterator it = meshes_list.begin(); it != meshes_list.end(); ++it) {
+		RELEASE(it->second);
+	}
+	meshes_list.clear();
+	for (std::map<uint, Prefab*>::iterator it = prefabs_list.begin(); it != prefabs_list.end(); ++it) {
+		RELEASE(it->second);
+	}
+	prefabs_list.clear();
+	
+	for (std::map<uint, Material*>::iterator it = materials_list.begin(); it != materials_list.end(); ++it) {
+		RELEASE(it->second);
+	}
+	materials_list.clear();
 }
 
 bool ModuleResources::Init(Data * editor_config)
 {
-	if (!App->file_system->DirectoryExist(LIBRARY_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_FOLDER_PATH);
-	if (!App->file_system->DirectoryExist(LIBRARY_TEXTURES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_TEXTURES_FOLDER_PATH);
-	if (!App->file_system->DirectoryExist(LIBRARY_MESHES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MESHES_FOLDER_PATH);
-	if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
-	if (!App->file_system->DirectoryExist(LIBRARY_MATERIALS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MATERIALS_FOLDER_PATH);
 	FillResourcesLists();
 	return true;
 }
@@ -89,11 +100,6 @@ void ModuleResources::AddResource(Resource * resource)
 
 void ModuleResources::ImportFile(std::string path)
 {
-	/*std::string library_path = CreateLibraryFile(type, path);
-	Resource* resource = nullptr;
-	resource = CreateResourceFromLibrary(library_path);
-	AddResource(resource);*/
-
 	std::string extension = App->file_system->GetFileExtension(path);
 	std::string file_name = App->file_system->GetFileName(path);
 	Resource::ResourceType type = AssetExtensionToResourceType(extension);
@@ -144,19 +150,16 @@ void ModuleResources::ImportFile(std::string path)
 
 Texture * ModuleResources::GetTexture(std::string name) const
 {
-	for (std::vector<Texture*>::const_iterator it = textures_list.begin(); it != textures_list.end(); it++)
+	for (std::map<uint, Texture*>::const_iterator it = textures_list.begin(); it != textures_list.end(); it++)
 	{
-		if ((*it) != nullptr && (*it)->GetName() == name) return (*it);
+		if (it->second != nullptr && it->second->GetName() == name) return it->second;
 	}
 	return nullptr;
 }
 
 Texture * ModuleResources::GetTexture(UID uid) const
 {
-	for (std::vector<Texture*>::const_iterator it = textures_list.begin(); it != textures_list.end(); it++)
-	{
-		if ((*it) != nullptr && (*it)->GetUID() == uid) return (*it);
-	}
+	if (textures_list.find(uid) != textures_list.end()) return textures_list.at(uid);
 	return nullptr;
 }
 
@@ -164,34 +167,36 @@ void ModuleResources::AddTexture(Texture * texture)
 {
 	if (texture != nullptr)
 	{
-		if (std::find(textures_list.begin(), textures_list.end(), texture) == textures_list.end())
-		{
-			textures_list.push_back(texture);
-		}
+		textures_list[texture->GetUID()] = texture;
 	}
 }
 
 void ModuleResources::RemoveTexture(Texture * texture)
 {
-	std::vector<Texture*>::iterator it = std::find(textures_list.begin(), textures_list.end(), texture);
-	if(it != textures_list.end()) textures_list.erase(it);
+	if (texture)
+	{
+		std::map<uint, Texture*>::iterator it = textures_list.find(texture->GetUID());
+		if (it != textures_list.end()) textures_list.erase(it);
+	}
+}
+
+std::map<uint, Texture*> ModuleResources::GetTexturesList() const
+{
+	return textures_list;
 }
 
 Mesh * ModuleResources::GetMesh(std::string name) const
 {
-	for (std::vector<Mesh*>::const_iterator it = meshes_list.begin(); it != meshes_list.end(); it++)
+	for (std::map<uint, Mesh*>::const_iterator it = meshes_list.begin(); it != meshes_list.end(); it++)
 	{
-		if ((*it) != nullptr && (*it)->GetName() == name) return (*it);
+		if (it->second != nullptr && it->second->GetName() == name) return it->second;
 	}
 	return nullptr;
 }
 
 Mesh * ModuleResources::GetMesh(UID uid) const
 {
-	for (std::vector<Mesh*>::const_iterator it = meshes_list.begin(); it != meshes_list.end(); it++)
-	{
-		if ((*it) != nullptr && (*it)->GetUID() == uid) return (*it);
-	}
+	if (meshes_list.find(uid) != meshes_list.end()) return meshes_list.at(uid);
 	return nullptr;
 }
 
@@ -199,34 +204,36 @@ void ModuleResources::AddMesh(Mesh * mesh)
 {
 	if (mesh != nullptr)
 	{
-		if (std::find(meshes_list.begin(), meshes_list.end(), mesh) == meshes_list.end())
-		{
-			meshes_list.push_back(mesh);
-		}
+		meshes_list[mesh->GetUID()] = mesh;
 	}
 }
 
 void ModuleResources::RemoveMesh(Mesh * mesh)
 {
-	std::vector<Mesh*>::iterator it = std::find(meshes_list.begin(), meshes_list.end(), mesh);
-	if (it != meshes_list.end()) meshes_list.erase(it);
+	if (mesh)
+	{
+		std::map<uint, Mesh*>::iterator it = meshes_list.find(mesh->GetUID());
+		if (it != meshes_list.end()) meshes_list.erase(it);
+	}
+}
+
+std::map<uint, Mesh*> ModuleResources::GetMeshesList() const
+{
+	return meshes_list;
 }
 
 Prefab * ModuleResources::GetPrefab(std::string name) const
 {
-	for (std::vector<Prefab*>::const_iterator it = prefabs_list.begin(); it != prefabs_list.end(); it++)
+	for (std::map<uint, Prefab*>::const_iterator it = prefabs_list.begin(); it != prefabs_list.end(); it++)
 	{
-		if ((*it) != nullptr && (*it)->GetName() == name) return (*it);
+		if (it->second != nullptr && it->second->GetName() == name) return it->second;
 	}
 	return nullptr;
 }
 
 Prefab * ModuleResources::GetPrefab(UID uid) const
 {
-	for (std::vector<Prefab*>::const_iterator it = prefabs_list.begin(); it != prefabs_list.end(); it++)
-	{
-		if ((*it) != nullptr && (*it)->GetUID() == uid) return (*it);
-	}
+	if (prefabs_list.find(uid) != prefabs_list.end()) return prefabs_list.at(uid);
 	return nullptr;
 }
 
@@ -234,34 +241,36 @@ void ModuleResources::AddPrefab(Prefab * prefab)
 {
 	if (prefab != nullptr)
 	{
-		if (std::find(prefabs_list.begin(), prefabs_list.end(), prefab) == prefabs_list.end())
-		{
-			prefabs_list.push_back(prefab);
-		}
+		prefabs_list[prefab->GetUID()] = prefab;
 	}
 }
 
 void ModuleResources::RemovePrefab(Prefab * prefab)
 {
-	std::vector<Prefab*>::iterator it = std::find(prefabs_list.begin(), prefabs_list.end(), prefab);
-	if (it != prefabs_list.end()) prefabs_list.erase(it);
+	if (prefab)
+	{
+		std::map<uint, Prefab*>::iterator it = prefabs_list.find(prefab->GetUID());
+		if (it != prefabs_list.end()) prefabs_list.erase(it);
+	}
+}
+
+std::map<uint, Prefab*> ModuleResources::GetPrefabsList() const
+{
+	return prefabs_list;
 }
 
 GameObject * ModuleResources::GetGameObject(std::string name) const
 {
-	for (std::vector<GameObject*>::const_iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); it++)
+	for (std::map<uint, GameObject*>::const_iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); it++)
 	{
-		if ((*it) != nullptr && (*it)->GetName() == name) return (*it);
+		if (it->second != nullptr && it->second->GetName() == name) return it->second;
 	}
 	return nullptr;
 }
 
 GameObject * ModuleResources::GetGameObject(UID uid) const
 {
-	for (std::vector<GameObject*>::const_iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); it++)
-	{
-		if ((*it) != nullptr && (*it)->GetUID() == uid) return (*it);
-	}
+	if (gameobjects_list.find(uid) != gameobjects_list.end()) return gameobjects_list.at(uid);
 	return nullptr;
 }
 
@@ -269,34 +278,36 @@ void ModuleResources::AddGameObject(GameObject * gameobject)
 {
 	if (gameobject != nullptr)
 	{
-		if (std::find(gameobjects_list.begin(), gameobjects_list.end(), gameobject) == gameobjects_list.end())
-		{
-			gameobjects_list.push_back(gameobject);
-		}
+		gameobjects_list[gameobject->GetUID()] = gameobject;
 	}
 }
 
 void ModuleResources::RemoveGameObject(GameObject * gameobject)
 {
-	std::vector<GameObject*>::iterator it = std::find(gameobjects_list.begin(), gameobjects_list.end(), gameobject);
-	if (it != gameobjects_list.end()) gameobjects_list.erase(it);
+	if (gameobject)
+	{
+		std::map<uint, GameObject*>::iterator it = gameobjects_list.find(gameobject->GetUID());
+		if (it != gameobjects_list.end()) gameobjects_list.erase(it);
+	}
+}
+
+std::map<uint, GameObject*> ModuleResources::GetGameobjectsList() const
+{
+	return gameobjects_list;
 }
 
 Material * ModuleResources::GetMaterial(std::string name) const
 {
-	for (std::vector<Material*>::const_iterator it = materials_list.begin(); it != materials_list.end(); it++)
+	for (std::map<uint, Material*>::const_iterator it = materials_list.begin(); it != materials_list.end(); it++)
 	{
-		if ((*it) != nullptr && (*it)->GetName() == name) return (*it);
+		if (it->second != nullptr && it->second->GetName() == name) return it->second;
 	}
 	return nullptr;
 }
 
 Material * ModuleResources::GetMaterial(UID uid) const
 {
-	for (std::vector<Material*>::const_iterator it = materials_list.begin(); it != materials_list.end(); it++)
-	{
-		if ((*it) != nullptr && (*it)->GetUID() == uid) return (*it);
-	}
+	if (materials_list.find(uid) != materials_list.end()) return materials_list.at(uid);
 	return nullptr;
 }
 
@@ -304,17 +315,22 @@ void ModuleResources::AddMaterial(Material * material)
 {
 	if (material != nullptr)
 	{
-		if (std::find(materials_list.begin(), materials_list.end(), material) == materials_list.end())
-		{
-			materials_list.push_back(material);
-		}
+		materials_list[material->GetUID()] = material;
 	}
 }
 
 void ModuleResources::RemoveMaterial(Material * material)
 {
-	std::vector<Material*>::iterator it = std::find(materials_list.begin(), materials_list.end(), material);
-	if (it != materials_list.end()) materials_list.erase(it);
+	if (material)
+	{
+		std::map<uint, Material*>::iterator it = materials_list.find(material->GetUID());
+		if (it != materials_list.end()) materials_list.erase(it);
+	}
+}
+
+std::map<uint, Material*> ModuleResources::GetMaterialsList() const
+{
+	return materials_list;
 }
 
 Resource::ResourceType ModuleResources::AssetExtensionToResourceType(std::string str)
@@ -426,12 +442,16 @@ std::string ModuleResources::CreateLibraryFile(Resource::ResourceType type, std:
 {
 	std::string ret;
 
+	if (!App->file_system->DirectoryExist(LIBRARY_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_FOLDER_PATH);
+
 	switch (type)
 	{
 	case Resource::TextureResource:
+		if (!App->file_system->DirectoryExist(LIBRARY_TEXTURES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_TEXTURES_FOLDER_PATH);
 		ret = App->texture_importer->ImportTexture(file_path);
 		break;
 	case Resource::MeshResource:
+		if (!App->file_system->DirectoryExist(LIBRARY_MESHES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MESHES_FOLDER_PATH);
 		ret = App->mesh_importer->ImportMesh(file_path);
 		break;
 	case Resource::SceneResource:
@@ -439,6 +459,7 @@ std::string ModuleResources::CreateLibraryFile(Resource::ResourceType type, std:
 	case Resource::AnimationResource:
 		break;
 	case Resource::PrefabResource:
+		if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
 		ret = App->prefab_importer->ImportPrefab(file_path);
 		break;
 	case Resource::ScriptResource:
@@ -450,6 +471,7 @@ std::string ModuleResources::CreateLibraryFile(Resource::ResourceType type, std:
 	case Resource::FontResource:
 		break;
 	case Resource::MaterialResource:
+		if (!App->file_system->DirectoryExist(LIBRARY_MATERIALS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MATERIALS_FOLDER_PATH);
 		ret = App->material_importer->ImportMaterial(file_path);
 		break;
 	case Resource::Unknown:
@@ -544,7 +566,6 @@ void ModuleResources::CreateResource(std::string file_path)
 	}
 	else
 	{
-		std::string extension = App->file_system->GetFileExtension(file_path);
 		Resource::ResourceType type = AssetExtensionToResourceType(extension);
 		library_path = CreateLibraryFile(type, file_path);
 		resource = CreateResourceFromLibrary(library_path);

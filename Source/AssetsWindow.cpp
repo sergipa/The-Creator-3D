@@ -37,6 +37,7 @@ AssetsWindow::~AssetsWindow()
 {
 	RELEASE(mesh_icon);
 	RELEASE(font_icon);
+	RELEASE(folder_icon)
 }
 
 void AssetsWindow::DrawWindow()

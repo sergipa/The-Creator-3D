@@ -55,7 +55,7 @@ void ComponentMeshRenderer::UpdateBoundingBox()
 void ComponentMeshRenderer::LoadToMemory()
 {
 	if (mesh) mesh->LoadToMemory();
-	if (material) material->LoadToMemory();
+	/*if (material) material->LoadToMemory();*/
 }
 
 void ComponentMeshRenderer::UnloadFromMemory()
@@ -85,11 +85,14 @@ void ComponentMeshRenderer::Load(Data & data)
 	SetUID(data.GetUInt("UUID"));
 	data.EnterSection("Mesh");
 	uint mesh_uid = data.GetUInt("UUID");
-	mesh = App->resources->GetMesh(mesh_uid);
-	if (!mesh)
+	if (mesh_uid != 0)
 	{
-		mesh = new Mesh();
-		mesh->Load(data);
+		mesh = App->resources->GetMesh(mesh_uid);
+		if (!mesh)
+		{
+			mesh = new Mesh();
+			mesh->Load(data);
+		}
 	}
 	data.LeaveSection();
 	data.EnterSection("Material");
@@ -103,7 +106,6 @@ void ComponentMeshRenderer::Load(Data & data)
 			material->Load(data);
 		}
 	}
-	
 	data.LeaveSection();
 }
 

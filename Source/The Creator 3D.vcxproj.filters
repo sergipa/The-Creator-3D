@@ -441,6 +441,12 @@
     <ClInclude Include="ModuleMaterialImporter.h">
       <Filter>Sources\Modules\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ResourcesWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\CustomImGui.h">
+      <Filter>Sources\3d Party\imGui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -721,6 +727,12 @@
     </ClCompile>
     <ClCompile Include="ModuleMaterialImporter.cpp">
       <Filter>Sources\Modules\Importers</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourcesWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\CustomImGui.cpp">
+      <Filter>Sources\3d Party\imGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

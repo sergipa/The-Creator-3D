@@ -64,7 +64,7 @@ bool Prefab::Load(Data & data)
 		go->SetIsUsedInPrefab(true);
 		if (go->IsRoot()) root_gameobject = go;
 	}
-	SetUID(data.GetUInt("UID"));
+	SetUID(data.GetUInt("UUID"));
 	SetAssetsPath(data.GetString("assets_path"));
 	SetLibraryPath(data.GetString("library_path"));
 	SetName(data.GetString("prefab_name"));

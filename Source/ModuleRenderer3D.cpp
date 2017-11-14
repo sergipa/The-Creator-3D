@@ -243,6 +243,7 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
 	active_camera->GetViewportTexture()->Bind();*/
 	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
+		if (*it == nullptr || (*it)->GetMesh() == nullptr) continue;
 		if (active_camera->GetGameObject())
 		{
 			if (!active_camera->ContainsGameObjectAABB((*it)->GetMesh()->box)) continue;
@@ -296,7 +297,7 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
 		glDisableClientState(GL_COLOR_ARRAY);
 		glPopMatrix();
 
-		//(*it)->GetGameObject()->UpdateGlobalMatrix();
+		(*it)->GetGameObject()->UpdateGlobalMatrix();
 
 	}
 		//active_camera->GetViewportTexture()->Unbind();

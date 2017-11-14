@@ -18,6 +18,7 @@
 #include "Prefab.h"
 #include "ModuleResources.h"
 #include "Mesh.h"
+#include "ModuleFileSystem.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -53,11 +54,6 @@ bool ModuleScene::Start()
 bool ModuleScene::CleanUp()
 {
 	CONSOLE_DEBUG("Unloading Scene");
-	
-	//Destroy the root gameobjects. Each gameobject will take care of their childs
-	for (std::list<GameObject*>::iterator it = root_gameobjects.begin(); it != root_gameobjects.end(); ++it) {
-		RELEASE(*it);
-	}
 
 	return true;
 }
@@ -252,10 +248,6 @@ void ModuleScene::RemoveWithoutDelete(GameObject * gameobject)
 		}
 	}
 
-	//std::string object_name = gameobject->GetName();
-	//scene_gameobjects_name_counter[object_name] -= 1;
-	//if (scene_gameobjects_name_counter[object_name] == 0) scene_gameobjects_name_counter.erase(object_name);
-
 	for (std::list<GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); it++)
 	{
 		RemoveWithoutDelete(*it);
@@ -385,6 +377,27 @@ void ModuleScene::LoadPrefab(Prefab* prefab)
 	{
 		DuplicateGameObject(prefab_root);
 	}
+}
+
+void ModuleScene::CreatePrefab(GameObject * gameobject)
+{
+	Data data;
+	if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
+	if (!App->file_system->DirectoryExist(ASSETS_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(ASSETS_PREFABS_FOLDER_PATH);
+	std::string assets_path = ASSETS_PREFABS_FOLDER + gameobject->GetName() + ".prefab";
+	std::string library_path = LIBRARY_PREFABS_FOLDER + gameobject->GetName() + ".prefab";
+	Prefab* prefab = new Prefab();
+	prefab->SetRootGameObject(gameobject);
+	prefab->SetAssetsPath(assets_path);
+	prefab->SetLibraryPath(library_path);
+	prefab->SetName(gameobject->GetName());
+	prefab->Save(data);
+	data.SaveAsBinary(assets_path);
+	data.SaveAsBinary(library_path);
+	
+	//Won't use this prefab, instead create a new resource from this prefab
+	delete prefab;
+	App->resources->CreateResource(assets_path);
 }
 
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)

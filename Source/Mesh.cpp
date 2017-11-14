@@ -72,6 +72,11 @@ bool Mesh::Load(Data & data)
 	}
 	else
 	{
+		SetUID(data.GetUInt("UUID"));
+		SetAssetsPath(data.GetString("assets_path"));
+		SetLibraryPath(data.GetString("library_path"));
+		SetName(data.GetString("mesh_name"));
+
 		num_indices = mesh->num_indices;
 		indices = mesh->indices;
 		num_vertices = mesh->num_vertices;
@@ -79,13 +84,8 @@ bool Mesh::Load(Data & data)
 		normals = mesh->normals;
 		colors = mesh->colors;
 		texture_coords = mesh->texture_coords;
-		App->resources->AddMesh(mesh);
+		App->resources->AddMesh(this);
 	}
-
-	SetUID(data.GetUInt("UID"));
-	SetAssetsPath(data.GetString("assets_path"));
-	SetLibraryPath(data.GetString("library_path"));
-	SetName(data.GetString("mesh_name"));
 
 	return ret;
 }

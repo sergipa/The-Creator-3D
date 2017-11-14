@@ -21,6 +21,8 @@
 #include "ModuleScene.h"
 #include "ModuleTime.h"
 #include "imgui\ImGuizmo\ImGuizmo.h"
+#include "ModuleFileSystem.h"
+#include "ResourcesWindow.h"
 
 ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {
@@ -60,6 +62,7 @@ bool ModuleEditor::Init(Data* editor_config)
 	editor_windows.push_back(input_config_window = new InputConfigWindow());
 	editor_windows.push_back(tags_and_layers_window = new TagsAndLayersWindow());
 	editor_windows.push_back(import_window = new ImportWindow());
+	editor_windows.push_back(resources_window = new ResourcesWindow());
 	
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());
@@ -106,22 +109,12 @@ update_status ModuleEditor::Update(float deltaTime)
 				char const * lFilterPatterns[1] = { "*.scene" };
 				const char* path = tinyfd_saveFileDialog("Save Scene...", (App->scene->scene_name + ".scene").c_str(), 1, lFilterPatterns, NULL);
 				if (path != NULL) {
-					std::string str(path);
-					bool get_char = false;
-					std::string new_scene_name;
-					for (std::string::reverse_iterator it = str.rbegin(); it != str.rend(); it++) {
-						if (*it == '\\') {
-							get_char = false;
-						}
-						if (get_char) {
-							new_scene_name.insert(0, 1, *it);
-						}
-						if (*it == '.') {
-							get_char = true;
-						}
-					}
-					App->window->SetTitle(new_scene_name.c_str());
-					App->scene->SaveScene(path);
+					std::string new_scene_name = App->file_system->GetFileName(path);
+					App->scene->scene_name = new_scene_name;
+					App->window->SetTitle((SCENE_TITLE_PREFIX + new_scene_name).c_str());
+					std::string s_path;
+					s_path = App->file_system->ChangeFileExtension(std::string(path), "scene");
+					App->scene->SaveScene(s_path);
 					App->scene->saving_index = 0;
 				}
 			}

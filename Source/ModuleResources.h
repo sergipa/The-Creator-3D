@@ -1,6 +1,6 @@
 #pragma once
 #include "Module.h"
-#include <vector>
+#include <map>
 #include "Resource.h"
 
 class Texture;
@@ -28,26 +28,31 @@ public:
 	Texture* GetTexture(UID uid) const;
 	void AddTexture(Texture* texture);
 	void RemoveTexture(Texture* texture);
+	std::map<uint, Texture*> GetTexturesList() const;
 
 	Mesh* GetMesh(std::string name) const;
 	Mesh* GetMesh(UID uid) const;
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(Mesh* mesh);
+	std::map<uint, Mesh*> GetMeshesList() const;
 
 	Prefab* GetPrefab(std::string name) const;
 	Prefab* GetPrefab(UID uid) const;
 	void AddPrefab(Prefab* prefab);
 	void RemovePrefab(Prefab* prefab);
+	std::map<uint, Prefab*> GetPrefabsList() const;
 
 	GameObject* GetGameObject(std::string name) const;
 	GameObject* GetGameObject(UID uid) const;
 	void AddGameObject(GameObject* gameobject);
 	void RemoveGameObject(GameObject* gameobject);
+	std::map<uint, GameObject*> GetGameobjectsList() const;
 
 	Material* GetMaterial(std::string name) const;
 	Material* GetMaterial(UID uid) const;
 	void AddMaterial(Material* material);
 	void RemoveMaterial(Material* material);
+	std::map<uint, Material*> GetMaterialsList() const;
 
 	Resource::ResourceType AssetExtensionToResourceType(std::string str);
 	Resource::ResourceType LibraryExtensionToResourceType(std::string str);
@@ -62,10 +67,10 @@ public:
 	bool CheckResourceName(std::string& name);
 
 private:
-	std::vector<Texture*> textures_list;
-	std::vector<Mesh*> meshes_list;
-	std::vector<Prefab*> prefabs_list;
-	std::vector<GameObject*> gameobjects_list;
-	std::vector<Material*> materials_list;
+	std::map<uint, Texture*> textures_list;
+	std::map<uint, Mesh*> meshes_list;
+	std::map<uint, Prefab*> prefabs_list;
+	std::map<uint, GameObject*> gameobjects_list;
+	std::map<uint, Material*> materials_list;
 };
 

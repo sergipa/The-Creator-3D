@@ -111,7 +111,7 @@ void ComponentCamera::SetFOV(float fov)
 {
 	camera_frustum.verticalFov = fov * DEGTORAD;
 	camera_frustum.horizontalFov = 2 * atanf(tanf(camera_frustum.verticalFov / 2) * camera_frustum.AspectRatio());
-	UpdateProjection();
+	//UpdateProjection();
 }
 
 float ComponentCamera::GetFOV() const

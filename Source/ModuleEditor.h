@@ -21,6 +21,7 @@ class RendererConfigWindow;
 class InputConfigWindow;
 class TagsAndLayersWindow;
 class ImportWindow;
+class ResourcesWindow;
 
 class ModuleEditor :
 	public Module
@@ -61,5 +62,6 @@ public:
 	InputConfigWindow* input_config_window = nullptr;
 	TagsAndLayersWindow* tags_and_layers_window = nullptr;
 	ImportWindow* import_window = nullptr;
+	ResourcesWindow* resources_window = nullptr;
 };
 

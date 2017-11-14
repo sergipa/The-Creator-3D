@@ -11,6 +11,7 @@
 #include "ModuleScene.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "imgui/CustomImGui.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -192,6 +193,12 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 		if (ImGui::Checkbox("Active##Mesh_Renderer", &is_active))
 		{
 			mesh_renderer->SetActive(is_active);
+		}
+
+		Mesh* mesh = mesh_renderer->GetMesh();
+		if (ImGui::InputResourceMesh("Mesh", &mesh))
+		{
+			mesh_renderer->SetMesh(mesh);
 		}
 
 		if(ImGui::TreeNodeEx("Mesh Info", ImGuiTreeNodeFlags_OpenOnArrow))

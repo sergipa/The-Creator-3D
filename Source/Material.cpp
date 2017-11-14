@@ -28,6 +28,7 @@ Material::Material()
 
 Material::~Material()
 {
+
 }
 
 void Material::Save(Data & data) const
@@ -50,6 +51,7 @@ void Material::Save(Data & data) const
 	data.AddInt("diffuse_count", diffuse_texture_list.size());
 	for (int i = 0; i < diffuse_texture_list.size(); i++)
 	{
+		if (diffuse_texture_list[i] == nullptr) continue;
 		data.AddString("diffuse_texture" + std::to_string(i), diffuse_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -57,6 +59,7 @@ void Material::Save(Data & data) const
 	data.AddInt("specular_count", specular_texture_list.size());
 	for (int i = 0; i < specular_texture_list.size(); i++)
 	{
+		if (specular_texture_list[i] == nullptr) continue;
 		data.AddString("specular_texture" + std::to_string(i), specular_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -64,6 +67,7 @@ void Material::Save(Data & data) const
 	data.AddInt("ambient_count", ambient_texture_list.size());
 	for (int i = 0; i < ambient_texture_list.size(); i++)
 	{
+		if (ambient_texture_list[i] == nullptr) continue;
 		data.AddString("ambient_texture" + std::to_string(i), ambient_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -71,6 +75,7 @@ void Material::Save(Data & data) const
 	data.AddInt("emissive_count", emissive_texture_list.size());
 	for (int i = 0; i < emissive_texture_list.size(); i++)
 	{
+		if (emissive_texture_list[i] == nullptr) continue;
 		data.AddString("emissive_texture" + std::to_string(i), emissive_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -78,6 +83,7 @@ void Material::Save(Data & data) const
 	data.AddInt("height_count", heightmap_texture_list.size());
 	for (int i = 0; i < heightmap_texture_list.size(); i++)
 	{
+		if (heightmap_texture_list[i] == nullptr) continue;
 		data.AddString("height_texture" + std::to_string(i), heightmap_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -85,6 +91,7 @@ void Material::Save(Data & data) const
 	data.AddInt("normal_count", normalmap_texture_list.size());
 	for (int i = 0; i < normalmap_texture_list.size(); i++)
 	{
+		if (normalmap_texture_list[i] == nullptr) continue;
 		data.AddString("normalmap_texture" + std::to_string(i), normalmap_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -92,6 +99,7 @@ void Material::Save(Data & data) const
 	data.AddInt("shininess_count", shininess_texture_list.size());
 	for (int i = 0; i < shininess_texture_list.size(); i++)
 	{
+		if (shininess_texture_list[i] == nullptr) continue;
 		data.AddString("shininess_texture" + std::to_string(i), shininess_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -99,6 +107,7 @@ void Material::Save(Data & data) const
 	data.AddInt("opacity_count", opacity_texture_list.size());
 	for (int i = 0; i < opacity_texture_list.size(); i++)
 	{
+		if (opacity_texture_list[i] == nullptr) continue;
 		data.AddString("opacity_texture" + std::to_string(i), opacity_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -106,6 +115,7 @@ void Material::Save(Data & data) const
 	data.AddInt("displacement_count", displacement_texture_list.size());
 	for (int i = 0; i < displacement_texture_list.size(); i++)
 	{
+		if (displacement_texture_list[i] == nullptr) continue;
 		data.AddString("displacement_texture" + std::to_string(i), displacement_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -113,6 +123,7 @@ void Material::Save(Data & data) const
 	data.AddInt("lightmap_count", lightmap_texture_list.size());
 	for (int i = 0; i < lightmap_texture_list.size(); i++)
 	{
+		if (lightmap_texture_list[i] == nullptr) continue;
 		data.AddString("lightmap_texture" + std::to_string(i), lightmap_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -120,6 +131,7 @@ void Material::Save(Data & data) const
 	data.AddInt("reflection_count", reflection_texture_list.size());
 	for (int i = 0; i < reflection_texture_list.size(); i++)
 	{
+		if (reflection_texture_list[i] == nullptr) continue;
 		data.AddString("reflection_texture" + std::to_string(i), reflection_texture_list[i]->GetLibraryPath());
 	}
 	data.CloseSection();
@@ -239,7 +251,7 @@ bool Material::Load(Data & data)
 	}
 	data.LeaveSection();
 
-	SetUID(data.GetUInt("UID"));
+	SetUID(data.GetUInt("UUID"));
 	SetAssetsPath(data.GetString("assets_path"));
 	SetLibraryPath(data.GetString("library_path"));
 	SetName(data.GetString("material_name"));

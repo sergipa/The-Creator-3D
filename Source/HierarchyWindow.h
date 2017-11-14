@@ -19,7 +19,7 @@ private:
 	bool show_rename_window;
 	char node_name[30];
 	bool show_rename_error;
-	//GameObject* open_gameobject_node = nullptr;
+	GameObject* open_gameobject_node;
 	GameObject* gameobject_to_rename;
 	float rename_window_y;
 };
