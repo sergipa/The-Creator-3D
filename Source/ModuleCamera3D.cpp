@@ -8,7 +8,10 @@
 #include "ComponentCamera.h"
 #include "ModuleInput.h"
 #include "ModuleRenderer3D.h"
-
+#include "ComponentMeshRenderer.h"
+#include "GameObject.h"
+#include "ModuleWindow.h"
+#include "Mesh.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -120,6 +123,41 @@ update_status ModuleCamera3D::Update(float dt)
 					tmp_camera_frustum->front = rotation_y.Mul(tmp_camera_frustum->front).Normalized();
 				}
 			}
+		}
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+		{
+
+			float normalized_mouse_x = -(1.0f - ((float)App->input->GetMouseX()) / ((float)(App->window->GetWidth())));
+			float normalized_mouse_y = 1.0f - ((float)App->input->GetMouseY()) / ((float)(App->window->GetHeight()));
+
+			Ray ray = this->GetCamera()->camera_frustum.UnProject(normalized_mouse_x, normalized_mouse_y);
+
+			float min_dist = NULL;
+			GameObject* closest_object = nullptr;
+			for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+			{
+
+				ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+				if (mesh_renderer != nullptr && mesh_renderer->GetMesh() != nullptr)
+				{
+					float dist_near;
+					float dist_far;
+					if (ray.Intersects(mesh_renderer->GetMesh()->box, dist_near, dist_far))
+					{
+						if (min_dist == NULL || dist_near < min_dist)
+						{
+							min_dist = dist_near;
+							closest_object = *it;
+						}
+					}
+				}
+			}
+			if (closest_object != nullptr)
+			{
+				App->scene->selected_gameobjects.clear();
+				App->scene->selected_gameobjects.push_back(closest_object);
+			}
+
 		}
 	}
 	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
