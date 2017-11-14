@@ -102,7 +102,7 @@ bool ModuleFileSystem::FileExist(std::string file_path)
 	return fs::exists(file_path);
 }
 
-void ModuleFileSystem::DeleteFile(std::string file_path)
+void ModuleFileSystem::Delete_File(std::string file_path)
 {
 	fs::remove(file_path);
 }

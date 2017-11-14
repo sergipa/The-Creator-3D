@@ -27,7 +27,9 @@ Mesh* ComponentMeshRenderer::GetMesh() const
 
 void ComponentMeshRenderer::SetMesh(Mesh * mesh)
 {
+	if(mesh != nullptr)mesh->UnloadFromMemory();
 	this->mesh = mesh;
+	if (mesh != nullptr)mesh->LoadToMemory();
 	UpdateBoundingBox();
 }
 

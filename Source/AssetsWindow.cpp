@@ -19,6 +19,7 @@ AssetsWindow::AssetsWindow()
 	show_new_folder_window = false;
 	file_options_open = true;
 	texture_icon = nullptr;
+	show_delete_window = false;
 	mesh_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"mesh_icon.png");
 	font_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"font_icon.png");
 	folder_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"folder_icon.png");
@@ -61,7 +62,8 @@ void AssetsWindow::DrawWindow()
 				}
 				if (App->file_system->GetDirectoryName(selected_folder) != "Assets") {
 					if (ImGui::MenuItem("Delete")) {
-						App->file_system->DeleteDirectory(selected_folder);
+						show_delete_window = true;
+						delete_path = selected_folder;
 					}
 				}
 				ImGui::Separator();
@@ -89,36 +91,12 @@ void AssetsWindow::DrawWindow()
 		}
 
 		if (show_new_folder_window) {
-			ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowSize().x / 2, ImGui::GetWindowSize().y / 2));
-			ImGui::SetNextWindowPosCenter();
-			ImGui::Begin("New Folder Name", &active,
-				ImGuiWindowFlags_NoFocusOnAppearing |
-				ImGuiWindowFlags_AlwaysAutoResize |
-				ImGuiWindowFlags_NoCollapse |
-				ImGuiWindowFlags_ShowBorders |
-				ImGuiWindowFlags_NoTitleBar);
-			ImGui::Spacing();
-			ImGui::Text("New Folder Name");
-			static char inputText[20];
-			ImGui::InputText("", inputText, 20);
-			ImGui::Spacing();
-			if (ImGui::Button("Confirm")) {
-				std::string str(inputText);
-				std::string temp = selected_folder;
-				if (App->file_system->Create_Directory(selected_folder += ("\\" + str))) {
-					show_new_folder_window = false;
-				}
-				else {
-					selected_folder = temp;
-				}
-				strcpy(inputText, "");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Cancel")) {
-				strcpy(inputText, "");
-				show_new_folder_window = false;
-			}
-			ImGui::End();
+			CreateDirectortWindow();
+		}
+
+		if (show_delete_window)
+		{
+			DeleteWindow(delete_path);
 		}
 
 		ImGui::NextColumn();
@@ -184,7 +162,8 @@ void AssetsWindow::DrawWindow()
 					file_options_open = false;
 				}
 				if (ImGui::MenuItem("Delete")) {
-					App->file_system->DeleteDirectory(selected_file_path);
+					delete_path = selected_file_path;
+					show_delete_window = true;
 					file_options_open = false;
 				}
 
@@ -244,4 +223,93 @@ void AssetsWindow::DrawChilds(std::string path)
 			selected_folder = path;
 		}
 	}
+}
+
+void AssetsWindow::CreateDirectortWindow()
+{
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowSize().x / 2, ImGui::GetWindowSize().y / 2));
+	ImGui::SetNextWindowPosCenter();
+	ImGui::Begin("New Folder Name", &active,
+		ImGuiWindowFlags_NoFocusOnAppearing |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_ShowBorders |
+		ImGuiWindowFlags_NoTitleBar);
+	ImGui::Spacing();
+	ImGui::Text("New Folder Name");
+	static char inputText[20];
+	ImGui::InputText("", inputText, 20);
+	ImGui::Spacing();
+	if (ImGui::Button("Confirm")) {
+		std::string str(inputText);
+		std::string temp = selected_folder;
+		if (App->file_system->Create_Directory(selected_folder += ("\\" + str))) {
+			show_new_folder_window = false;
+		}
+		else {
+			selected_folder = temp;
+		}
+		strcpy(inputText, "");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+		strcpy(inputText, "");
+		show_new_folder_window = false;
+	}
+	ImGui::End();
+}
+
+void AssetsWindow::DeleteWindow(std::string path)
+{
+	std::string tittle;
+	if (App->file_system->IsDirectory(path))
+	{
+		tittle = "Delete Diretory";
+	}
+	else
+	{
+		tittle = "Delete File";
+	}
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowSize().x / 2, ImGui::GetWindowSize().y / 2));
+	ImGui::SetNextWindowPosCenter();
+	ImGui::Begin(tittle.c_str(), &active,
+		ImGuiWindowFlags_NoFocusOnAppearing |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_ShowBorders |
+		ImGuiWindowFlags_NoTitleBar);
+	ImGui::Spacing();
+	if (App->file_system->IsDirectory(path))
+	{
+		ImGui::Text("Directory %s will be deleted from disk with all the files inside. Continue?", App->file_system->GetDirectoryName(path).c_str());
+	}
+	else
+	{
+		ImGui::Text("File %s will be deleted from disk. Continue?", App->file_system->GetFileName(path).c_str());
+	}
+	ImGui::Spacing();
+	if (ImGui::Button("Confirm")) {
+		if (App->file_system->IsDirectory(path))
+		{
+			std::vector<std::string> files = App->file_system->GetFilesInDirectory(path);
+			for (int i = 0; i < files.size(); i++)
+			{
+				App->file_system->Delete_File(path);
+				App->resources->DeleteResource(path);
+			}
+			App->file_system->DeleteDirectory(path);
+		}
+		else
+		{
+			App->file_system->Delete_File(path);
+			App->resources->DeleteResource(path);
+		}
+		show_delete_window = false;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+		show_delete_window = false;
+	}
+	ImGui::End();
+	
 }

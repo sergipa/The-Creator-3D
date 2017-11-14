@@ -12,6 +12,7 @@
 #include "Material.h"
 #include "Texture.h"
 #include "Prefab.h"
+#include "ImportWindow.h"
 
 #include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
@@ -62,7 +63,9 @@ std::string ModuleMeshImporter::ImportMesh(std::string path)
 		prefab->SetLibraryPath(library_path);
 		prefab->SetName(App->file_system->GetFileNameWithoutExtension(path));
 		prefab->Save(data);
+		if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
 		data.SaveAsBinary(library_path);
+		App->resources->AddPrefab(prefab);
 
 		ret = library_path;
 
@@ -215,6 +218,7 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 						Data material_data;
 						material->Save(material_data);
 						material_data.SaveAsBinary(material_assets_path);
+						if (!App->file_system->DirectoryExist(LIBRARY_MATERIALS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MATERIALS_FOLDER_PATH);
 						material_data.SaveAsBinary(material_library_path);
 					}
 				}

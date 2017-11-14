@@ -23,7 +23,7 @@ public:
 	std::vector<std::string> GetAllSubDirectoriesRecursively(std::string directory_path);
 
 	bool FileExist(std::string file_path);
-	void DeleteFile(std::string file_path);
+	void Delete_File(std::string file_path);
 	void Copy_File(std::string old_path, std::string new_path);
 	std::string GetFileName(std::string file_path);
 	std::string GetFileNameWithoutExtension(std::string file_path);

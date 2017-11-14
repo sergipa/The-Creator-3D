@@ -244,6 +244,7 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
 	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
 	{
 		if (*it == nullptr || (*it)->GetMesh() == nullptr) continue;
+		if ((*it)->GetMesh()->id_indices == 0) (*it)->GetMesh()->LoadToMemory();
 		if (active_camera->GetGameObject())
 		{
 			if (!active_camera->ContainsGameObjectAABB((*it)->GetMesh()->box)) continue;

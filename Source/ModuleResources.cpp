@@ -56,6 +56,12 @@ void ModuleResources::FillResourcesLists()
 {
 	std::string assets_folder_path = App->file_system->StringToPathFormat(ASSETS_FOLDER_PATH);
 	std::vector<std::string> files_in_assets = App->file_system->GetAllFilesRecursively(assets_folder_path);
+
+	if (!App->file_system->DirectoryExist(LIBRARY_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_FOLDER_PATH);
+	if (!App->file_system->DirectoryExist(LIBRARY_TEXTURES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_TEXTURES_FOLDER_PATH);
+	if (!App->file_system->DirectoryExist(LIBRARY_MESHES_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MESHES_FOLDER_PATH);
+	if (!App->file_system->DirectoryExist(LIBRARY_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_PREFABS_FOLDER_PATH);
+	if (!App->file_system->DirectoryExist(LIBRARY_MATERIALS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MATERIALS_FOLDER_PATH);
 	
 	for (std::vector<std::string>::iterator it = files_in_assets.begin(); it != files_in_assets.end(); it++)
 	{
@@ -574,6 +580,68 @@ void ModuleResources::CreateResource(std::string file_path)
 			resource->SetAssetsPath(file_path);
 			resource->CreateMeta();
 		}
+	}
+}
+
+void ModuleResources::DeleteResource(std::string file_path)
+{
+	std::string extension = App->file_system->GetFileExtension(file_path);
+	Resource::ResourceType type = LibraryExtensionToResourceType(extension);
+	std::string resource_name = App->file_system->GetFileNameWithoutExtension(file_path);
+
+	Texture* texture = nullptr;
+	Mesh* mesh = nullptr;
+	Prefab* prefab = nullptr;
+	Material* material = nullptr;
+
+	switch (type)
+	{
+	case Resource::TextureResource:
+		texture = GetTexture(resource_name);
+		App->file_system->Delete_File(texture->GetLibraryPath());
+		App->file_system->Delete_File(file_path + ".meta");
+		RemoveTexture(texture);
+		break;
+	case Resource::MeshResource:
+		mesh = GetMesh(resource_name);
+		App->file_system->Delete_File(mesh->GetLibraryPath());
+		App->file_system->Delete_File(file_path + ".meta");
+		RemoveMesh(mesh);
+		break;
+	case Resource::SceneResource:
+		break;
+	case Resource::AnimationResource:
+		break;
+	case Resource::PrefabResource:
+		prefab = GetPrefab(resource_name);
+		App->file_system->Delete_File(prefab->GetLibraryPath());
+		App->file_system->Delete_File(file_path + ".meta");
+		RemovePrefab(prefab);
+		break;
+	case Resource::ScriptResource:
+		break;
+	case Resource::AudioResource:
+		break;
+	case Resource::ParticleFXResource:
+		break;
+	case Resource::FontResource:
+		break;
+	case Resource::RenderTextureResource:
+		break;
+	case Resource::GameObjectResource:
+		/*GameObject* gameobject = GetGameObject(file_path);
+		RemoveGameObject(gameobject);*/
+		break;
+	case Resource::MaterialResource:
+		material = GetMaterial(resource_name);
+		App->file_system->Delete_File(material->GetLibraryPath());
+		App->file_system->Delete_File(file_path + ".meta");
+		RemoveMaterial(material);
+		break;
+	case Resource::Unknown:
+		break;
+	default:
+		break;
 	}
 }
 
