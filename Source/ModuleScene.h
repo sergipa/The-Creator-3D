@@ -40,8 +40,9 @@ public:
 
 	int GetNumCameras() const;
 
-	void InsertGoInOctree(AABB& box);
-	void EraseGoInOctree(AABB& box);
+	void InsertGoInOctree(ComponentMeshRenderer* mesh);
+	void EraseGoInOctree(ComponentMeshRenderer* mesh);
+	void GetOctreeIntersects(std::list<ComponentMeshRenderer*>& list, AABB& box);
 
 	void NewScene();
 	void LoadScene(std::string path);
@@ -60,8 +61,8 @@ public:
 	std::list<GameObject*> scene_gameobjects;
 	std::map<std::string, int> scene_gameobjects_name_counter;
 	std::list<ComponentCamera*> scene_cameras;
-	std::list<Mesh*> static_meshes;
-	std::list<Mesh*> dynamic_meshes;
+	std::list<ComponentMeshRenderer*> static_meshes;
+	std::list<ComponentMeshRenderer*> dynamic_meshes;
 	Octree octree;
 	bool draw_octree;
 	int saving_index;

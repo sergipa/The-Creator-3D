@@ -28,6 +28,7 @@ public:
 	float GetFOV() const;
 	void AddLayerToDraw(std::string layer);
 	std::string GetLayerToDraw(int index) const;
+	std::vector<std::string> GetAllLayersToDraw() const;
 	void RemoveLayerToDraw(std::string layer);
 	void SetBackgroundColor(Color color);
 	Color GetBackgroundColor() const;

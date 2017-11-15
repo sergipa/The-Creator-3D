@@ -16,6 +16,7 @@
 #include "ModuleCamera3D.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "ModuleScene.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -34,6 +35,9 @@ ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled, bool is
 	textureMSAA = nullptr;
 	name = "Renderer";
 	active_camera = nullptr;
+
+	editor_camera_texture_id = 0;
+	binded_textures_count = 0;
 }
 
 // Destructor
@@ -159,24 +163,31 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 // PreUpdate: clear buffer
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
-ms_timer.Start();
-glEnable(GL_LIGHTING);
+	ms_timer.Start();
+	glEnable(GL_LIGHTING);
 
-textureMSAA->Bind();
+	textureMSAA->Bind();
 
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-glLoadIdentity();
+	for (std::list<ComponentCamera*>::iterator it = rendering_cameras.begin(); it != rendering_cameras.end(); it++)
+	{
+		if((*it) != nullptr && (*it)->GetViewportTexture() == nullptr) continue;
+		//(*it)->GetViewportTexture()->Bind();
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 
-glMatrixMode(GL_MODELVIEW);
-glLoadMatrixf(App->camera->GetViewMatrix());
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
 
-// light 0 on cam pos
-lights[0].SetPos(App->camera->GetPosition().x, App->camera->GetPosition().y, App->camera->GetPosition().z);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(App->camera->GetViewMatrix());
 
-for (uint i = 0; i < MAX_LIGHTS; ++i)
-	lights[i].Render();
+	// light 0 on cam pos
+	lights[0].SetPos(App->camera->GetPosition().x, App->camera->GetPosition().y, App->camera->GetPosition().z);
 
-return UPDATE_CONTINUE;
+	for (uint i = 0; i < MAX_LIGHTS; ++i)
+		lights[i].Render();
+
+	return UPDATE_CONTINUE;
 }
 
 // PostUpdate present buffer to screen
@@ -228,86 +239,132 @@ void ModuleRenderer3D::DrawScene()
 		}
 	}
 
+	editor_camera_texture_id = textureMSAA->GetTextureID();
+
+	glActiveTexture(GL_TEXTURE0);
+
 	for (std::list<ComponentCamera*>::iterator it = rendering_cameras.begin(); it != rendering_cameras.end(); it++)
 	{
-		DrawSceneGameObjects(*it);
+		DrawSceneGameObjects(*it, false);
+		binded_textures_count++;
 	}
-	DrawSceneGameObjects(active_camera);
+	DrawSceneGameObjects(active_camera, true);
 	rendering_cameras.clear();
 
 }
 
-void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera)
+void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera, bool is_editor_camera)
 {
-	/*this->active_camera = active_camera;
-	active_camera->GetViewportTexture()->Bind();*/
-	for (std::list<ComponentMeshRenderer*>::iterator it = mesh_to_draw.begin(); it != mesh_to_draw.end(); it++)
+	if(active_camera == nullptr && active_camera->GetViewportTexture() == nullptr) return;
+	if (!is_editor_camera)
 	{
-		if (*it == nullptr || (*it)->GetMesh() == nullptr) continue;
-		if ((*it)->GetMesh()->id_indices == 0) (*it)->GetMesh()->LoadToMemory();
-		if (active_camera->GetGameObject())
-		{
-			if (!active_camera->ContainsGameObjectAABB((*it)->GetMesh()->box)) continue;
-		}
-
-		glPushMatrix();
-		glMultMatrixf((*it)->GetGameObject()->GetOpenGLMatrix());
-		Material* material = (*it)->GetMaterial();
-		if (material != nullptr)
-		{
-			material->LoadToMemory();
-		}
-		//VERTICES
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_vertices);
-		glVertexPointer(3, GL_FLOAT, 0, NULL);
-		//NORMALS
-		if ((*it)->GetMesh()->id_normals > 0)
-		{
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_normals);
-			glNormalPointer(GL_FLOAT, 0, NULL);
-		}
-		//TEXTURE_COORDS
-		if ((*it)->GetMesh()->id_texture_coords > 0)
-		{
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_texture_coords);
-			glTexCoordPointer(3, GL_FLOAT, 0, NULL);
-		}
-		//COLORS
-		if ((*it)->GetMesh()->id_colors > 0)
-		{
-			glEnableClientState(GL_COLOR_ARRAY);
-			glBindBuffer(GL_ARRAY_BUFFER, (*it)->GetMesh()->id_colors);
-			glColorPointer(3, GL_FLOAT, 0, NULL);
-		}
-		//INDICES
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->GetMesh()->id_indices);
-		glDrawElements(GL_TRIANGLES, (*it)->GetMesh()->num_indices, GL_UNSIGNED_INT, NULL);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		if (material != nullptr)
-		{
-			material->UnloadFromMemory();
-		}
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
-		glPopMatrix();
-
-		(*it)->GetGameObject()->UpdateGlobalMatrix();
-
+		active_camera->GetViewportTexture()->Bind();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
-		//active_camera->GetViewportTexture()->Unbind();
-	mesh_to_draw.clear();
+	
+
+	std::vector<std::string> layer_masks = active_camera->GetAllLayersToDraw();
+
+	std::list<ComponentMeshRenderer*> static_instersects;
+	App->scene->GetOctreeIntersects(static_instersects, active_camera->camera_frustum.MinimalEnclosingAABB());
+
+	for (std::list<ComponentMeshRenderer*>::iterator it = static_instersects.begin(); it != static_instersects.end(); it++)
+	{
+		if (!is_editor_camera)
+		{
+			if (std::find(layer_masks.begin(), layer_masks.end(), (*it)->GetGameObject()->GetLayer()) == layer_masks.end()) continue;
+		}
+		DrawMesh(*it);
+	}
+
+	for (std::list<ComponentMeshRenderer*>::iterator it = dynamic_mesh_to_draw.begin(); it != dynamic_mesh_to_draw.end(); it++)
+	{
+		if (!is_editor_camera)
+		{
+			if (active_camera->GetGameObject() && (*it)->GetMesh())
+			{
+				if (active_camera->ContainsGameObjectAABB((*it)->GetMesh()->box))
+				{
+					if (std::find(layer_masks.begin(), layer_masks.end(), (*it)->GetGameObject()->GetLayer()) == layer_masks.end()) continue;
+					DrawMesh(*it);
+				}
+			}
+		}
+		else
+		{
+			DrawMesh(*it);
+		}
+	}
+	
+	if (active_camera->GetViewportTexture() != nullptr && !is_editor_camera)
+	{
+		active_camera->GetViewportTexture()->Render();
+		glBindFramebuffer(GL_FRAMEBUFFER, editor_camera_texture_id);
+		glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	}
+
+	dynamic_mesh_to_draw.clear();
+}
+
+void ModuleRenderer3D::DrawMesh(ComponentMeshRenderer * mesh)
+{
+	if (mesh == nullptr || mesh->GetMesh() == nullptr) return;
+	if (mesh->GetMesh()->id_indices == 0) mesh->GetMesh()->LoadToMemory();
+
+	glPushMatrix();
+	glMultMatrixf(mesh->GetGameObject()->GetOpenGLMatrix());
+	Material* material = mesh->GetMaterial();
+	if (material != nullptr)
+	{
+		material->LoadToMemory();
+	}
+	//VERTICES
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->GetMesh()->id_vertices);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+	//NORMALS
+	if (mesh->GetMesh()->id_normals > 0)
+	{
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetMesh()->id_normals);
+		glNormalPointer(GL_FLOAT, 0, NULL);
+	}
+	//TEXTURE_COORDS
+	if (mesh->GetMesh()->id_texture_coords > 0)
+	{
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetMesh()->id_texture_coords);
+		glTexCoordPointer(3, GL_FLOAT, 0, NULL);
+	}
+	//COLORS
+	if (mesh->GetMesh()->id_colors > 0)
+	{
+		glEnableClientState(GL_COLOR_ARRAY);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->GetMesh()->id_colors);
+		glColorPointer(3, GL_FLOAT, 0, NULL);
+	}
+	//INDICES
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMesh()->id_indices);
+	glDrawElements(GL_TRIANGLES, mesh->GetMesh()->num_indices, GL_UNSIGNED_INT, NULL);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if (material != nullptr)
+	{
+		material->UnloadFromMemory();
+	}
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glPopMatrix();
+
+	mesh->GetGameObject()->UpdateGlobalMatrix();
 }
 
 void ModuleRenderer3D::AddMeshToDraw(ComponentMeshRenderer * mesh)
 {
-	mesh_to_draw.push_back(mesh);
+	dynamic_mesh_to_draw.push_back(mesh);
 }
 
 // Called before quitting

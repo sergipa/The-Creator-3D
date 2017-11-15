@@ -128,7 +128,7 @@ void RenderTextureMSAA::Destroy()
 	rbo_depth_id = 0;
 }
 
-uint RenderTextureMSAA::GetTexture() const
+uint RenderTextureMSAA::GetTextureID() const
 {
 	return texture_id;
 }

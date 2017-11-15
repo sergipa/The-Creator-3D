@@ -30,16 +30,15 @@ ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 
 	camera_viewport_texture = new RenderTextureMSAA();
 	camera_viewport_texture->Create((uint)camera_frustum.NearPlaneWidth(), (uint)camera_frustum.NearPlaneHeight(), 2);
-	//camera_viewport_texture = nullptr;
 	camera_target_texture = nullptr;
+
+	for (int i = 0; i < App->tags_and_layers->layers_list.size(); i++)
+	{
+		layers_to_draw.push_back(App->tags_and_layers->layers_list[i]);
+	}
 
 	if (attached_gameobject)
 	{
-		for (int i = 0; i < App->tags_and_layers->layers_list.size(); i++)
-		{
-			layers_to_draw.push_back(App->tags_and_layers->layers_list[i]);
-		}
-
 		render_order = App->scene->GetNumCameras();
 		App->scene->scene_cameras.push_back(this);
 	}
@@ -236,6 +235,11 @@ void ComponentCamera::AddLayerToDraw(std::string layer)
 std::string ComponentCamera::GetLayerToDraw(int index) const
 {
 	return layers_to_draw[index];
+}
+
+std::vector<std::string> ComponentCamera::GetAllLayersToDraw() const
+{
+	return layers_to_draw;
 }
 
 void ComponentCamera::RemoveLayerToDraw(std::string layer)

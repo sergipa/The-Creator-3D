@@ -1,8 +1,11 @@
 #pragma once
-#include "MathGeoLib\Geometry\AABB.h"
+
 #include <list>
+#include "MathGeoLib/Geometry/AABB.h"
 
 #define MAX_DIVISIONS 3
+
+class ComponentMeshRenderer;
 
 class OctreeNode
 {
@@ -11,16 +14,16 @@ public:
 	~OctreeNode();
 
 	bool NodeIsFull() const;
-	void InsertInNode(AABB* node_content);
-	void EraseInNode(AABB* bounding_box);
+	void InsertInNode(ComponentMeshRenderer* node_content);
+	void EraseInNode(ComponentMeshRenderer* mesh);
 	void DivideNode();
 	void ClearNode();
-	void CollectIntersections(std::list<AABB*>& intersections_list, AABB* bounding_box);
+	void CollectIntersections(std::list<ComponentMeshRenderer*>& intersections_list, AABB* bounding_box);
 	void DebugDrawNode();
 
 public:
 	AABB node_box;
-	std::list<AABB*> node_contents;
+	std::list<ComponentMeshRenderer*> node_contents;
 	OctreeNode* node_childs[8];
 	int division_level = 0;
 };
@@ -33,9 +36,9 @@ public:
 	void Create(float3 min_point, float3 max_point);
 	void Clear();
 	void Update();
-	void Insert(AABB* bounding_box);
-	void Erase(AABB* bounding_box);
-	void CollectIntersections(std::list<AABB*>& intersections_list, AABB* bounding_box);
+	void Insert(ComponentMeshRenderer* mesh);
+	void Erase(ComponentMeshRenderer* mesh);
+	void CollectIntersections(std::list<ComponentMeshRenderer*>& intersections_list, AABB* bounding_box);
 	void DebugDraw();
 	void CalculateNewSize(float3 box_min_point, float3 box_max_point);
 

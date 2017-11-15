@@ -17,7 +17,7 @@ public:
 	void ChangeMSAALevel(int MSAA_level);
 	void Destroy();
 
-	uint GetTexture() const;
+	uint GetTextureID() const;
 	int GetMaxMSAALevel() const;
 	int GetCurrentMSAALevel() const;
 

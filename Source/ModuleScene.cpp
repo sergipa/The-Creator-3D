@@ -165,16 +165,16 @@ update_status ModuleScene::Update(float dt)
 		//If octree needs to be updated, set the size to 0 and start growing it
 		octree.min_point = float3::zero;
 		octree.max_point = float3::zero;
-		for (std::list<Mesh*>::iterator it = static_meshes.begin(); it != static_meshes.end(); it++)
+		for (std::list<ComponentMeshRenderer*>::iterator it = static_meshes.begin(); it != static_meshes.end(); it++)
 		{
-			octree.CalculateNewSize((*it)->box.minPoint, (*it)->box.maxPoint);
+			octree.CalculateNewSize((*it)->GetMesh()->box.minPoint, (*it)->GetMesh()->box.maxPoint);
 		}
 		//After calculate the size of the new octree, crete it deleteing the previous
 		octree.Update();
 		//Insert all the contents to the new octree
-		for (std::list<Mesh*>::iterator it = static_meshes.begin(); it != static_meshes.end(); it++)
+		for (std::list<ComponentMeshRenderer*>::iterator it = static_meshes.begin(); it != static_meshes.end(); it++)
 		{
-			octree.Insert(&(*it)->box);
+			octree.Insert(*it);
 		}
 		octree.update_tree = false;
 	}
@@ -225,22 +225,18 @@ void ModuleScene::RemoveWithoutDelete(GameObject * gameobject)
 	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::MeshRenderer);
 	if (mesh_renderer)
 	{
-		Mesh* mesh = mesh_renderer->GetMesh();
-		if (mesh)
+		if (gameobject->IsStatic())
 		{
-			if (gameobject->IsStatic())
+			if (std::find(static_meshes.begin(), static_meshes.end(), mesh_renderer) != static_meshes.end())
 			{
-				if (std::find(static_meshes.begin(), static_meshes.end(), mesh) != static_meshes.end())
-				{
-					static_meshes.remove(mesh);
-				}
+				static_meshes.remove(mesh_renderer);
 			}
-			else
+		}
+		else
+		{
+			if (std::find(dynamic_meshes.begin(), dynamic_meshes.end(), mesh_renderer) != dynamic_meshes.end())
 			{
-				if (std::find(dynamic_meshes.begin(), dynamic_meshes.end(), mesh) != dynamic_meshes.end())
-				{
-					dynamic_meshes.remove(mesh);
-				}
+				dynamic_meshes.remove(mesh_renderer);
 			}
 		}
 		mesh_renderer->UnloadFromMemory();
@@ -288,14 +284,19 @@ int ModuleScene::GetNumCameras() const
 	return scene_cameras.size();
 }
 
-void ModuleScene::InsertGoInOctree(AABB& box)
+void ModuleScene::InsertGoInOctree(ComponentMeshRenderer* mesh)
 {
-	octree.Insert(&box);
+	octree.Insert(mesh);
 }
 
-void ModuleScene::EraseGoInOctree(AABB& box)
+void ModuleScene::EraseGoInOctree(ComponentMeshRenderer* mesh)
 {
-	octree.Erase(&box);
+	octree.Erase(mesh);
+}
+
+void ModuleScene::GetOctreeIntersects(std::list<ComponentMeshRenderer*>& list, AABB & box)
+{
+	return octree.CollectIntersections(list, &box);
 }
 
 void ModuleScene::NewScene()

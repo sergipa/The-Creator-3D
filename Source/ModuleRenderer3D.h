@@ -49,7 +49,8 @@ public:
 
 private:
 	void DrawScene();
-	void DrawSceneGameObjects(ComponentCamera* active_camera);
+	void DrawSceneGameObjects(ComponentCamera* active_camera, bool is_editor_camera);
+	void DrawMesh(ComponentMeshRenderer* mesh);
 	//void DrawDebugScene();
 
 public:
@@ -73,7 +74,10 @@ private:
 
 	bool testing_light;
 
-	std::list<ComponentMeshRenderer*> mesh_to_draw;
+	uint editor_camera_texture_id;
+	int binded_textures_count;
+
+	std::list<ComponentMeshRenderer*> dynamic_mesh_to_draw;
 	std::list<Primitive*> debug_primitive_to_draw;
 
 };

@@ -132,11 +132,11 @@ void GameObject::SetActive(bool active)
 		{
 			if (active)
 			{
-				App->scene->InsertGoInOctree(mesh_renderer->GetMesh()->box);
+				App->scene->InsertGoInOctree(mesh_renderer);
 			}
 			else
 			{
-				App->scene->EraseGoInOctree(mesh_renderer->GetMesh()->box);
+				App->scene->EraseGoInOctree(mesh_renderer);
 			}
 		}
 	}
@@ -152,13 +152,13 @@ void GameObject::SetStatic(bool is_static)
 		{
 			if (is_static)
 			{
-				App->scene->InsertGoInOctree(mesh_renderer->GetMesh()->box);
-				App->scene->static_meshes.push_back(mesh_renderer->GetMesh());
+				App->scene->InsertGoInOctree(mesh_renderer);
+				App->scene->static_meshes.push_back(mesh_renderer);
 			}
 			else
 			{
-				App->scene->EraseGoInOctree(mesh_renderer->GetMesh()->box);
-				App->scene->static_meshes.remove(mesh_renderer->GetMesh());
+				App->scene->EraseGoInOctree(mesh_renderer);
+				App->scene->static_meshes.remove(mesh_renderer);
 			}
 		}
 	}

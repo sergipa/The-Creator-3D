@@ -6075,8 +6075,12 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
 		if (image_id > 0)
 		{
 			window->DrawList->AddImage((ImTextureID)image_id, bb.Min + ImVec2(padding.x + g.FontSize, g.FontSize*0.03 + text_base_offset_y), bb.Min + ImVec2(padding.x + g.FontSize, g.FontSize*0.03f + text_base_offset_y) + ImVec2(g.FontSize, g.FontSize), ImVec2(0, 1), ImVec2(1, 0));
+			RenderText(text_pos + ImVec2(g.FontSize, -1), label, label_end, false);
 		}
-		RenderText(text_pos + ImVec2(g.FontSize, -1), label, label_end, false);
+		else
+		{
+			RenderText(text_pos, label, label_end, false);
+		}
     }
 
     if (is_open && !(flags & ImGuiTreeNodeFlags_NoTreePushOnOpen))

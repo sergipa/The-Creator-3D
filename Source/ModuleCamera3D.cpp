@@ -219,11 +219,19 @@ void ModuleCamera3D::OrbitAt(const float3 & spot)
 
 }
 
-void ModuleCamera3D::FocusOnObject(const float3 & object_pos, const float & distance)
+void ModuleCamera3D::FocusOnObject(AABB& box)
 {
-	/*Reference = object;
-	Position = Reference + (Z * distance);
-	CalculateViewMatrix();*/
+	editor_camera->camera_frustum.pos.x = box.maxPoint.x;
+	editor_camera->camera_frustum.pos.y = box.maxPoint.y + 10;
+	editor_camera->camera_frustum.pos.z = box.maxPoint.z;
+
+	float3 look_at_pos;
+
+	look_at_pos.x = box.CenterPoint().x;
+	look_at_pos.y = box.CenterPoint().y;
+	look_at_pos.z = box.CenterPoint().z;
+
+	LookAt(look_at_pos);
 }
 
 // -----------------------------------------------------------------

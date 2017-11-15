@@ -438,6 +438,9 @@
     <ClInclude Include="MathGeoLib\Time\Clock.h">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClInclude>
+    <ClInclude Include="MathGeoLib\Algorithm\Random\LCG.h">
+      <Filter>Sources\3d Party\MathGeolib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -656,9 +659,6 @@
     <ClCompile Include="MathGeoLib\Geometry\OBB.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
-    <ClCompile Include="MathGeoLib\Geometry\PBVolume.cpp">
-      <Filter>Sources\3d Party\MathGeolib</Filter>
-    </ClCompile>
     <ClCompile Include="MathGeoLib\Geometry\Plane.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
@@ -683,9 +683,6 @@
     <ClCompile Include="MathGeoLib\Math\BitOps.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
-    <ClCompile Include="MathGeoLib\Math\Callstack.cpp">
-      <Filter>Sources\3d Party\MathGeolib</Filter>
-    </ClCompile>
     <ClCompile Include="MathGeoLib\Math\float2.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
@@ -701,16 +698,7 @@
     <ClCompile Include="MathGeoLib\Math\float4.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
-    <ClCompile Include="MathGeoLib\Math\float4d.cpp">
-      <Filter>Sources\3d Party\MathGeolib</Filter>
-    </ClCompile>
     <ClCompile Include="MathGeoLib\Math\float4x4.cpp">
-      <Filter>Sources\3d Party\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="MathGeoLib\Math\grisu3.c">
-      <Filter>Sources\3d Party\MathGeolib</Filter>
-    </ClCompile>
-    <ClCompile Include="MathGeoLib\Math\grisu3_cpp.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
     <ClCompile Include="MathGeoLib\Math\MathFunc.cpp">
@@ -735,6 +723,9 @@
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
     <ClCompile Include="MathGeoLib\Time\Clock.cpp">
+      <Filter>Sources\3d Party\MathGeolib</Filter>
+    </ClCompile>
+    <ClCompile Include="MathGeoLib\Algorithm\Random\LCG.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClCompile>
   </ItemGroup>

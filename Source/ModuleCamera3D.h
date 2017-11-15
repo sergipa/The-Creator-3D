@@ -18,7 +18,7 @@ public:
 
 	void LookAt(const float3 &spot);
 	void OrbitAt(const float3 &spot);
-	void FocusOnObject(const float3& object_pos, const float& distance);
+	void FocusOnObject(AABB& box);
 	float* GetViewMatrix();
 	void SetOrbital(bool is_orbital);
 	bool IsOrbital() const;

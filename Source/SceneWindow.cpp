@@ -37,7 +37,7 @@ void SceneWindow::DrawWindow()
 
 		DrawMenuBar();
 
-		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTexture(), size, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTextureID(), size, ImVec2(0, 1), ImVec2(1, 0));
 		
 		if (App->renderer3D->active_camera != nullptr)
 		{
@@ -191,4 +191,9 @@ bool SceneWindow::IsWindowFocused() const
 bool SceneWindow::IsMouseHoveringWindow() const
 {
 	return is_mouse_hovering_window;
+}
+
+ImVec2 SceneWindow::GetWindowSize() const
+{
+	return ImGui::GetContentRegionAvail();
 }

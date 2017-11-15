@@ -2,6 +2,8 @@
 #include "Globals.h"
 #include "Primitive.h"
 #include "MathGeoLib\Geometry\OBB.h"
+#include "Mesh.h"
+#include "ComponentMeshRenderer.h"
 
 OctreeNode::OctreeNode(AABB& box)
 {
@@ -20,13 +22,14 @@ bool OctreeNode::NodeIsFull() const
 	return node_contents.size() == 2;
 }
 
-void OctreeNode::InsertInNode(AABB * node_content)
+void OctreeNode::InsertInNode(ComponentMeshRenderer * mesh)
 {
+	if (mesh == nullptr || mesh->GetMesh() == nullptr) return;
 	if (node_childs[0] == nullptr/* && root_parent_node->division_level < MAX_DIVISIONS*/)
 	{
 		if (!NodeIsFull())
 		{
-			node_contents.push_back(node_content);
+			node_contents.push_back(mesh);
 		}
 		else
 		{
@@ -38,20 +41,21 @@ void OctreeNode::InsertInNode(AABB * node_content)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			if (node_childs[i]->node_box.Intersects(*node_content))
+			if (node_childs[i]->node_box.Intersects(mesh->GetMesh()->box))
 			{
-				node_childs[i]->InsertInNode(node_content);
+				node_childs[i]->InsertInNode(mesh);
 				break;
 			}
 		}
 	}
 }
 
-void OctreeNode::EraseInNode(AABB * bounding_box)
+void OctreeNode::EraseInNode(ComponentMeshRenderer * mesh)
 {
-	if (std::find(node_contents.begin(), node_contents.end(), bounding_box) != node_contents.end())
+	if (mesh == nullptr || mesh->GetMesh() == nullptr) return;
+	if (std::find(node_contents.begin(), node_contents.end(), mesh) != node_contents.end())
 	{
-		node_contents.remove(bounding_box);
+		node_contents.remove(mesh);
 	}
 	
 	if (node_childs[0] != nullptr)
@@ -59,7 +63,7 @@ void OctreeNode::EraseInNode(AABB * bounding_box)
 		int childs_contents_num = 0;
 		for (int i = 0; i < 8; i++)
 		{
-			node_childs[i]->EraseInNode(bounding_box);
+			node_childs[i]->EraseInNode(mesh);
 			childs_contents_num += node_childs[i]->node_contents.size();
 		}
 		if (childs_contents_num == 0)
@@ -101,16 +105,23 @@ void OctreeNode::DivideNode()
 		}
 	}
 
-	for (std::list<AABB*>::iterator it = node_contents.begin(); it != node_contents.end();)
+	for (std::list<ComponentMeshRenderer*>::iterator it = node_contents.begin(); it != node_contents.end();)
 	{
-		for (int i = 0; i < 8; i++)
+		if ((*it) != nullptr && (*it)->GetMesh() != nullptr)
 		{
-			if (node_childs[i]->node_box.Intersects((*it)->ToOBB().MinimalEnclosingAABB()))
+			for (int i = 0; i < 8; i++)
 			{
-				node_childs[i]->InsertInNode(*it);
+				if (node_childs[i]->node_box.Intersects((*it)->GetMesh()->box.ToOBB().MinimalEnclosingAABB()))
+				{
+					node_childs[i]->InsertInNode(*it);
+				}
 			}
+			it = node_contents.erase(it);
 		}
-		it = node_contents.erase(it);
+		else
+		{
+			it++;
+		}
 	}
 }
 
@@ -122,7 +133,7 @@ void OctreeNode::ClearNode()
 	}
 }
 
-void OctreeNode::CollectIntersections(std::list<AABB*>& intersections_list, AABB * bounding_box)
+void OctreeNode::CollectIntersections(std::list<ComponentMeshRenderer*>& intersections_list, AABB * bounding_box)
 {
 	if (node_childs[0] != nullptr)
 	{
@@ -135,9 +146,10 @@ void OctreeNode::CollectIntersections(std::list<AABB*>& intersections_list, AABB
 		}
 	}
 
-	for (std::list<AABB*>::iterator it = node_contents.begin(); it != node_contents.end(); it++)
+	for (std::list<ComponentMeshRenderer*>::iterator it = node_contents.begin(); it != node_contents.end(); it++)
 	{
-		if ((*it)->Intersects(*bounding_box))
+		if ((*it) == nullptr || (*it)->GetMesh() == nullptr) continue;
+		if ((*it)->GetMesh()->box.Intersects(*bounding_box))
 		{
 			intersections_list.push_back(*it);
 		}
@@ -192,58 +204,59 @@ void Octree::Update()
 	Create(min_point, max_point);
 }
 
-void Octree::Insert(AABB * bounding_box)
+void Octree::Insert(ComponentMeshRenderer * mesh)
 {
+	if (mesh == nullptr || mesh->GetMesh() == nullptr) return;
 	update_tree = false;
 	if (root_node != nullptr)
 	{
 		//If the box that we need to insert is out of the octree, we will need to update the octree.
-		if (bounding_box->minPoint.x < min_point.x)
+		if (mesh->GetMesh()->box.minPoint.x < min_point.x)
 		{
-			min_point.x = bounding_box->minPoint.x;
+			min_point.x = mesh->GetMesh()->box.minPoint.x;
 			update_tree = true;
 		}
-		if (bounding_box->minPoint.y < min_point.y) 
+		if (mesh->GetMesh()->box.minPoint.y < min_point.y)
 		{
-			min_point.y = bounding_box->minPoint.y;
+			min_point.y = mesh->GetMesh()->box.minPoint.y;
 			update_tree = true;
 		}
-		if (bounding_box->minPoint.z < min_point.z) 
+		if (mesh->GetMesh()->box.minPoint.z < min_point.z)
 		{ 
-			min_point.z = bounding_box->minPoint.z;
+			min_point.z = mesh->GetMesh()->box.minPoint.z;
 			update_tree = true;
 		}
-		if (bounding_box->maxPoint.x > max_point.x)
+		if (mesh->GetMesh()->box.maxPoint.x > max_point.x)
 		{
-			max_point.x = bounding_box->maxPoint.x;
+			max_point.x = mesh->GetMesh()->box.maxPoint.x;
 			update_tree = true;
 		}
-		if (bounding_box->maxPoint.y > max_point.y)
+		if (mesh->GetMesh()->box.maxPoint.y > max_point.y)
 		{
-			max_point.y = bounding_box->maxPoint.y;
+			max_point.y = mesh->GetMesh()->box.maxPoint.y;
 			update_tree = true;
 		}
-		if (bounding_box->maxPoint.z > max_point.z)
+		if (mesh->GetMesh()->box.maxPoint.z > max_point.z)
 		{
-			max_point.z = bounding_box->maxPoint.z;
+			max_point.z = mesh->GetMesh()->box.maxPoint.z;
 			update_tree = true;
 		}
 
 		if (!update_tree)
 		{
-			root_node->InsertInNode(bounding_box);
+			root_node->InsertInNode(mesh);
 		}
 		
 	}	
 }
 
-void Octree::Erase(AABB * bounding_box)
+void Octree::Erase(ComponentMeshRenderer * mesh)
 {
-	if (root_node != nullptr)
+	if (root_node != nullptr && mesh != nullptr && mesh->GetMesh() != nullptr)
 	{
 		//If the box that we need to delete is at any corner of the octree, we will need to update the octree.
-		if (bounding_box->minPoint.x == min_point.x || bounding_box->minPoint.y == min_point.y || bounding_box->minPoint.z == min_point.z ||
-			bounding_box->maxPoint.x == max_point.x || bounding_box->maxPoint.y == max_point.y || bounding_box->maxPoint.z == max_point.z)
+		if (mesh->GetMesh()->box.minPoint.x == min_point.x || mesh->GetMesh()->box.minPoint.y == min_point.y || mesh->GetMesh()->box.minPoint.z == min_point.z ||
+			mesh->GetMesh()->box.maxPoint.x == max_point.x || mesh->GetMesh()->box.maxPoint.y == max_point.y || mesh->GetMesh()->box.maxPoint.z == max_point.z)
 		{
 			update_tree = true;
 		}
@@ -251,12 +264,12 @@ void Octree::Erase(AABB * bounding_box)
 		//If we need to update the octree, we will handle that in the scene update if not, just erase the box
 		if (!update_tree)
 		{
-			root_node->EraseInNode(bounding_box);
+			root_node->EraseInNode(mesh);
 		}
 	}
 }
 
-void Octree::CollectIntersections(std::list<AABB*>& intersections_list, AABB* bounding_box)
+void Octree::CollectIntersections(std::list<ComponentMeshRenderer*>& intersections_list, AABB* bounding_box)
 {
 	if (root_node != nullptr)
 	{

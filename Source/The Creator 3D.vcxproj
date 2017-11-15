@@ -112,6 +112,7 @@
     <ClInclude Include="imgui_impl_sdl.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="MathGeoLib\Algorithm\Random\LCG.h" />
     <ClInclude Include="MathGeoLib\Geometry\AABB.h" />
     <ClInclude Include="MathGeoLib\Geometry\AABB2D.h" />
     <ClInclude Include="MathGeoLib\Geometry\Capsule.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="log.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MathGeoLib\Algorithm\Random\LCG.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\AABB.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\Capsule.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\Circle.cpp" />
@@ -247,7 +249,6 @@
     <ClCompile Include="MathGeoLib\Geometry\Line.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\LineSegment.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\OBB.cpp" />
-    <ClCompile Include="MathGeoLib\Geometry\PBVolume.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\Plane.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\Polygon.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\Polyhedron.cpp" />
@@ -256,16 +257,12 @@
     <ClCompile Include="MathGeoLib\Geometry\Triangle.cpp" />
     <ClCompile Include="MathGeoLib\Geometry\TriangleMesh.cpp" />
     <ClCompile Include="MathGeoLib\Math\BitOps.cpp" />
-    <ClCompile Include="MathGeoLib\Math\Callstack.cpp" />
     <ClCompile Include="MathGeoLib\Math\float2.cpp" />
     <ClCompile Include="MathGeoLib\Math\float3.cpp" />
     <ClCompile Include="MathGeoLib\Math\float3x3.cpp" />
     <ClCompile Include="MathGeoLib\Math\float3x4.cpp" />
     <ClCompile Include="MathGeoLib\Math\float4.cpp" />
-    <ClCompile Include="MathGeoLib\Math\float4d.cpp" />
     <ClCompile Include="MathGeoLib\Math\float4x4.cpp" />
-    <ClCompile Include="MathGeoLib\Math\grisu3.c" />
-    <ClCompile Include="MathGeoLib\Math\grisu3_cpp.cpp" />
     <ClCompile Include="MathGeoLib\Math\MathFunc.cpp" />
     <ClCompile Include="MathGeoLib\Math\MathLog.cpp" />
     <ClCompile Include="MathGeoLib\Math\MathOps.cpp" />
