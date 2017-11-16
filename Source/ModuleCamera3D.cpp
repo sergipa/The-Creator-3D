@@ -133,7 +133,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 	}
 
-	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && !ImGuizmo::IsOver())
 	{
 		int mouse_x = App->input->GetMouseX();
 		int mouse_y = App->input->GetMouseY();
@@ -155,36 +155,29 @@ update_status ModuleCamera3D::Update(float dt)
 		}
 		for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
 		{
+			Ray inv_ray = ray.ReturnTransform((*it)->GetGlobalTransfomMatrix().Inverted());
 
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
 			if (mesh_renderer != nullptr && mesh_renderer->GetMesh() != nullptr)
 			{
 				float dist_near;
 				float dist_far;
-				float i_dist;
-				float3 i_point;
 				if (ray.Intersects(mesh_renderer->GetMesh()->box, dist_near, dist_far))
 				{
-					LineSegment line_seg(ray.GetPoint(GetCamera()->camera_frustum.nearPlaneDistance), ray.GetPoint(GetCamera()->camera_frustum.farPlaneDistance));
-					float distance = GetCamera()->camera_frustum.farPlaneDistance;
-
 					float* mesh_vertices = mesh_renderer->GetMesh()->vertices;
 					uint* mesh_indices = mesh_renderer->GetMesh()->indices;
-					for (int i = 0; i < mesh_renderer->GetMesh()->num_indices;/*; i++*/)
+					for (int i = 0; i < mesh_renderer->GetMesh()->num_indices;i += 3)
 					{
-						uint tttemp = mesh_renderer->GetMesh()->num_indices;
 						Triangle temp;
-						temp.a = float3(mesh_vertices[(mesh_indices[i] * 3)], mesh_vertices[(mesh_indices[i] * 3) + 1], mesh_vertices[(mesh_indices[i] * 3) + 2]);
-						++i;
-						temp.b = float3(mesh_vertices[(mesh_indices[i] * 3)], mesh_vertices[(mesh_indices[i] * 3) + 1], mesh_vertices[(mesh_indices[i] * 3) + 2]);
-						++i;
-						temp.c = float3(mesh_vertices[(mesh_indices[i] * 3)], mesh_vertices[(mesh_indices[i] * 3) + 1], mesh_vertices[(mesh_indices[i] * 3) + 2]);
-						++i;
-						if (line_seg.Intersects(temp,&i_dist,&i_point))
+						temp.a.Set(mesh_vertices[(3 * mesh_indices[i])], mesh_vertices[(3 * mesh_indices[i] + 1)], mesh_vertices[(3 * mesh_indices[i] + 2)]);
+						temp.b.Set(mesh_vertices[(3 * mesh_indices[i + 1])], mesh_vertices[(3 * mesh_indices[i + 1] + 1)], mesh_vertices[(3 * mesh_indices[i + 1] + 2)]);
+						temp.c.Set(mesh_vertices[(3 * mesh_indices[i + 2])], mesh_vertices[(3 * mesh_indices[i + 2] + 1)], mesh_vertices[(3 * mesh_indices[i + 2] + 2)]);
+						 
+						if (inv_ray.Intersects(temp))
 						{
-							if (min_dist == NULL || i_dist < min_dist)
+							if (min_dist == NULL || dist_near < min_dist)
 							{
-								min_dist = i_dist;
+								min_dist = dist_near;
 								if (closest_object != nullptr)
 								{
 									closest_object->SetSelected(false);
