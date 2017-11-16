@@ -58,6 +58,8 @@ public:
 	void Save(Data& data, bool isDuplicated = false);
 	void Load(Data & data, bool isPrefab = false);
 
+	void DeleteFromResourcesDestructor();
+
 public:
 	std::list<GameObject*> childs;
 	std::list<Component*> components_list;

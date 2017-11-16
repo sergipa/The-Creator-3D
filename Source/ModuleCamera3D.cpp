@@ -37,8 +37,7 @@ ModuleCamera3D::~ModuleCamera3D()
 bool ModuleCamera3D::Init(Data * editor_config)
 {
 	CONSOLE_DEBUG("Setting up the camera");
-	editor_camera = new ComponentCamera(nullptr);
-
+	
 	bool ret = true;
 
 	if (editor_config->EnterSection("Camera_Config"))
@@ -54,9 +53,15 @@ bool ModuleCamera3D::Init(Data * editor_config)
 
 		editor_config->LeaveSection();
 	}
-
-	App->renderer3D->active_camera = editor_camera;
+	
 	return ret;
+}
+
+
+void ModuleCamera3D::CreateEditorCamera()
+{
+	editor_camera = new ComponentCamera(nullptr);
+	App->renderer3D->editor_camera = editor_camera;
 }
 
 // -----------------------------------------------------------------
@@ -64,7 +69,7 @@ bool ModuleCamera3D::CleanUp()
 {
 	CONSOLE_DEBUG("Cleaning camera");
 	RELEASE(editor_camera);
-	App->renderer3D->active_camera = nullptr;
+	App->renderer3D->editor_camera = nullptr;
 	return true;
 }
 

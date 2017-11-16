@@ -16,6 +16,8 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	void CreateEditorCamera();
+
 	void LookAt(const float3 &spot);
 	void OrbitAt(const float3 &spot);
 	void FocusOnObject(AABB& box);

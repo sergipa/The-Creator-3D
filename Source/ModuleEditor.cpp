@@ -23,6 +23,7 @@
 #include "imgui\ImGuizmo\ImGuizmo.h"
 #include "ModuleFileSystem.h"
 #include "ResourcesWindow.h"
+#include "GameWindow.h"
 
 ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {
@@ -63,6 +64,7 @@ bool ModuleEditor::Init(Data* editor_config)
 	editor_windows.push_back(tags_and_layers_window = new TagsAndLayersWindow());
 	editor_windows.push_back(import_window = new ImportWindow());
 	editor_windows.push_back(resources_window = new ResourcesWindow());
+	editor_windows.push_back(game_window = new GameWindow());
 	
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());

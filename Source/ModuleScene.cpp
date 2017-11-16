@@ -25,6 +25,7 @@ ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : M
 	name = "Scene";
 	saving_index = 0;
 	scene_name = "Untitled Scene";
+	main_camera = nullptr;
 }
 
 ModuleScene::~ModuleScene()
@@ -33,7 +34,7 @@ ModuleScene::~ModuleScene()
 // Load assets
 bool ModuleScene::Start()
 {
-	CONSOLE_DEBUG("Loading Intro assets");
+	CONSOLE_DEBUG("Loading Scene");
 	bool ret = true;
 
 	math::float3 initial_pos(0.f, 5.f, -10.f);
@@ -47,6 +48,19 @@ bool ModuleScene::Start()
 
 	mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	mCurrentGizmoMode = ImGuizmo::LOCAL;
+
+	main_camera = new GameObject();
+	main_camera->SetName("Main Camera");
+	ComponentTransform* transform = (ComponentTransform*)main_camera->GetComponent(Component::Transform);
+	transform->SetPosition({ 0,1,-10 });
+	ComponentCamera* camera = (ComponentCamera*)main_camera->AddComponent(Component::Camera);
+	main_camera->SetTag("Main Camera");
+	scene_gameobjects.push_back(main_camera);
+	root_gameobjects.push_back(main_camera);
+	scene_cameras.push_back(camera);
+	App->resources->AddGameObject(main_camera);
+	App->renderer3D->game_camera = camera;
+
 	return ret;
 }
 
@@ -109,7 +123,7 @@ update_status ModuleScene::PreUpdate(float dt)
 	for (std::list<GameObject*>::iterator it = gameobjects_to_destroy.begin(); it != gameobjects_to_destroy.end();) {
 		if (*it != nullptr)
 		{
-			if(!(*it)->GetIsUsedInPrefab()) {
+			if (!(*it)->GetIsUsedInPrefab()) {
 				(*it)->OnDestroy();
 				if ((*it)->IsRoot()) {
 					root_gameobjects.remove(*it);
@@ -144,18 +158,22 @@ update_status ModuleScene::Update(float dt)
 		{
 			if (mesh_renderer != nullptr && mesh_renderer->IsActive() && mesh_renderer->GetMesh() != nullptr)
 			{
-				App->renderer3D->AddMeshToDraw(mesh_renderer);
 				if ((*it)->IsSelected())
 				{
 					DebugAABB aabb(mesh_renderer->GetMesh()->box);
 					aabb.Render();
 				}
+				App->renderer3D->AddMeshToDraw(mesh_renderer);
 			}
 			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
 			{
 				DebugFrustum frustum(camera->GetFrustum());
 				frustum.Render();
 				App->renderer3D->rendering_cameras.push_back(camera);
+				if (App->renderer3D->game_camera == nullptr && (*it)->GetTag() == "Main Camera")
+				{
+					App->renderer3D->game_camera = camera;
+				}
 			}
 		}
 	}

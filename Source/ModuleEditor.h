@@ -22,6 +22,7 @@ class InputConfigWindow;
 class TagsAndLayersWindow;
 class ImportWindow;
 class ResourcesWindow;
+class GameWindow;
 
 class ModuleEditor :
 	public Module
@@ -63,5 +64,6 @@ public:
 	TagsAndLayersWindow* tags_and_layers_window = nullptr;
 	ImportWindow* import_window = nullptr;
 	ResourcesWindow* resources_window = nullptr;
+	GameWindow* game_window = nullptr;
 };
 

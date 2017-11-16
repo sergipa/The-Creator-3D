@@ -68,6 +68,8 @@ public:
 	int saving_index;
 	std::string scene_name;
 
+	GameObject* main_camera;
+
 	ImGuizmo::OPERATION mCurrentGizmoOperation;
 	ImGuizmo::MODE mCurrentGizmoMode;
 private:

@@ -23,7 +23,8 @@ ModuleResources::ModuleResources(Application* app, bool start_enabled, bool is_g
 ModuleResources::~ModuleResources()
 {
 	for (std::map<uint, GameObject*>::iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); ++it) {
-		if(it->second->IsRoot()) RELEASE(it->second);
+		it->second->DeleteFromResourcesDestructor();
+		it->second = nullptr;
 	}
 	gameobjects_list.clear();
 

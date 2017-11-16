@@ -8,6 +8,7 @@
 #include "ModuleTime.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
+#include "RenderTextureMSAA.h"
 
 SceneWindow::SceneWindow()
 {
@@ -24,25 +25,35 @@ SceneWindow::~SceneWindow()
 
 void SceneWindow::DrawWindow()
 {
-	if (ImGui::BeginDock(window_name.c_str(), false, false, false, 
-		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_MenuBar)) {
-
+	if (ImGui::BeginDock(window_name.c_str(), false, false, false,
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_MenuBar)) 
+	{
 
 		ImVec2 size = ImGui::GetContentRegionAvail();
 		if (scene_width != size.x || scene_height != size.y) {
-			App->renderer3D->OnResize(size.x, size.y);
+			App->renderer3D->OnResize(size.x, size.y, App->renderer3D->editor_camera);
 			scene_width = size.x;
 			scene_height = size.y;
 		}
 
 		DrawMenuBar();
 
-		ImGui::Image((void*)App->renderer3D->textureMSAA->GetTextureID(), size, ImVec2(0, 1), ImVec2(1, 0));
-		
-		if (App->renderer3D->active_camera != nullptr)
+		if (App->renderer3D->editor_camera != nullptr && App->renderer3D->editor_camera->GetViewportTexture() != nullptr)
 		{
+			ImGui::Image((void*)App->renderer3D->editor_camera->GetViewportTexture()->GetTextureID(), size, ImVec2(0, 1), ImVec2(1, 0));
+		}
+		
+		if (!App->renderer3D->rendering_cameras.empty() && App->renderer3D->rendering_cameras.back() != nullptr && App->renderer3D->rendering_cameras.back()->GetViewportTexture() != nullptr)
+		{
+			ImVec2 win_pos = ImGui::GetWindowPos();
+			ImVec2 preview_x_y = { win_pos.x + size.x - 300, win_pos.y + size.y - 100 };
+			ImVec2 preview_w_h = { win_pos.x + size.x, win_pos.y + size.y + 25};
+			ImVec2 preview_back_x_y = { preview_x_y.x - 5, preview_x_y.y - 10 };
+			ImVec2 preview_back_w_h = { preview_w_h.x + 5, preview_w_h.y + 5 };
+
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			//draw_list->AddImage((void*)App->renderer3D->active_camera->GetViewportTexture()->GetTexture(), { 600,400 }, { 900,700 }, ImVec2(0, 1), ImVec2(1, 0));
+			draw_list->AddRectFilled(preview_back_x_y, preview_back_w_h, ImGui::ColorConvertFloat4ToU32(ImVec4(0.5f, 0.5f, 0.5f, 1)));
+			draw_list->AddImage((void*)App->renderer3D->rendering_cameras.back()->GetViewportTexture()->GetTextureID(), preview_x_y, preview_w_h, ImVec2(0, 1), ImVec2(1, 0));
 		}
 
 		is_mouse_hovering_window = ImGui::IsMouseHoveringWindow();
@@ -139,7 +150,7 @@ void SceneWindow::DrawMenuBar()
 		}
 		if (ImGui::BeginMenu("Anti Aliasing level"))
 		{
-			int curr_msaa_level = App->renderer3D->textureMSAA->GetCurrentMSAALevel();
+			int curr_msaa_level = App->renderer3D->editor_camera->GetViewportTexture()->GetCurrentMSAALevel();
 			bool selected = false;
 			for (int i = 0; i <= 8; i *= 2) //cap the max MSAA level at x8
 			{
@@ -148,7 +159,7 @@ void SceneWindow::DrawMenuBar()
 				if (i == curr_msaa_level) selected = true;
 				if (ImGui::MenuItem(msaa_level, "", selected))
 				{
-					App->renderer3D->textureMSAA->ChangeMSAALevel(i);
+					App->renderer3D->editor_camera->GetViewportTexture()->ChangeMSAALevel(i);
 				}
 				if (i == 0) i++;
 				selected = false;

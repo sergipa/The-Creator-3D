@@ -23,13 +23,14 @@ ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 	camera_frustum.type = FrustumType::PerspectiveFrustum;
 	camera_frustum.nearPlaneDistance = 0.3f;
 	camera_frustum.farPlaneDistance = 200;
-	camera_frustum.horizontalFov = (float)App->window->GetWidth() / (float)App->window->GetHeight(); //<-- Needed for the first time correct aspect ratio
+	aspect_ratio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
+	camera_frustum.horizontalFov = math::Atan(aspect_ratio * math::Tan(camera_frustum.verticalFov / 2)) * 2;
 	SetFOV(60);
 
 	background_color = Black;
 
 	camera_viewport_texture = new RenderTextureMSAA();
-	camera_viewport_texture->Create((uint)camera_frustum.NearPlaneWidth(), (uint)camera_frustum.NearPlaneHeight(), 2);
+	camera_viewport_texture->Create(App->window->GetWidth(), App->window->GetHeight(), 2);
 	camera_target_texture = nullptr;
 
 	for (int i = 0; i < App->tags_and_layers->layers_list.size(); i++)
@@ -91,26 +92,33 @@ void ComponentCamera::UpdateProjection()
 	glLoadMatrixf((GLfloat*)camera_frustum.ProjectionMatrix().Transposed().v);
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	//glLoadIdentity();
 }
 
 float * ComponentCamera::GetProjectionMatrix() const
 {
-	return (float*)camera_frustum.ProjectionMatrix().Transposed().v;
+	static float4x4 matrix;
+
+	matrix = camera_frustum.ProjectionMatrix();
+	matrix.Transpose();
+
+	return (float*)matrix.v;
 }
 
 float * ComponentCamera::GetViewMatrix()
 {
 	//ViewMatrix is 3x4 and Transposed3 is not working
-	float4x4 matrix = camera_frustum.ViewMatrix();
-	return (float*)matrix.Transposed().v;
+	static float4x4 matrix;
+	matrix = camera_frustum.ViewMatrix();
+	matrix.Transpose();
+
+	return (float*)matrix.v;
 }
 
 void ComponentCamera::SetFOV(float fov)
 {
 	camera_frustum.verticalFov = fov * DEGTORAD;
-	camera_frustum.horizontalFov = 2 * atanf(tanf(camera_frustum.verticalFov / 2) * camera_frustum.AspectRatio());
-	//UpdateProjection();
+	camera_frustum.horizontalFov = math::Atan(aspect_ratio * math::Tan(camera_frustum.verticalFov / 2)) * 2;
 }
 
 float ComponentCamera::GetFOV() const
@@ -126,7 +134,6 @@ Color ComponentCamera::GetBackgroundColor() const
 void ComponentCamera::SetNearPlaneDistance(float distance)
 {
 	camera_frustum.nearPlaneDistance = distance;
-	UpdateProjection();
 }
 
 float ComponentCamera::GetNearPlaneDistance() const
@@ -137,12 +144,17 @@ float ComponentCamera::GetNearPlaneDistance() const
 void ComponentCamera::SetFarPlaneDistance(float distance)
 {
 	camera_frustum.farPlaneDistance = distance;
-	UpdateProjection();
 }
 
 float ComponentCamera::GetFarPlanceDistance() const
 {
 	return camera_frustum.farPlaneDistance;
+}
+
+void ComponentCamera::SetAspectRatio(float ratio)
+{
+	aspect_ratio = ratio;
+	camera_frustum.horizontalFov = math::Atan(aspect_ratio * math::Tan(camera_frustum.verticalFov / 2)) * 2;
 }
 
 float ComponentCamera::GetAspectRatio() const
@@ -168,6 +180,11 @@ int ComponentCamera::GetRenderOrder() const
 void ComponentCamera::SetTargetTexture(RenderTextureMSAA * texture)
 {
 	camera_target_texture = texture;
+}
+
+void ComponentCamera::SetViewPortTexture(RenderTextureMSAA * texture)
+{
+	camera_viewport_texture = texture;
 }
 
 RenderTextureMSAA * ComponentCamera::GetTargetTexture() const

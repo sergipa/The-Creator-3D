@@ -22,11 +22,12 @@
             "key_right": "D"
         },
         "Tags": {
-            "tags_num": "1",
-            "tag_0": "Default"
+            "tags_num": "2",
+            "tag_0": "Default",
+            "tag_1": "Main Camera"
         },
         "Layers": {
-            "layers_num": "1",
+            "layers_num": "2",
             "layer_0": "Default",
             "layer_1": "Ignore Raycast",
             "layer_2": "UI"

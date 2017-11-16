@@ -4,6 +4,7 @@
 TagsAndLayers::TagsAndLayers()
 {
 	tags_list.push_back("Default");
+	tags_list.push_back("Main Camera");
 	layers_list.push_back("Default");
 	layers_list.push_back("Ignore Raycast");
 	layers_list.push_back("UI");

@@ -31,6 +31,8 @@ public:
 	uint GetWidth() const;
 	uint GetHeight() const;
 
+	uint GetFrameBufferID() const;
+
 private:
 	uint fbo_id;
 	uint fbo_msaa_id;

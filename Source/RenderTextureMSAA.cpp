@@ -173,3 +173,8 @@ uint RenderTextureMSAA::GetHeight() const
 {
 	return height;
 }
+
+uint RenderTextureMSAA::GetFrameBufferID() const
+{
+	return fbo_msaa_id;
+}

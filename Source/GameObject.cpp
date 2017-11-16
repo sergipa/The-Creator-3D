@@ -510,3 +510,10 @@ void GameObject::Load(Data & data, bool is_prefab)
 	}
 
 }
+
+void GameObject::DeleteFromResourcesDestructor()
+{
+	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); ++it) {
+		RELEASE(*it);
+	}
+}

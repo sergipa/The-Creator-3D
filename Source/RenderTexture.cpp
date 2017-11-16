@@ -62,15 +62,15 @@ bool RenderTexture::Create(uint width, uint height)
 
 void RenderTexture::Resize(uint new_width, uint new_height)
 {
-	//In case you need to resize the texture. Not used right now.
-	if (width == new_width && height == new_height) {
-		return;
-	}
-	Destroy();
-	Create(new_width, new_height);
-	width = new_width;
-	height = new_height;
-	App->renderer3D->OnResize(new_width, new_height);
+	////In case you need to resize the texture. Not used right now.
+	//if (width == new_width && height == new_height) {
+	//	return;
+	//}
+	//Destroy();
+	//Create(new_width, new_height);
+	//width = new_width;
+	//height = new_height;
+	//App->renderer3D->OnResize(new_width, new_height);
 }
 
 void RenderTexture::Bind()

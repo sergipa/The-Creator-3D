@@ -36,12 +36,14 @@ public:
 	float GetNearPlaneDistance() const;
 	void SetFarPlaneDistance(float distance);
 	float GetFarPlanceDistance() const;
+	void SetAspectRatio(float ratio);
 	float GetAspectRatio() const;
 	void SetViewport(Rect viewport);
 	Rect GetViewport() const;
 	void SetRenderOrder(int position);
 	int GetRenderOrder() const;
 	void SetTargetTexture(RenderTextureMSAA* texture);
+	void SetViewPortTexture(RenderTextureMSAA* texture);
 	RenderTextureMSAA* GetTargetTexture() const;
 	RenderTextureMSAA* GetViewportTexture() const;
 
@@ -59,6 +61,6 @@ private:
 	Color background_color;
 	Rect camera_viewport;
 	int render_order;
-	
+	float aspect_ratio;
 };
 

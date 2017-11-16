@@ -3,7 +3,6 @@
 #include "Globals.h"
 #include "glmath.h"
 #include "Light.h"
-#include "RenderTextureMSAA.h"
 #include <list>
 
 class ComponentMeshRenderer;
@@ -23,7 +22,7 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
-	void OnResize(int width, int height);
+	void OnResize(int width, int height, ComponentCamera* camera);
 	void SetWireframeMode();
 	void SaveData(Data* data);
 
@@ -45,13 +44,12 @@ public:
 	void DisableTestLight();
 
 	void AddMeshToDraw(ComponentMeshRenderer* mesh);
-	//void AddPrimitiveToDraw(Primitive* primitive);
 
 private:
-	void DrawScene();
 	void DrawSceneGameObjects(ComponentCamera* active_camera, bool is_editor_camera);
 	void DrawMesh(ComponentMeshRenderer* mesh);
-	//void DrawDebugScene();
+	void DrawEditorScene();
+	void DrawSceneCameras(ComponentCamera* camera);
 
 public:
 
@@ -59,9 +57,9 @@ public:
 	SDL_GLContext context;
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
-	RenderTextureMSAA* textureMSAA;
 	std::list<ComponentCamera*> rendering_cameras;
-	ComponentCamera* active_camera;
+	ComponentCamera* editor_camera;
+	ComponentCamera* game_camera;
 
 private:
 	bool use_vsync;
@@ -73,9 +71,6 @@ private:
 	bool is_using_fog;
 
 	bool testing_light;
-
-	uint editor_camera_texture_id;
-	int binded_textures_count;
 
 	std::list<ComponentMeshRenderer*> dynamic_mesh_to_draw;
 	std::list<Primitive*> debug_primitive_to_draw;

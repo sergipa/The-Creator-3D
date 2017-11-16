@@ -441,6 +441,9 @@
     <ClInclude Include="MathGeoLib\Algorithm\Random\LCG.h">
       <Filter>Sources\3d Party\MathGeolib</Filter>
     </ClInclude>
+    <ClInclude Include="GameWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -727,6 +730,9 @@
     </ClCompile>
     <ClCompile Include="MathGeoLib\Algorithm\Random\LCG.cpp">
       <Filter>Sources\3d Party\MathGeolib</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

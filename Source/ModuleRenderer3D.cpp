@@ -17,6 +17,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "ModuleScene.h"
+#include "RenderTextureMSAA.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -32,12 +33,9 @@ ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled, bool is
 	is_using_texture2D = false;
 	is_using_fog = false;
 	testing_light = false;
-	textureMSAA = nullptr;
 	name = "Renderer";
-	active_camera = nullptr;
-
-	editor_camera_texture_id = 0;
-	binded_textures_count = 0;
+	editor_camera = nullptr;
+	game_camera = nullptr;
 }
 
 // Destructor
@@ -77,8 +75,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		if(use_vsync && SDL_GL_SetSwapInterval(1) < 0)
 			CONSOLE_DEBUG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
-		textureMSAA = new RenderTextureMSAA();
-		textureMSAA->Create(App->window->GetWidth(), App->window->GetHeight(), MSAA_level);
+		App->camera->CreateEditorCamera();
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -155,7 +152,6 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 
 		glEnable(GL_MULTISAMPLE);
 	}
-	OnResize(App->window->GetWidth(), App->window->GetHeight());
 	
 	return ret;
 }
@@ -166,55 +162,22 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	ms_timer.Start();
 	glEnable(GL_LIGHTING);
 
-	textureMSAA->Bind();
-
-	for (std::list<ComponentCamera*>::iterator it = rendering_cameras.begin(); it != rendering_cameras.end(); it++)
+	if (editor_camera != nullptr && editor_camera->GetViewportTexture() != nullptr)
 	{
-		if((*it) != nullptr && (*it)->GetViewportTexture() == nullptr) continue;
-		//(*it)->GetViewportTexture()->Bind();
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		editor_camera->GetViewportTexture()->Bind();
+		editor_camera->UpdateProjection();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(editor_camera->GetViewMatrix());
+
+		// light 0 on cam pos
+		lights[0].SetPos(editor_camera->camera_frustum.pos.x, editor_camera->camera_frustum.pos.y, editor_camera->camera_frustum.pos.z);
 	}
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(App->camera->GetViewMatrix());
-
-	// light 0 on cam pos
-	lights[0].SetPos(App->camera->GetPosition().x, App->camera->GetPosition().y, App->camera->GetPosition().z);
 
 	for (uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
 
-	return UPDATE_CONTINUE;
-}
-
-// PostUpdate present buffer to screen
-update_status ModuleRenderer3D::PostUpdate(float dt)
-{
-
-	DrawScene();
-
-	textureMSAA->Render();
-
-	textureMSAA->Unbind();
-
-	//EditorUI can't be drawn in wireframe mode!
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//Disable Lighting before draw editor or shadows will appear in menu bars and ligth will affect editor colors.
-	glDisable(GL_LIGHTING);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	App->editor->DrawEditor();
-
-	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
-
-	SDL_GL_SwapWindow(App->window->window);
-	return UPDATE_CONTINUE;
-}
-
-void ModuleRenderer3D::DrawScene()
-{
 	for (uint i = 1; i < MAX_LIGHTS; ++i)
 		lights[i].Active(false);
 
@@ -239,30 +202,56 @@ void ModuleRenderer3D::DrawScene()
 		}
 	}
 
-	editor_camera_texture_id = textureMSAA->GetTextureID();
+	return UPDATE_CONTINUE;
+}
 
-	glActiveTexture(GL_TEXTURE0);
+// PostUpdate present buffer to screen
+update_status ModuleRenderer3D::PostUpdate(float dt)
+{
+	DrawEditorScene();
 
 	for (std::list<ComponentCamera*>::iterator it = rendering_cameras.begin(); it != rendering_cameras.end(); it++)
 	{
-		DrawSceneGameObjects(*it, false);
-		binded_textures_count++;
+		DrawSceneCameras(*it);
 	}
-	DrawSceneGameObjects(active_camera, true);
+	
+	dynamic_mesh_to_draw.clear();
 	rendering_cameras.clear();
 
+	//EditorUI can't be drawn in wireframe mode!
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//Disable Lighting before draw editor or shadows will appear in menu bars and ligth will affect editor colors.
+	glDisable(GL_LIGHTING);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	App->editor->DrawEditor();
+
+	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
+
+	SDL_GL_SwapWindow(App->window->window);
+	return UPDATE_CONTINUE;
+}
+
+void ModuleRenderer3D::DrawEditorScene()
+{
+	DrawSceneGameObjects(editor_camera, true);
+}
+
+void ModuleRenderer3D::DrawSceneCameras(ComponentCamera * camera)
+{
+	if (camera == nullptr || camera->GetViewportTexture() == nullptr) return;
+
+	camera->GetViewportTexture()->Bind();
+	camera->UpdateProjection();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(camera->GetViewMatrix());
+
+	DrawSceneGameObjects(camera, false);
 }
 
 void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera, bool is_editor_camera)
 {
-	if(active_camera == nullptr && active_camera->GetViewportTexture() == nullptr) return;
-	if (!is_editor_camera)
-	{
-		active_camera->GetViewportTexture()->Bind();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	
-
 	std::vector<std::string> layer_masks = active_camera->GetAllLayersToDraw();
 
 	std::list<ComponentMeshRenderer*> static_instersects;
@@ -296,14 +285,9 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera, bool
 		}
 	}
 	
-	if (active_camera->GetViewportTexture() != nullptr && !is_editor_camera)
-	{
-		active_camera->GetViewportTexture()->Render();
-		glBindFramebuffer(GL_FRAMEBUFFER, editor_camera_texture_id);
-		glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
-	}
+	active_camera->GetViewportTexture()->Render();
+	active_camera->GetViewportTexture()->Unbind();
 
-	dynamic_mesh_to_draw.clear();
 }
 
 void ModuleRenderer3D::DrawMesh(ComponentMeshRenderer * mesh)
@@ -313,6 +297,7 @@ void ModuleRenderer3D::DrawMesh(ComponentMeshRenderer * mesh)
 
 	glPushMatrix();
 	glMultMatrixf(mesh->GetGameObject()->GetOpenGLMatrix());
+
 	Material* material = mesh->GetMaterial();
 	if (material != nullptr)
 	{
@@ -371,20 +356,24 @@ void ModuleRenderer3D::AddMeshToDraw(ComponentMeshRenderer * mesh)
 bool ModuleRenderer3D::CleanUp()
 {
 	CONSOLE_DEBUG("Destroying 3D Renderer");
-	RELEASE(textureMSAA);
 	SDL_GL_DeleteContext(context);
 
 	return true;
 }
 
 
-void ModuleRenderer3D::OnResize(int width, int height)
+void ModuleRenderer3D::OnResize(int width, int height, ComponentCamera* camera)
 {
+	float ratio = (float)width / (float)height;
+	camera->SetAspectRatio(ratio);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-	glLoadMatrixf(&ProjectionMatrix);
+
+	glLoadMatrixf(camera->GetProjectionMatrix());
+
 	glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 }
 
 void ModuleRenderer3D::SetWireframeMode()
@@ -396,9 +385,9 @@ void ModuleRenderer3D::SaveData(Data * data)
 {
 	data->CreateSection("Renderer_Config");
 	data->AddBool("Vsync", use_vsync);
-	if(textureMSAA == nullptr)
+	if(editor_camera->GetViewportTexture() == nullptr)
 		data->AddInt("MSAA_Level", 2);
-	else data->AddInt("MSAA_Level", textureMSAA->GetCurrentMSAALevel());
+	else data->AddInt("MSAA_Level", editor_camera->GetViewportTexture()->GetCurrentMSAALevel());
 	
 
 	data->CloseSection();
