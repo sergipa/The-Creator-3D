@@ -62,7 +62,7 @@ public:
 	std::string GetLibraryFile(std::string file_path);
 	std::string CreateLibraryFile(Resource::ResourceType type, std::string file_path);
 	Resource* CreateResourceFromLibrary(std::string library_path);
-	void CreateResource(std::string file_path);
+	Resource* CreateResource(std::string file_path);
 	void DeleteResource(std::string file_path);
 	//Checks if name is valid (not contain invalid characters) and change it for a valid name if necessary
 	bool CheckResourceName(std::string& name);

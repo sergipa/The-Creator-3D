@@ -35,6 +35,8 @@ public:
 	void SetSize(uint width, uint height);
 	void GetSize(uint& width, uint& height) const;
 	void SetTextureType(TextureType type);
+	void SetImageData(byte* data);
+	byte* GetImageData() const;
 	TextureType GetTextureType() const;
 	std::string GetTypeString() const;
 	void SetFormat(TextureFormat format);
@@ -58,5 +60,6 @@ private:
 	TextureFormat format;
 	TextureType type;
 	CompressionFormat compression;
+	byte* image_data;
 };
 

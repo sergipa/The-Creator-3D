@@ -444,6 +444,7 @@
     <ClInclude Include="GameWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
+    <ClInclude Include="CubeMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -734,6 +735,7 @@
     <ClCompile Include="GameWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
+    <ClCompile Include="CubeMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

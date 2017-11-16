@@ -20,6 +20,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
+	delete image_data;
 	UnloadFromMemory();
 }
 
@@ -68,6 +69,16 @@ void Texture::GetSize(uint & width, uint & height) const
 void Texture::SetTextureType(TextureType type)
 {
 	this->type = type;
+}
+
+void Texture::SetImageData(byte * data)
+{
+	image_data = data;
+}
+
+byte * Texture::GetImageData() const
+{
+	return image_data;
 }
 
 Texture::TextureType Texture::GetTextureType() const

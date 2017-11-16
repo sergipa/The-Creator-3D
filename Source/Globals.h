@@ -24,6 +24,7 @@ void log(const char file[], const char function[], int line, bool is_warning, bo
 
 
 typedef unsigned int uint;
+typedef unsigned char byte;
 typedef unsigned int UID;
 
 enum update_status
