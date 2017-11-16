@@ -35,7 +35,7 @@ void SceneWindow::DrawWindow()
 			scene_width = size.x;
 			scene_height = size.y;
 		}
-
+		window_pos = ImGui::GetWindowPos();
 		DrawMenuBar();
 
 		if (App->renderer3D->editor_camera != nullptr && App->renderer3D->editor_camera->GetViewportTexture() != nullptr)
@@ -71,7 +71,6 @@ void SceneWindow::DrawWindow()
 			//ImGuizmo::Enable(true);
 			ImGuizmo::SetRect(0, 0, io.DisplaySize.x - 100, io.DisplaySize.y - 100);
 			//ImGuizmo::SetRect(0, 0, scene_width, scene_height);
-
 
 
 			float4x4 view_matrix = App->camera->GetCamera()->camera_frustum.ViewMatrix();
@@ -206,5 +205,10 @@ bool SceneWindow::IsMouseHoveringWindow() const
 
 ImVec2 SceneWindow::GetWindowSize() const
 {
-	return ImGui::GetContentRegionAvail();
+	return ImVec2(scene_width, scene_height);
+}
+
+ImVec2 SceneWindow::GetWindowPos() const
+{
+	return window_pos;
 }
