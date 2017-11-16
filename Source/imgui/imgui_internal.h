@@ -708,6 +708,9 @@ struct IMGUI_API ImGuiWindow
     int                     FocusIdxAllRequestNext;             // Item being requested for focus, for next update (relies on layout to be stable between the frame pressing TAB and the next frame)
     int                     FocusIdxTabRequestNext;             // "
 
+	//Locked
+	bool					IsLocked;								// Check if user can interact with window elements
+
 public:
     ImGuiWindow(const char* name);
     ~ImGuiWindow();

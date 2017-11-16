@@ -25,7 +25,7 @@ PropertiesWindow::~PropertiesWindow()
 
 void PropertiesWindow::DrawWindow()
 {
-	if (ImGui::BeginDock(window_name.c_str(), false, false/*, App->IsPlaying()*/, ImGuiWindowFlags_HorizontalScrollbar)) {
+	if (ImGui::BeginDock(window_name.c_str(), false, false, App->IsPlaying(), ImGuiWindowFlags_HorizontalScrollbar)) {
 		GameObject* selected_gameobject = nullptr;
 		if (App->scene->selected_gameobjects.size() == 1) {
 			selected_gameobject = App->scene->selected_gameobjects.front();

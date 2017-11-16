@@ -285,6 +285,49 @@ void Application::UpdateStep()
 	}
 }
 
+void Application::Play()
+{
+	if (state == OnStop) {
+		state = OnPlay;
+	}
+}
+
+void Application::Pause()
+{
+	if (state == OnPlay) {
+		state = OnPause;
+	}
+}
+
+void Application::UnPause()
+{
+	if (state == OnPause) {
+		state = OnPlay;
+	}
+}
+
+void Application::Stop()
+{
+	if (state == OnPlay || state == OnPause) {
+		state = OnStop;
+	}
+}
+
+bool Application::IsPlaying()
+{
+	return state == OnPlay;
+}
+
+bool Application::IsPaused()
+{
+	return state == OnPause;
+}
+
+bool Application::IsStopped()
+{
+	return state == OnStop;
+}
+
 void Application::AddModule(Module* mod)
 {
 	list_modules.push_back(mod);

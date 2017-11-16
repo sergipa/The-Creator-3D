@@ -26,6 +26,39 @@ class ModuleMaterialImporter;
 
 class Application
 {
+
+public:
+
+	Application();
+	~Application();
+
+	bool Init();
+	update_status Update();
+	bool CleanUp();
+	LCG& RandomNumber();
+	void CapFPS(int max_fps);
+	void SetCursor(SDL_SystemCursor id);
+	void CreateEngineData(Data* data);
+	void UpdateStep();
+
+	void Play();
+	void Pause();
+	void UnPause();
+	void Stop();
+	bool IsPlaying();
+	bool IsPaused();
+	bool IsStopped();
+
+	enum EngineState {
+		OnPlay, OnPause, OnStop
+	};
+
+private:
+
+	void AddModule(Module* mod);
+	void PrepareUpdate();
+	void FinishUpdate();
+
 public:
 	ModuleWindow* window;
 	ModuleInput* input;
@@ -60,24 +93,8 @@ private:
 	int frames;
 	int capped_ms;
 	SDL_Cursor* cursor;
-public:
+	EngineState state = EngineState::OnStop;
 
-	Application();
-	~Application();
-
-	bool Init();
-	update_status Update();
-	bool CleanUp();
-	LCG& RandomNumber();
-	void CapFPS(int max_fps);
-	void SetCursor(SDL_SystemCursor id);
-	void CreateEngineData(Data* data);
-	void UpdateStep();
-private:
-
-	void AddModule(Module* mod);
-	void PrepareUpdate();
-	void FinishUpdate();
 };
 
 // Give App pointer access everywhere

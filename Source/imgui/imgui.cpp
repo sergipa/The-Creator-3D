@@ -1960,7 +1960,7 @@ bool ImGui::IsHovered(const ImRect& bb, ImGuiID id, bool flatten_childs, bool ed
     if (g.HoveredId == 0 || g.HoveredId == id || g.HoveredIdAllowOverlap)
     {
         ImGuiWindow* window = GetCurrentWindowRead();
-        if (editable && (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window->RootWindow)))
+        if (!window->IsLocked && editable && (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window->RootWindow)))
             if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
                 if (IsWindowContentHoverable(g.HoveredRootWindow))
                     return true;
@@ -3629,7 +3629,7 @@ bool ImGui::BeginPopupContextVoid(const char* str_id, int mouse_button)
     return BeginPopup(str_id);
 }
 
-static bool BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, bool border, ImGuiWindowFlags extra_flags)
+static bool BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, bool border, ImGuiWindowFlags extra_flags, bool locked)
 {
     ImGuiWindow* parent_window = ImGui::GetCurrentWindow();
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_ChildWindow;
@@ -3651,7 +3651,7 @@ static bool BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
     else
         ImFormatString(title, IM_ARRAYSIZE(title), "%s.%08X", parent_window->Name, id);
 
-    bool ret = ImGui::Begin(title, NULL, size, -1.0f, flags);
+    bool ret = ImGui::Begin(title, NULL, size, -1.0f, flags, locked);
     ImGuiWindow* child_window = ImGui::GetCurrentWindow();
     child_window->AutoFitChildAxises = auto_fit_axises;
     if (!(parent_window->Flags & ImGuiWindowFlags_ShowBorders))
@@ -3660,15 +3660,15 @@ static bool BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
     return ret;
 }
 
-bool ImGui::BeginChild(const char* str_id, const ImVec2& size_arg, bool border, ImGuiWindowFlags extra_flags)
+bool ImGui::BeginChild(const char* str_id, const ImVec2& size_arg, bool border, ImGuiWindowFlags extra_flags, bool locked)
 {
     ImGuiWindow* window = GetCurrentWindow();
-    return BeginChildEx(str_id, window->GetID(str_id), size_arg, border, extra_flags);
+    return BeginChildEx(str_id, window->GetID(str_id), size_arg, border, extra_flags, locked);
 }
 
-bool ImGui::BeginChild(ImGuiID id, const ImVec2& size_arg, bool border, ImGuiWindowFlags extra_flags)
+bool ImGui::BeginChild(ImGuiID id, const ImVec2& size_arg, bool border, ImGuiWindowFlags extra_flags, bool locked)
 {
-    return BeginChildEx(NULL, id, size_arg, border, extra_flags);
+    return BeginChildEx(NULL, id, size_arg, border, extra_flags, locked);
 }
 
 void ImGui::EndChild()
@@ -3870,15 +3870,16 @@ static void ApplySizeFullWithConstraint(ImGuiWindow* window, ImVec2 new_size)
 // - Return false when window is collapsed, so you can early out in your code. You always need to call ImGui::End() even if false is returned.
 // - Passing 'bool* p_open' displays a Close button on the upper-right corner of the window, the pointed value will be set to false when the button is pressed.
 // - Passing non-zero 'size' is roughly equivalent to calling SetNextWindowSize(size, ImGuiCond_FirstUseEver) prior to calling Begin().
-bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
+bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags, bool locked)
 {
-    return ImGui::Begin(name, p_open, ImVec2(0.f, 0.f), -1.0f, flags);
+    return ImGui::Begin(name, p_open, ImVec2(0.f, 0.f), -1.0f, flags, locked);
 }
 
-bool ImGui::Begin(const char* name, bool* p_open, const ImVec2& size_on_first_use, float bg_alpha, ImGuiWindowFlags flags)
+bool ImGui::Begin(const char* name, bool* p_open, const ImVec2& size_on_first_use, float bg_alpha, ImGuiWindowFlags flags, bool locked)
 {
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
+	ImGuiIO& io = GetIO();
     IM_ASSERT(name != NULL);                        // Window name required
     IM_ASSERT(g.Initialized);                       // Forgot to call ImGui::NewFrame()
     IM_ASSERT(g.FrameCountEnded != g.FrameCount);   // Called ImGui::Render() or ImGui::EndFrame() and haven't called ImGui::NewFrame() again yet
@@ -4437,6 +4438,16 @@ bool ImGui::Begin(const char* name, bool* p_open, const ImVec2& size_on_first_us
     }
     if (style.Alpha <= 0.0f)
         window->Active = false;
+
+	window->IsLocked = locked;
+	if (window->IsLocked) {
+		//window->DrawList->AddRectFilled({ 0,0 }, io.DisplaySize, ColorConvertFloat4ToU32({ 0,1,1,1 }));
+		//g.Style.Colors[ImGuiCol_WindowBg] = { 0,0,0,0.1f };
+		g.Style.Alpha = 0.5f;
+	}
+	else {
+		g.Style.Alpha = 1.0f;
+	}
 
     // Return false if we don't intend to display anything to allow user to perform an early out optimization
     window->SkipItems = (window->Collapsed || !window->Active) && window->AutoFitFramesX <= 0 && window->AutoFitFramesY <= 0;

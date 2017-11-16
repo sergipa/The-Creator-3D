@@ -43,7 +43,7 @@ AssetsWindow::~AssetsWindow()
 
 void AssetsWindow::DrawWindow()
 {
-	if (ImGui::BeginDock(window_name.c_str(), false, false/*, App->IsPlaying()*/, ImGuiWindowFlags_HorizontalScrollbar)) {
+	if (ImGui::BeginDock(window_name.c_str(), false, false, App->IsPlaying(), ImGuiWindowFlags_HorizontalScrollbar)) {
 		ImGui::Columns(2);
 		node = 0;
 		ImGui::Spacing();
@@ -101,7 +101,7 @@ void AssetsWindow::DrawWindow()
 
 		ImGui::NextColumn();
 
-		if (ImGui::BeginChild("Files", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar/*, App->IsPlaying()*/)) 
+		if (ImGui::BeginChild("Files", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar, App->IsPlaying())) 
 		{
 			if (!selected_folder.empty()) 
 			{

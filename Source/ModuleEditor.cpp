@@ -204,12 +204,12 @@ update_status ModuleEditor::Update(float deltaTime)
 
 	ImGui::SameLine(ImGui::GetIO().DisplaySize.x / 2 - 75);
 	if (ImGui::Button("Play", { 50,40 })) {
-		//App->Play();
+		App->Play();
 		App->time->time_scale = 1.0f;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Stop", { 50,40 })) {
-		//App->Stop();
+		App->Stop();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Pause", { 50,40 })) {

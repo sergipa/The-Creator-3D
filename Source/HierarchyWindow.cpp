@@ -21,8 +21,8 @@ HierarchyWindow::~HierarchyWindow()
 
 void HierarchyWindow::DrawWindow()
 {
-	if (ImGui::BeginDock(window_name.c_str(), false, false, false, ImGuiWindowFlags_HorizontalScrollbar)) {
-		if (ImGui::IsMouseClicked(1) && ImGui::IsMouseHoveringWindow()/* && !App->IsPlaying()*/) {
+	if (ImGui::BeginDock(window_name.c_str(), false, false, App->IsPlaying(), ImGuiWindowFlags_HorizontalScrollbar)) {
+		if (ImGui::IsMouseClicked(1) && ImGui::IsMouseHoveringWindow() && !App->IsPlaying()) {
 			ImGui::SetNextWindowPos(ImGui::GetMousePos());
 			ImGui::OpenPopup("GameObject Options");
 		}
@@ -187,7 +187,7 @@ void HierarchyWindow::IsMouseOver(GameObject * gameObject)
 		}
 	}
 
-	if (ImGui::IsMouseDoubleClicked(0)/* && !App->IsPlaying()*/)
+	if (ImGui::IsMouseDoubleClicked(0) && !App->IsPlaying())
 	{
 		if (ImGui::IsItemHoveredRect())
 		{

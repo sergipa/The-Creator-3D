@@ -1053,7 +1053,7 @@ namespace ImGui {
 					opened,
 					dock.size,
 					-1.0f,
-					ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders | extra_flags);
+					ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_ShowBorders | extra_flags, locked);
 				m_end_action = EndAction_End;
 				dock.pos = GetWindowPos();
 				dock.size = GetWindowSize();
@@ -1097,7 +1097,7 @@ namespace ImGui {
 				ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
 				ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBringToFrontOnFocus |
 				extra_flags;
-			bool ret = BeginChild(label, size, true, flags);
+			bool ret = BeginChild(label, size, true, flags, locked);
 			PopStyleColor();
 
 			return ret;
