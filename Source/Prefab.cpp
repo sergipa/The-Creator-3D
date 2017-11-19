@@ -11,7 +11,6 @@
 Prefab::Prefab()
 {
 	SetType(Resource::PrefabResource);
-	SetUsedCount(0);
 	root_gameobject = nullptr;
 }
 

@@ -37,11 +37,6 @@ void AppWindowConfigWindow::DrawWindow()
 		App->window->SetFullScreenDesktop(fullscren_desktop);
 	}
 
-	//if (ImGui::Checkbox("Resizable", &resizable)) Cant be changed while running, will implement when we can read json files
-	//{
-	//}
-
-
 	if (ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f))
 	{
 		App->window->SetBrightness(brightness);

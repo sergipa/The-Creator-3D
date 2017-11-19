@@ -12,6 +12,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "imgui/CustomImGui.h"
+#include "ModuleRenderer3D.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -56,7 +57,10 @@ void PropertiesWindow::DrawWindow()
 				for (int i = 0; i < App->tags_and_layers->tags_list.size(); i++) {
 					std::string name = App->tags_and_layers->tags_list[i];
 					if (ImGui::MenuItem(name.c_str())) {
-						selected_gameobject->SetTag(name);
+						if (name == "Main Camera" && App->renderer3D->game_camera == nullptr)
+						{
+							selected_gameobject->SetTag(name);
+						}
 					}
 				}
 				ImGui::Separator();
@@ -201,6 +205,12 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 			mesh_renderer->SetMesh(mesh);
 		}
 
+		Material* material = mesh_renderer->GetMaterial();
+		if (ImGui::InputResourceMaterial("Material", &material))
+		{
+			mesh_renderer->SetMaterial(material);
+		}
+
 		if(ImGui::TreeNodeEx("Mesh Info", ImGuiTreeNodeFlags_OpenOnArrow))
 		{
 			if (mesh_renderer->GetMesh() == nullptr)
@@ -217,11 +227,11 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 			ImGui::Text("UV: "); ImGui::SameLine(); (mesh_renderer->GetMesh()->id_texture_coords > 0) ? ImGui::TextColored(ImVec4(0, 1, 0, 1), ("yes")) : ImGui::TextColored(ImVec4(1, 0, 0, 1), ("no"));
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNodeEx("Texture Info", ImGuiTreeNodeFlags_OpenOnArrow))
+		if (ImGui::TreeNodeEx("Material", ImGuiTreeNodeFlags_OpenOnArrow))
 		{
 			if (mesh_renderer->GetMaterial() == nullptr)
 			{
-				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Not using a Texture");
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Not using a Material");
 				ImGui::TreePop();
 				return;
 			}

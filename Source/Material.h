@@ -98,6 +98,9 @@ public:
 	void SetBumpScaling(float bump_scaling);
 	float GetBumpScaling() const;
 
+	void IncreaseUsedTexturesCount();
+	void DecreaseUsedTexturesCount();
+
 private:
 
 	std::vector<Texture*> diffuse_texture_list;

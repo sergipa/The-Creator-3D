@@ -15,7 +15,6 @@ Texture::Texture()
 	format = UnknownFormat;
 	type = UnknownType;
 	SetType(Resource::TextureResource);
-	SetUsedCount(0);
 }
 
 Texture::~Texture()
@@ -237,7 +236,6 @@ void Texture::CreateMeta() const
 
 void Texture::LoadToMemory()
 {
-	// create a texture object
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -246,12 +244,18 @@ void Texture::LoadToMemory()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 
 void Texture::UnloadFromMemory()
 {
-	glDeleteTextures(1, &texture_id);
-	texture_id = 0;
+	DecreaseUsedCount();
+
+	if (GetUsedCount() == 0)
+	{
+		glDeleteTextures(1, &texture_id);
+		texture_id = 0;
+	}
 }
 
 void Texture::RecreateTexture()

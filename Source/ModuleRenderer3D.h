@@ -76,6 +76,8 @@ private:
 	bool testing_light;
 	bool use_skybox;
 
+	int lights_count;
+
 	std::list<ComponentMeshRenderer*> dynamic_mesh_to_draw;
 	std::list<Primitive*> debug_primitive_to_draw;
 

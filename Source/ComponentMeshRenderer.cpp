@@ -40,7 +40,20 @@ Material * ComponentMeshRenderer::GetMaterial() const
 
 void ComponentMeshRenderer::SetMaterial(Material * material)
 {
-	this->material = material;
+	if (this->material != material)
+	{
+		if (this->material != nullptr)
+		{
+			this->material->DecreaseUsedCount();
+			this->material->DecreaseUsedTexturesCount();
+		}
+		this->material = material;
+		if (this->material != nullptr)
+		{
+			this->material->IncreaseUsedCount();
+			this->material->IncreaseUsedTexturesCount();
+		}
+	}
 }
 
 void ComponentMeshRenderer::UpdateBoundingBox()

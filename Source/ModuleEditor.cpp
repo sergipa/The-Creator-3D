@@ -24,6 +24,7 @@
 #include "ModuleFileSystem.h"
 #include "ResourcesWindow.h"
 #include "GameWindow.h"
+#include "ResourcesConfigWindow.h"
 
 ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {
@@ -65,6 +66,7 @@ bool ModuleEditor::Init(Data* editor_config)
 	editor_windows.push_back(import_window = new ImportWindow());
 	editor_windows.push_back(resources_window = new ResourcesWindow());
 	editor_windows.push_back(game_window = new GameWindow());
+	editor_windows.push_back(resources_config_window = new ResourcesConfigWindow());
 	
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());
@@ -149,6 +151,10 @@ update_status ModuleEditor::Update(float deltaTime)
 				if (ImGui::MenuItem("Tags & Layers"))
 				{
 					tags_and_layers_window->active = !tags_and_layers_window->active;
+				}
+				if (ImGui::MenuItem("Resource Management"))
+				{
+					resources_config_window->active = !resources_config_window->active;
 				}
 				ImGui::EndMenu();
 			}

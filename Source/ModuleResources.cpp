@@ -498,15 +498,18 @@ std::string ModuleResources::CreateLibraryFile(Resource::ResourceType type, std:
 Resource * ModuleResources::CreateResourceFromLibrary(std::string library_path)
 {
 	std::string extension = App->file_system->GetFileExtension(library_path);
+	std::string name = App->file_system->GetFileNameWithoutExtension(library_path);
 	Resource::ResourceType type = LibraryExtensionToResourceType(extension);
 	Resource* resource = nullptr;
 
 	switch (type)
 	{
 	case Resource::TextureResource:
+		if (GetTexture(name) != nullptr) break;
 		resource = (Resource*)App->texture_importer->LoadTextureFromLibrary(library_path);
 		break;
 	case Resource::MeshResource:
+		if (GetMesh(name) != nullptr) break;
 		resource = (Resource*)App->mesh_importer->LoadMeshFromLibrary(library_path);
 		break;
 	case Resource::SceneResource:
@@ -514,6 +517,7 @@ Resource * ModuleResources::CreateResourceFromLibrary(std::string library_path)
 	case Resource::AnimationResource:
 		break;
 	case Resource::PrefabResource:
+		if (GetPrefab(name) != nullptr) break;
 		resource = (Resource*)App->prefab_importer->LoadPrefabFromLibrary(library_path);
 		break;
 	case Resource::ScriptResource:
@@ -525,6 +529,7 @@ Resource * ModuleResources::CreateResourceFromLibrary(std::string library_path)
 	case Resource::FontResource:
 		break;
 	case Resource::MaterialResource:
+		if (GetMaterial(name) != nullptr) break;
 		resource = (Resource*)App->material_importer->LoadMaterialFromLibrary(library_path);
 		break;
 	case Resource::Unknown:

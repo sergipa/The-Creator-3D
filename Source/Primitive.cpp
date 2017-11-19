@@ -802,6 +802,7 @@ void pFrustum::InnerRender() const
 DebugFrustum::DebugFrustum(math::Frustum & frustum)
 {
 	frustum.GetCornerPoints(corners);
+	type = PrimitiveTypes::Primitive_Frustum;
 }
 
 void DebugFrustum::InnerRender() const
@@ -809,9 +810,6 @@ void DebugFrustum::InnerRender() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(2.0f);
 	glDisable(GL_CULL_FACE);
-	glDisable(GL_TEXTURE_2D);
-
-	glColor3f(color.r, color.g, color.b);
 
 	glBegin(GL_QUADS);
 
@@ -848,7 +846,6 @@ void DebugFrustum::InnerRender() const
 	glEnd();
 	glLineWidth(1.0f);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -856,11 +853,7 @@ void DebugFrustum::InnerRender() const
 DebugAABB::DebugAABB(math::AABB & aabb)
 {
 	aabb.GetCornerPoints(corners);
-
-	/*for (int i = 0; i < 8; i++)
-	{
-		corners[i].z *= -1;
-	}*/
+	type = PrimitiveTypes::Primitive_Cube;
 }
 
 void DebugAABB::InnerRender() const
@@ -868,9 +861,6 @@ void DebugAABB::InnerRender() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(2.0f);
 	glDisable(GL_CULL_FACE);
-	glDisable(GL_TEXTURE_2D);
-
-	glColor3f(color.r, color.g, color.b);
 
 	glBegin(GL_QUADS);
 
@@ -907,7 +897,6 @@ void DebugAABB::InnerRender() const
 	glEnd();
 	glLineWidth(1.0f);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -935,8 +924,6 @@ void pTexturedCube::InnerRender() const
 	float sx = size.x * 0.5f;
 	float sy = size.y * 0.5f;
 	float sz = size.z * 0.5f;
-
-	glDisable(GL_DEPTH_TEST);
 
 	//top
 	glBindTexture(GL_TEXTURE_2D, textures_id[0]->GetID());
@@ -1016,7 +1003,6 @@ void pTexturedCube::InnerRender() const
 	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
 	glEnd();
 
-	glEnable(GL_DEPTH_TEST);
 }
 
 pTexturedSphere::pTexturedSphere(float radius, Texture* texture)

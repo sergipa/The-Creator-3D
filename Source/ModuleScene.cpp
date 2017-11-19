@@ -175,17 +175,12 @@ update_status ModuleScene::Update(float dt)
 			{
 				if ((*it)->IsSelected())
 				{
-					DebugAABB aabb(mesh_renderer->GetMesh()->box);
-					aabb.Render();
+					App->renderer3D->SetActiveTexture2D(false);
 				}
 				App->renderer3D->AddMeshToDraw(mesh_renderer);
 			}
 			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
 			{
-				DebugFrustum frustum(camera->GetFrustum());
-				frustum.color = { 1,1,1,1 };
-				frustum.Render();
-				App->renderer3D->rendering_cameras.push_back(camera);
 				if (App->renderer3D->game_camera == nullptr && (*it)->GetTag() == "Main Camera")
 				{
 					App->renderer3D->game_camera = camera;
@@ -212,7 +207,6 @@ update_status ModuleScene::Update(float dt)
 		}
 		octree.update_tree = false;
 	}
-	if(draw_octree) octree.DebugDraw();
 
 	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;

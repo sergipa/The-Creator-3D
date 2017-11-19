@@ -27,7 +27,8 @@ public:
 	void SetLibraryPath(std::string path);
 	ResourceType GetType() const;
 	void SetType(ResourceType type);
-	void SetUsedCount(int count);
+	void IncreaseUsedCount();
+	void DecreaseUsedCount();
 	int GetUsedCount() const;
 
 	virtual void Save(Data& data) const = 0;

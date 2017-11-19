@@ -40,6 +40,8 @@ void SceneWindow::DrawWindow()
 		window_pos = ImGui::GetWindowPos();
 		DrawMenuBar();
 
+		App->renderer3D->SetActiveTexture2D(true);
+
 		if (App->renderer3D->editor_camera != nullptr && App->renderer3D->editor_camera->GetViewportTexture() != nullptr)
 		{
 			ImGui::Image((void*)App->renderer3D->editor_camera->GetViewportTexture()->GetTextureID(), size, ImVec2(0, 1), ImVec2(1, 0));
@@ -47,9 +49,8 @@ void SceneWindow::DrawWindow()
 		
 		if (!App->renderer3D->rendering_cameras.empty() && App->renderer3D->rendering_cameras.back() != nullptr && App->renderer3D->rendering_cameras.back()->GetViewportTexture() != nullptr)
 		{
-			ImVec2 win_pos = ImGui::GetWindowPos();
-			ImVec2 preview_x_y = { win_pos.x + size.x - 300, win_pos.y + size.y - 100 };
-			ImVec2 preview_w_h = { win_pos.x + size.x, win_pos.y + size.y + 25};
+			ImVec2 preview_x_y = { window_pos.x + size.x - 300, window_pos.y + size.y - 100 };
+			ImVec2 preview_w_h = { window_pos.x + size.x, window_pos.y + size.y + 25};
 			ImVec2 preview_back_x_y = { preview_x_y.x - 5, preview_x_y.y - 10 };
 			ImVec2 preview_back_w_h = { preview_w_h.x + 5, preview_w_h.y + 5 };
 
@@ -57,6 +58,8 @@ void SceneWindow::DrawWindow()
 			draw_list->AddRectFilled(preview_back_x_y, preview_back_w_h, ImGui::ColorConvertFloat4ToU32(ImVec4(0.5f, 0.5f, 0.5f, 1)));
 			draw_list->AddImage((void*)App->renderer3D->rendering_cameras.back()->GetViewportTexture()->GetTextureID(), preview_x_y, preview_w_h, ImVec2(0, 1), ImVec2(1, 0));
 		}
+
+		App->renderer3D->SetActiveTexture2D(false);
 
 		is_mouse_hovering_window = ImGui::IsMouseHoveringWindow();
 		//Necessary because left-click doesn't give focus to a window

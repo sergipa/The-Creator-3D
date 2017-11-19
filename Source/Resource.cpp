@@ -8,6 +8,7 @@ Resource::Resource()
 	library_path = "";
 	creation_date = "";
 	uuid = App->RandomNumber().Int();
+	used_count = 0;
 }
 
 Resource::~Resource()
@@ -64,9 +65,14 @@ void Resource::SetType(ResourceType type)
 	this->type = type;
 }
 
-void Resource::SetUsedCount(int count)
+void Resource::IncreaseUsedCount()
 {
-	used_count = count;
+	used_count++;
+}
+
+void Resource::DecreaseUsedCount()
+{
+	if(used_count > 0) used_count--;
 }
 
 int Resource::GetUsedCount() const

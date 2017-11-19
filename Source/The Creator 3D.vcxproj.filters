@@ -444,8 +444,15 @@
     <ClInclude Include="GameWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
-    <ClInclude Include="CubeMap.h" />
-    <ClInclude Include="SkyDome.h" />
+    <ClInclude Include="CubeMap.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyDome.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourcesConfigWindow.h">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -736,8 +743,15 @@
     <ClCompile Include="GameWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
-    <ClCompile Include="CubeMap.cpp" />
-    <ClCompile Include="SkyDome.cpp" />
+    <ClCompile Include="CubeMap.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyDome.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourcesConfigWindow.cpp">
+      <Filter>Sources\EditorUI\Modules Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

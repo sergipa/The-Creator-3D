@@ -19,6 +19,7 @@
 #include "ModuleScene.h"
 #include "RenderTextureMSAA.h"
 #include "CubeMap.h"
+#include "SceneWindow.h"
 
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
@@ -38,6 +39,7 @@ ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled, bool is
 	editor_camera = nullptr;
 	game_camera = nullptr;
 	use_skybox = true;
+	lights_count = 0;
 }
 
 // Destructor
@@ -79,9 +81,9 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 
 		App->camera->CreateEditorCamera();
 
-		//Initialize Projection Matrix
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
+		////Initialize Projection Matrix
+		//glMatrixMode(GL_PROJECTION);
+		//glLoadIdentity();
 
 		//Check for error
 		GLenum error = glGetError();
@@ -91,9 +93,9 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 			ret = false;
 		}
 
-		//Initialize Modelview Matrix
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		////Initialize Modelview Matrix
+		//glMatrixMode(GL_MODELVIEW);
+		//glLoadIdentity();
 
 		//Check for error
 		error = glGetError();
@@ -124,6 +126,7 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		lights[0].specular.Set(1, 1, 1, 1);
 		lights[0].SetPos(-1.0f, 1.0f, 1.0f);
 		lights[0].Init();
+		lights_count++;
 
 		lights[1].ref = GL_LIGHT1;
 		lights[1].ambient.Set(0.2f, 0.2f, 0.2f, 1);
@@ -131,22 +134,22 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 		lights[1].specular.Set(1, 1, 1, 1);
 		lights[1].SetPos(-1.0f, 1.0f, 1.0f);
 		lights[1].Init();
+		lights_count++;
 
 		GLfloat LightModelAmbient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
-		/*glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
-		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);*/
+		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		lights[0].Active(true);
-		//lights[1].Active(true);
+		lights[1].Active(true);
 		glEnable(GL_COLOR_MATERIAL);
 		is_using_lightning = true;
 		is_using_depth_test = true;
 		is_using_cull_test = true;
 		is_using_color_material = true;
-		glEnable(GL_TEXTURE_2D);
 		is_using_texture2D = true;
 
 		glEnable(GL_MULTISAMPLE);
@@ -159,6 +162,13 @@ bool ModuleRenderer3D::Init(Data* editor_config)
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	ms_timer.Start();
+
+	return UPDATE_CONTINUE;
+}
+
+// PostUpdate present buffer to screen
+update_status ModuleRenderer3D::PostUpdate(float dt)
+{
 	glEnable(GL_LIGHTING);
 
 	if (editor_camera != nullptr && editor_camera->GetViewportTexture() != nullptr)
@@ -169,36 +179,25 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(editor_camera->GetViewMatrix());
-
-		// light 0 on cam pos
-		//lights[0].SetPos(editor_camera->camera_frustum.pos.x, editor_camera->camera_frustum.pos.y, editor_camera->camera_frustum.pos.z);
 	}
-
-	for (uint i = 0; i < MAX_LIGHTS; ++i)
-		lights[i].Render();
-
-	for (uint i = 1; i < MAX_LIGHTS; ++i)
-		lights[i].Active(false);
 
 	if (is_using_lightning)
 	{
 		if (testing_light)
 		{
+			for (uint i = 1; i < lights_count; ++i)
+				lights[i].Active(false);
 			lights[7].Active(true);
 		}
 		else
 		{
-			for (uint i = 1; i < MAX_LIGHTS; ++i)
+			for (uint i = 1; i < lights_count; ++i)
 				lights[i].Active(true);
 		}
+		for (uint i = 0; i < lights_count; ++i)
+			lights[i].Render();
 	}
 
-	return UPDATE_CONTINUE;
-}
-
-// PostUpdate present buffer to screen
-update_status ModuleRenderer3D::PostUpdate(float dt)
-{
 	DrawEditorScene();
 
 	for (std::list<ComponentCamera*>::iterator it = rendering_cameras.begin(); it != rendering_cameras.end(); it++)
@@ -207,7 +206,6 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	}
 	
 	dynamic_mesh_to_draw.clear();
-	rendering_cameras.clear();
 
 	//EditorUI can't be drawn in wireframe mode!
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -226,18 +224,19 @@ void ModuleRenderer3D::DrawEditorScene()
 {
 	if (use_skybox)
 	{
+		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
 		App->scene->DrawSkyBox(editor_camera->camera_frustum.pos);
-		glEnable(GL_LIGHTING);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_TEXTURE_2D);
 	}
 
-	//Wihout this, the dragged texture will be drawn on the grid if scene doesn't have gameobjects
-	glDisable(GL_TEXTURE_2D);
 	pPlane pl(0, 1, 0, 0);
-	pl.axis = true;
 	pl.color = { 0.7f,0.7f,0.7f,1 };
 	pl.Render();
-	glEnable(GL_TEXTURE_2D);
+
+	glEnable(GL_LIGHTING);
 
 	DrawSceneGameObjects(editor_camera, true);
 }
@@ -256,9 +255,13 @@ void ModuleRenderer3D::DrawSceneCameras(ComponentCamera * camera)
 
 	if (use_skybox)
 	{
+		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
 		App->scene->DrawSkyBox(camera->camera_frustum.pos);
+		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	DrawSceneGameObjects(camera, false);
@@ -276,6 +279,15 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera, bool
 		if (!is_editor_camera)
 		{
 			if (std::find(layer_masks.begin(), layer_masks.end(), (*it)->GetGameObject()->GetLayer()) == layer_masks.end()) continue;
+		}
+		else
+		{
+			if ((*it)->GetGameObject()->IsSelected())
+			{
+				DebugAABB aabb((*it)->GetMesh()->box);
+				aabb.color = { 0,1,0,1 };
+				aabb.Render();
+			}
 		}
 		DrawMesh(*it);
 	}
@@ -296,7 +308,31 @@ void ModuleRenderer3D::DrawSceneGameObjects(ComponentCamera* active_camera, bool
 		else
 		{
 			DrawMesh(*it);
+			if ((*it)->GetGameObject()->IsSelected())
+			{
+				DebugAABB aabb((*it)->GetMesh()->box);
+				aabb.color = { 0,1,0,1 };
+				aabb.Render();
+			}
 		}
+	}
+
+	if (is_editor_camera)
+	{
+		for (std::list<ComponentCamera*>::iterator it = rendering_cameras.begin(); it != rendering_cameras.end(); it++)
+		{
+			if ((*it)->GetGameObject()->IsSelected())
+			{
+				DebugFrustum frustum((*it)->camera_frustum);
+				frustum.color = { 0,1,0,1 };
+				frustum.Render();
+			}
+		}
+	}
+
+	if (App->scene->draw_octree)
+	{
+		App->scene->octree.DebugDraw();
 	}
 	
 	active_camera->GetViewportTexture()->Render();
@@ -380,9 +416,13 @@ bool ModuleRenderer3D::CleanUp()
 
 void ModuleRenderer3D::OnResize(int width, int height, ComponentCamera* camera)
 {
+	int msaa_level = camera->GetViewportTexture()->GetCurrentMSAALevel();
+	camera->GetViewportTexture()->Destroy();
+	camera->GetViewportTexture()->Create(width, height, msaa_level);
+
 	float ratio = (float)width / (float)height;
 	camera->SetAspectRatio(ratio);
-	//glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -390,7 +430,7 @@ void ModuleRenderer3D::OnResize(int width, int height, ComponentCamera* camera)
 	glLoadMatrixf(camera->GetProjectionMatrix());
 
 	glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
+	glLoadIdentity();
 }
 
 void ModuleRenderer3D::SetWireframeMode()
@@ -416,12 +456,12 @@ void ModuleRenderer3D::SetActiveLighting(bool active)
 
 	if (active)
 	{
-		for (uint i = 0; i < MAX_LIGHTS; ++i)
+		for (uint i = 0; i < lights_count; ++i)
 			lights[i].Active(true);
 	}
 	else 
 	{
-		for (uint i = 0; i < MAX_LIGHTS; ++i)
+		for (uint i = 0; i < lights_count; ++i)
 			lights[i].Active(false);
 	}
 }
@@ -530,7 +570,7 @@ void ModuleRenderer3D::EnableTestLight()
 {
 	lights[7].ref = GL_LIGHT7;
 	lights[7].Active(true);
-	for (uint i = 1; i < MAX_LIGHTS - 1; ++i)
+	for (uint i = 1; i < lights_count - 1; ++i)
 		lights[i].Active(false);
 	testing_light = true;
 }
@@ -538,7 +578,7 @@ void ModuleRenderer3D::EnableTestLight()
 void ModuleRenderer3D::DisableTestLight()
 {
 	lights[7].Active(false);
-	for (uint i = 1; i < MAX_LIGHTS - 1; ++i)
+	for (uint i = 1; i < lights_count - 1; ++i)
 		lights[i].Active(true);
 	lights[7].ref = 0;
 	testing_light = false;

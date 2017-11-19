@@ -26,7 +26,6 @@ Mesh::Mesh()
 	texture_coords = nullptr;
 
 	SetType(Resource::MeshResource);
-	SetUsedCount(0);
 
 }
 
@@ -130,19 +129,26 @@ void Mesh::LoadToMemory()
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * num_vertices * 3, texture_coords, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
+	IncreaseUsedCount();
 }
 
 void Mesh::UnloadFromMemory()
 {
-	glDeleteBuffers(1, &id_vertices);
-	glDeleteBuffers(1, &id_indices);
-	glDeleteBuffers(1, &id_normals);
-	glDeleteBuffers(1, &id_colors);
-	glDeleteBuffers(1, &id_texture_coords);
+	DecreaseUsedCount();
 
-	id_vertices = 0;
-	id_indices = 0;
-	id_normals = 0;
-	id_colors = 0;
-	id_texture_coords = 0;
+	if (GetUsedCount() == 0)
+	{
+		glDeleteBuffers(1, &id_vertices);
+		glDeleteBuffers(1, &id_indices);
+		glDeleteBuffers(1, &id_normals);
+		glDeleteBuffers(1, &id_colors);
+		glDeleteBuffers(1, &id_texture_coords);
+
+		id_vertices = 0;
+		id_indices = 0;
+		id_normals = 0;
+		id_colors = 0;
+		id_texture_coords = 0;
+	}
 }

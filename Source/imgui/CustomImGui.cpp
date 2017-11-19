@@ -42,7 +42,7 @@ namespace ImGui
 		}
 		else
 		{
-			buf_display = "None(Mesh)";
+			buf_display = "None(Texture)";
 		}
 		window->DrawList->AddText(g.Font, g.FontSize, window->DC.CursorPos, GetColorU32(ImGuiCol_Text), buf_display.c_str());
 
@@ -51,9 +51,9 @@ namespace ImGui
 			return false;
 		ImGui::SameLine();
 
-		if (Button("+", { 20, 20 }))
+		if (Button("+##texture", { 20, 20 }))
 		{
-			App->editor->resources_window->SetResourceType(Resource::MeshResource);
+			App->editor->resources_window->SetResourceType(Resource::TextureResource);
 			App->editor->resources_window->SetActive(true);
 		}
 
@@ -113,7 +113,7 @@ namespace ImGui
 			return false;
 		ImGui::SameLine();
 
-		if (Button("+", { 20, 20 }))
+		if (Button("+##mesh", { 20, 20 }))
 		{
 			App->editor->resources_window->SetResourceType(Resource::MeshResource);
 			App->editor->resources_window->SetActive(true);
@@ -166,7 +166,7 @@ namespace ImGui
 		}
 		else
 		{
-			buf_display = "None(Mesh)";
+			buf_display = "None(Prefab)";
 		}
 		window->DrawList->AddText(g.Font, g.FontSize, window->DC.CursorPos, GetColorU32(ImGuiCol_Text), buf_display.c_str());
 
@@ -175,9 +175,9 @@ namespace ImGui
 			return false;
 		ImGui::SameLine();
 
-		if (Button("+", { 20, 20 }))
+		if (Button("+##prefab", { 20, 20 }))
 		{
-			App->editor->resources_window->SetResourceType(Resource::MeshResource);
+			App->editor->resources_window->SetResourceType(Resource::PrefabResource);
 			App->editor->resources_window->SetActive(true);
 		}
 
@@ -228,7 +228,7 @@ namespace ImGui
 		}
 		else
 		{
-			buf_display = "None(Mesh)";
+			buf_display = "None(GameObject)";
 		}
 		window->DrawList->AddText(g.Font, g.FontSize, window->DC.CursorPos, GetColorU32(ImGuiCol_Text), buf_display.c_str());
 
@@ -237,15 +237,15 @@ namespace ImGui
 			return false;
 		ImGui::SameLine();
 
-		if (Button("+", { 20, 20 }))
+		if (Button("+##gameobject", { 20, 20 }))
 		{
-			App->editor->resources_window->SetResourceType(Resource::MeshResource);
+			App->editor->resources_window->SetResourceType(Resource::GameObjectResource);
 			App->editor->resources_window->SetActive(true);
 		}
 
 		GameObject* new_gameoject = nullptr;
 
-		if (App->editor->resources_window->active && App->editor->resources_window->prefab_changed)
+		if (App->editor->resources_window->active && App->editor->resources_window->gameobject_changed)
 		{
 			new_gameoject = App->editor->resources_window->GetGameobject();
 			if (new_gameoject != tmp_gameobject)
@@ -290,7 +290,7 @@ namespace ImGui
 		}
 		else
 		{
-			buf_display = "None(Mesh)";
+			buf_display = "None(Material)";
 		}
 		window->DrawList->AddText(g.Font, g.FontSize, window->DC.CursorPos, GetColorU32(ImGuiCol_Text), buf_display.c_str());
 
@@ -299,15 +299,15 @@ namespace ImGui
 			return false;
 		ImGui::SameLine();
 
-		if (Button("+", { 20, 20 }))
+		if (Button("+## material", { 20, 20 }))
 		{
-			App->editor->resources_window->SetResourceType(Resource::MeshResource);
+			App->editor->resources_window->SetResourceType(Resource::MaterialResource);
 			App->editor->resources_window->SetActive(true);
 		}
 
 		Material* new_material = nullptr;
 
-		if (App->editor->resources_window->active && App->editor->resources_window->prefab_changed)
+		if (App->editor->resources_window->active && App->editor->resources_window->material_changed)
 		{
 			new_material = App->editor->resources_window->GetMaterial();
 			if (new_material != tmp_material)

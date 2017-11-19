@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "ModuleWindow.h"
 #include "RenderTextureMSAA.h"
+#include "ModuleRenderer3D.h"
 
 ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 {
@@ -42,6 +43,7 @@ ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 	{
 		render_order = App->scene->GetNumCameras();
 		App->scene->scene_cameras.push_back(this);
+		App->renderer3D->rendering_cameras.push_back(this);
 	}
 }
 
@@ -49,6 +51,18 @@ ComponentCamera::~ComponentCamera()
 {
 	RELEASE(camera_viewport_texture);
 	RELEASE(camera_target_texture);
+
+	if (GetGameObject() != nullptr)
+	{
+		if (std::find(App->renderer3D->rendering_cameras.begin(), App->renderer3D->rendering_cameras.end(), this) != App->renderer3D->rendering_cameras.end())
+		{
+			App->renderer3D->rendering_cameras.remove(this);
+			if (GetGameObject()->GetTag() == "Main Camera")
+			{
+				App->renderer3D->game_camera = nullptr;
+			}
+		}
+	}
 }
 
 math::Frustum ComponentCamera::GetFrustum() const
@@ -86,13 +100,13 @@ void ComponentCamera::UpdatePosition()
 
 void ComponentCamera::UpdateProjection()
 {
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glLoadMatrixf((GLfloat*)camera_frustum.ProjectionMatrix().Transposed().v);
+
+	glLoadMatrixf(GetProjectionMatrix());
 
 	glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
+	glLoadIdentity();
 }
 
 float * ComponentCamera::GetProjectionMatrix() const

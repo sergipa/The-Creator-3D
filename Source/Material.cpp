@@ -12,8 +12,6 @@
 Material::Material()
 {
 	SetType(Resource::MaterialResource);
-	SetUsedCount(0);
-
 	wireframe = false;
 	two_sided = false;
 	shading_model = 0;
@@ -24,6 +22,8 @@ Material::Material()
 	refraction = 1;
 	reflectivity = 0;
 	bump_scaling = 1;
+
+	diffuse_color = { 0.6f,0.6f,0.6f };
 }
 
 Material::~Material()
@@ -162,7 +162,7 @@ bool Material::Load(Data & data)
 	for (int i = 0; i < diffuse_count; i++)
 	{
 		std::string library_path = data.GetString("diffuse_texture" + std::to_string(i));
-		Texture* diffuse = App->texture_importer->LoadTextureFromLibrary(library_path);
+		Texture* diffuse = (Texture*)App->resources->CreateResourceFromLibrary(library_path);
 		SetDiffuseTexture(diffuse);
 	}
 	math::float4 f_diffuse_color = data.GetVector4("diffuse_color");
@@ -292,6 +292,7 @@ void Material::LoadToMemory()
 		{
 			if ((*it)->GetID() > 0)
 			{
+				glEnable(GL_TEXTURE_2D);
 				glBindTexture(GL_TEXTURE_2D, (*it)->GetID());
 				used_texture = true;
 			}
@@ -309,6 +310,7 @@ void Material::LoadToMemory()
 void Material::UnloadFromMemory()
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 }
 
 void Material::SetDiffuseTexture(Texture * diffuse)
@@ -646,6 +648,102 @@ void Material::SetBumpScaling(float bump_scaling)
 float Material::GetBumpScaling() const
 {
 	return bump_scaling;
+}
+
+void Material::IncreaseUsedTexturesCount()
+{
+	for (std::vector<Texture*>::iterator it = diffuse_texture_list.begin(); it != diffuse_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = specular_texture_list.begin(); it != specular_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = ambient_texture_list.begin(); it != ambient_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = emissive_texture_list.begin(); it != emissive_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = heightmap_texture_list.begin(); it != heightmap_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = normalmap_texture_list.begin(); it != normalmap_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = shininess_texture_list.begin(); it != shininess_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = opacity_texture_list.begin(); it != opacity_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = displacement_texture_list.begin(); it != displacement_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = lightmap_texture_list.begin(); it != lightmap_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+	for(std::vector<Texture*>::iterator it = reflection_texture_list.begin(); it != reflection_texture_list.end(); it++)
+	{
+		(*it)->IncreaseUsedCount();
+	}
+}
+
+void Material::DecreaseUsedTexturesCount()
+{
+	for (std::vector<Texture*>::iterator it = diffuse_texture_list.begin(); it != diffuse_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = specular_texture_list.begin(); it != specular_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = ambient_texture_list.begin(); it != ambient_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = emissive_texture_list.begin(); it != emissive_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = heightmap_texture_list.begin(); it != heightmap_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = normalmap_texture_list.begin(); it != normalmap_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = shininess_texture_list.begin(); it != shininess_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = opacity_texture_list.begin(); it != opacity_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = displacement_texture_list.begin(); it != displacement_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = lightmap_texture_list.begin(); it != lightmap_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
+	for (std::vector<Texture*>::iterator it = reflection_texture_list.begin(); it != reflection_texture_list.end(); it++)
+	{
+		(*it)->DecreaseUsedCount();
+	}
 }
 
 

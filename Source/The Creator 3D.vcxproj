@@ -201,6 +201,7 @@
     <ClInclude Include="RendererConfigWindow.h" />
     <ClInclude Include="RenderTextureMSAA.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourcesConfigWindow.h" />
     <ClInclude Include="ResourcesWindow.h" />
     <ClInclude Include="SkyDome.h" />
     <ClInclude Include="TagsAndLayers.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="RendererConfigWindow.cpp" />
     <ClCompile Include="RenderTextureMSAA.cpp" />
     <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourcesConfigWindow.cpp" />
     <ClCompile Include="ResourcesWindow.cpp" />
     <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="TagsAndLayers.cpp" />
