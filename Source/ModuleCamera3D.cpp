@@ -137,66 +137,7 @@ update_status ModuleCamera3D::Update(float dt)
 	{
 		int mouse_x = App->input->GetMouseX();
 		int mouse_y = App->input->GetMouseY();
-		//float normalized_mouse_x = -(1.0f - ((float)App->input->GetMouseX()) / (float)(App->editor->scene_window->GetWindowSize().x));
-		//float normalized_mouse_x = -1.0 + 2.0 * (App->input->GetMouseX() - App->editor->scene_window->GetWindowSize().x) / App->editor->scene_window->GetWindowSize().x;
-		float normalized_mouse_x = (((mouse_x - App->editor->scene_window->GetWindowPos().x) / App->editor->scene_window->GetWindowSize().x) * 2) - 1;
-		//normalized_mouse_x = (normalized_mouse_x * 2) - 1;
-		//float normalized_mouse_y = 1.0f - ((float)App->input->GetMouseY()) / ((float)(App->editor->scene_window->GetWindowSize().y));
-		float normalized_mouse_y = 1 -  ((mouse_y - App->editor->scene_window->GetWindowPos().y) / App->editor->scene_window->GetWindowSize().y) * 2;
-		//normalized_mouse_y = 1 - (normalized_mouse_y * 2);
-
-		Ray ray = this->GetCamera()->camera_frustum.UnProject(normalized_mouse_x, normalized_mouse_y);
-
-		float min_dist = NULL;
-		GameObject* closest_object = nullptr;
-		if (!App->scene->selected_gameobjects.empty())
-		{
-			closest_object = App->scene->selected_gameobjects.front();
-		}
-		for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
-		{
-			Ray inv_ray = ray.ReturnTransform((*it)->GetGlobalTransfomMatrix().Inverted());
-
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-			if (mesh_renderer != nullptr && mesh_renderer->GetMesh() != nullptr)
-			{
-				float dist_near;
-				float dist_far;
-				if (ray.Intersects(mesh_renderer->GetMesh()->box, dist_near, dist_far))
-				{
-					float* mesh_vertices = mesh_renderer->GetMesh()->vertices;
-					uint* mesh_indices = mesh_renderer->GetMesh()->indices;
-					for (int i = 0; i < mesh_renderer->GetMesh()->num_indices;i += 3)
-					{
-						Triangle temp;
-						temp.a.Set(mesh_vertices[(3 * mesh_indices[i])], mesh_vertices[(3 * mesh_indices[i] + 1)], mesh_vertices[(3 * mesh_indices[i] + 2)]);
-						temp.b.Set(mesh_vertices[(3 * mesh_indices[i + 1])], mesh_vertices[(3 * mesh_indices[i + 1] + 1)], mesh_vertices[(3 * mesh_indices[i + 1] + 2)]);
-						temp.c.Set(mesh_vertices[(3 * mesh_indices[i + 2])], mesh_vertices[(3 * mesh_indices[i + 2] + 1)], mesh_vertices[(3 * mesh_indices[i + 2] + 2)]);
-						 
-						if (inv_ray.Intersects(temp))
-						{
-							if (min_dist == NULL || dist_near < min_dist)
-							{
-								min_dist = dist_near;
-								if (closest_object != nullptr)
-								{
-									closest_object->SetSelected(false);
-								}
-								closest_object = *it;
-							}
-						}
-
-					}
-				}
-			}
-		}
-		if (closest_object != nullptr)
-		{
-			App->scene->selected_gameobjects.clear();
-			closest_object->SetSelected(true);
-			App->scene->selected_gameobjects.push_back(closest_object);
-		}
-
+		MousePickRay(mouse_x, mouse_y);
 	}
 
 	App->editor->performance_window->AddModuleData(this->name, ms_timer.ReadMs());
@@ -274,6 +215,83 @@ void ModuleCamera3D::SetCameraSensitivity(float sensivity)
 float ModuleCamera3D::GetCameraSensitivity() const
 {
 	return camera_sensitivity;
+}
+
+void ModuleCamera3D::MousePickRay(int mouse_x, int mouse_y)
+{
+	ImVec2 window_pos = App->editor->scene_window->GetWindowPos();
+	ImVec2 window_size = App->editor->scene_window->GetWindowSize();
+
+	if (mouse_x > window_pos.x && mouse_x < window_pos.x + window_size.x && mouse_y > window_pos.y && mouse_y < window_pos.y + window_size.y)//If mouse is in scene 
+	{
+		//Ray needs x and y between [-1,1]
+		float normalized_mouse_x = (((mouse_x - window_pos.x) / window_size.x) * 2) - 1;
+
+		float normalized_mouse_y = 1 - ((mouse_y - window_pos.y) / window_size.y) * 2;
+
+
+		Ray ray = this->GetCamera()->camera_frustum.UnProject(normalized_mouse_x, normalized_mouse_y);
+		//------------------------------------------------------------------------------
+
+		float min_dist = NULL;
+		GameObject* closest_object = nullptr;
+
+		for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+		{
+			Ray inv_ray = ray.ReturnTransform((*it)->GetGlobalTransfomMatrix().Inverted()); //Triangle intersection needs the inverted ray
+
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+			if (mesh_renderer != nullptr && mesh_renderer->GetMesh() != nullptr)
+			{
+				float dist_near;
+				float dist_far;
+				if (ray.Intersects(mesh_renderer->GetMesh()->box, dist_near, dist_far))//Try intersection with AABB, if it intersects, then try with triangles
+				{
+					float* mesh_vertices = mesh_renderer->GetMesh()->vertices;
+					uint* mesh_indices = mesh_renderer->GetMesh()->indices;
+					for (int i = 0; i < mesh_renderer->GetMesh()->num_indices; i += 3)//Create Triangles
+					{
+						Triangle temp;
+						temp.a.Set(mesh_vertices[(3 * mesh_indices[i])], mesh_vertices[(3 * mesh_indices[i] + 1)], mesh_vertices[(3 * mesh_indices[i] + 2)]);
+						temp.b.Set(mesh_vertices[(3 * mesh_indices[i + 1])], mesh_vertices[(3 * mesh_indices[i + 1] + 1)], mesh_vertices[(3 * mesh_indices[i + 1] + 2)]);
+						temp.c.Set(mesh_vertices[(3 * mesh_indices[i + 2])], mesh_vertices[(3 * mesh_indices[i + 2] + 1)], mesh_vertices[(3 * mesh_indices[i + 2] + 2)]);
+
+						if (inv_ray.Intersects(temp))//If it intersects, save the distance 
+						{
+							if (min_dist == NULL || dist_near < min_dist)
+							{
+								min_dist = dist_near;
+								if (closest_object != nullptr)
+								{
+									closest_object->SetSelected(false);
+								}
+								closest_object = *it;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (closest_object != nullptr)
+		{
+			App->scene->selected_gameobjects.clear();
+			for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+			{
+				(*it)->SetSelected(false);
+			}
+			closest_object->SetSelected(true);
+			App->scene->selected_gameobjects.push_back(closest_object);
+
+		}
+		else//If clicks but doesn't intersect an object, remove selected objects
+		{
+			App->scene->selected_gameobjects.clear();
+			for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+			{
+				(*it)->SetSelected(false);
+			}
+		}
+	}
 }
 
 void ModuleCamera3D::SaveData(Data * data)
