@@ -907,6 +907,7 @@ pTexturedCube::pTexturedCube()
 pTexturedCube::pTexturedCube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
 {
 	type = PrimitiveTypes::Primitive_TexturedCube;
+	pos = { 0,0,0 };
 }
 
 void pTexturedCube::SetTextures(Texture * textures_id[6])
@@ -929,80 +930,86 @@ void pTexturedCube::InnerRender() const
 	glBindTexture(GL_TEXTURE_2D, textures_id[0]->GetID());
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0); 
-	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(sx + pos.x, sy + pos.y, sz + pos.z);
 	glTexCoord2f(1, 0); 
-	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, sy + pos.y, sz + pos.z);
 	glTexCoord2f(1, 1); 
-	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, sy + pos.y, -sz + pos.z);
 	glTexCoord2f(0, 1); 
-	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(sx + pos.x, sy + pos.y, -sz + pos.z);
 	glEnd();
 
 	//left
 	glBindTexture(GL_TEXTURE_2D, textures_id[1]->GetID());
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
-	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(sx + pos.x, -sy + pos.y, -sz + pos.z);
 	glTexCoord2f(1, 0);
-	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(sx + pos.x, -sy + pos.y, sz + pos.z);
 	glTexCoord2f(1, 1);
-	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(sx + pos.x, sy + pos.y, sz + pos.z);
 	glTexCoord2f(0, 1);
-	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(sx + pos.x, sy + pos.y, -sz + pos.z);
 	glEnd();
 
 	//front
 	glBindTexture(GL_TEXTURE_2D, textures_id[2]->GetID());
 	glBegin(GL_QUADS);
 	glTexCoord2f(1, 1);
-	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, sy + pos.y, sz + pos.z);
 	glTexCoord2f(0, 1);
-	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(sx + pos.x, sy + pos.y, sz + pos.z);
 	glTexCoord2f(0, 0);
-	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(sx + pos.x, -sy + pos.y, sz + pos.z);
 	glTexCoord2f(1, 0);
-	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, -sy + pos.y, sz + pos.z);
 	glEnd();
+	CONSOLE_DEBUG("%.3f", sx + pos.z);
 
 	//right
 	glBindTexture(GL_TEXTURE_2D, textures_id[3]->GetID());
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, 0);
-	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, -sy + pos.y, sz + pos.z);
 	glTexCoord2f(1, 0);
-	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, -sy + pos.y, -sz + pos.z);
 	glTexCoord2f(1, 1);
-	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, sy + pos.y, -sz + pos.z);
 	glTexCoord2f(0, 1);
-	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, sy + pos.y, sz + pos.z);
 	glEnd();
 
 	//back
 	glBindTexture(GL_TEXTURE_2D, textures_id[4]->GetID());
 	glBegin(GL_QUADS);
 	glTexCoord2f(1, 1); 
-	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(sx + pos.x, sy + pos.y, -sz + pos.z);
 	glTexCoord2f(0, 1); 
-	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y,  -sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, sy + pos.y,  -sz + pos.z);
 	glTexCoord2f(0, 0); 
-	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, -sy + pos.y, -sz + pos.z);
 	glTexCoord2f(1, 0); 
-	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(sx + pos.x, -sy + pos.y, -sz + pos.z);
 	glEnd();
 
 	//bottom
 	glBindTexture(GL_TEXTURE_2D, textures_id[5]->GetID());
 	glBegin(GL_QUADS);
 	glTexCoord2f(1, 0); 
-	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
-	glTexCoord2f(0, 0);	
-	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glVertex3f(sx + pos.x, -sy + pos.y, sz + pos.z);
+	glTexCoord2f(1, 1);	
+	glVertex3f(sx + pos.x, -sy + pos.y, -sz + pos.z);
+	glTexCoord2f(0, 0); 
+	glVertex3f(-sx + pos.x, -sy + pos.y, -sz + pos.z);
 	glTexCoord2f(0, 1); 
-	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
-	glTexCoord2f(1, 1); 
-	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glVertex3f(-sx + pos.x, -sy + pos.y, sz + pos.z);
 	glEnd();
 
+}
+
+void pTexturedCube::SetPos(float3 new_pos)
+{
+	pos = new_pos;
 }
 
 pTexturedSphere::pTexturedSphere(float radius, Texture* texture)

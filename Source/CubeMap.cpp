@@ -40,8 +40,8 @@ void CubeMap::CreateCubeMap()
 
 void CubeMap::RenderCubeMap(float3 position)
 {
-	//Direct draw until shaders are done
-	cube->SetPos(position.x, position.y, position.z);
+	//Immediate draw until shaders are done
+	cube->SetPos(position);
 	cube->Render();
 }
 

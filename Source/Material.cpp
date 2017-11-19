@@ -654,47 +654,47 @@ void Material::IncreaseUsedTexturesCount()
 {
 	for (std::vector<Texture*>::iterator it = diffuse_texture_list.begin(); it != diffuse_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if((*it) != nullptr) (*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = specular_texture_list.begin(); it != specular_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = ambient_texture_list.begin(); it != ambient_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = emissive_texture_list.begin(); it != emissive_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = heightmap_texture_list.begin(); it != heightmap_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = normalmap_texture_list.begin(); it != normalmap_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = shininess_texture_list.begin(); it != shininess_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = opacity_texture_list.begin(); it != opacity_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = displacement_texture_list.begin(); it != displacement_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = lightmap_texture_list.begin(); it != lightmap_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 	for(std::vector<Texture*>::iterator it = reflection_texture_list.begin(); it != reflection_texture_list.end(); it++)
 	{
-		(*it)->IncreaseUsedCount();
+		if ((*it) != nullptr)(*it)->IncreaseUsedCount();
 	}
 }
 
@@ -702,47 +702,47 @@ void Material::DecreaseUsedTexturesCount()
 {
 	for (std::vector<Texture*>::iterator it = diffuse_texture_list.begin(); it != diffuse_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = specular_texture_list.begin(); it != specular_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = ambient_texture_list.begin(); it != ambient_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = emissive_texture_list.begin(); it != emissive_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = heightmap_texture_list.begin(); it != heightmap_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = normalmap_texture_list.begin(); it != normalmap_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = shininess_texture_list.begin(); it != shininess_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = opacity_texture_list.begin(); it != opacity_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = displacement_texture_list.begin(); it != displacement_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = lightmap_texture_list.begin(); it != lightmap_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 	for (std::vector<Texture*>::iterator it = reflection_texture_list.begin(); it != reflection_texture_list.end(); it++)
 	{
-		(*it)->DecreaseUsedCount();
+		if ((*it) != nullptr)(*it)->DecreaseUsedCount();
 	}
 }
 

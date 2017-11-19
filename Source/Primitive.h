@@ -68,10 +68,12 @@ public:
 	pTexturedCube(float sizeX, float sizeY, float sizeZ);
 	void SetTextures(Texture* textures_id[6]);
 	void InnerRender() const;
+	void SetPos(float3 new_pos);
 public:
 	vec3 size;
 	float3 corners[8];
 	Texture* textures_id[6];
+	float3 pos;
 };
 
 // ============================================

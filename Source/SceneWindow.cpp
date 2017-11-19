@@ -47,7 +47,8 @@ void SceneWindow::DrawWindow()
 			ImGui::Image((void*)App->renderer3D->editor_camera->GetViewportTexture()->GetTextureID(), size, ImVec2(0, 1), ImVec2(1, 0));
 		}
 		
-		if (!App->renderer3D->rendering_cameras.empty() && App->renderer3D->rendering_cameras.back() != nullptr && App->renderer3D->rendering_cameras.back()->GetViewportTexture() != nullptr)
+		if (!App->renderer3D->rendering_cameras.empty() && App->renderer3D->rendering_cameras.back() != nullptr && 
+			App->renderer3D->rendering_cameras.back()->GetViewportTexture() != nullptr && App->renderer3D->rendering_cameras.back()->GetGameObject()->IsSelected())
 		{
 			ImVec2 preview_x_y = { window_pos.x + size.x - 300, window_pos.y + size.y - 100 };
 			ImVec2 preview_w_h = { window_pos.x + size.x, window_pos.y + size.y + 25};
