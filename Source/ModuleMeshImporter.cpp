@@ -215,6 +215,7 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 						material_data.SaveAsBinary(material_assets_path);
 						if (!App->file_system->DirectoryExist(LIBRARY_MATERIALS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_MATERIALS_FOLDER_PATH);
 						material_data.SaveAsBinary(material_library_path);
+						material->CreateMeta();
 					}
 				}
 			}
