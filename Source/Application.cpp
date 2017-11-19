@@ -52,12 +52,12 @@ Application::Application()
 	AddModule(input);
 	AddModule(audio);
 	AddModule(renderer3D);
-	AddModule(camera);
-	AddModule(scene);
 	AddModule(mesh_importer);
 	AddModule(texture_importer);
 	AddModule(prefab_importer);
 	AddModule(material_importer);
+	AddModule(camera);
+	AddModule(scene);
 	AddModule(editor);
 	AddModule(resources);
 	//TIME
@@ -252,6 +252,7 @@ void Application::CreateEngineData(Data * data)
 
 void Application::UpdateStep()
 {
+	if (state != OnPlay) return;
 	update_status ret = UPDATE_CONTINUE;
 
 	std::list<Module*>::iterator item = list_modules.begin();
@@ -289,6 +290,11 @@ void Application::Play()
 {
 	if (state == OnStop) {
 		state = OnPlay;
+		if (!App->file_system->DirectoryExist(TMP_FOLDER_PATH))
+		{
+			App->file_system->Create_Directory(TMP_FOLDER_PATH);
+		}
+		App->scene->SaveScene(TMP_FOLDER"tmp_scene");
 	}
 }
 
@@ -310,6 +316,7 @@ void Application::Stop()
 {
 	if (state == OnPlay || state == OnPause) {
 		state = OnStop;
+		App->scene->LoadScene(TMP_FOLDER"tmp_scene");
 	}
 }
 

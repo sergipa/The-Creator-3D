@@ -5,6 +5,8 @@
 #include <vector>
 #include "MathGeoLib\Geometry\Frustum.h"
 #include "MathGeoLib\Geometry\AABB.h"
+#include "Texture.h"
+
 enum PrimitiveTypes
 {
 	Primitive_Point,
@@ -15,6 +17,7 @@ enum PrimitiveTypes
 	Primitive_Cylinder,
 	Primitive_CubeArray,
 	Primitive_CubeIndices,
+	Primitive_TexturedCube,
 	Primitive_Ray,
 	Primitive_Frustum,
 };
@@ -54,6 +57,21 @@ public :
 public:
 	vec3 size;
 	float3 corners[8];
+};
+
+// ============================================
+// ============================================
+class pTexturedCube : public Primitive
+{
+public:
+	pTexturedCube();
+	pTexturedCube(float sizeX, float sizeY, float sizeZ);
+	void SetTextures(Texture* textures_id[6]);
+	void InnerRender() const;
+public:
+	vec3 size;
+	float3 corners[8];
+	Texture* textures_id[6];
 };
 
 // ============================================
@@ -116,6 +134,35 @@ public:
 	float num_vertex;
 	uint ibo_id;
 	float num_indices;
+};
+
+// ============================================
+class pTexturedSphere : public Primitive
+{
+public:
+	pTexturedSphere(float radius, Texture* texture);
+	pTexturedSphere(float radius, uint rings, uint sectors, Texture* texture);
+	void InnerRender() const;
+
+public:
+	void SetTexture(Texture* texture);
+
+private:
+	float radius;
+	std::vector<float> vertices;
+	std::vector<float> normals;
+	std::vector<float> texcoords;
+	std::vector<uint> indices;
+	Texture* texture;
+
+	uint vbo_id;
+	float num_vertex;
+	uint ibo_id;
+	float num_indices;
+	uint tbo_id;
+	float num_tex_coords;
+	uint nbo_id;
+	float num_normals;
 };
 
 // ============================================

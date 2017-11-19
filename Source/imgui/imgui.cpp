@@ -1960,7 +1960,7 @@ bool ImGui::IsHovered(const ImRect& bb, ImGuiID id, bool flatten_childs, bool ed
     if (g.HoveredId == 0 || g.HoveredId == id || g.HoveredIdAllowOverlap)
     {
         ImGuiWindow* window = GetCurrentWindowRead();
-        if (!window->IsLocked && editable && (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window->RootWindow)))
+        if (editable && (g.HoveredWindow == window || (flatten_childs && g.HoveredRootWindow == window->RootWindow)))
             if ((g.ActiveId == 0 || g.ActiveId == id || g.ActiveIdAllowOverlap) && IsMouseHoveringRect(bb.Min, bb.Max))
                 if (IsWindowContentHoverable(g.HoveredRootWindow))
                     return true;

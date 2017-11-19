@@ -53,6 +53,8 @@ public:
 	void LoadToMemory();
 	void UnloadFromMemory();
 
+	void RecreateTexture();
+
 private:
 	uint texture_id;
 	uint width;

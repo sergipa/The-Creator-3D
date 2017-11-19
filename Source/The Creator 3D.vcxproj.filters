@@ -445,6 +445,7 @@
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
     <ClInclude Include="CubeMap.h" />
+    <ClInclude Include="SkyDome.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -736,6 +737,7 @@
       <Filter>Sources\EditorUI</Filter>
     </ClCompile>
     <ClCompile Include="CubeMap.cpp" />
+    <ClCompile Include="SkyDome.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

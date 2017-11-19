@@ -2,6 +2,8 @@
 #include "Globals.h"
 #include "OpenGL.h"
 #include "Primitive.h"
+#include "Texture.h"
+
 // ------------------------------------------------------------
 Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
 {}
@@ -29,6 +31,9 @@ void Primitive::Render() const
 
 	if(axis == true)
 	{
+		GLfloat prev_color[4];
+		glGetFloatv(GL_CURRENT_COLOR, prev_color);
+
 		// Draw Axis Grid
 		glLineWidth(2.0f);
 
@@ -57,18 +62,19 @@ void Primitive::Render() const
 		glEnd();
 
 		glLineWidth(1.0f);
+
+		glColor4f(prev_color[0], prev_color[1], prev_color[2], prev_color[3]);
 	}
-
-	glColor3f(color.r, color.g, color.b);
-
-	//if(wire)
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//else
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
+	GLfloat gl_color[] = { color.r, color.g, color.b, color.a };
+	glDisable(GL_COLOR_MATERIAL);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, gl_color);
 
 	InnerRender();
 
 	glPopMatrix();
+
+	glEnable(GL_COLOR_MATERIAL);
 }
 
 // ------------------------------------------------------------
@@ -803,6 +809,7 @@ void DebugFrustum::InnerRender() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(2.0f);
 	glDisable(GL_CULL_FACE);
+	glDisable(GL_TEXTURE_2D);
 
 	glColor3f(color.r, color.g, color.b);
 
@@ -841,6 +848,7 @@ void DebugFrustum::InnerRender() const
 	glEnd();
 	glLineWidth(1.0f);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -860,6 +868,7 @@ void DebugAABB::InnerRender() const
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(2.0f);
 	glDisable(GL_CULL_FACE);
+	glDisable(GL_TEXTURE_2D);
 
 	glColor3f(color.r, color.g, color.b);
 
@@ -898,6 +907,293 @@ void DebugAABB::InnerRender() const
 	glEnd();
 	glLineWidth(1.0f);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+pTexturedCube::pTexturedCube()
+{
+}
+
+pTexturedCube::pTexturedCube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
+{
+	type = PrimitiveTypes::Primitive_TexturedCube;
+}
+
+void pTexturedCube::SetTextures(Texture * textures_id[6])
+{
+	this->textures_id[0] = textures_id[0];
+	this->textures_id[1] = textures_id[1];
+	this->textures_id[2] = textures_id[2];
+	this->textures_id[3] = textures_id[3];
+	this->textures_id[4] = textures_id[4];
+	this->textures_id[5] = textures_id[5];
+}
+
+void pTexturedCube::InnerRender() const
+{
+	float sx = size.x * 0.5f;
+	float sy = size.y * 0.5f;
+	float sz = size.z * 0.5f;
+
+	glDisable(GL_DEPTH_TEST);
+
+	//top
+	glBindTexture(GL_TEXTURE_2D, textures_id[0]->GetID());
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); 
+	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(1, 0); 
+	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(1, 1); 
+	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(0, 1); 
+	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glEnd();
+
+	//left
+	glBindTexture(GL_TEXTURE_2D, textures_id[1]->GetID());
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(1, 0);
+	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(1, 1);
+	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(0, 1);
+	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glEnd();
+
+	//front
+	glBindTexture(GL_TEXTURE_2D, textures_id[2]->GetID());
+	glBegin(GL_QUADS);
+	glTexCoord2f(1, 1);
+	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(0, 1);
+	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(0, 0);
+	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(1, 0);
+	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glEnd();
+
+	//right
+	glBindTexture(GL_TEXTURE_2D, textures_id[3]->GetID());
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0);
+	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(1, 0);
+	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(1, 1);
+	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(0, 1);
+	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y, sz + GetPosition().z);
+	glEnd();
+
+	//back
+	glBindTexture(GL_TEXTURE_2D, textures_id[4]->GetID());
+	glBegin(GL_QUADS);
+	glTexCoord2f(1, 1); 
+	glVertex3f(sx + GetPosition().x, sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(0, 1); 
+	glVertex3f(-sx + GetPosition().x, sy + GetPosition().y,  -sz + GetPosition().z);
+	glTexCoord2f(0, 0); 
+	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(1, 0); 
+	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glEnd();
+
+	//bottom
+	glBindTexture(GL_TEXTURE_2D, textures_id[5]->GetID());
+	glBegin(GL_QUADS);
+	glTexCoord2f(1, 0); 
+	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glTexCoord2f(0, 0);	
+	glVertex3f(sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(0, 1); 
+	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, -sz + GetPosition().z);
+	glTexCoord2f(1, 1); 
+	glVertex3f(-sx + GetPosition().x, -sy + GetPosition().y, sz + GetPosition().z);
+	glEnd();
+
+	glEnable(GL_DEPTH_TEST);
+}
+
+pTexturedSphere::pTexturedSphere(float radius, Texture* texture)
+{
+	uint rings = 20;
+	uint sectors = 20;
+
+	float const R = 1. / (float)(rings - 1);
+	float const S = 1. / (float)(sectors - 1);
+	int r, s;
+
+	vertices.resize(rings * sectors * 3);
+	normals.resize(rings * sectors * 3);
+	texcoords.resize(rings * sectors * 2);
+	std::vector<GLfloat>::iterator v = vertices.begin();
+	std::vector<GLfloat>::iterator n = normals.begin();
+	std::vector<GLfloat>::iterator t = texcoords.begin();
+	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
+		float const y = sin(-M_PI_2 + M_PI * r * R);
+		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
+		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+
+		*t++ = s*S;
+		*t++ = r*R;
+
+		*v++ = x * radius;
+		*v++ = y * radius;
+		*v++ = z * radius;
+
+		*n++ = -x;
+		*n++ = -y;
+		*n++ = -z;
+	}
+
+	indices.resize(rings * sectors * 4);
+	std::vector<uint>::iterator i = indices.begin();
+	for (r = 0; r < rings - 1; r++)
+		for (s = 0; s < sectors - 1; s++) {
+			/*
+			*i++ = r * sectors + s;
+			*i++ = r * sectors + (s+1);
+			*i++ = (r+1) * sectors + (s+1);
+			*i++ = (r+1) * sectors + s;
+			*/
+			*i++ = (r + 1) * sectors + s;
+			*i++ = (r + 1) * sectors + (s + 1);
+			*i++ = r * sectors + (s + 1);
+			*i++ = r * sectors + s;
+
+		}
+
+
+	this->texture = texture;
+	this->radius = radius;
+}
+
+pTexturedSphere::pTexturedSphere(float radius, uint rings, uint sectors, Texture* texture)
+{
+	float const R = 1. / (float)(rings - 1);
+	float const S = 1. / (float)(sectors - 1);
+	int r, s;
+
+	vertices.resize(rings * sectors * 3);
+	normals.resize(rings * sectors * 3);
+	texcoords.resize(rings * sectors * 2);
+	std::vector<float>::iterator v = vertices.begin();
+	std::vector<float>::iterator n = normals.begin();
+	std::vector<float>::iterator t = texcoords.begin();
+	for (r = 0; r < rings; r++) for (s = 0; s < sectors; s++) {
+		float const y = sin(-M_PI_2 + M_PI * r * R);
+		float const x = cos(2 * M_PI * s * S) * sin(M_PI * r * R);
+		float const z = sin(2 * M_PI * s * S) * sin(M_PI * r * R);
+
+		*t++ = s*S;
+		*t++ = r*R;
+
+		*v++ = x * radius;
+		*v++ = y * radius;
+		*v++ = z * radius;
+
+		*n++ = x;
+		*n++ = y;
+		*n++ = z;
+	}
+
+	indices.resize(rings * sectors * 4);
+	std::vector<uint>::iterator i = indices.begin();
+	for (r = 0; r < rings - 1; r++) for (s = 0; s < sectors - 1; s++) {
+		*i++ = r * sectors + s;
+		*i++ = r * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + (s + 1);
+		*i++ = (r + 1) * sectors + s;
+	}
+
+	this->texture = texture;
+	this->radius = radius;
+
+	num_indices = indices.size();
+	num_vertex = vertices.size();
+	num_tex_coords = texcoords.size();
+	num_normals = normals.size();
+	vbo_id = 0;
+	ibo_id = 0;
+	tbo_id = 0;
+	nbo_id = 0;
+	glGenBuffers(1, &vbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertex, &vertices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &ibo_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float)*num_indices, &indices[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &tbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, tbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_tex_coords, &texcoords[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &nbo_id);
+	glBindBuffer(GL_ARRAY_BUFFER, nbo_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_normals, &normals[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
+void pTexturedSphere::InnerRender() const
+{
+	/*glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+	glVertexPointer(3, GL_FLOAT, 0, &vertices[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, tbo_id);
+	glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, tbo_id);
+	glNormalPointer(GL_FLOAT, 0, &normals[0]);
+	
+	if (texture)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture->GetID());
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_id);
+	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_INT, &indices[0]);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);*/
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, 0, &vertices[0]);
+	glNormalPointer(GL_FLOAT, 0, &normals[0]);
+	glTexCoordPointer(2, GL_FLOAT, 0, &texcoords[0]);
+
+	glEnable(GL_TEXTURE_2D);
+	//glFrontFace(GL_CCW);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture->GetID());
+
+	glDrawElements(GL_QUADS, indices.size(), GL_UNSIGNED_SHORT, &indices[0]);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void pTexturedSphere::SetTexture(Texture * texture)
+{
+	this->texture = texture;
+}

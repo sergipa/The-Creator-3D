@@ -25,7 +25,7 @@ AssetsWindow::AssetsWindow()
 	folder_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"folder_icon.png");
 
 	if (!App->file_system->DirectoryExist(ASSETS_FOLDER_PATH)) {
-		if (!App->file_system->Create_Directory(PROJECT_FOLDER"Assets")) {
+		if (!App->file_system->Create_Directory(ASSETS_FOLDER_PATH)) {
 			CONSOLE_ERROR("Assets folder is not found and can't create new folder");
 			return;
 		}

@@ -541,7 +541,7 @@ Resource * ModuleResources::CreateResourceFromLibrary(std::string library_path)
 	return resource;
 }
 
-Resource* ModuleResources::CreateResource(std::string file_path)
+void ModuleResources::CreateResource(std::string file_path)
 {
 	std::string extension = App->file_system->GetFileExtension(file_path);
 	std::string library_path;
@@ -587,8 +587,6 @@ Resource* ModuleResources::CreateResource(std::string file_path)
 			resource->CreateMeta();
 		}
 	}
-
-	return resource;
 }
 
 void ModuleResources::DeleteResource(std::string file_path)

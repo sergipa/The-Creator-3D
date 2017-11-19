@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "MathGeoLib\Math\float3.h"
 
 class SceneWindow :
 	public Window
@@ -23,5 +24,7 @@ private:
 	bool is_mouse_hovering_window;
 	ImVec2 window_size;
 	ImVec2 window_pos;
+
+	float3 last_used_scale;
 };
 

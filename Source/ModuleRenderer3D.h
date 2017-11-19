@@ -43,6 +43,9 @@ public:
 	void EnableTestLight();
 	void DisableTestLight();
 
+	void ActiveSkybox(bool active);
+	bool IsUsingSkybox()const;
+
 	void AddMeshToDraw(ComponentMeshRenderer* mesh);
 
 private:
@@ -71,6 +74,7 @@ private:
 	bool is_using_fog;
 
 	bool testing_light;
+	bool use_skybox;
 
 	std::list<ComponentMeshRenderer*> dynamic_mesh_to_draw;
 	std::list<Primitive*> debug_primitive_to_draw;

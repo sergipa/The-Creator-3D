@@ -54,6 +54,12 @@ void Material::Save(Data & data) const
 		if (diffuse_texture_list[i] == nullptr) continue;
 		data.AddString("diffuse_texture" + std::to_string(i), diffuse_texture_list[i]->GetLibraryPath());
 	}
+	math::float4 f_diffuse_color;
+	f_diffuse_color.x = diffuse_color.r;
+	f_diffuse_color.y = diffuse_color.g;
+	f_diffuse_color.z = diffuse_color.b;
+	f_diffuse_color.w = diffuse_color.a;
+	data.AddVector4("diffuse_color", f_diffuse_color);
 	data.CloseSection();
 	data.CreateSection("Specular_textures");
 	data.AddInt("specular_count", specular_texture_list.size());
@@ -159,6 +165,11 @@ bool Material::Load(Data & data)
 		Texture* diffuse = App->texture_importer->LoadTextureFromLibrary(library_path);
 		SetDiffuseTexture(diffuse);
 	}
+	math::float4 f_diffuse_color = data.GetVector4("diffuse_color");
+	diffuse_color.r = f_diffuse_color.x;
+	diffuse_color.g = f_diffuse_color.y;
+	diffuse_color.b = f_diffuse_color.z;
+	diffuse_color.a = f_diffuse_color.w;
 	data.LeaveSection();
 	data.EnterSection("Specular_textures");
 	int specular_count = data.GetInt("specular_count");
@@ -274,6 +285,7 @@ void Material::CreateMeta() const
 
 void Material::LoadToMemory()
 {
+	bool used_texture = false;
 	for (std::vector<Texture*>::iterator it = diffuse_texture_list.begin(); it != diffuse_texture_list.end(); it++)
 	{
 		if (*it != nullptr)
@@ -281,10 +293,16 @@ void Material::LoadToMemory()
 			if ((*it)->GetID() > 0)
 			{
 				glBindTexture(GL_TEXTURE_2D, (*it)->GetID());
+				used_texture = true;
 			}
-			/*glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
-			glEnable(GL_COLOR_MATERIAL);*/
 		}
+	}
+	if (!used_texture)
+	{
+		GLfloat color[] = { diffuse_color.r, diffuse_color.g, diffuse_color.b, diffuse_color.a };
+		GLfloat color2[] = { 0.3f, 0.5f, 0.05f, 1 };
+		glDisable(GL_COLOR_MATERIAL);
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	}
 }
 

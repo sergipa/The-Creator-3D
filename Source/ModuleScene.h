@@ -13,6 +13,8 @@ class Texture;
 class ComponentCamera;
 class Mesh;
 class Prefab;
+class CubeMap;
+class SkyDome;
 
 class ModuleScene : public Module
 {
@@ -51,6 +53,8 @@ public:
 	void LoadPrefab(Prefab* prefab);
 	void CreatePrefab(GameObject* gameobject);
 
+	void DrawSkyBox(float3 pos);
+
 private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
 	void HandleInput();
@@ -72,7 +76,11 @@ public:
 
 	ImGuizmo::OPERATION mCurrentGizmoOperation;
 	ImGuizmo::MODE mCurrentGizmoMode;
+
+	Data* tmp_scene_data;
+
 private:
-	
 	std::list<GameObject*> gameobjects_to_destroy;
+	CubeMap* skybox;
+	
 };

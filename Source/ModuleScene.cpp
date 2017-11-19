@@ -19,6 +19,8 @@
 #include "ModuleResources.h"
 #include "Mesh.h"
 #include "ModuleFileSystem.h"
+#include "CubeMap.h"
+#include "SkyDome.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -26,10 +28,14 @@ ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : M
 	saving_index = 0;
 	scene_name = "Untitled Scene";
 	main_camera = nullptr;
+	skybox = nullptr;
+	tmp_scene_data = new Data();
 }
 
 ModuleScene::~ModuleScene()
-{}
+{
+	RELEASE(tmp_scene_data);
+}
 
 // Load assets
 bool ModuleScene::Start()
@@ -60,6 +66,15 @@ bool ModuleScene::Start()
 	scene_cameras.push_back(camera);
 	App->resources->AddGameObject(main_camera);
 	App->renderer3D->game_camera = camera;
+
+	skybox = new CubeMap(500);
+	skybox->SetCubeMapTopTexture(EDITOR_SKYBOX_FOLDER"top.bmp");
+	skybox->SetCubeMapLeftTexture(EDITOR_SKYBOX_FOLDER"left.bmp");
+	skybox->SetCubeMapFrontTexture(EDITOR_SKYBOX_FOLDER"front.bmp");
+	skybox->SetCubeMapRightTexture(EDITOR_SKYBOX_FOLDER"right.bmp");
+	skybox->SetCubeMapBackTexture(EDITOR_SKYBOX_FOLDER"back.bmp");
+	skybox->SetCubeMapBottomTexture(EDITOR_SKYBOX_FOLDER"bottom.bmp");
+	skybox->CreateCubeMap();
 
 	return ret;
 }
@@ -168,6 +183,7 @@ update_status ModuleScene::Update(float dt)
 			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
 			{
 				DebugFrustum frustum(camera->GetFrustum());
+				frustum.color = { 1,1,1,1 };
 				frustum.Render();
 				App->renderer3D->rendering_cameras.push_back(camera);
 				if (App->renderer3D->game_camera == nullptr && (*it)->GetTag() == "Main Camera")
@@ -353,7 +369,13 @@ void ModuleScene::LoadScene(std::string path)
 			if (transform) transform->UpdateGlobalMatrix();
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)game_object->GetComponent(Component::MeshRenderer);
 			if (mesh_renderer) mesh_renderer->LoadToMemory();
+			ComponentCamera* camera = (ComponentCamera*)game_object->GetComponent(Component::Camera);
+			if (camera)
+			{
+				if (game_object->GetTag() == "Main Camera") App->renderer3D->game_camera = camera;
+			}
 		}
+		saving_index = 0;
 	}
 	else
 	{
@@ -376,40 +398,7 @@ void ModuleScene::LoadPrefab(Prefab* prefab)
 {
 	GameObject* prefab_root = prefab->GetRootGameObject();
 
-	if (std::find(root_gameobjects.begin(), root_gameobjects.end(), prefab_root) == root_gameobjects.end())
-	{
-		std::vector<GameObject*> createdObjects;
-		bool justIncrease = false;
-		if (scene_gameobjects.empty()) {
-		justIncrease = true;
-		}
-
-		std::vector<GameObject*> prefab_gameobjects = prefab->GetGameObjects();
-		for (std::vector<GameObject*>::iterator it = prefab_gameobjects.begin(); it != prefab_gameobjects.end(); it++)
-		{
-			AddGameObjectToScene(*it);
-			createdObjects.push_back(*it);
-			ComponentTransform* transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
-			if (transform) transform->UpdateGlobalMatrix();
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-			if (mesh_renderer)
-			{
-				mesh_renderer->LoadToMemory();
-				//Focus the camera on the mesh
-				App->camera->can_update = true;
-				App->camera->FocusOnObject(mesh_renderer->GetMesh()->box);
-				App->camera->can_update = false;
-			}
-		}
-
-		for (int i = 0; i < createdObjects.size(); i++) {
-			RenameDuplicatedGameObject(createdObjects[i], justIncrease);
-		}
-	}
-	else
-	{
-		DuplicateGameObject(prefab_root);
-	}
+	DuplicateGameObject(prefab_root);
 }
 
 void ModuleScene::CreatePrefab(GameObject * gameobject)
@@ -431,6 +420,11 @@ void ModuleScene::CreatePrefab(GameObject * gameobject)
 	//Won't use this prefab, instead create a new resource from this prefab
 	delete prefab;
 	App->resources->CreateResource(assets_path);
+}
+
+void ModuleScene::DrawSkyBox(float3 pos)
+{
+	skybox->RenderCubeMap(pos);
 }
 
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)

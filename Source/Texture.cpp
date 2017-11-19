@@ -237,39 +237,6 @@ void Texture::CreateMeta() const
 
 void Texture::LoadToMemory()
 {
-	GLenum gl_format;
-
-	switch (format)
-	{
-	case Texture::ColorIndex:
-		gl_format = GL_COLOR_INDEX;
-		break;
-	case Texture::alpha:
-		gl_format = GL_ALPHA;
-		break;
-	case Texture::rgb:
-		gl_format = GL_RGB;
-		break;
-	case Texture::rgba:
-		gl_format = GL_RGBA;
-		break;
-	case Texture::bgr:
-		gl_format = GL_BGR;
-		break;
-	case Texture::bgra:
-		gl_format = GL_BGRA;
-		break;
-	case Texture::luminance:
-		gl_format = GL_LUMINANCE;
-		break;
-	case Texture::luminance_alpha:
-		gl_format = GL_LUMINANCE_ALPHA;
-		break;
-	case Texture::UnknownFormat:
-		gl_format = GL_ZERO;
-		break;
-	}
-
 	// create a texture object
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -277,7 +244,7 @@ void Texture::LoadToMemory()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, gl_format, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -285,4 +252,10 @@ void Texture::UnloadFromMemory()
 {
 	glDeleteTextures(1, &texture_id);
 	texture_id = 0;
+}
+
+void Texture::RecreateTexture()
+{
+	UnloadFromMemory();
+	LoadToMemory();
 }

@@ -90,5 +90,9 @@ enum update_status
 #define EDITOR_STYLE_FILE "./Editor_Settings/Editor_Style.json"
 #define EDITOR_IMAGES_FOLDER "./Editor_Settings/Images/"
 #define EDITOR_FONTS_FOLDER "./Editor_Settings/Fonts/"
+#define EDITOR_SKYBOX_FOLDER "./Editor_Settings/Images/Sky_Box/"
 
 #define LOGS_FOLDER "./Logs/"
+#define LOGS_FOLDER_PATH "./Logs"
+#define TMP_FOLDER "./Tmp/"
+#define TMP_FOLDER_PATH "./Tmp"

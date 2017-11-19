@@ -22,7 +22,7 @@ ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 
 	camera_frustum.type = FrustumType::PerspectiveFrustum;
 	camera_frustum.nearPlaneDistance = 0.3f;
-	camera_frustum.farPlaneDistance = 200;
+	camera_frustum.farPlaneDistance = 1000;
 	aspect_ratio = (float)App->window->GetWidth() / (float)App->window->GetHeight();
 	camera_frustum.horizontalFov = math::Atan(aspect_ratio * math::Tan(camera_frustum.verticalFov / 2)) * 2;
 	SetFOV(60);

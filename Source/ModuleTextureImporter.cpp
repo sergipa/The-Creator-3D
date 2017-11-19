@@ -80,39 +80,37 @@ Texture * ModuleTextureImporter::LoadTextureFromLibrary(std::string path)
 		ILinfo ImageInfo;
 		iluGetImageInfo(&ImageInfo);
 
+		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		{
+			iluFlipImage();
+		}
+
+		if (!ilConvertImage(ilGetInteger(IL_IMAGE_FORMAT), IL_UNSIGNED_BYTE))
+		{
+			CONSOLE_LOG("DeviL: Failed to convert image %s. Error: %s", path.c_str(), iluErrorString(ilGetError()));
+		}
+
+		int width = ilGetInteger(IL_IMAGE_WIDTH);
+		int height = ilGetInteger(IL_IMAGE_HEIGHT);
+		int format = ilGetInteger(IL_IMAGE_FORMAT);
+		int type = ilGetInteger(IL_IMAGE_TYPE);
+		byte* data = new byte[width * height * 4];
+		ilCopyPixels(0, 0, 0, width, height, 1, IL_RGBA, IL_UNSIGNED_BYTE, data);
+
 		tmp_texture = new Texture();
 		tmp_texture->SetID(ilutGLBindTexImage());
-		tmp_texture->SetWidth(ImageInfo.Width);
-		tmp_texture->SetHeight(ImageInfo.Height);
+		tmp_texture->SetWidth(width);
+		tmp_texture->SetHeight(height);
 		tmp_texture->SetLibraryPath(path);
 		tmp_texture->SetName(App->file_system->GetFileNameWithoutExtension(path).c_str());
 		tmp_texture->SetCompression(ilGetInteger(IL_DXTC_FORMAT));
-		tmp_texture->SetImageData(ImageInfo.Data);
+		tmp_texture->SetImageData(data);
+		tmp_texture->SetFormat(Texture::rgba);
 
-		switch (ImageInfo.Format)
-		{
-		case IL_COLOUR_INDEX: tmp_texture->SetFormat(Texture::ColorIndex); break;
-		case IL_ALPHA: tmp_texture->SetFormat(Texture::alpha); break;
-		case IL_RGB: tmp_texture->SetFormat(Texture::rgb); break;
-		case IL_RGBA: tmp_texture->SetFormat(Texture::rgba); break;
-		case IL_BGR: tmp_texture->SetFormat(Texture::bgr); break;
-		case IL_BGRA: tmp_texture->SetFormat(Texture::bgra); break;
-		case IL_LUMINANCE: tmp_texture->SetFormat(Texture::luminance); break;
-		case IL_LUMINANCE_ALPHA: tmp_texture->SetFormat(Texture::luminance_alpha); break;
-		default: tmp_texture->SetFormat(Texture::UnknownFormat); break;
-		}
-		switch (ImageInfo.Type)
-		{
-		case IL_BMP: tmp_texture->SetTextureType(Texture::TextureType::bmp); break;
-		case IL_JPG: tmp_texture->SetTextureType(Texture::TextureType::jpg); break;
-		case IL_PNG: tmp_texture->SetTextureType(Texture::TextureType::png); break;
-		case IL_TGA: tmp_texture->SetTextureType(Texture::TextureType::tga); break;
-		case IL_DDS: tmp_texture->SetTextureType(Texture::TextureType::dds); break;
-		default: tmp_texture->SetTextureType(Texture::TextureType::UnknownType); break;
-		}
 		ilDeleteImages(1, &image_id);
 		CONSOLE_DEBUG("Image loaded from library: %s", path.c_str());
-		tmp_texture->SetLibraryPath(path);
+
+		tmp_texture->RecreateTexture();
 	}
 	else
 	{

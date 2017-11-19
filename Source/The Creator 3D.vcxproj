@@ -56,6 +56,7 @@
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <LanguageStandard>
       </LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -72,6 +73,7 @@
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -200,6 +202,7 @@
     <ClInclude Include="RenderTextureMSAA.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourcesWindow.h" />
+    <ClInclude Include="SkyDome.h" />
     <ClInclude Include="TagsAndLayers.h" />
     <ClInclude Include="TagsAndLayersWindow.h" />
     <ClInclude Include="Texture.h" />
@@ -299,6 +302,7 @@
     <ClCompile Include="RenderTextureMSAA.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourcesWindow.cpp" />
+    <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="TagsAndLayers.cpp" />
     <ClCompile Include="TagsAndLayersWindow.cpp" />
     <ClCompile Include="Texture.cpp" />

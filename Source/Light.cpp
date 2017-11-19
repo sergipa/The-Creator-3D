@@ -9,7 +9,7 @@ void Light::Init()
 {
 	glLightfv(ref, GL_AMBIENT, &ambient);
 	glLightfv(ref, GL_DIFFUSE, &diffuse);
-	glLightfv(ref, GL_SPECULAR, &specular);
+	//glLightfv(ref, GL_SPECULAR, &specular);
 }
 
 void Light::SetPos(float x, float y, float z, float w)
