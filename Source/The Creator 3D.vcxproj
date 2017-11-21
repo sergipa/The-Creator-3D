@@ -91,6 +91,7 @@
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="imgui\CustomImGui.h" />
+    <ClInclude Include="imgui\ImGuiColorTextEdit\TextEditor.h" />
     <ClInclude Include="imgui\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="ImportWindow.h" />
     <ClInclude Include="InputConfigWindow.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="imgui\CustomImGui.cpp" />
+    <ClCompile Include="imgui\ImGuiColorTextEdit\TextEditor.cpp" />
     <ClCompile Include="imgui\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="ImportWindow.cpp" />
     <ClCompile Include="InputConfigWindow.cpp" />

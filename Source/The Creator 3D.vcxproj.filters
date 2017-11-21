@@ -52,6 +52,9 @@
     <Filter Include="Sources\3d Party\Lua">
       <UniqueIdentifier>{17cc6fe6-e36a-4e01-b344-a9a581285cdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3d Party\imGui\TextEdit">
+      <UniqueIdentifier>{f5ff2a23-210f-4e86-85c8-b4e18cd31259}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -475,6 +478,9 @@
     <ClInclude Include="lua\include\lualib.h">
       <Filter>Sources\3d Party\Lua</Filter>
     </ClInclude>
+    <ClInclude Include="imgui\ImGuiColorTextEdit\TextEditor.h">
+      <Filter>Sources\3d Party\imGui\TextEdit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -778,6 +784,9 @@
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="LuaScript.cpp" />
+    <ClCompile Include="imgui\ImGuiColorTextEdit\TextEditor.cpp">
+      <Filter>Sources\3d Party\imGui\TextEdit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">
