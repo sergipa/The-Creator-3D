@@ -164,7 +164,7 @@ void ModuleCamera3D::OrbitAt(const float3 & spot)
 void ModuleCamera3D::FocusOnObject(AABB& box)
 {
 	editor_camera->camera_frustum.pos.x = box.maxPoint.x;
-	editor_camera->camera_frustum.pos.y = box.maxPoint.y + 10;
+	editor_camera->camera_frustum.pos.y = box.maxPoint.y + 20;
 	editor_camera->camera_frustum.pos.z = box.maxPoint.z;
 
 	float3 look_at_pos;

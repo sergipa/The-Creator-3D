@@ -49,6 +49,9 @@
     <Filter Include="Sources\3d Party\MathGeolib">
       <UniqueIdentifier>{42066115-5b05-4ffc-95bd-eac40115cd13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\3d Party\Lua">
+      <UniqueIdentifier>{17cc6fe6-e36a-4e01-b344-a9a581285cdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -453,6 +456,25 @@
     <ClInclude Include="ResourcesConfigWindow.h">
       <Filter>Sources\EditorUI\Modules Config</Filter>
     </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaScript.h" />
+    <ClInclude Include="lua\include\lauxlib.h">
+      <Filter>Sources\3d Party\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\include\lua.h">
+      <Filter>Sources\3d Party\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\include\lua.hpp">
+      <Filter>Sources\3d Party\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\include\luaconf.h">
+      <Filter>Sources\3d Party\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="lua\include\lualib.h">
+      <Filter>Sources\3d Party\Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -752,6 +774,10 @@
     <ClCompile Include="ResourcesConfigWindow.cpp">
       <Filter>Sources\EditorUI\Modules Config</Filter>
     </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

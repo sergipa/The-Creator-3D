@@ -233,11 +233,10 @@ void ModuleRenderer3D::DrawEditorScene()
 	}
 
 	pPlane pl(0, 1, 0, 0);
-	pl.color = { 0.7f,0.7f,0.7f,1 };
+	pl.SetPos(editor_camera->camera_frustum.pos);
+	pl.color = { 1,1,1,1 };
 	pl.Render();
-
 	glEnable(GL_LIGHTING);
-
 	DrawSceneGameObjects(editor_camera, true);
 }
 

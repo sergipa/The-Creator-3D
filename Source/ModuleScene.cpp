@@ -103,6 +103,7 @@ GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
 	if (gameObject != nullptr) {
 		Data data;
 		gameObject->Save(data, true);
+		AABB camera_pos(float3::zero, float3::zero);
 		for (int i = 0; i < saving_index; i++) {
 			GameObject* go = new GameObject();
 			data.EnterSection("GameObject_" + std::to_string(i));
@@ -119,15 +120,26 @@ GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
 			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->GetComponent(Component::MeshRenderer);
 			if (mesh_renderer)
 			{
-				//Focus the camera on the mesh
-				App->camera->can_update = true;
-				App->camera->FocusOnObject(mesh_renderer->GetMesh()->box);
-				App->camera->can_update = false;
+				Mesh* mesh = mesh_renderer->GetMesh();
+				if (mesh != nullptr)
+				{
+					if (mesh->box.minPoint.x < camera_pos.minPoint.x) camera_pos.minPoint.x = mesh->box.minPoint.x;
+					if (mesh->box.minPoint.y < camera_pos.minPoint.y) camera_pos.minPoint.y = mesh->box.minPoint.y;
+					if (mesh->box.minPoint.z < camera_pos.minPoint.z) camera_pos.minPoint.z = mesh->box.minPoint.z;
+					if (mesh->box.maxPoint.x > camera_pos.maxPoint.x) camera_pos.maxPoint.x = mesh->box.maxPoint.x;
+					if (mesh->box.maxPoint.y > camera_pos.maxPoint.y) camera_pos.maxPoint.y = mesh->box.maxPoint.y;
+					if (mesh->box.maxPoint.z > camera_pos.maxPoint.z) camera_pos.maxPoint.z = mesh->box.maxPoint.z;
+				}
 				mesh_renderer->LoadToMemory();
 			}
 		}
 		data.ClearData();
 		saving_index = 0;
+
+		//Focus the camera on the mesh
+		App->camera->can_update = true;
+		App->camera->FocusOnObject(camera_pos);
+		App->camera->can_update = false;
 	}
 
 	return ret;

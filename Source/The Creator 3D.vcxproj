@@ -115,6 +115,12 @@
     <ClInclude Include="imgui\stb_truetype.h" />
     <ClInclude Include="imgui_impl_sdl.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LuaScript.h" />
+    <ClInclude Include="lua\include\lauxlib.h" />
+    <ClInclude Include="lua\include\lua.h" />
+    <ClInclude Include="lua\include\lua.hpp" />
+    <ClInclude Include="lua\include\luaconf.h" />
+    <ClInclude Include="lua\include\lualib.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MathGeoLib\Algorithm\Random\LCG.h" />
     <ClInclude Include="MathGeoLib\Geometry\AABB.h" />
@@ -203,6 +209,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourcesConfigWindow.h" />
     <ClInclude Include="ResourcesWindow.h" />
+    <ClInclude Include="Script.h" />
     <ClInclude Include="SkyDome.h" />
     <ClInclude Include="TagsAndLayers.h" />
     <ClInclude Include="TagsAndLayersWindow.h" />
@@ -247,6 +254,7 @@
     <ClCompile Include="imgui_impl_sdl.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="log.cpp" />
+    <ClCompile Include="LuaScript.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MathGeoLib\Algorithm\Random\LCG.cpp" />
@@ -304,6 +312,7 @@
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourcesConfigWindow.cpp" />
     <ClCompile Include="ResourcesWindow.cpp" />
+    <ClCompile Include="Script.cpp" />
     <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="TagsAndLayers.cpp" />
     <ClCompile Include="TagsAndLayersWindow.cpp" />

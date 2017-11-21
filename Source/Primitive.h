@@ -211,9 +211,11 @@ public:
 	pPlane();
 	pPlane(float x, float y, float z, float d);
 	void InnerRender() const;
+	void SetPos(float3 pos);
 public:
 	vec3 normal;
 	float constant;
+	float3 pos;
 };
 // ============================================
 typedef struct

@@ -13,6 +13,7 @@
 #include "ModuleTextureImporter.h"
 #include "ModulePrefabImporter.h"
 #include "ModuleMaterialImporter.h"
+#include "ComponentMeshRenderer.h"
 
 
 ModuleResources::ModuleResources(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
@@ -111,19 +112,29 @@ void ModuleResources::ImportFile(std::string path)
 	std::string file_name = App->file_system->GetFileName(path);
 	Resource::ResourceType type = AssetExtensionToResourceType(extension);
 
+	if (extension == ".fbx" || extension == ".FBX") type = Resource::MeshResource;
+
 	bool exist = false;
 
 	switch (type)
 	{
 	case Resource::TextureResource:
 		if (!App->file_system->DirectoryExist(ASSETS_TEXTURES_FOLDER_PATH)) App->file_system->Create_Directory(ASSETS_TEXTURES_FOLDER_PATH);
-		if (App->file_system->FileExist(ASSETS_TEXTURES_FOLDER + file_name)) exist = true; break;
+		if (App->file_system->FileExist(ASSETS_TEXTURES_FOLDER + file_name))
+		{
+			exist = true;
+			break;
+		}
 		App->file_system->Copy_File(path, ASSETS_TEXTURES_FOLDER + file_name);
 		path = ASSETS_TEXTURES_FOLDER + file_name;
 		break;
 	case Resource::MeshResource:
 		if (!App->file_system->DirectoryExist(ASSETS_FBX_FOLDER_PATH)) App->file_system->Create_Directory(ASSETS_FBX_FOLDER_PATH);
-		if (App->file_system->FileExist(ASSETS_FBX_FOLDER + file_name)) exist = true; break;
+		if (App->file_system->FileExist(ASSETS_FBX_FOLDER + file_name))
+		{
+			exist = true;
+			break;
+		}
 		App->file_system->Copy_File(path, ASSETS_FBX_FOLDER + file_name);
 		path = ASSETS_FBX_FOLDER + file_name;
 		break;
@@ -133,7 +144,11 @@ void ModuleResources::ImportFile(std::string path)
 		break;
 	case Resource::PrefabResource:
 		if (!App->file_system->DirectoryExist(ASSETS_PREFABS_FOLDER_PATH)) App->file_system->Create_Directory(ASSETS_PREFABS_FOLDER_PATH);
-		if (App->file_system->FileExist(ASSETS_PREFABS_FOLDER + file_name)) exist = true; break;
+		if (App->file_system->FileExist(ASSETS_PREFABS_FOLDER + file_name))
+		{
+			exist = true;
+			break;
+		}
 		App->file_system->Copy_File(path, ASSETS_PREFABS_FOLDER + file_name);
 		path = ASSETS_PREFABS_FOLDER + file_name;
 		break;
@@ -617,23 +632,24 @@ void ModuleResources::DeleteResource(std::string file_path)
 	std::string resource_name = App->file_system->GetFileNameWithoutExtension(file_path);
 
 	Texture* texture = nullptr;
-	Mesh* mesh = nullptr;
 	Prefab* prefab = nullptr;
 	Material* material = nullptr;
+
+	if (extension == ".fbx" || extension == ".FBX") type = Resource::PrefabResource;
 
 	switch (type)
 	{
 	case Resource::TextureResource:
 		texture = GetTexture(resource_name);
-		App->file_system->Delete_File(texture->GetLibraryPath());
-		App->file_system->Delete_File(file_path + ".meta");
-		RemoveTexture(texture);
+		if (texture != nullptr)
+		{
+			App->file_system->Delete_File(texture->GetLibraryPath());
+			App->file_system->Delete_File(file_path + ".meta");
+			RemoveTexture(texture);
+		}
 		break;
 	case Resource::MeshResource:
-		mesh = GetMesh(resource_name);
-		App->file_system->Delete_File(mesh->GetLibraryPath());
-		App->file_system->Delete_File(file_path + ".meta");
-		RemoveMesh(mesh);
+
 		break;
 	case Resource::SceneResource:
 		break;
@@ -641,9 +657,16 @@ void ModuleResources::DeleteResource(std::string file_path)
 		break;
 	case Resource::PrefabResource:
 		prefab = GetPrefab(resource_name);
-		App->file_system->Delete_File(prefab->GetLibraryPath());
-		App->file_system->Delete_File(file_path + ".meta");
-		RemovePrefab(prefab);
+		if (prefab != nullptr)
+		{
+			App->file_system->Delete_File(prefab->GetLibraryPath());
+			App->file_system->Delete_File(file_path + ".meta");
+			RemovePrefab(prefab);
+			if (extension == ".fbx" || extension == ".FBX")
+			{
+				DeleteFBXMeshes(prefab->GetRootGameObject());
+			}
+		}
 		break;
 	case Resource::ScriptResource:
 		break;
@@ -656,19 +679,42 @@ void ModuleResources::DeleteResource(std::string file_path)
 	case Resource::RenderTextureResource:
 		break;
 	case Resource::GameObjectResource:
-		/*GameObject* gameobject = GetGameObject(file_path);
-		RemoveGameObject(gameobject);*/
 		break;
 	case Resource::MaterialResource:
 		material = GetMaterial(resource_name);
-		App->file_system->Delete_File(material->GetLibraryPath());
-		App->file_system->Delete_File(file_path + ".meta");
-		RemoveMaterial(material);
+		if (material != nullptr)
+		{
+			App->file_system->Delete_File(material->GetLibraryPath());
+			App->file_system->Delete_File(file_path + ".meta");
+			RemoveMaterial(material);
+		}
 		break;
 	case Resource::Unknown:
 		break;
 	default:
 		break;
+	}
+}
+
+void ModuleResources::DeleteFBXMeshes(GameObject* gameobject)
+{
+	if (gameobject != nullptr)
+	{
+		for (std::list<GameObject*>::iterator it = gameobject->childs.begin(); it != gameobject->childs.end(); it++)
+		{
+			DeleteFBXMeshes(*it);
+		}
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::MeshRenderer);
+
+		if (mesh_renderer != nullptr)
+		{
+			Mesh* mesh = mesh_renderer->GetMesh();
+			if (mesh != nullptr)
+			{
+				App->file_system->Delete_File(mesh->GetLibraryPath());
+				RemoveMesh(mesh);
+			}
+		}
 	}
 }
 

@@ -29,11 +29,11 @@ void Primitive::Render() const
 	glPushMatrix();
 	glMultMatrixf(transform.M);
 
+	GLfloat prev_color[4];
+	glGetFloatv(GL_CURRENT_COLOR, prev_color);
+
 	if(axis == true)
 	{
-		GLfloat prev_color[4];
-		glGetFloatv(GL_CURRENT_COLOR, prev_color);
-
 		// Draw Axis Grid
 		glLineWidth(2.0f);
 
@@ -70,9 +70,13 @@ void Primitive::Render() const
 	glDisable(GL_COLOR_MATERIAL);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, gl_color);
 
+	glColor4f(color.r, color.g, color.b, color.a);
+
 	InnerRender();
 
 	glPopMatrix();
+
+	glColor4f(prev_color[0], prev_color[1], prev_color[2], prev_color[3]);
 
 	glEnable(GL_COLOR_MATERIAL);
 }
@@ -650,13 +654,12 @@ pPlane::pPlane(float x, float y, float z, float d) : Primitive(), normal(x, y, z
 
 void pPlane::InnerRender() const
 {
-	glLineWidth(2.0f);
 
 	glBegin(GL_LINES);
 
-	float d = 200.0f;
+	float d = 600.0f;
 
-	for(float i = -d; i <= d; i += 2.0f)
+	for(float i = -d; i <= d; i += 10)
 	{
 		glVertex3f(i, 0.0f, -d);
 		glVertex3f(i, 0.0f, d);
@@ -665,8 +668,11 @@ void pPlane::InnerRender() const
 	}
 
 	glEnd();
+}
 
-	glLineWidth(1.0f);
+void pPlane::SetPos(float3 pos)
+{
+	this->pos = pos;
 }
 
 pRay::pRay() : Primitive(), origin(0, 0, 0), destination(1, 1, 1)
@@ -995,13 +1001,13 @@ void pTexturedCube::InnerRender() const
 	//bottom
 	glBindTexture(GL_TEXTURE_2D, textures_id[5]->GetID());
 	glBegin(GL_QUADS);
-	glTexCoord2f(1, 0); 
+	glTexCoord2f(1, 1); 
 	glVertex3f(sx + pos.x, -sy + pos.y, sz + pos.z);
-	glTexCoord2f(1, 1);	
+	glTexCoord2f(0, 1);	
 	glVertex3f(sx + pos.x, -sy + pos.y, -sz + pos.z);
 	glTexCoord2f(0, 0); 
 	glVertex3f(-sx + pos.x, -sy + pos.y, -sz + pos.z);
-	glTexCoord2f(0, 1); 
+	glTexCoord2f(1, 0); 
 	glVertex3f(-sx + pos.x, -sy + pos.y, sz + pos.z);
 	glEnd();
 

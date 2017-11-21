@@ -68,6 +68,9 @@ public:
 	bool CheckResourceName(std::string& name);
 
 private:
+	void DeleteFBXMeshes(GameObject* gameobject);
+
+private:
 	std::map<uint, Texture*> textures_list;
 	std::map<uint, Mesh*> meshes_list;
 	std::map<uint, Prefab*> prefabs_list;
