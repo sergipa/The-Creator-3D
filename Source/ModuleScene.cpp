@@ -470,15 +470,15 @@ void ModuleScene::HandleInput()
 		//Gizmo
 		if (App->camera->can_update == false)
 		{
-			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN && !ImGuizmo::IsUsing())
 			{
 				mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 			}
-			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+			if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN && !ImGuizmo::IsUsing())
 			{
 				mCurrentGizmoOperation = ImGuizmo::ROTATE;
 			}
-			if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+			if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN && !ImGuizmo::IsUsing())
 			{
 				mCurrentGizmoOperation = ImGuizmo::SCALE;
 			}
