@@ -35,15 +35,15 @@ bool LuaScript::InitScript(const char * code, GameObject * container)
 		lua_pushlightuserdata(luaState, container);
 		lua_settable(luaState, -3);
 		lua_setglobal(luaState, "this");
-		ret = LuaUtils::CallFunction(luaState, NULL);
+		ret = CallFunction(luaState, NULL);
 		if (ret) {
-			hasStartFunction = LuaUtils::FunctionExist(luaState, "Start");
-			hasUpdateFunction = LuaUtils::FunctionExist(luaState, "Update");
-			hasOnCollisionEnter = LuaUtils::FunctionExist(luaState, "OnCollisionEnter");
-			hasOnCollisionStay = LuaUtils::FunctionExist(luaState, "OnCollisionStay");
-			hasOnCollisionExit = LuaUtils::FunctionExist(luaState, "OnCollisionExit");
-			hasOnEnable = LuaUtils::FunctionExist(luaState, "OnEnable");
-			hasOnDisable = LuaUtils::FunctionExist(luaState, "OnDisable");
+			hasStartFunction = FunctionExist(luaState, "Start");
+			hasUpdateFunction = FunctionExist(luaState, "Update");
+			hasOnCollisionEnter = FunctionExist(luaState, "OnCollisionEnter");
+			hasOnCollisionStay = FunctionExist(luaState, "OnCollisionStay");
+			hasOnCollisionExit = FunctionExist(luaState, "OnCollisionExit");
+			hasOnEnable = FunctionExist(luaState, "OnEnable");
+			hasOnDisable = FunctionExist(luaState, "OnDisable");
 			insideFunction = true;
 		}
 	}
@@ -56,59 +56,49 @@ bool LuaScript::InitScript(const char * code, GameObject * container)
 void LuaScript::StartScript()
 {
 	if (luaState && hasStartFunction) {
-		LuaUtils::CallFunction(luaState, "Start");
+		CallFunction(luaState, "Start");
 	}
 }
 
 void LuaScript::UpdateScript(float deltaTime)
 {
 	if (luaState && hasUpdateFunction) {
-		LuaUtils::CallFunction(luaState, "Update");
+		CallFunction(luaState, "Update");
 	}
 }
 
 void LuaScript::OnCollisionEnter()
 {
 	if (luaState && hasOnCollisionEnter) {
-		LuaUtils::CallFunction(luaState, "OnCollisionEnter");
+		CallFunction(luaState, "OnCollisionEnter");
 	}
 }
 
 void LuaScript::OnCollisionStay()
 {
 	if (luaState && hasOnCollisionStay) {
-		LuaUtils::CallFunction(luaState, "OnCollisionStay");
+		CallFunction(luaState, "OnCollisionStay");
 	}
 }
 
 void LuaScript::OnCollisionExit()
 {
 	if (luaState && hasOnCollisionExit) {
-		LuaUtils::CallFunction(luaState, "OnCollisionExit");
+		CallFunction(luaState, "OnCollisionExit");
 	}
 }
 
 void LuaScript::OnEnable()
 {
 	if (luaState && hasOnEnable) {
-		LuaUtils::CallFunction(luaState, "OnEnable");
+		CallFunction(luaState, "OnEnable");
 	}
 }
 
 void LuaScript::OnDisable()
 {
 	if (luaState && hasOnDisable) {
-		LuaUtils::CallFunction(luaState, "OnDisable");
-	}
-}
-
-void LuaScript::CallFunction(const char * function)
-{
-	if (LuaUtils::FunctionExist(luaState, function)) {
-		LuaUtils::CallFunction(luaState, function);
-	}
-	else {
-		CONSOLE_WARNING("Trying to call non-existent function %s", function);
+		CallFunction(luaState, "OnDisable");
 	}
 }
 
@@ -898,7 +888,7 @@ void LuaScript::StackDump(lua_State * luaState)
 	printf("\n");  /* end the listing */
 }
 
-void LuaUtils::RegisterLibrary(lua_State * luaState, luaL_Reg lib[], const char * libName)
+void LuaScript::RegisterLibrary(lua_State * luaState, luaL_Reg lib[], const char * libName)
 {
 	lua_getglobal(luaState, libName);
 	if (lua_isnil(luaState, -1))
@@ -910,7 +900,7 @@ void LuaUtils::RegisterLibrary(lua_State * luaState, luaL_Reg lib[], const char 
 	lua_setglobal(luaState, libName);
 }
 
-bool LuaUtils::CallFunction(lua_State * luaState, const char * functionName)
+bool LuaScript::CallFunction(lua_State * luaState, const char * functionName)
 {
 	bool ret = true;
 
@@ -928,7 +918,7 @@ bool LuaUtils::CallFunction(lua_State * luaState, const char * functionName)
 	return ret;
 }
 
-bool LuaUtils::FunctionExist(lua_State * luaState, const char * functionName)
+bool LuaScript::FunctionExist(lua_State * luaState, const char * functionName)
 {
 	bool ret = true;
 

@@ -3,12 +3,6 @@
 #include "Script.h"
 #include "lua/include/lua.hpp"
 
-struct LuaUtils {
-	static void RegisterLibrary(lua_State* luaState, luaL_Reg lib[], const char* libName);
-	static bool CallFunction(lua_State* luaState, const char* functionName);
-	static bool FunctionExist(lua_State* luaState, const char* functionName);
-};
-
 class LuaScript :
 	public Script
 {
@@ -24,8 +18,6 @@ public:
 	void OnCollisionExit();
 	void OnEnable();
 	void OnDisable();
-
-	void CallFunction(const char* function);
 
 	void SetIntProperty(const char* propertyName, int value);
 	int GetIntProperty(const char* propertyName);
@@ -58,6 +50,10 @@ private:
 	void GlobalFunctions(lua_State* luaState);
 	static int PrintToLog(lua_State* luaState);
 	void RegisterAPI(lua_State* luaState);
+
+	static void RegisterLibrary(lua_State* luaState, luaL_Reg lib[], const char* libName);
+	static bool CallFunction(lua_State* luaState, const char* functionName);
+	static bool FunctionExist(lua_State* luaState, const char* functionName);
 
 	//GameObject library
 	static int IsGameObjectActive(lua_State* luaState);
