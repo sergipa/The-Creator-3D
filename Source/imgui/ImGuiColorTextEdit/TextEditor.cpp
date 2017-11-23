@@ -1923,3 +1923,50 @@ TextEditor::LanguageDefinition TextEditor::LanguageDefinition::Lua()
 	}
 	return langDef;
 }
+
+TextEditor::LanguageDefinition TextEditor::LanguageDefinition::CSharp()
+{
+	static bool inited = false;
+	static LanguageDefinition langDef;
+	if (!inited)
+	{
+		static const char* const csharpKeywords[] = {
+			"abstract","as","base","bool","break","byte","case","catch","char","checked","class","const","continue","decimal","default","default","delegate","do","double","else","enum","event","explicit","extern","false","finally",
+			"fixed","float","for","foreach","goto","if","implicit","in","int","interace","internal","is","lock","long","namescape","new","null","object","operator","out","override","params","private","protected","public",
+			"readonly","ref","return","sbyte","sealed","short","sizeof","stackalloc","static","string","struct","switch","this","throw","true","try","typeof","uint","ulong","unchecked","unsafe","ushort","using","using static","virtual","void","volatile","while"
+		};
+		for (auto& k : csharpKeywords)
+			langDef.mKeywords.insert(k);
+
+		static const char* const identifiers[] = {
+			"@Override"
+		};
+		for (auto& k : identifiers)
+		{
+			Identifier id;
+			id.mDeclaration = "Built-in function";
+			langDef.mIdentifiers.insert(std::make_pair(std::string(k), id));
+		}
+
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("//.*", TokenType::Comment));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("[ \t]*#[ \\t]*[a-zA-Z_]+", TokenType::Preprocessor));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("L?\\\"(\\\\.|[^\\\"])*\\\"", TokenType::String));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("\\'\\\\?[^\\']\\'", TokenType::CharLiteral));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("0[xX][0-9a-fA-F]+[uU]?[lL]?[lL]?", TokenType::Number));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?[fF]?", TokenType::Number));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("0[0-7]+[Uu]?[lL]?[lL]?", TokenType::Number));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("[+-]?[0-9]+[Uu]?[lL]?[lL]?", TokenType::Number));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("[a-zA-Z_][a-zA-Z0-9_]*", TokenType::Identifier));
+		langDef.mTokenRegexStrings.push_back(std::make_pair<std::string, TokenType>("[\\[\\]\\{\\}\\!\\%\\^\\&\\*\\(\\)\\-\\+\\=\\~\\|\\<\\>\\?\\/\\;\\,\\.]", TokenType::Punctuation));
+
+		langDef.mCommentStart = "/*";
+		langDef.mCommentEnd = "*/";
+
+		langDef.mCaseSensitive = true;
+
+		langDef.mName = "C#";
+
+		inited = true;
+	}
+	return langDef;
+}

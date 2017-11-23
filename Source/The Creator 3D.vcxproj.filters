@@ -579,6 +579,9 @@
     <ClInclude Include="mono\include\metadata\verify.h">
       <Filter>Sources\3d Party\Mono</Filter>
     </ClInclude>
+    <ClInclude Include="TextEditorWindow.h">
+      <Filter>Sources\EditorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -889,6 +892,9 @@
     </ClCompile>
     <ClCompile Include="LuaScript.cpp">
       <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="TextEditorWindow.cpp">
+      <Filter>Sources\EditorUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
