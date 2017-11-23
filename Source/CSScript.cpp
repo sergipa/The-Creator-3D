@@ -1,5 +1,7 @@
 #include "CSScript.h"
 #include "GameObject.h"
+#include "Application.h"
+#include "ModuleFileSystem.h"
 
 #pragma comment (lib, "mono/lib/mono-2.0-sgen.lib")
 
@@ -17,6 +19,7 @@ CSScript::~CSScript()
 
 bool CSScript::InitScript(const char * code, GameObject * container)
 {
+	mono_install_assembly_preload_hook(assembly_preload_hook, NULL);
 	//mono_class = mono_class_from_name()
 	return false;
 }
@@ -218,4 +221,25 @@ void CSScript::CallFunction(MonoMethod * function, void ** parameter)
 	{
 		mono_print_unhandled_exception(exception);
 	}
+}
+
+ static MonoAssembly * assembly_preload_hook(MonoAssemblyName * assembly_name, char ** assemblies_path, void * user_data)
+{
+
+	 std::string name(mono_assembly_name_get_name(assembly_name));
+
+	 if (App->file_system->GetFileExtension(name) != ".dll")
+	 {
+		 name += ".dll";
+	 }
+
+	 MonoAssembly* assembly = mono_assembly_loaded(assembly_name);
+
+	 if (assembly)
+	 {
+		 CONSOLE_DEBUG("Loaded Assembly '%s'.", name);
+		 return assembly;
+	 }
+
+	return nullptr;
 }
