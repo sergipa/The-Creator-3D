@@ -53,13 +53,4 @@ private:
 	MonoClass* mono_class;
 	MonoImage* image;
 	MonoObject* object;
-
-	MonoMethod* init;
-	MonoMethod* start;
-	MonoMethod* update;
-	MonoMethod* on_collision_enter;
-	MonoMethod* on_collision_stay;
-	MonoMethod* on_collision_exit;
-	MonoMethod* on_enable;
-	MonoMethod* on_disable;
 };
