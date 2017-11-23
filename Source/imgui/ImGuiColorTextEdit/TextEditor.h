@@ -143,6 +143,7 @@ public:
 		static LanguageDefinition SQL();
 		static LanguageDefinition AngelScript();
 		static LanguageDefinition Lua();
+		static LanguageDefinition CSharp();
 	};
 
 	TextEditor();

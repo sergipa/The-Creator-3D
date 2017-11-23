@@ -245,6 +245,7 @@
     <ClInclude Include="SkyDome.h" />
     <ClInclude Include="TagsAndLayers.h" />
     <ClInclude Include="TagsAndLayersWindow.h" />
+    <ClInclude Include="TextEditorWindow.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="tinyfiledialogs.h" />
     <ClInclude Include="Window.h" />
@@ -350,6 +351,7 @@
     <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="TagsAndLayers.cpp" />
     <ClCompile Include="TagsAndLayersWindow.cpp" />
+    <ClCompile Include="TextEditorWindow.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="tinyfiledialogs.c" />
     <ClCompile Include="Window.cpp" />
