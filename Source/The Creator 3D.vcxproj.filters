@@ -52,8 +52,13 @@
     <Filter Include="Sources\3d Party\Lua">
       <UniqueIdentifier>{17cc6fe6-e36a-4e01-b344-a9a581285cdf}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD
     <Filter Include="Sources\3d Party\Mono">
       <UniqueIdentifier>{ab9360c0-8b1f-487a-8d58-7db85f286fa4}</UniqueIdentifier>
+=======
+    <Filter Include="Sources\3d Party\imGui\TextEdit">
+      <UniqueIdentifier>{f5ff2a23-210f-4e86-85c8-b4e18cd31259}</UniqueIdentifier>
+>>>>>>> 8fb51705f029f23c755188f494a9286ce4853087
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -477,6 +482,7 @@
     <ClInclude Include="lua\include\lualib.h">
       <Filter>Sources\3d Party\Lua</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="mono\include\jit\jit.h">
       <Filter>Sources\3d Party\Mono</Filter>
     </ClInclude>
@@ -571,6 +577,11 @@
       <Filter>Sources\Resources</Filter>
     </ClInclude>
     <ClInclude Include="CSScript.h" />
+=======
+    <ClInclude Include="imgui\ImGuiColorTextEdit\TextEditor.h">
+      <Filter>Sources\3d Party\imGui\TextEdit</Filter>
+    </ClInclude>
+>>>>>>> 8fb51705f029f23c755188f494a9286ce4853087
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -873,10 +884,17 @@
     <ClCompile Include="Script.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="LuaScript.cpp">
       <Filter>Sources\Resources</Filter>
     </ClCompile>
     <ClCompile Include="CSScript.cpp" />
+=======
+    <ClCompile Include="LuaScript.cpp" />
+    <ClCompile Include="imgui\ImGuiColorTextEdit\TextEditor.cpp">
+      <Filter>Sources\3d Party\imGui\TextEdit</Filter>
+    </ClCompile>
+>>>>>>> 8fb51705f029f23c755188f494a9286ce4853087
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">
