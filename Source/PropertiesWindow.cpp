@@ -13,6 +13,10 @@
 #include "Material.h"
 #include "imgui/CustomImGui.h"
 #include "ModuleRenderer3D.h"
+#include "ComponentScript.h"
+#include "Script.h"
+#include "CSScript.h"
+#include "ModuleResources.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -104,8 +108,8 @@ void PropertiesWindow::DrawWindow()
 			if (ImGui::BeginPopup("Components"))
 			{
 				if (ImGui::MenuItem("Mesh Renderer")) {
-					if (selected_gameobject->GetComponent(Component::MeshRenderer) == nullptr) {
-						selected_gameobject->AddComponent(Component::MeshRenderer);
+					if (selected_gameobject->GetComponent(Component::CompMeshRenderer) == nullptr) {
+						selected_gameobject->AddComponent(Component::CompMeshRenderer);
 					}
 					else
 					{
@@ -113,13 +117,54 @@ void PropertiesWindow::DrawWindow()
 					}
 				}
 				if (ImGui::MenuItem("Camera")) {
-					if (selected_gameobject->GetComponent(Component::Camera) == nullptr) {
-						selected_gameobject->AddComponent(Component::Camera);
+					if (selected_gameobject->GetComponent(Component::CompCamera) == nullptr) {
+						selected_gameobject->AddComponent(Component::CompCamera);
 					}
 					else
 					{
 						CONSOLE_WARNING("GameObject can't have more than 1 Camera!");
 					}
+				}
+				if (ImGui::BeginMenu("Script")) {
+					std::map<uint, Script*> scripts = App->resources->GetScriptsList();
+					Script* script = nullptr;
+
+					if (ImGui::MenuItem("C#"))
+					{
+						for (std::map<uint, Script*>::iterator it = scripts.begin(); it != scripts.end(); it++)
+						{
+							if (it->second->GetScriptType() == Script::CsScript)
+							{
+								if (ImGui::MenuItem(it->second->GetName().c_str()))
+								{
+									script = it->second;
+								}
+							}
+						}
+					}
+					else if (ImGui::MenuItem("Lua"))
+					{
+						for (std::map<uint, Script*>::iterator it = scripts.begin(); it != scripts.end(); it++)
+						{
+							if (it->second->GetScriptType() == Script::CsScript)
+							{
+								if (ImGui::MenuItem(it->second->GetName().c_str()))
+								{
+									script = it->second;
+								}
+							}
+						}
+					}
+
+					if (script != nullptr)
+					{
+						ComponentScript* comp_script = (ComponentScript*)selected_gameobject->AddComponent(Component::CompScript);
+						if (comp_script != nullptr)
+						{
+							comp_script->SetScript(script);
+						}
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::EndPopup();
 			}
@@ -133,28 +178,29 @@ void PropertiesWindow::DrawComponent(Component * component)
 {
 	switch (component->GetType())
 	{
-	case Component::Transform:
+	case Component::CompTransform:
 		DrawTransformPanel((ComponentTransform*)component);
 		break;
-	case Component::Camera:
+	case Component::CompCamera:
 		DrawCameraPanel((ComponentCamera*)component);
 		break;
-	case Component::RigidBody:
+	case Component::CompRigidBody:
 		break;
-	case Component::MeshRenderer:
+	case Component::CompMeshRenderer:
 		DrawMeshRendererPanel((ComponentMeshRenderer*)component);
 		break;
-	case Component::BoxCollider:
+	case Component::CompBoxCollider:
 		break;
-	case Component::CircleCollider:
+	case Component::CompCircleCollider:
 		break;
-	case Component::AudioSource:
+	case Component::CompAudioSource:
 		break;
-	case Component::Animaton:
+	case Component::CompAnimaton:
 		break;
-	case Component::Script:
+	case Component::CompScript:
+		DrawScriptPanel((ComponentScript*)component);
 		break;
-	case Component::ParticleSystem:
+	case Component::CompParticleSystem:
 		break;
 	default:
 		break;
@@ -251,27 +297,27 @@ void PropertiesWindow::DrawMeshRendererPanel(ComponentMeshRenderer * mesh_render
 			ImGui::Text("Texture Size: %d x %d", mesh_renderer->GetMaterial()->GetWidth(), mesh_renderer->GetMaterial()->GetHeight());
 			ImGui::Text("Texture Format: %s", mesh_renderer->GetMaterial()->GetFormatString().c_str());
 			ImGui::Text("Texture Type: %s", mesh_renderer->GetMaterial()->GetTypeString().c_str());*/
-			ImGui::TreePop();
+ImGui::TreePop();
 		}
 
 		ImGui::Spacing();
 	}
 }
 
-void PropertiesWindow::DrawCameraPanel(ComponentCamera * camera)
+void PropertiesWindow::DrawCameraPanel(ComponentCamera * comp_camera)
 {
 	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
-		bool is_active = camera->IsActive();
+		bool is_active = comp_camera->IsActive();
 		if (ImGui::Checkbox("Active##Camera", &is_active))
 		{
-			camera->SetActive(is_active);
+			comp_camera->SetActive(is_active);
 		}
 
-		Color background_color = camera->GetBackgroundColor();
+		Color background_color = comp_camera->GetBackgroundColor();
 		ImGui::Text("Background Color:");
 		if (ImGui::ColorEdit4("##Background Color", &background_color.r))
 		{
-			camera->SetBackgroundColor(background_color);
+			comp_camera->SetBackgroundColor(background_color);
 		}
 		ImGui::Text("Culling Mask:");
 		if (ImGui::Button("Select Layers")) {
@@ -281,10 +327,10 @@ void PropertiesWindow::DrawCameraPanel(ComponentCamera * camera)
 			for (int i = 0; i < App->tags_and_layers->layers_list.size(); i++) {
 				std::string name = App->tags_and_layers->layers_list[i];
 				bool selected = false;
-				if (std::find(camera->layers_to_draw.begin(), camera->layers_to_draw.end(), name) != camera->layers_to_draw.end()) selected = true;
+				if (std::find(comp_camera->layers_to_draw.begin(), comp_camera->layers_to_draw.end(), name) != comp_camera->layers_to_draw.end()) selected = true;
 				if (ImGui::MenuItem(name.c_str(), "", selected)) {
-					if (selected) camera->RemoveLayerToDraw(name);
-					else camera->AddLayerToDraw(name);
+					if (selected) comp_camera->RemoveLayerToDraw(name);
+					else comp_camera->AddLayerToDraw(name);
 				}
 			}
 			ImGui::Separator();
@@ -293,49 +339,167 @@ void PropertiesWindow::DrawCameraPanel(ComponentCamera * camera)
 			}
 			ImGui::EndPopup();
 		}
-		float fov = camera->GetFOV();
+		float fov = comp_camera->GetFOV();
 		ImGui::Text("Field of View:");
 		if (ImGui::SliderFloat("##Field of View", &fov, 1, 160))
 		{
-			camera->SetFOV(fov);
+			comp_camera->SetFOV(fov);
 		}
-		float near_plane = camera->GetNearPlaneDistance();
-		float far_plane = camera->GetFarPlanceDistance();
+		float near_plane = comp_camera->GetNearPlaneDistance();
+		float far_plane = comp_camera->GetFarPlanceDistance();
 		ImGui::Text("Near Plane:");
 		if (ImGui::DragFloat("##Near Plane", &near_plane, true, 0.025f, 0.01, far_plane - 0.1f))
 		{
-			camera->SetNearPlaneDistance(near_plane);
+			comp_camera->SetNearPlaneDistance(near_plane);
 		}
 		ImGui::Text("Far Plane:");
 		if (ImGui::DragFloat("##Far Plane", &far_plane, true, 0.025f, near_plane + 0.1f))
 		{
-			camera->SetFarPlaneDistance(far_plane);
+			comp_camera->SetFarPlaneDistance(far_plane);
 		}
-		Rect viewport = camera->GetViewport();
+		Rect viewport = comp_camera->GetViewport();
 		ImGui::Text("Viewport:");
 		if (ImGui::DragInt("X", &viewport.left, true, 0.025f, 0, 1))
 		{
-			camera->SetViewport(viewport);
+			comp_camera->SetViewport(viewport);
 		}
 		if (ImGui::DragInt("Y", &viewport.top, true, 0.025f, 0, 1))
 		{
-			camera->SetViewport(viewport);
+			comp_camera->SetViewport(viewport);
 		}
 		if (ImGui::DragInt("W", &viewport.right, true, 0.025f, 1, 0))
 		{
-			camera->SetViewport(viewport);
+			comp_camera->SetViewport(viewport);
 		}
 		if (ImGui::DragInt("H", &viewport.bottom, true, 0.025f, 1, 0))
 		{
-			camera->SetViewport(viewport);
+			comp_camera->SetViewport(viewport);
 		}
-		int render_order = camera->GetRenderOrder();
+		int render_order = comp_camera->GetRenderOrder();
 		ImGui::Text("Render Order:");
 		if (ImGui::DragInt("##Render Order", &render_order))
 		{
-			camera->SetRenderOrder(render_order);
+			comp_camera->SetRenderOrder(render_order);
 		}
-		
+
 		ImGui::Spacing();
+	}
+}
+
+void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
+{
+	if (ImGui::CollapsingHeader(comp_script->GetScriptName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+		bool is_active = comp_script->IsActive();
+		ImGui::SameLine();
+		if (ImGui::Button("Delete Component##script"))
+		{
+			App->scene->selected_gameobjects.front()->DestroyComponent(comp_script);
+		}
+
+		Script* script = comp_script->GetScript();
+		if (ImGui::InputResourceScript("Script", &script))
+		{
+			comp_script->SetScript(script);
+		}
+
+		std::vector<ScriptField*> script_fields = script->GetScriptFields();
+
+		for (std::vector<ScriptField*>::iterator it = script_fields.begin(); it != script_fields.end(); it++)
+		{
+			switch ((*it)->propertyType)
+			{
+			case ScriptField::Integer:
+			{
+				int i = comp_script->GetScript()->GetIntProperty((*it)->fieldName.c_str());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::InputInt(("##" + (*it)->fieldName).c_str(), &i)) {
+					comp_script->GetScript()->SetIntProperty((*it)->fieldName.c_str(), i);
+				}
+			}
+				break;
+			case ScriptField::Decimal:
+			{
+				double d = comp_script->GetScript()->GetDoubleProperty((*it)->fieldName.c_str());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::InputFloat(("##" + (*it)->fieldName).c_str(), (float*)&d, 0.001f, 0.01f, 3)) {
+					comp_script->GetScript()->SetDoubleProperty((*it)->fieldName.c_str(), d);
+				}
+			}
+				break;
+			case ScriptField::Float:
+			{
+				float f = comp_script->GetScript()->GetFloatProperty((*it)->fieldName.c_str());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::InputFloat(("##" + (*it)->fieldName).c_str(), &f, 0.001f, 0.01f, 3)) {
+					comp_script->GetScript()->SetFloatProperty((*it)->fieldName.c_str(), f);
+				}
+			}
+				break;
+			case ScriptField::Bool:
+			{
+				bool b = comp_script->GetScript()->GetBoolProperty((*it)->fieldName.c_str());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::Checkbox(("##" + (*it)->fieldName).c_str(), &b)) {
+					comp_script->GetScript()->SetBoolProperty((*it)->fieldName.c_str(), b);
+				}
+			}
+				break;
+			case ScriptField::String:
+			{
+				static char textToRender[256];
+				std::string str = comp_script->GetScript()->GetStringProperty((*it)->fieldName.c_str());
+				strncpy(textToRender, str.data(), str.size());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::InputText(("##" + (*it)->fieldName).c_str(), textToRender, 256)) {
+					comp_script->GetScript()->SetStringProperty((*it)->fieldName.c_str(), textToRender);
+				}
+				memset(textToRender, 0, sizeof textToRender);
+			}
+				break;
+			case ScriptField::GameObject:
+				break;
+			case ScriptField::Animation:
+				break;
+			case ScriptField::Vector2:
+			{
+				float2 v2 = comp_script->GetScript()->GetVec2Property((*it)->fieldName.c_str());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::DragFloat2(("##" + (*it)->fieldName).c_str(), &v2[0], !App->IsPlaying(), 0.25f)) {
+					comp_script->GetScript()->SetVec2Property((*it)->fieldName.c_str(), v2);
+				}
+			}
+				break;
+			case ScriptField::Vector3:
+			{
+				float3 v3 = comp_script->GetScript()->GetVec3Property((*it)->fieldName.c_str());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::DragFloat3(("##" + (*it)->fieldName).c_str(), &v3[0], !App->IsPlaying(), 0.25f)) {
+					comp_script->GetScript()->SetVec3Property((*it)->fieldName.c_str(), v3);
+				}
+			}
+				break;
+			case ScriptField::Vector4:
+			{
+				float4 v4 = comp_script->GetScript()->GetVec4Property((*it)->fieldName.c_str());
+				ImGui::Text(" %s", (*it)->fieldName.c_str());
+				ImGui::SameLine();
+				if (ImGui::DragFloat4(("##" + (*it)->fieldName).c_str(), &v4[0], !App->IsPlaying(), 0.25f)) {
+					comp_script->GetScript()->SetVec4Property((*it)->fieldName.c_str(), v4);
+				}
+			}
+				break;
+			case ScriptField::Texture:
+				break;
+			case ScriptField::Audio:
+				break;
+			}
+		}
 	}
 }

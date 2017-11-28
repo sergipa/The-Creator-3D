@@ -9,7 +9,7 @@ ComponentMeshRenderer::ComponentMeshRenderer(GameObject* attached_gameobject)
 {
 	SetActive(true);
 	SetName("Mesh_Renderer");
-	SetType(ComponentType::MeshRenderer);
+	SetType(ComponentType::CompMeshRenderer);
 	SetGameObject(attached_gameobject);
 	mesh = nullptr;
 	material = nullptr;

@@ -6,6 +6,7 @@
 #include "ComponentCamera.h"
 #include "Mesh.h"
 #include "ModuleResources.h"
+#include "ComponentScript.h"
 
 GameObject::GameObject(GameObject* parent)
 {
@@ -26,7 +27,7 @@ GameObject::GameObject(GameObject* parent)
 	is_selected = false;
 	is_static = false;
 	is_used_in_prefab = false;
-	AddComponent(Component::Transform);
+	AddComponent(Component::CompTransform);
 
 	uuid = App->RandomNumber().Int();
 }
@@ -49,28 +50,29 @@ Component * GameObject::AddComponent(Component::ComponentType component_type)
 
 	switch (component_type)
 	{
-	case Component::Transform:
+	case Component::CompTransform:
 		components_list.push_back(component = new ComponentTransform(this));
 		break;
-	case Component::Camera:
+	case Component::CompCamera:
 		components_list.push_back(component = new ComponentCamera(this));
 		break;
-	case Component::RigidBody:
+	case Component::CompRigidBody:
 		break;
-	case Component::MeshRenderer:
+	case Component::CompMeshRenderer:
 		components_list.push_back(component = new ComponentMeshRenderer(this));
 		break;
-	case Component::BoxCollider:
+	case Component::CompBoxCollider:
 		break;
-	case Component::CircleCollider:
+	case Component::CompCircleCollider:
 		break;
-	case Component::AudioSource:
+	case Component::CompAudioSource:
 		break;
-	case Component::Animaton:
+	case Component::CompAnimaton:
 		break;
-	case Component::Script:
+	case Component::CompScript:
+		components_list.push_back(component = new ComponentScript(this));
 		break;
-	case Component::ParticleSystem:
+	case Component::CompParticleSystem:
 		break;
 	default:
 		break;
@@ -99,10 +101,10 @@ Component * GameObject::GetComponent(std::string component_type)
 	return nullptr;
 }
 
-void GameObject::DestroyComponent(Component::ComponentType component)
+void GameObject::DestroyComponent(Component* component)
 {
 	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end();) {
-		if ((*it)->GetType() == component) {
+		if (*it == component) {
 			RELEASE(*it);
 			it = components_list.erase(it);
 		}
@@ -127,7 +129,7 @@ void GameObject::SetActive(bool active)
 	this->active = active;
 	if (is_static)
 	{
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::CompMeshRenderer);
 		if (mesh_renderer != nullptr)
 		{
 			if (active)
@@ -147,7 +149,7 @@ void GameObject::SetStatic(bool is_static)
 	this->is_static = is_static;
 	if (active)
 	{
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::CompMeshRenderer);
 		if (mesh_renderer != nullptr)
 		{
 			if (is_static)
@@ -279,7 +281,7 @@ void GameObject::GetAllChildsMeshesNames(std::vector<std::string>& names)
 	for (std::list<GameObject*>::const_iterator it = childs.begin(); it != childs.end(); it++)
 	{
 		(*it)->GetAllChildsName(names);
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::CompMeshRenderer);
 		if (mesh_renderer != nullptr)
 		{
 			names.push_back((*it)->name);
@@ -289,7 +291,7 @@ void GameObject::GetAllChildsMeshesNames(std::vector<std::string>& names)
 
 void GameObject::UpdateBoundingBox()
 {
-	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::CompMeshRenderer);
 	if (mesh_renderer != nullptr)
 	{
 		mesh_renderer->UpdateBoundingBox();
@@ -298,25 +300,25 @@ void GameObject::UpdateBoundingBox()
 
 math::float4x4 GameObject::GetGlobalTransfomMatrix()
 {
-	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::CompTransform);
 	return transform->GetMatrix();
 }
 
 const float * GameObject::GetOpenGLMatrix()
 {
-	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::CompTransform);
 	return transform->GetOpenGLMatrix();
 }
 
 void GameObject::UpdateGlobalMatrix()
 {
-	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::CompTransform);
 	transform->UpdateGlobalMatrix();
 }
 
 void GameObject::UpdateCamera()
 {
-	ComponentCamera* camera = (ComponentCamera*)GetComponent(Component::Camera);
+	ComponentCamera* camera = (ComponentCamera*)GetComponent(Component::CompCamera);
 	if (camera != nullptr)
 	{
 		camera->UpdatePosition();
@@ -325,7 +327,7 @@ void GameObject::UpdateCamera()
 
 void GameObject::SetGlobalTransfomMatrix(const float4x4 & matrix)
 {
-	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::Transform);
+	ComponentTransform* transform = (ComponentTransform*)GetComponent(Component::CompTransform);
 	transform->SetMatrix(matrix);
 }
 
@@ -355,7 +357,7 @@ void GameObject::OnDestroy()
 	}
 	App->resources->RemoveGameObject(this);
 
-	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::MeshRenderer);
+	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)GetComponent(Component::CompMeshRenderer);
 	if (mesh_renderer) mesh_renderer->UnloadFromMemory();
 	
 	for (std::list<GameObject*>::iterator it = childs.begin(); it != childs.end();) {

@@ -5,8 +5,8 @@
 #include "MathGeoLib\Math\float4.h"
 #include <vector>
 
-class GameObject;
 class Texture;
+class GameObject;
 
 struct ScriptField {
 	enum PropertyType {
@@ -23,7 +23,13 @@ public:
 	Script();
 	~Script();
 
-	virtual bool InitScript(const char* code, GameObject* container) = 0;
+	enum ScriptType
+	{
+		CsScript, LuaScript, UnknownScript
+	};
+
+	virtual bool LoadScript(std::string script_path) = 0;
+	virtual void InitScript() = 0;
 	virtual void StartScript() = 0;
 	virtual void UpdateScript(float deltaTime) = 0;
 	virtual void OnCollisionEnter() = 0;
@@ -31,8 +37,6 @@ public:
 	virtual void OnCollisionExit() = 0;
 	virtual void OnEnable() = 0;
 	virtual void OnDisable() = 0;
-
-	virtual void CallFunction(const char* function) = 0;
 
 	virtual void SetIntProperty(const char* propertyName, int value) = 0;
 	virtual int GetIntProperty(const char* propertyName) = 0;
@@ -53,8 +57,14 @@ public:
 	virtual void SetVec4Property(const char* propertyName, float4 value) = 0;
 	virtual float4 GetVec4Property(const char* propertyName) = 0;
 	virtual void SetTextureProperty(const char* propertyName, Texture* value) = 0;
-	virtual Texture* GetSpriteProperty(const char* propertyName) = 0;
+	virtual Texture* GetTextureProperty(const char* propertyName) = 0;
 
 	virtual std::vector<ScriptField*> GetScriptFields() = 0;
+
+	virtual void SetScriptType(ScriptType type);
+	virtual ScriptType GetScriptType();
+	
+private:
+	ScriptType script_type;
 };
 

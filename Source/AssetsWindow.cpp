@@ -9,6 +9,9 @@
 #include "ModuleFileSystem.h"
 #include "ModuleScene.h"
 #include "Data.h"
+#include "CSScript.h"
+#include "LuaScript.h"
+#include "ModuleScriptImporter.h"
 
 AssetsWindow::AssetsWindow()
 {
@@ -17,9 +20,14 @@ AssetsWindow::AssetsWindow()
 
 	node = 0;
 	show_new_folder_window = false;
-	file_options_open = true;
 	texture_icon = nullptr;
 	show_delete_window = false;
+	show_new_script_window = false;
+	show_file_options = false;
+	show_files_window_options = false;
+	show_folder_options = false;
+	asset_hovered = false;
+
 	mesh_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"mesh_icon.png");
 	font_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"font_icon.png");
 	folder_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"folder_icon.png");
@@ -51,41 +59,32 @@ void AssetsWindow::DrawWindow()
 
 		if (ImGui::IsMouseClicked(1) && ImGui::IsMouseHoveringWindow()) {
 			ImGui::SetNextWindowPos(ImGui::GetMousePos());
-			ImGui::OpenPopup("Assets Options");
+			show_folder_options = true;
+			show_file_options = false;
+			show_files_window_options = false;
+		}
+
+		if (show_folder_options)
+		{
+			ImGui::OpenPopup("Folder Options");
 		}
 
 		if (!App->file_system->DirectoryIsEmpty(selected_folder)) {
-			if (ImGui::BeginPopup("Assets Options"))
+			if (ImGui::BeginPopup("Folder Options"))
 			{
 				if (ImGui::MenuItem("Create Folder")) {
 					show_new_folder_window = true;
+					show_delete_window = false;
+					show_new_script_window = false;
 				}
 				if (App->file_system->GetDirectoryName(selected_folder) != "Assets") {
 					if (ImGui::MenuItem("Delete")) {
 						show_delete_window = true;
+						show_new_folder_window = false;
+						show_new_script_window = false;
 						delete_path = selected_folder;
 					}
 				}
-				ImGui::Separator();
-				/*if (ImGui::MenuItem("Import Texture")) {
-					char const * lFilterPatterns[4] = { "*.jpg", "*.png", "*.tga", "*.dds" };
-					const char* texture_path = tinyfd_openFileDialog("Select Texture...", NULL, 4, lFilterPatterns, NULL, 0);
-					if (texture_path != NULL) {
-						std::string oldPath(texture_path);
-						std::string newPath(selected_folder + "\\" + App->file_system->GetDirectoryName(oldPath));
-						if (!App->file_system->DirectoryExist(newPath)) {
-							if (oldPath != newPath) {
-								App->file_system->Copy_File(oldPath, newPath);
-							}
-							else {
-								tinyfd_messageBox("Error", "Open file name is NULL", "ok", "error", 1);
-							}
-						}
-						else {
-							tinyfd_messageBox("Error", "A file with this name exist in the current folder", "ok", "error", 1);
-						}
-					}
-				}*/
 				ImGui::EndPopup();
 			}
 		}
@@ -105,6 +104,7 @@ void AssetsWindow::DrawWindow()
 		{
 			if (!selected_folder.empty()) 
 			{
+				CONSOLE_LOG("%d", asset_hovered);
 				std::vector<std::string> files = App->file_system->GetFilesInDirectory(selected_folder);
 				for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
 				{
@@ -142,29 +142,116 @@ void AssetsWindow::DrawWindow()
 						}
 					}
 					ImGui::Selectable((file_name + file_extension).c_str(), &selected);
-					if (ImGui::IsItemHoveredRect()) {
-						if (ImGui::IsItemClicked(0) || ImGui::IsItemClicked(1) && !file_options_open) {
-							selected_file_path = *it;
-							App->scene->selected_gameobjects.clear();
-							if (ImGui::IsItemClicked(1)) {
-								ImGui::SetNextWindowPos(ImGui::GetMousePos());
-								ImGui::OpenPopup("File Options");
-								file_options_open = true;
+					if (ImGui::IsItemHoveredRect()) 
+					{
+						asset_hovered = true;
+						
+						if (ImGui::IsMouseDragging() && !App->editor->drag_data->hasData)
+						{
+							Resource::ResourceType type = App->resources->AssetExtensionToResourceType(file_extension);
+							Resource* resource = nullptr;
+							switch (type)
+							{
+							case Resource::TextureResource:
+								resource = (Resource*)App->resources->GetTexture(file_name);
+								break;
+							case Resource::MeshResource:
+								resource = (Resource*)App->resources->GetMesh(file_name);
+								break;
+							case Resource::SceneResource:
+								break;
+							case Resource::AnimationResource:
+								break;
+							case Resource::PrefabResource:
+								resource = (Resource*)App->resources->GetPrefab(file_name);
+								break;
+							case Resource::ScriptResource:
+								resource = (Resource*)App->resources->GetScript(file_name);
+								break;
+							case Resource::AudioResource:
+								break;
+							case Resource::ParticleFXResource:
+								break;
+							case Resource::FontResource:
+								break;
+							case Resource::RenderTextureResource:
+								break;
+							case Resource::GameObjectResource:
+								break;
+							case Resource::MaterialResource:
+								resource = (Resource*)App->resources->GetMaterial(file_name);
+								break;
+							case Resource::Unknown:
+								break;
+							default:
+								break;
+							}
+							if (resource != nullptr)
+							{
+								App->editor->drag_data->hasData = true;
+								App->editor->drag_data->fromPanel = "Assets";
+								App->editor->drag_data->resource = resource;
+							}
+						}
+						else
+						{
+							if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)) {
+								selected_file_path = *it;
+								App->scene->selected_gameobjects.clear();
+								if (ImGui::IsMouseClicked(1)) {
+									ImGui::SetNextWindowPos(ImGui::GetMousePos());
+									show_file_options = true;
+									show_files_window_options = false;
+									show_folder_options = false;
+								}
 							}
 						}
 					}
+
+					if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && !asset_hovered)
+					{
+						selected = false;
+						selected_file_path = "";
+						show_files_window_options = false;
+						show_file_options = false;
+						show_folder_options = false;
+					}
 				}
+			}
+
+			if (ImGui::IsMouseHoveringWindow() && !ImGui::IsAnyItemHovered())
+			{
+				asset_hovered = false;
+			}
+
+			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(1) && !asset_hovered)
+			{
+				show_files_window_options = true;
+				show_file_options = false;
+				show_folder_options = false;
+			}
+
+			if (show_file_options)
+			{
+				ImGui::OpenPopup("File Options");
+			}
+
+			if (show_files_window_options)
+			{
+				ImGui::OpenPopup("Files Window Options");
 			}
 
 			if (ImGui::BeginPopup("File Options"))
 			{
 				if (ImGui::MenuItem("Rename")) {
-					file_options_open = false;
+					show_new_folder_window = false;
+					show_new_script_window = false;
 				}
 				if (ImGui::MenuItem("Delete")) {
 					delete_path = selected_file_path;
 					show_delete_window = true;
-					file_options_open = false;
+					show_new_folder_window = false;
+					show_new_script_window = false;
 				}
 
 				std::string extension = App->file_system->GetFileExtension(selected_file_path);
@@ -179,11 +266,25 @@ void AssetsWindow::DrawWindow()
 
 				ImGui::EndPopup();
 			}
-			else {
-				file_options_open = false;
+
+			if (ImGui::BeginPopup("Files Window Options"))
+			{
+				if (ImGui::MenuItem("Create C# Script"))
+				{
+					show_new_script_window = true;
+					show_delete_window = false;
+					show_new_folder_window = false;
+				}
+
+				ImGui::EndPopup();
 			}
 		}
 		ImGui::EndChild();
+
+		if (show_new_script_window)
+		{
+			CreateNewScriptWindow(Script::CsScript);
+		}
 	}
 	ImGui::EndDock();
 }
@@ -257,6 +358,82 @@ void AssetsWindow::CreateDirectortWindow()
 		show_new_folder_window = false;
 	}
 	ImGui::End();
+}
+
+void AssetsWindow::CreateNewScriptWindow(Script::ScriptType type)
+{
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetWindowSize().x / 2, ImGui::GetWindowSize().y / 2));
+	ImGui::SetNextWindowPosCenter();
+	ImGui::Begin("New Script Name", &active,
+		ImGuiWindowFlags_NoFocusOnAppearing |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_ShowBorders |
+		ImGuiWindowFlags_NoTitleBar);
+	ImGui::Spacing();
+	ImGui::Text("New Script Name");
+	static char inputText[30];
+	ImGui::InputText("", inputText, 30);
+	ImGui::Spacing();
+	if (ImGui::Button("Confirm")) {
+		std::string str(inputText);
+		if (!str.empty()) {
+			for (std::string::iterator it = str.begin(); it != str.end(); it++)
+			{
+				if (*it == ' ') *it = '_';
+			}
+			CreateScript(type, str);
+			strcpy(inputText, "");
+			show_new_script_window = false;
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+		strcpy(inputText, "");
+		show_new_script_window = false;
+	}
+	ImGui::End();
+}
+
+void AssetsWindow::CreateScript(Script::ScriptType type, std::string scriptName)
+{
+	std::ifstream in_file;
+	std::string new_file_name;
+
+	switch (type)
+	{
+	case Script::CsScript:
+		in_file.open(CS_TEMPLATE_FILE_PATH);
+		new_file_name = scriptName + ".cs";
+		break;
+	case Script::LuaScript:
+		in_file.open(LUA_TEMPLATE_FILE_PATH);
+		new_file_name = scriptName + ".lua";
+		break;
+	}
+
+	if (in_file.is_open()) {
+		std::stringstream str_stream;
+		str_stream << in_file.rdbuf();//read the file
+		std::string str = str_stream.str();//str holds the content of the file
+
+		if (str.empty())
+			return;
+		size_t start_pos = 0;
+		std::string class_name_template = "#CLASS_NAME#";
+		while ((start_pos = str.find(class_name_template, start_pos)) != std::string::npos) {
+			str.replace(start_pos, class_name_template.length(), scriptName);
+			start_pos += scriptName.length();
+		}
+
+		in_file.close();
+
+		std::ofstream output_file(selected_folder + "\\" + new_file_name);
+		output_file << str;
+		output_file.close();
+
+		App->resources->CreateResource(selected_folder + "\\" + new_file_name);
+	}
 }
 
 void AssetsWindow::DeleteWindow(std::string path)

@@ -18,6 +18,7 @@
 #include "Data.h"
 #include "TagsAndLayers.h"
 #include "ModuleMaterialImporter.h"
+#include "ModuleScriptImporter.h"
 
 Application::Application()
 {
@@ -42,6 +43,8 @@ Application::Application()
 	texture_importer = new ModuleTextureImporter(this);
 	prefab_importer = new ModulePrefabImporter(this);
 	material_importer = new ModuleMaterialImporter(this);
+	script_importer = new ModuleScriptImporter(this);
+
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
 	// They will CleanUp() in reverse order
@@ -56,6 +59,7 @@ Application::Application()
 	AddModule(texture_importer);
 	AddModule(prefab_importer);
 	AddModule(material_importer);
+	AddModule(script_importer);
 	AddModule(camera);
 	AddModule(scene);
 	AddModule(editor);

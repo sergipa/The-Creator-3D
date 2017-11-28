@@ -3,6 +3,8 @@
 #include "Script.h"
 #include "lua/include/lua.hpp"
 
+class Data;
+
 class LuaScript :
 	public Script
 {
@@ -10,7 +12,8 @@ public:
 	LuaScript();
 	~LuaScript();
 
-	bool InitScript(const char* code, GameObject* container);
+	bool LoadScript(std::string script_path);
+	void InitScript();
 	void StartScript();
 	void UpdateScript(float deltaTime);
 	void OnCollisionEnter();
@@ -97,16 +100,22 @@ private:
 
 	static void StackDump(lua_State* luaState);
 
+	void Save(Data& data) const;
+	bool Load(Data& data);
+	void CreateMeta() const;
+	void LoadToMemory();
+	void UnloadFromMemory();
+
 private:
-	bool hasStartFunction = false;
-	bool hasUpdateFunction = false;
-	bool hasOnCollisionEnter = false;
-	bool hasOnCollisionStay = false;
-	bool hasOnCollisionExit = false;
-	bool hasOnEnable = false;
-	bool hasOnDisable = false;
+	bool hasStartFunction;
+	bool hasUpdateFunction;
+	bool hasOnCollisionEnter;
+	bool hasOnCollisionStay;
+	bool hasOnCollisionExit;
+	bool hasOnEnable;
+	bool hasOnDisable;
 	static bool insideFunction;
-	lua_State* luaState = NULL;
+	lua_State* luaState;
 	std::vector<ScriptField*> fields;
 };
 

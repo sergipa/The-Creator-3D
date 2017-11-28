@@ -7,6 +7,7 @@ class Mesh;
 class Prefab;
 class GameObject;
 class Material;
+class Script;
 
 namespace ImGui
 {
@@ -16,5 +17,6 @@ namespace ImGui
 	bool InputResourcePrefab(const char* label, Prefab** texture);
 	bool InputResourceGameObject(const char* label, GameObject** texture);
 	bool InputResourceMaterial(const char* label, Material** texture);
+	bool InputResourceScript(const char* label, Script** script);
 }
 

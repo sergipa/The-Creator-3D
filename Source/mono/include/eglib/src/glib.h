@@ -15,9 +15,9 @@
 
 #include <stdint.h>
 
-#include <eglib-config.h>
+#include "eglib-config.h"
 #ifndef EGLIB_NO_REMAP
-#include <eglib-remap.h>
+#include "eglib-remap.h"
 #endif
 
 #ifdef G_HAVE_ALLOCA_H

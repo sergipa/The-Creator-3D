@@ -3,7 +3,7 @@
 
 Component::Component()
 {
-	type = Unknown;
+	type = CompUnknown;
 	active = true;
 	gameobject = nullptr;
 	name = "Unknown";

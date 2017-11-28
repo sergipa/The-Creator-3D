@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "ModuleInput.h"
 #include "ModuleScene.h"
+#include "ModuleEditor.h"
 
 HierarchyWindow::HierarchyWindow()
 {
@@ -196,5 +197,12 @@ void HierarchyWindow::IsMouseOver(GameObject * gameObject)
 				rename_window_y = ImGui::GetMousePos().y;
 			}
 		}
+	}
+
+	if (ImGui::IsMouseDragging() && App->scene->selected_gameobjects.size() == 1 && ImGui::IsItemHoveredRect())
+	{
+		App->editor->drag_data->fromPanel = "Hierarchy";
+		App->editor->drag_data->hasData = true;
+		App->editor->drag_data->resource = (Resource*)App->scene->selected_gameobjects.front();
 	}
 }

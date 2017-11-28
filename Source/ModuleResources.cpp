@@ -14,6 +14,8 @@
 #include "ModulePrefabImporter.h"
 #include "ModuleMaterialImporter.h"
 #include "ComponentMeshRenderer.h"
+#include "Script.h"
+#include "ModuleScriptImporter.h"
 
 
 ModuleResources::ModuleResources(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
@@ -69,6 +71,8 @@ void ModuleResources::FillResourcesLists()
 	{
 		CreateResource(*it);
 	}
+
+	App->script_importer->CompileScripts();
 }
 
 void ModuleResources::AddResource(Resource * resource)
@@ -360,10 +364,48 @@ std::map<uint, Material*> ModuleResources::GetMaterialsList() const
 	return materials_list;
 }
 
+Script * ModuleResources::GetScript(std::string name) const
+{
+	for (std::map<uint, Script*>::const_iterator it = scripts_list.begin(); it != scripts_list.end(); it++)
+	{
+		if (it->second != nullptr && it->second->GetName() == name) return it->second;
+	}
+	return nullptr;
+}
+
+Script * ModuleResources::GetScript(UID uid) const
+{
+	if (scripts_list.find(uid) != scripts_list.end()) return scripts_list.at(uid);
+	return nullptr;
+}
+
+void ModuleResources::AddScript(Script * script)
+{
+	if (script != nullptr)
+	{
+		scripts_list[script->GetUID()] = script;
+	}
+}
+
+void ModuleResources::RemoveScript(Script * script)
+{
+	if (script)
+	{
+		std::map<uint, Script*>::iterator it = scripts_list.find(script->GetUID());
+		if (it != scripts_list.end()) scripts_list.erase(it);
+	}
+}
+
+std::map<uint, Script*> ModuleResources::GetScriptsList() const
+{
+	return scripts_list;
+}
+
 Resource::ResourceType ModuleResources::AssetExtensionToResourceType(std::string str)
 {
 	if (str == ".jpg" || str == ".png" || str == ".tga" || str == ".dds") return Resource::TextureResource;
 	else if (str == ".fbx" || str == ".FBX") return Resource::MeshResource;
+	else if (str == ".cs" || str == ".lua") return Resource::ScriptResource;
 	else if (str == ".wav" || str == ".ogg") return Resource::AudioResource;
 	else if (str == ".prefab") return Resource::PrefabResource;
 	else if (str == ".mat") return Resource::MaterialResource;
@@ -381,6 +423,7 @@ Resource::ResourceType ModuleResources::LibraryExtensionToResourceType(std::stri
 	else if (str == ".mesh") return Resource::MeshResource;
 	else if (str == ".scene") return Resource::SceneResource;
 	else if (str == ".mat") return Resource::MaterialResource;
+	else if (str == ".dll") return Resource::ScriptResource;
 	else if (str == ".prefab" || str == ".fbx" || str == ".FBX") return Resource::PrefabResource;
 
 	return Resource::Unknown;
@@ -393,6 +436,7 @@ std::string ModuleResources::ResourceTypeToLibraryExtension(Resource::ResourceTy
 	else if (type == Resource::SceneResource) return ".scene";
 	else if (type == Resource::PrefabResource) return ".prefab";
 	else if (type == Resource::MaterialResource) return ".mat";
+	else if (type == Resource::ScriptResource) return ".dll";
 	
 	return "";
 }
@@ -442,6 +486,11 @@ std::string ModuleResources::GetLibraryFile(std::string file_path)
 		}
 		break;
 	case Resource::ScriptResource:
+		directory = App->file_system->StringToPathFormat(LIBRARY_SCRIPTS_FOLDER);
+		if (App->file_system->FileExistInDirectory(file_name + ".dll", directory, false))
+		{
+			library_file = directory + file_name + ".dll";
+		}
 		break;
 	case Resource::AudioResource:
 		break;
@@ -490,6 +539,8 @@ std::string ModuleResources::CreateLibraryFile(Resource::ResourceType type, std:
 		ret = App->prefab_importer->ImportPrefab(file_path);
 		break;
 	case Resource::ScriptResource:
+		if (!App->file_system->DirectoryExist(LIBRARY_SCRIPTS_FOLDER_PATH)) App->file_system->Create_Directory(LIBRARY_SCRIPTS_FOLDER_PATH);
+		ret = App->script_importer->ImportScript(file_path);
 		break;
 	case Resource::AudioResource:
 		break;
@@ -548,6 +599,12 @@ Resource * ModuleResources::CreateResourceFromLibrary(std::string library_path)
 		resource = (Resource*)App->prefab_importer->LoadPrefabFromLibrary(library_path);
 		break;
 	case Resource::ScriptResource:
+		if (GetScript(name) != nullptr)
+		{
+			resource = (Resource*)GetScript(name);
+			break;
+		}
+		resource = (Resource*)App->script_importer->LoadScriptFromLibrary(library_path);
 		break;
 	case Resource::AudioResource:
 		break;
@@ -704,7 +761,7 @@ void ModuleResources::DeleteFBXMeshes(GameObject* gameobject)
 		{
 			DeleteFBXMeshes(*it);
 		}
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::MeshRenderer);
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::CompMeshRenderer);
 
 		if (mesh_renderer != nullptr)
 		{

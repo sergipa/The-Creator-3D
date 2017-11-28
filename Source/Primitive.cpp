@@ -970,7 +970,6 @@ void pTexturedCube::InnerRender() const
 	glTexCoord2f(1, 0);
 	glVertex3f(-sx + pos.x, -sy + pos.y, sz + pos.z);
 	glEnd();
-	CONSOLE_DEBUG("%.3f", sx + pos.z);
 
 	//right
 	glBindTexture(GL_TEXTURE_2D, textures_id[3]->GetID());

@@ -582,6 +582,12 @@
     <ClInclude Include="TextEditorWindow.h">
       <Filter>Sources\EditorUI</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentScript.h">
+      <Filter>Sources\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleScriptImporter.h">
+      <Filter>Sources\Modules\Importers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -895,6 +901,12 @@
     </ClCompile>
     <ClCompile Include="TextEditorWindow.cpp">
       <Filter>Sources\EditorUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentScript.cpp">
+      <Filter>Sources\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleScriptImporter.cpp">
+      <Filter>Sources\Modules\Importers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -84,6 +84,8 @@ enum update_status
 #define LIBRARY_PREFABS_FOLDER_PATH "./Project/Library/Prefabs"
 #define LIBRARY_MATERIALS_FOLDER "./Project/Library/Materials/"
 #define LIBRARY_MATERIALS_FOLDER_PATH "./Project/Library/Materials"
+#define LIBRARY_SCRIPTS_FOLDER "./Project/Library/Scripts/"
+#define LIBRARY_SCRIPTS_FOLDER_PATH "./Project/Library/Scripts"
 
 #define EDITOR_CONFIG_FILE "./Editor_Settings/Editor_Config.json"
 #define EDITOR_LAYOUT_FILE "./Editor_Settings/Editor_Layout"
@@ -96,3 +98,6 @@ enum update_status
 #define LOGS_FOLDER_PATH "./Logs"
 #define TMP_FOLDER "./Tmp/"
 #define TMP_FOLDER_PATH "./Tmp"
+
+#define CS_TEMPLATE_FILE_PATH "./Editor_Settings/Scripts_Templates/C#Script.txt"
+#define LUA_TEMPLATE_FILE_PATH "./Editor_Settings/Scripts_Templates/LuaScript.txt"

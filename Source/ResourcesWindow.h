@@ -8,6 +8,7 @@ class Mesh;
 class Prefab;
 class GameObject;
 class Material;
+class Script;
 
 class ResourcesWindow :
 	public Window
@@ -23,6 +24,7 @@ public:
 	Prefab* GetPrefab() const;
 	GameObject* GetGameobject() const;
 	Material* GetMaterial() const;
+	Script* GetScript() const;
 	void Reset();
 
 private:
@@ -32,12 +34,14 @@ private:
 	std::map<uint, Prefab*> prefabs_list;
 	std::map<uint, GameObject*> gameobjects_list;
 	std::map<uint, Material*> materials_list;
+	std::map<uint, Script*> scripts_list;
 
 	Texture* texture_to_return;
 	Mesh* mesh_to_return;
 	Prefab* prefab_to_return;
 	GameObject* gameobject_to_return;
 	Material* material_to_return;
+	Script* script_to_return;
 
 public:
 	bool texture_changed;

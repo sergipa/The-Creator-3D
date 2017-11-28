@@ -5,7 +5,7 @@ ComponentTransform::ComponentTransform(GameObject* attached_gameobject)
 {
 	SetActive(true);
 	SetName("Transform");
-	SetType(ComponentType::Transform);
+	SetType(ComponentType::CompTransform);
 	SetGameObject(attached_gameobject);
 
 	position = float3(0.f, 0.f, 0.f);
@@ -33,7 +33,7 @@ float3 ComponentTransform::GetGlobalPosition() const
 	}
 	else
 	{
-		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::Transform);
+		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
 		return (position + parent_transform->position);
 	}
 }
@@ -54,7 +54,7 @@ float3 ComponentTransform::GetGlobalRotation() const
 {
 	if (GetGameObject()->GetParent() != nullptr)
 	{
-		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::Transform);
+		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
 		return GetLocalRotation() + parent_transform->GetLocalRotation();
 	}
 	return GetLocalRotation(); //If it's the parent. local rotation = global rotation
@@ -79,7 +79,7 @@ float3 ComponentTransform::GetGlobalScale() const
 	}
 	else
 	{
-		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::Transform);
+		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
 		return (scale + parent_transform->scale);
 	}
 }
@@ -94,7 +94,7 @@ void ComponentTransform::UpdateGlobalMatrix()
 
 	if (!this->GetGameObject()->IsRoot())
 	{
-		ComponentTransform* parent_transform = (ComponentTransform*)this->GetGameObject()->GetParent()->GetComponent(Component::Transform);
+		ComponentTransform* parent_transform = (ComponentTransform*)this->GetGameObject()->GetParent()->GetComponent(Component::CompTransform);
 
 		transform_matrix = transform_matrix.FromTRS(position, rotation, scale);
 		transform_matrix = parent_transform->transform_matrix * transform_matrix;
@@ -104,7 +104,7 @@ void ComponentTransform::UpdateGlobalMatrix()
 		transform_matrix = float4x4::FromTRS(position, rotation, scale);
 		for (std::list<GameObject*>::iterator it = this->GetGameObject()->childs.begin(); it != this->GetGameObject()->childs.end(); it++)
 		{
-			ComponentTransform* child_transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
+			ComponentTransform* child_transform = (ComponentTransform*)(*it)->GetComponent(Component::CompTransform);
 			child_transform->UpdateGlobalMatrix();
 		}
 	}
@@ -150,7 +150,7 @@ void ComponentTransform::SetMatrix(const float4x4 & matrix)
 	{
 		for (std::list<GameObject*>::iterator it = this->GetGameObject()->childs.begin(); it != this->GetGameObject()->childs.end(); it++)
 		{
-			ComponentTransform* child_transform = (ComponentTransform*)(*it)->GetComponent(Component::Transform);
+			ComponentTransform* child_transform = (ComponentTransform*)(*it)->GetComponent(Component::CompTransform);
 			child_transform->UpdateGlobalMatrix();
 		}
 	}

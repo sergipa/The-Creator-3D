@@ -24,6 +24,23 @@ class ImportWindow;
 class ResourcesWindow;
 class GameWindow;
 class ResourcesConfigWindow;
+class Resource;
+
+struct DragData {
+	std::string fromPanel;
+	std::string path;
+	std::string extension;
+	std::string name;
+	Resource* resource = nullptr;
+	bool hasData = false;
+	void clearData() {
+		fromPanel.clear();
+		path.clear();
+		extension.clear();
+		name.clear();
+		hasData = false;
+	}
+};
 
 class ModuleEditor :
 	public Module
@@ -67,5 +84,6 @@ public:
 	ResourcesWindow* resources_window = nullptr;
 	GameWindow* game_window = nullptr;
 	ResourcesConfigWindow* resources_config_window = nullptr;
+	DragData* drag_data;
 };
 

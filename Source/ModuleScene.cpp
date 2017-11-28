@@ -57,9 +57,9 @@ bool ModuleScene::Start()
 
 	main_camera = new GameObject();
 	main_camera->SetName("Main Camera");
-	ComponentTransform* transform = (ComponentTransform*)main_camera->GetComponent(Component::Transform);
+	ComponentTransform* transform = (ComponentTransform*)main_camera->GetComponent(Component::CompTransform);
 	transform->SetPosition({ 0,1,-10 });
-	ComponentCamera* camera = (ComponentCamera*)main_camera->AddComponent(Component::Camera);
+	ComponentCamera* camera = (ComponentCamera*)main_camera->AddComponent(Component::CompCamera);
 	main_camera->SetTag("Main Camera");
 	scene_gameobjects.push_back(main_camera);
 	root_gameobjects.push_back(main_camera);
@@ -115,9 +115,9 @@ GameObject * ModuleScene::DuplicateGameObject(GameObject * gameObject)
 				ret = go;
 			}
 			App->resources->AddGameObject(go);
-			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::Transform);
+			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::CompTransform);
 			if (transform) transform->UpdateGlobalMatrix();
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->GetComponent(Component::MeshRenderer);
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->GetComponent(Component::CompMeshRenderer);
 			if (mesh_renderer)
 			{
 				Mesh* mesh = mesh_renderer->GetMesh();
@@ -178,8 +178,8 @@ update_status ModuleScene::Update(float dt)
 
 	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
 	{
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
-		ComponentCamera* camera = (ComponentCamera*)(*it)->GetComponent(Component::Camera);
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::CompMeshRenderer);
+		ComponentCamera* camera = (ComponentCamera*)(*it)->GetComponent(Component::CompCamera);
 		bool active_parents = RecursiveCheckActiveParents((*it));
 		if (active_parents && (*it)->IsActive())
 		{
@@ -262,7 +262,7 @@ void ModuleScene::RemoveWithoutDelete(GameObject * gameobject)
 		selected_gameobjects.remove(gameobject);
 	}
 
-	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::MeshRenderer);
+	ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::CompMeshRenderer);
 	if (mesh_renderer)
 	{
 		if (gameobject->IsStatic())
@@ -282,7 +282,7 @@ void ModuleScene::RemoveWithoutDelete(GameObject * gameobject)
 		mesh_renderer->UnloadFromMemory();
 	}
 
-	ComponentCamera* camera = (ComponentCamera*)gameobject->GetComponent(Component::Camera);
+	ComponentCamera* camera = (ComponentCamera*)gameobject->GetComponent(Component::CompCamera);
 	if (camera)
 	{
 		if (std::find(scene_cameras.begin(), scene_cameras.end(), camera) != scene_cameras.end())
@@ -309,7 +309,7 @@ void ModuleScene::ApplyTextureToGameObject(GameObject * gameobject, Texture* tex
 {
 	if (gameobject->IsActive())
 	{
-		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::MeshRenderer);
+		ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)gameobject->GetComponent(Component::CompMeshRenderer);
 
 		if (mesh_renderer != nullptr)
 		{
@@ -371,11 +371,11 @@ void ModuleScene::LoadScene(std::string path)
 			scene_gameobjects.push_back(game_object);
 			if (game_object->IsRoot()) root_gameobjects.push_back(game_object);
 			App->resources->AddGameObject(game_object);
-			ComponentTransform* transform = (ComponentTransform*)game_object->GetComponent(Component::Transform);
+			ComponentTransform* transform = (ComponentTransform*)game_object->GetComponent(Component::CompTransform);
 			if (transform) transform->UpdateGlobalMatrix();
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)game_object->GetComponent(Component::MeshRenderer);
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)game_object->GetComponent(Component::CompMeshRenderer);
 			if (mesh_renderer) mesh_renderer->LoadToMemory();
-			ComponentCamera* camera = (ComponentCamera*)game_object->GetComponent(Component::Camera);
+			ComponentCamera* camera = (ComponentCamera*)game_object->GetComponent(Component::CompCamera);
 			if (camera)
 			{
 				if (game_object->GetTag() == "Main Camera") App->renderer3D->game_camera = camera;
@@ -488,7 +488,7 @@ void ModuleScene::HandleInput()
 		{
 			if (!selected_gameobjects.empty())
 			{
-				ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
+				ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::CompTransform);
 				App->camera->can_update = true;
 				App->camera->LookAt(transform->GetGlobalPosition());
 				App->camera->can_update = false;
@@ -501,7 +501,7 @@ void ModuleScene::HandleInput()
 			{
 				if (!selected_gameobjects.empty())
 				{
-					ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::Transform);
+					ComponentTransform* transform = (ComponentTransform*)selected_gameobjects.front()->GetComponent(Component::CompTransform);
 					App->camera->can_update = true;
 					App->camera->LookAt(transform->GetGlobalPosition());
 					App->camera->SetOrbital(true);

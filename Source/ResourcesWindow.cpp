@@ -184,6 +184,11 @@ Material * ResourcesWindow::GetMaterial() const
 	return material_to_return;
 }
 
+Script * ResourcesWindow::GetScript() const
+{
+	return script_to_return;
+}
+
 void ResourcesWindow::Reset()
 {
 	texture_changed = false;

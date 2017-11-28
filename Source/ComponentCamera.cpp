@@ -14,7 +14,7 @@ ComponentCamera::ComponentCamera(GameObject* attached_gameobject)
 {
 	SetActive(true);
 	SetName("Camera");
-	SetType(ComponentType::Camera);
+	SetType(ComponentType::CompCamera);
 	SetGameObject(attached_gameobject);
 
 	(attached_gameobject) ? camera_frustum.pos = attached_gameobject->GetGlobalTransfomMatrix().TranslatePart() : camera_frustum.pos = float3::zero;

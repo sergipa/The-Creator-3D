@@ -93,7 +93,7 @@ void SceneWindow::DrawWindow()
 
 				ImGuizmo::DecomposeMatrixToComponents(transformation, translation, rotation, scale);
 
-				ComponentTransform* transform = (ComponentTransform*)App->scene->selected_gameobjects.front()->GetComponent(Component::Transform);
+				ComponentTransform* transform = (ComponentTransform*)App->scene->selected_gameobjects.front()->GetComponent(Component::CompTransform);
 
 				float3 go_position;
 				float3 go_rotation;

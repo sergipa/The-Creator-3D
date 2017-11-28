@@ -23,6 +23,7 @@ class ModuleMeshImporter;
 class ModuleTextureImporter;
 class ModulePrefabImporter;
 class ModuleMaterialImporter;
+class ModuleScriptImporter;
 
 class Application
 {
@@ -76,6 +77,7 @@ public:
 	ModuleTextureImporter* texture_importer;
 	ModulePrefabImporter* prefab_importer;
 	ModuleMaterialImporter* material_importer;
+	ModuleScriptImporter* script_importer;
 
 private:
 

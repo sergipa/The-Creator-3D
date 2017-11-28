@@ -1,10 +1,10 @@
 #ifndef __DEBUG_INTERNALS_H__
 #define __DEBUG_INTERNALS_H__
 
-#include <glib.h>
-#include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/mono-debug.h>
-#include <mono/utils/mono-compiler.h>
+#include "../eglib/src/glib.h"
+#include "../metadata/debug-helpers.h"
+#include "../metadata/mono-debug.h"
+#include "../utils/mono-compiler.h"
 
 struct _MonoDebugMethodInfo {
 	MonoMethod *method;

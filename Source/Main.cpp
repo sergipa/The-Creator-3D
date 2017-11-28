@@ -6,7 +6,6 @@
 #pragma comment( lib, "SDL/lib/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/lib/libx86/SDL2main.lib" )
 
-
 enum main_states
 {
 	MAIN_CREATION,

@@ -25,10 +25,13 @@
 #include "ResourcesWindow.h"
 #include "GameWindow.h"
 #include "ResourcesConfigWindow.h"
+#include "CSScript.h"
+#include "LuaScript.h"
 
 ModuleEditor::ModuleEditor(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, false)
 {
 	name = "Editor";
+	drag_data = nullptr;
 }
 
 ModuleEditor::~ModuleEditor()
@@ -71,6 +74,9 @@ bool ModuleEditor::Init(Data* editor_config)
 	//editor_panels.push_back(animator_panel = new PanelAnimator());
 	//editor_panels.push_back(particle_editor_panel = new PanelParticleEditor());
 	ImGui::LoadDocks();
+
+	drag_data = new DragData();
+
 	return true;
 }
 
@@ -241,6 +247,7 @@ update_status ModuleEditor::Update(float deltaTime)
 	ImGui::EndDockspace();
 	ImGui::End();
 	ImGui::PopFont();
+	if (ImGui::IsMouseReleased(0) && drag_data->hasData) drag_data->clearData();
 	performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }
@@ -256,6 +263,7 @@ bool ModuleEditor::CleanUp()
 	for (std::list<Window*>::iterator it = editor_windows.begin(); it != editor_windows.end(); ++it) {
 		RELEASE(*it);
 	}
+	RELEASE(drag_data);
 	editor_windows.clear();
 	ImGui::SaveDocks();
 	ImGui_ImplSdl_Shutdown();

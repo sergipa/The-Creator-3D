@@ -1,6 +1,7 @@
 #include "LuaScript.h"
 #include "GameObject.h"
 #include "Texture.h"
+#include "Data.h"
 
 #pragma comment (lib, "lua/lib/lua53.lib")
 
@@ -8,6 +9,15 @@ bool LuaScript::insideFunction = false;
 
 LuaScript::LuaScript()
 {
+	hasStartFunction = false;
+	hasUpdateFunction = false;
+	hasOnCollisionEnter = false;
+	hasOnCollisionStay = false;
+	hasOnCollisionExit = false;
+	hasOnEnable = false;
+	hasOnDisable = false;
+	luaState = nullptr;
+	SetScriptType(ScriptType::LuaScript);
 }
 
 LuaScript::~LuaScript()
@@ -15,12 +25,13 @@ LuaScript::~LuaScript()
 	CloseLua();
 }
 
-bool LuaScript::InitScript(const char * code, GameObject * container)
+bool LuaScript::LoadScript(std::string script_path)
 {
-	CloseLua();
+	bool ret = false;
+
+	/*CloseLua();
 
 	insideFunction = false;
-	bool ret = false;
 	luaState = LuaNewState();
 	luaL_openlibs(luaState);
 	GlobalFunctions(luaState);
@@ -49,8 +60,12 @@ bool LuaScript::InitScript(const char * code, GameObject * container)
 	}
 	else {
 		CONSOLE_WARNING("Cannot load lua script of '%s': %s", container->GetName().c_str(), lua_tostring(luaState, -1));
-	}
+	}*/
 	return ret;
+}
+
+void LuaScript::InitScript()
+{
 }
 
 void LuaScript::StartScript()
@@ -600,7 +615,7 @@ void LuaScript::CloseLua()
 	if (luaState)
 	{
 		lua_close(luaState);
-		luaState = NULL;
+		luaState = nullptr;
 	}
 }
 
@@ -886,6 +901,27 @@ void LuaScript::StackDump(lua_State * luaState)
 		}
 	}
 	printf("\n");  /* end the listing */
+}
+
+void LuaScript::Save(Data & data) const
+{
+}
+
+bool LuaScript::Load(Data & data)
+{
+	return false;
+}
+
+void LuaScript::CreateMeta() const
+{
+}
+
+void LuaScript::LoadToMemory()
+{
+}
+
+void LuaScript::UnloadFromMemory()
+{
 }
 
 void LuaScript::RegisterLibrary(lua_State * luaState, luaL_Reg lib[], const char * libName)

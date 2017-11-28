@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "Script.h"
 
 class Texture;
 
@@ -18,13 +19,21 @@ private:
 	void DrawChilds(std::string path);
 	void DeleteWindow(std::string path);
 	void CreateDirectortWindow();
+	void CreateNewScriptWindow(Script::ScriptType type);
+	void CreateScript(Script::ScriptType type, std::string scriptName);
 
 private:
 	uint node;
 	char node_name[150];
 	bool show_new_folder_window;
-	bool file_options_open;
 	bool show_delete_window;
+	bool show_new_script_window;
+
+	bool show_file_options;
+	bool show_files_window_options;
+	bool show_folder_options;
+
+	bool asset_hovered;
 
 	Texture* texture_icon;
 	Texture* mesh_icon;

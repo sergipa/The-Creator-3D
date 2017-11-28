@@ -240,7 +240,7 @@ void ModuleCamera3D::MousePickRay(int mouse_x, int mouse_y)
 		{
 			Ray inv_ray = ray.ReturnTransform((*it)->GetGlobalTransfomMatrix().Inverted()); //Triangle intersection needs the inverted ray
 
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::MeshRenderer);
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)(*it)->GetComponent(Component::CompMeshRenderer);
 			if (mesh_renderer != nullptr && mesh_renderer->GetMesh() != nullptr)
 			{
 				float dist_near;

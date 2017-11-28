@@ -80,7 +80,7 @@ void TextEditorWindow::DrawWindow()
 
 void TextEditorWindow::SetPath(std::string string)
 {
-	std::ifstream t(string.c_str);
+	std::ifstream t(string.c_str());
 	std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 	editor.SetText(str);
 }

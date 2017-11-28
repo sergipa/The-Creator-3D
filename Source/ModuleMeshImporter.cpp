@@ -114,7 +114,7 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 		(s_node_name.find("RootNode") != std::string::npos) ? root_go_name = App->file_system->GetFileNameWithoutExtension(path) : root_go_name = node->mName.C_Str();
 		root = new GameObject(parent);
 		root->SetName(root_go_name);
-		ComponentTransform* transform = (ComponentTransform*)root->GetComponent(Component::Transform);
+		ComponentTransform* transform = (ComponentTransform*)root->GetComponent(Component::CompTransform);
 		math::Quat math_quat(quat.x, quat.y, quat.z, quat.w);
 		float3 rotation = math::RadToDeg(math_quat.ToEulerXYZ());
 		transform->SetPosition({ pos.x, pos.y, pos.z });
@@ -224,12 +224,12 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 			App->resources->AddMesh(mesh);
 
 			GameObject* go = new GameObject(parent);
-			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::MeshRenderer);
+			ComponentMeshRenderer* mesh_renderer = (ComponentMeshRenderer*)go->AddComponent(Component::CompMeshRenderer);
 			mesh_renderer->SetMesh(mesh);
 			mesh->DecreaseUsedCount();
 			mesh_renderer->SetMaterial(material);
 			material->DecreaseUsedCount();
-			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::Transform);
+			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::CompTransform);
 			aiVector3D position;
 			aiQuaternion rotation_quat;
 			aiVector3D scale;

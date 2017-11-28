@@ -1,0 +1,15 @@
+--[Local/Global vars here]
+
+
+
+--[functions here]
+
+function Start()
+    -- Called when game starts or spawned
+	
+end
+
+function Update(deltaTime)
+    -- Called every frame
+	
+end

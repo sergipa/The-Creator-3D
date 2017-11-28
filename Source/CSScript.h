@@ -3,6 +3,9 @@
 #include "Script.h"
 #include "mono/include/jit/jit.h"
 #include "mono/include/metadata/assembly.h"
+#include "mono/include/metadata/attrdefs.h"
+
+class Data;
 
 class CSScript :
 	public Script
@@ -11,7 +14,8 @@ public:
 	CSScript();
 	~CSScript();
 
-	bool InitScript(const char* code, GameObject* container);
+	bool LoadScript(std::string script_path);
+	void InitScript();
 	void StartScript();
 	void UpdateScript(float deltaTime);
 	void OnCollisionEnter();
@@ -43,14 +47,29 @@ public:
 
 	std::vector<ScriptField*> GetScriptFields();
 
+	void SetDomain(MonoDomain* mono_domain);
+	void SetImage(MonoImage* mono_image);
+	void SetClass(MonoClass* mono_class);
+
 private:
 	MonoMethod* GetFunction(const char* functionName, int parameters);
 	void CallFunction(MonoMethod* function, void** parameter);
+	void ConvertMonoType(MonoType* type, ScriptField& script_field);
+	void RegisterLibrary();
+
+	void Save(Data& data) const;
+	bool Load(Data& data);
+	void CreateMeta() const;
+	void LoadToMemory();
+	void UnloadFromMemory();
 
 private:
-	MonoDomain* domain;
-	MonoAssembly* assembly;
+	MonoDomain* mono_domain;
+	MonoAssembly* mono_assembly;
 	MonoClass* mono_class;
-	MonoImage* image;
-	MonoObject* object;
+	MonoImage* mono_image;
+	MonoObject* mono_object;
+
+	std::vector<ScriptField*> script_fields;
 };
+

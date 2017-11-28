@@ -3303,6 +3303,11 @@ bool ImGui::IsItemClicked(int mouse_button)
     return IsMouseClicked(mouse_button) && IsItemHovered();
 }
 
+bool ImGui::IsItemReleased(int mouse_button)
+{
+	return IsMouseReleased(mouse_button) && IsItemHovered();
+}
+
 bool ImGui::IsAnyItemHovered()
 {
     return GImGui->HoveredId != 0 || GImGui->HoveredIdPreviousFrame != 0;

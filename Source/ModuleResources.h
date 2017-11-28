@@ -9,6 +9,7 @@ class Prefab;
 class GameObject;
 class Resources;
 class Material;
+class Script;
 
 class ModuleResources :
 	public Module
@@ -54,6 +55,12 @@ public:
 	void RemoveMaterial(Material* material);
 	std::map<uint, Material*> GetMaterialsList() const;
 
+	Script* GetScript(std::string name) const;
+	Script* GetScript(UID uid) const;
+	void AddScript(Script* script);
+	void RemoveScript(Script* script);
+	std::map<uint, Script*> GetScriptsList() const;
+
 	Resource::ResourceType AssetExtensionToResourceType(std::string str);
 	Resource::ResourceType LibraryExtensionToResourceType(std::string str);
 	std::string ResourceTypeToLibraryExtension(Resource::ResourceType type);
@@ -76,5 +83,6 @@ private:
 	std::map<uint, Prefab*> prefabs_list;
 	std::map<uint, GameObject*> gameobjects_list;
 	std::map<uint, Material*> materials_list;
+	std::map<uint, Script*> scripts_list;
 };
 
