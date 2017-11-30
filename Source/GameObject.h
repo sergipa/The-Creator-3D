@@ -50,6 +50,10 @@ public:
 
 	void SetParentByID(UID parent_id);
 
+	void InitScripts();
+	void StartScripts();
+	void UpdateScripts();
+
 	void Destroy();
 	void OnDestroy();
 

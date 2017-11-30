@@ -336,6 +336,39 @@ void GameObject::SetParentByID(UID parent_id)
 	SetParent(App->scene->FindGameObject(parent_id));
 }
 
+void GameObject::InitScripts()
+{
+	ComponentScript* comp_script = nullptr;
+	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); it++) {
+		if ((*it)->GetType() == Component::CompScript) {
+			comp_script = (ComponentScript*)*it;
+			comp_script->InitScript();
+		}
+	}
+}
+
+void GameObject::StartScripts()
+{
+	ComponentScript* comp_script = nullptr;
+	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); it++) {
+		if ((*it)->GetType() == Component::CompScript) {
+			comp_script = (ComponentScript*)*it;
+			comp_script->StartScript();
+		}
+	}
+}
+
+void GameObject::UpdateScripts()
+{
+	ComponentScript* comp_script = nullptr;
+	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); it++) {
+		if ((*it)->GetType() == Component::CompScript) {
+			comp_script = (ComponentScript*)*it;
+			comp_script->UpdateScript();
+		}
+	}
+}
+
 void GameObject::Destroy()
 {
 	App->scene->AddGameObjectToDestroy(this);

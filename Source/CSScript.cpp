@@ -4,9 +4,14 @@
 #include "ModuleFileSystem.h"
 #include "Data.h"
 #include "ModuleScriptImporter.h"
+#include <ctime>
+#include "ModuleScene.h"
+#include "ModuleResources.h"
 
 #pragma comment (lib, "mono/lib/mono-2.0-sgen.lib")
 
+GameObject* CSScript::attached_gameobject = nullptr;
+GameObject* CSScript::active_object = nullptr;
 
 CSScript::CSScript()
 {
@@ -15,6 +20,16 @@ CSScript::CSScript()
 	mono_class = nullptr;
 	mono_image = nullptr;
 
+	init = nullptr;
+	start = nullptr;
+	update = nullptr;
+	on_collision_enter = nullptr;
+	on_collision_stay = nullptr;
+	on_collision_exit = nullptr;
+	on_enable = nullptr;
+	on_disable = nullptr;
+
+	SetType(Resource::ScriptResource);
 	SetScriptType(ScriptType::CsScript);
 }
 
@@ -34,16 +49,30 @@ bool CSScript::LoadScript(std::string script_path)
 	if (mono_object)
 	{
 		mono_runtime_object_init(mono_object);
+		
+		init = GetFunction("Init", 0);
+		start = GetFunction("Start", 0);
+		update = GetFunction("Update", 0);
+		on_collision_enter = GetFunction("OnCollisionEnter", 1);
+		on_collision_stay = GetFunction("OnCollisionStay", 1);
+		on_collision_exit = GetFunction("OnCollisionExit", 1);
+		on_enable = GetFunction("OnEnable", 0);
+		on_disable = GetFunction("OnDisable", 0);
+
 		ret = true;
 	}
 	
+	RegisterAPI();
 	return ret;
+}
+
+void CSScript::SetAttachedGameObject(GameObject * gameobject)
+{
+	attached_gameobject = gameobject;
 }
 
 void CSScript::InitScript()
 {
-	MonoMethod* init = GetFunction("Init", 0);
-
 	if (init != nullptr)
 	{
 		CallFunction(init, nullptr);
@@ -52,18 +81,14 @@ void CSScript::InitScript()
 
 void CSScript::StartScript()
 {
-	MonoMethod* start = GetFunction("Start", 0);
-
 	if (start != nullptr)
 	{
 		CallFunction(start, nullptr);
 	}
 }
 
-void CSScript::UpdateScript(float deltaTime)
+void CSScript::UpdateScript()
 {
-	MonoMethod* update = GetFunction("Update", 0);
-
 	if (update != nullptr)
 	{
 		CallFunction(update, nullptr);
@@ -72,8 +97,6 @@ void CSScript::UpdateScript(float deltaTime)
 
 void CSScript::OnCollisionEnter()
 {
-	MonoMethod* on_collision_enter = GetFunction("OnCollisionEnter", 1);
-
 	if (on_collision_enter != nullptr)
 	{
 		CallFunction(on_collision_enter, nullptr); //nullptr should be the collision
@@ -82,8 +105,6 @@ void CSScript::OnCollisionEnter()
 
 void CSScript::OnCollisionStay()
 {
-	MonoMethod* on_collision_stay = GetFunction("OnCollisionStay", 1);
-
 	if (on_collision_stay != nullptr)
 	{
 		CallFunction(on_collision_stay, nullptr); //nullptr should be the collision
@@ -92,8 +113,6 @@ void CSScript::OnCollisionStay()
 
 void CSScript::OnCollisionExit()
 {
-	MonoMethod* on_collision_exit = GetFunction("OnCollisionExit", 1);
-
 	if (on_collision_exit != nullptr)
 	{
 		CallFunction(on_collision_exit, nullptr); //nullptr should be the collision
@@ -102,8 +121,6 @@ void CSScript::OnCollisionExit()
 
 void CSScript::OnEnable()
 {
-	MonoMethod* on_enable = GetFunction("OnEnable", 0);
-
 	if (on_enable != nullptr)
 	{
 		CallFunction(on_enable, nullptr);
@@ -112,8 +129,6 @@ void CSScript::OnEnable()
 
 void CSScript::OnDisable()
 {
-	MonoMethod* on_disable = GetFunction("OnDisable", 0);
-
 	if (on_disable != nullptr)
 	{
 		CallFunction(on_disable, nullptr);
@@ -477,6 +492,21 @@ void CSScript::SetClass(MonoClass * mono_class)
 	this->mono_class = mono_class;
 }
 
+void CSScript::SetAssembly(MonoAssembly * mono_assembly)
+{
+	this->mono_assembly = mono_assembly;
+}
+
+void CSScript::SetNameSpace(std::string name_space)
+{
+	this->name_space = name_space;
+}
+
+void CSScript::SetClassName(std::string class_name)
+{
+	this->class_name = class_name;
+}
+
 MonoMethod * CSScript::GetFunction(const char * functionName, int parameters_count)
 {
 	MonoMethod* method = nullptr;
@@ -492,7 +522,7 @@ MonoMethod * CSScript::GetFunction(const char * functionName, int parameters_cou
 void CSScript::CallFunction(MonoMethod * function, void ** parameter)
 {
 	MonoObject* exception = nullptr;
-	mono_runtime_invoke((MonoMethod*)function, mono_object, parameter, &exception);
+	MonoObject* obj = mono_runtime_invoke(function, mono_object, parameter, &exception);
 
 	if (exception)
 	{
@@ -551,21 +581,83 @@ void CSScript::ConvertMonoType(MonoType * type, ScriptField& script_field)
 	}
 }
 
-void CSScript::RegisterLibrary()
+void CSScript::RegisterAPI()
 {
+	//GAMEOBJECT
+	mono_add_internal_call("TheEngine.TheGameObject::SetName(string)", (const void*)SetGameObjectName);
+	mono_add_internal_call("TheEngine.TheGameObject::CreateNewGameObject", (const void*)CreateGameObject);
+	mono_add_internal_call("TheEngine.TheGameObject::get_Self", (const void*)SetSelf);
+}
+
+void CSScript::SetGameObjectName(MonoString* name)
+{
+	char* new_name = mono_string_to_utf8(name);
+	attached_gameobject->SetName(new_name);
+	mono_free(new_name);
+}
+
+void CSScript::CreateGameObject()
+{
+	GameObject* gameobject = App->scene->CreateGameObject();
+}
+
+void CSScript::SetSelf()
+{
+	active_object = attached_gameobject;
 }
 
 void CSScript::Save(Data & data) const
 {
+	data.AddString("library_path", GetLibraryPath());
+	data.AddString("assets_path", GetAssetsPath());
+	data.AddString("script_name", GetName());
+	data.AddUInt("UUID", GetUID());
 }
 
 bool CSScript::Load(Data & data)
 {
-	return false;
+	bool ret = true;
+	std::string library_path = data.GetString("library_path");
+
+	Script* text = App->script_importer->LoadScriptFromLibrary(library_path);
+	if (!text)
+	{
+		std::string assets_path = data.GetString("assets_path");
+		if (App->file_system->FileExist(assets_path))
+		{
+			library_path = App->resources->CreateLibraryFile(Resource::ScriptResource, assets_path);
+			if (!library_path.empty())
+			{
+				Load(data);
+			}
+		}
+		else
+		{
+			ret = false;
+		}
+	}
+	else
+	{
+		SetAssetsPath(data.GetString("assets_path"));
+		SetLibraryPath(data.GetString("library_path"));
+		SetName(data.GetString("script_name"));
+		SetUID(data.GetUInt("UUID"));
+	}
+
+	return ret;
 }
 
 void CSScript::CreateMeta() const
 {
+	time_t now = time(0);
+	char* dt = ctime(&now);
+
+	Data data;
+	data.AddInt("Type", GetType());
+	data.AddUInt("UUID", GetUID());
+	data.AddString("Time_Created", dt);
+	data.AddString("Library_path", GetLibraryPath());
+	data.SaveAsMeta(GetAssetsPath());
 }
 
 void CSScript::LoadToMemory()

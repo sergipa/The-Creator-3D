@@ -9,7 +9,6 @@
 ModuleScriptImporter::ModuleScriptImporter(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
 	name = "Script_Importer";
-	compile_scripts = false;
 	mono_domain = nullptr;
 	mono_image = nullptr;
 }
@@ -18,7 +17,7 @@ ModuleScriptImporter::~ModuleScriptImporter()
 {
 }
 
-void MonoPrintToLog(const char * string, mono_bool is_stdout)
+void MonoInternalPrint(const char * string, mono_bool is_stdout)
 {
 	CONSOLE_WARNING("%s", string);
 }
@@ -46,8 +45,8 @@ void MonoLogToLog(const char * log_domain, const char * log_level, const char * 
 bool ModuleScriptImporter::Init(Data * editor_config)
 {
 	mono_trace_set_log_handler(MonoLogToLog, nullptr);
-	mono_trace_set_print_handler(MonoPrintToLog);
-	mono_trace_set_printerr_handler(MonoPrintToLog);
+	mono_trace_set_print_handler(MonoInternalPrint);
+	mono_trace_set_printerr_handler(MonoInternalPrint);
 
 	mono_path = App->file_system->GetFileDirectory(__FILE__) + "\\mono\\";
 
@@ -55,7 +54,7 @@ bool ModuleScriptImporter::Init(Data * editor_config)
 
 	mono_domain = mono_jit_init("TheCreator");
 
-	bool recompile_scripts = false;
+	/*bool recompile_scripts = false;
 
 	if (App->file_system->DirectoryExist(LIBRARY_SCRIPTS_FOLDER_PATH))
 	{
@@ -67,7 +66,7 @@ bool ModuleScriptImporter::Init(Data * editor_config)
 				DumpAssemblyInfo(assembly);
 			}
 		}
-	}
+	}*/
 
 	return true;
 }
@@ -76,18 +75,18 @@ std::string ModuleScriptImporter::ImportScript(std::string path)
 {
 	std::string ret = "";
 
-	/*std::string library_folder = LIBRARY_SCRIPTS_FOLDER;
+	std::string library_folder = LIBRARY_SCRIPTS_FOLDER;
 	std::string script_name = App->file_system->GetFileNameWithoutExtension(path);
-	std::string compile_command = mono_path + "bin\\mcs -target:library " + path + " -out:" + library_folder + script_name + ".dll";
+	std::string library_path = library_folder + script_name + ".dll";
 	
-	if (system(compile_command.c_str()) != 0)
+	if (CompileScript(path, library_path) != 0)
 	{
 		CONSOLE_ERROR("Can't compile %s", path.c_str());
 	}
 	else
 	{
 		ret = library_folder + script_name + ".dll";
-	}*/
+	}
 
 	/*std::string merge_command = mono_path + "bin\\ILMerge.exe -target:library -allowDup:.dll -out:" + library_folder + "Assembly-CSharp.dll ";
 	
@@ -102,20 +101,31 @@ std::string ModuleScriptImporter::ImportScript(std::string path)
 	//system(merge_command.c_str());
 	//App->file_system->Delete_File(ret);
 
-	std::string script_name = App->file_system->GetFileNameWithoutExtension(path);
+	/*std::string script_name = App->file_system->GetFileNameWithoutExtension(path);
 
 	for (std::vector<MonoClass*>::iterator it = loaded_scripts.begin(); it != loaded_scripts.end(); it++)
 	{
 		if (script_name != mono_class_get_name(*it)) compile_scripts = true;
 	}
 
-	ret = LIBRARY_SCRIPTS_FOLDER"Assembly-CSharp.dll";
+	ret = LIBRARY_SCRIPTS_FOLDER"Assembly-CSharp.dll";*/
 	return ret;
 }
 
 Script * ModuleScriptImporter::LoadScriptFromLibrary(std::string path)
 {
-	
+	MonoAssembly* assembly = mono_domain_assembly_open(mono_domain, path.c_str());
+	if (assembly)
+	{
+		CSScript* script = DumpAssemblyInfo(assembly);
+		if (script != nullptr)
+		{
+			if (script->LoadScript(path))
+			{
+				return script;
+			}
+		}
+	}
 
 	return nullptr;
 }
@@ -130,57 +140,64 @@ MonoImage * ModuleScriptImporter::GetImage() const
 	return mono_image;
 }
 
-void ModuleScriptImporter::CompileScripts()
+int ModuleScriptImporter::CompileScript(std::string assets_path, std::string library_path)
 {
-	if (compile_scripts)
+	std::string compile_command = mono_path + "bin\\mcs -target:library " + assets_path + " -out:" + library_path + " ";
+	std::string folder = REFERENCE_ASSEMBLIES_FOLDER;
+	std::vector<std::string> assemblies = App->file_system->GetFilesInDirectory(folder);
+	for (std::vector<std::string>::iterator it = assemblies.begin(); it != assemblies.end(); it++)
 	{
-		//compile
-		compile_scripts = false;
+		if (App->file_system->GetFileExtension(*it) == ".dll")
+		{
+			compile_command += "/reference:" + folder + App->file_system->GetFileName(*it) + " ";
+		}
 	}
+	return system(compile_command.c_str());
 }
 
-void ModuleScriptImporter::DumpAssemblyInfo(MonoAssembly * assembly)
+CSScript* ModuleScriptImporter::DumpAssemblyInfo(MonoAssembly * assembly)
 {
 	mono_image = mono_assembly_get_image(assembly);
 	if (mono_image)
 	{
-		loaded_scripts = DumpClassInfo(mono_image);
+		std::string class_name;
+		std::string name_space;
+		MonoClass* loaded_script = DumpClassInfo(mono_image, class_name, name_space);
 
-		for (std::vector<MonoClass*>::iterator it = loaded_scripts.begin(); it != loaded_scripts.end(); it++)
+		if (loaded_script != nullptr)
 		{
-			if (*it != nullptr)
-			{
-				CSScript* script = new CSScript();
-				script->SetDomain(mono_domain);
-				script->SetImage(mono_image);
-				script->SetClass(*it);
-				script->LoadScript(LIBRARY_SCRIPTS_FOLDER"Assembly-CSharp.dll");
-
-			}
+			CSScript* script = new CSScript();
+			script->SetDomain(mono_domain);
+			script->SetImage(mono_image);
+			script->SetName(class_name);
+			script->SetClassName(class_name);
+			script->SetNameSpace(name_space);
+			script->SetClass(loaded_script);
+			return script;
 		}
 	}
 }
 
-std::vector<MonoClass*> ModuleScriptImporter::DumpClassInfo(MonoImage * image)
+MonoClass* ModuleScriptImporter::DumpClassInfo(MonoImage * image, std::string& class_name, std::string& name_space)
 {
-	std::vector<MonoClass*> class_list;
+	MonoClass* mono_class = nullptr;
 
 	const MonoTableInfo* table_info = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
 
 	int rows = mono_table_info_get_rows(table_info);
 
 	for (int i = 1; i < rows; i++) {
-		MonoClass* mono_class = nullptr;
 		uint32_t cols[MONO_TYPEDEF_SIZE];
 		mono_metadata_decode_row(table_info, i, cols, MONO_TYPEDEF_SIZE);
 		const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
-		const char* name_space = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
-		mono_class = mono_class_from_name(image, name_space, name);
+		const char* _name_space = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+		mono_class = mono_class_from_name(image, _name_space, name);
 		if (mono_class)
 		{
-			class_list.push_back(mono_class);
+			class_name = name;
+			name_space = _name_space;
 		}
 	}
 
-	return class_list;
+	return mono_class;
 }

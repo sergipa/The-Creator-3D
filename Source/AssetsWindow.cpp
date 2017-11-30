@@ -104,7 +104,6 @@ void AssetsWindow::DrawWindow()
 		{
 			if (!selected_folder.empty()) 
 			{
-				CONSOLE_LOG("%d", asset_hovered);
 				std::vector<std::string> files = App->file_system->GetFilesInDirectory(selected_folder);
 				for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
 				{

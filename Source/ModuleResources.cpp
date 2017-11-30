@@ -71,8 +71,6 @@ void ModuleResources::FillResourcesLists()
 	{
 		CreateResource(*it);
 	}
-
-	App->script_importer->CompileScripts();
 }
 
 void ModuleResources::AddResource(Resource * resource)
@@ -95,6 +93,7 @@ void ModuleResources::AddResource(Resource * resource)
 		AddPrefab((Prefab*)resource);
 		break;
 	case Resource::ScriptResource:
+		AddScript((Script*)resource);
 		break;
 	case Resource::AudioResource:
 		break;

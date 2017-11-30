@@ -99,5 +99,6 @@ enum update_status
 #define TMP_FOLDER "./Tmp/"
 #define TMP_FOLDER_PATH "./Tmp"
 
+#define REFERENCE_ASSEMBLIES_FOLDER "./Editor_Settings/Reference_Assemblies/"
 #define CS_TEMPLATE_FILE_PATH "./Editor_Settings/Scripts_Templates/C#Script.txt"
 #define LUA_TEMPLATE_FILE_PATH "./Editor_Settings/Scripts_Templates/LuaScript.txt"

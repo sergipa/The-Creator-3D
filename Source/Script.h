@@ -29,9 +29,10 @@ public:
 	};
 
 	virtual bool LoadScript(std::string script_path) = 0;
+	virtual void SetAttachedGameObject(GameObject* gameobject) = 0;
 	virtual void InitScript() = 0;
 	virtual void StartScript() = 0;
-	virtual void UpdateScript(float deltaTime) = 0;
+	virtual void UpdateScript() = 0;
 	virtual void OnCollisionEnter() = 0;
 	virtual void OnCollisionStay() = 0;
 	virtual void OnCollisionExit() = 0;
@@ -63,6 +64,10 @@ public:
 
 	virtual void SetScriptType(ScriptType type);
 	virtual ScriptType GetScriptType();
+
+	void Save(Data& data) const = 0;
+	bool Load(Data& data) = 0;
+	void CreateMeta() const = 0;
 	
 private:
 	ScriptType script_type;

@@ -129,7 +129,28 @@ void PropertiesWindow::DrawWindow()
 					std::map<uint, Script*> scripts = App->resources->GetScriptsList();
 					Script* script = nullptr;
 
-					if (ImGui::MenuItem("C#"))
+					if (ImGui::BeginMenu("C#"))
+					{
+						if (scripts.empty())
+						{
+							ImGui::MenuItem("No Scripts##NoCSScript");
+						}
+						else
+						{
+							for (std::map<uint, Script*>::iterator it = scripts.begin(); it != scripts.end(); it++)
+							{
+								if (it->second->GetScriptType() == Script::CsScript)
+								{
+									if (ImGui::MenuItem(it->second->GetName().c_str()))
+									{
+										script = it->second;
+									}
+								}
+							}
+						}
+						ImGui::EndMenu();
+					}
+					/*else if (ImGui::MenuItem("Lua"))
 					{
 						for (std::map<uint, Script*>::iterator it = scripts.begin(); it != scripts.end(); it++)
 						{
@@ -141,26 +162,14 @@ void PropertiesWindow::DrawWindow()
 								}
 							}
 						}
-					}
-					else if (ImGui::MenuItem("Lua"))
-					{
-						for (std::map<uint, Script*>::iterator it = scripts.begin(); it != scripts.end(); it++)
-						{
-							if (it->second->GetScriptType() == Script::CsScript)
-							{
-								if (ImGui::MenuItem(it->second->GetName().c_str()))
-								{
-									script = it->second;
-								}
-							}
-						}
-					}
+					}*/
 
 					if (script != nullptr)
 					{
 						ComponentScript* comp_script = (ComponentScript*)selected_gameobject->AddComponent(Component::CompScript);
 						if (comp_script != nullptr)
 						{
+							script->SetAttachedGameObject(selected_gameobject);
 							comp_script->SetScript(script);
 						}
 					}
@@ -390,6 +399,10 @@ void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 {
 	if (ImGui::CollapsingHeader(comp_script->GetScriptName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		bool is_active = comp_script->IsActive();
+		if (ImGui::Checkbox(("Active##Script_" + comp_script->GetScript()->GetName()).c_str(), &is_active))
+		{
+			comp_script->SetActive(is_active);
+		}
 		ImGui::SameLine();
 		if (ImGui::Button("Delete Component##script"))
 		{

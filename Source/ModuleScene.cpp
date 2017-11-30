@@ -21,6 +21,7 @@
 #include "ModuleFileSystem.h"
 #include "CubeMap.h"
 #include "SkyDome.h"
+#include "ComponentScript.h";
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -197,6 +198,10 @@ update_status ModuleScene::Update(float dt)
 				{
 					App->renderer3D->game_camera = camera;
 				}
+			}
+			if (App->IsPlaying())
+			{
+				(*it)->UpdateScripts();
 			}
 		}
 	}
@@ -431,6 +436,27 @@ void ModuleScene::CreatePrefab(GameObject * gameobject)
 void ModuleScene::DrawSkyBox(float3 pos)
 {
 	skybox->RenderCubeMap(pos);
+}
+
+void ModuleScene::InitScripts()
+{
+	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
+	{
+		bool active_parents = RecursiveCheckActiveParents((*it));
+		if (active_parents && (*it)->IsActive())
+		{
+			(*it)->InitScripts();
+		}
+	}
+
+	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
+	{
+		bool active_parents = RecursiveCheckActiveParents((*it));
+		if (active_parents && (*it)->IsActive())
+		{
+			(*it)->StartScripts();
+		}
+	}
 }
 
 bool ModuleScene::RecursiveCheckActiveParents(GameObject* gameobject)

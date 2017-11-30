@@ -15,7 +15,7 @@ public:
 	bool LoadScript(std::string script_path);
 	void InitScript();
 	void StartScript();
-	void UpdateScript(float deltaTime);
+	void UpdateScript();
 	void OnCollisionEnter();
 	void OnCollisionStay();
 	void OnCollisionExit();

@@ -256,7 +256,7 @@ void Application::CreateEngineData(Data * data)
 
 void Application::UpdateStep()
 {
-	if (state != OnPlay) return;
+	if (state != OnPause) return;
 	update_status ret = UPDATE_CONTINUE;
 
 	std::list<Module*>::iterator item = list_modules.begin();
@@ -299,6 +299,8 @@ void Application::Play()
 			App->file_system->Create_Directory(TMP_FOLDER_PATH);
 		}
 		App->scene->SaveScene(TMP_FOLDER"tmp_scene");
+		App->scene->is_game = true;
+		App->scene->InitScripts();
 	}
 }
 
@@ -321,6 +323,7 @@ void Application::Stop()
 	if (state == OnPlay || state == OnPause) {
 		state = OnStop;
 		App->scene->LoadScene(TMP_FOLDER"tmp_scene");
+		App->scene->is_game = false;
 	}
 }
 

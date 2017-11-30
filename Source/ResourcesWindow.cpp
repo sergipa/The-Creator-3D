@@ -17,12 +17,14 @@ ResourcesWindow::ResourcesWindow()
 	prefab_to_return = nullptr;
 	gameobject_to_return = nullptr;
 	material_to_return = nullptr;
+	script_to_return = nullptr;
 
 	texture_changed = false;
 	mesh_changed = false;
 	prefab_changed = false;
 	gameobject_changed = false;
 	material_changed = false;
+	script_changed = false;
 
 	type = Resource::Unknown;
 }
@@ -43,7 +45,7 @@ void ResourcesWindow::DrawWindow()
 	{
 	case Resource::TextureResource:
 		textures_list = App->resources->GetTexturesList();
-		if (ImGui::Selectable("None"))
+		if (ImGui::Selectable("None##Texture"))
 		{
 			texture_to_return = nullptr;
 			texture_changed = true;
@@ -61,7 +63,7 @@ void ResourcesWindow::DrawWindow()
 		break;
 	case Resource::MeshResource:
 		meshes_list = App->resources->GetMeshesList();
-		if (ImGui::Selectable("None"))
+		if (ImGui::Selectable("None##Mesh"))
 		{
 			mesh_to_return = nullptr;
 			mesh_changed = true;
@@ -83,7 +85,7 @@ void ResourcesWindow::DrawWindow()
 		break;
 	case Resource::PrefabResource:
 		prefabs_list = App->resources->GetPrefabsList();
-		if (ImGui::Selectable("None"))
+		if (ImGui::Selectable("None##prefab"))
 		{
 			prefab_to_return = nullptr;
 			prefab_changed = true;
@@ -100,6 +102,22 @@ void ResourcesWindow::DrawWindow()
 		}
 		break;
 	case Resource::ScriptResource:
+		scripts_list = App->resources->GetScriptsList();
+		if (ImGui::Selectable("None##script"))
+		{
+			prefab_to_return = nullptr;
+			prefab_changed = true;
+			break;
+		}
+		for (std::map<uint, Prefab*>::const_iterator it = prefabs_list.begin(); it != prefabs_list.end(); it++)
+		{
+			if (ImGui::Selectable(it->second->GetName().c_str()))
+			{
+				prefab_to_return = it->second;
+				prefab_changed = true;
+				break;
+			}
+		}
 		break;
 	case Resource::AudioResource:
 		break;
@@ -111,7 +129,7 @@ void ResourcesWindow::DrawWindow()
 		break;
 	case Resource::GameObjectResource:
 		gameobjects_list = App->resources->GetGameobjectsList();
-		if (ImGui::Selectable("None"))
+		if (ImGui::Selectable("None##gameobject"))
 		{
 			gameobject_to_return = nullptr;
 			gameobject_changed = true;
@@ -129,7 +147,7 @@ void ResourcesWindow::DrawWindow()
 		break;
 	case Resource::MaterialResource:
 		materials_list = App->resources->GetMaterialsList();
-		if (ImGui::Selectable("None"))
+		if (ImGui::Selectable("None##material"))
 		{
 			material_to_return = nullptr;
 			material_changed = true;
@@ -196,10 +214,12 @@ void ResourcesWindow::Reset()
 	prefab_changed = false;
 	gameobject_changed = false;
 	material_changed = false;
+	script_changed = false;
 
 	texture_to_return = nullptr;
 	mesh_to_return = nullptr;
 	prefab_to_return = nullptr;
 	gameobject_to_return = nullptr;
 	material_to_return = nullptr;
+	script_to_return = nullptr;
 }

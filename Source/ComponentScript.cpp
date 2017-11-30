@@ -1,6 +1,7 @@
 #include "ComponentScript.h"
 #include "CSScript.h"
-
+#include "ModuleResources.h"
+#include "Application.h"
 
 ComponentScript::ComponentScript(GameObject* attached_gameobject)
 {
@@ -15,20 +16,19 @@ ComponentScript::~ComponentScript()
 {
 }
 
-void ComponentScript::InitScript(std::string script_path)
+void ComponentScript::InitScript()
 {
-	script->LoadScript(script_path.c_str());
-	SetScriptPath(script_path);
+	script->InitScript();
 }
 
-void ComponentScript::SetScriptName(std::string name)
+void ComponentScript::StartScript()
 {
-	script_name = name;
+	script->StartScript();
 }
 
-void ComponentScript::SetScriptPath(std::string path)
+void ComponentScript::UpdateScript()
 {
-	script_path = path;
+	script->UpdateScript();
 }
 
 void ComponentScript::SetScript(Script * script)
@@ -38,12 +38,7 @@ void ComponentScript::SetScript(Script * script)
 
 std::string ComponentScript::GetScriptName() const
 {
-	return script_name;
-}
-
-std::string ComponentScript::GetScriptPath() const
-{
-	return script_path;
+	return script->GetName();
 }
 
 Script * ComponentScript::GetScript() const
@@ -63,8 +58,29 @@ void ComponentScript::UpdateScriptFields()
 
 void ComponentScript::Save(Data & data) const
 {
+	data.AddInt("Type", GetType());
+	data.AddBool("Active", IsActive());
+	data.AddUInt("UUID", GetUID());
+	data.CreateSection("Script");
+	if(script)script->Save(data);
+	data.CloseSection();
 }
 
 void ComponentScript::Load(Data & data)
 {
+	SetType((Component::ComponentType)data.GetInt("Type"));
+	SetActive(data.GetBool("Active"));
+	SetUID(data.GetUInt("UUID"));
+	data.EnterSection("Script");
+	uint script_uid = data.GetUInt("UUID");
+	if (script_uid != 0)
+	{
+		script = App->resources->GetScript(script_uid);
+		if (!script)
+		{
+			script = new CSScript();
+			script->Load(data);
+		}
+	}
+	data.LeaveSection();
 }

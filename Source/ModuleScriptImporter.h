@@ -5,6 +5,7 @@
 #include <vector>
 
 class Script;
+class CSScript;
 
 class ModuleScriptImporter :
 	public Module
@@ -22,17 +23,15 @@ public:
 	MonoDomain* GetDomain() const;
 	MonoImage* GetImage() const;
 
-	void CompileScripts();
+	int CompileScript(std::string assets_path, std::string library_path);
 
 private:
-	void DumpAssemblyInfo(MonoAssembly* assembly);
-	std::vector<MonoClass*> DumpClassInfo(MonoImage* image);
+	CSScript* DumpAssemblyInfo(MonoAssembly* assembly);
+	MonoClass* DumpClassInfo(MonoImage* image, std::string& class_name, std::string& name_space);
 
 private:
 	std::string mono_path;
 	MonoDomain* mono_domain;
 	MonoImage* mono_image;
-	std::vector<MonoClass*> loaded_scripts;
-	bool compile_scripts;
 };
 

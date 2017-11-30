@@ -55,6 +55,8 @@ public:
 
 	void DrawSkyBox(float3 pos);
 
+	void InitScripts();
+
 private:
 	bool RecursiveCheckActiveParents(GameObject* gameobject);
 	void HandleInput();

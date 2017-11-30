@@ -75,7 +75,7 @@ void LuaScript::StartScript()
 	}
 }
 
-void LuaScript::UpdateScript(float deltaTime)
+void LuaScript::UpdateScript()
 {
 	if (luaState && hasUpdateFunction) {
 		CallFunction(luaState, "Update");

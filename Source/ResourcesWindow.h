@@ -49,5 +49,6 @@ public:
 	bool prefab_changed;
 	bool gameobject_changed;
 	bool material_changed;
+	bool script_changed;
 };
 

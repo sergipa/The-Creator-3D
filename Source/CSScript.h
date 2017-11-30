@@ -15,9 +15,10 @@ public:
 	~CSScript();
 
 	bool LoadScript(std::string script_path);
+	void SetAttachedGameObject(GameObject* gameobject);
 	void InitScript();
 	void StartScript();
-	void UpdateScript(float deltaTime);
+	void UpdateScript();
 	void OnCollisionEnter();
 	void OnCollisionStay();
 	void OnCollisionExit();
@@ -50,12 +51,19 @@ public:
 	void SetDomain(MonoDomain* mono_domain);
 	void SetImage(MonoImage* mono_image);
 	void SetClass(MonoClass* mono_class);
+	void SetAssembly(MonoAssembly* mono_assembly);
+	void SetNameSpace(std::string name_space);
+	void SetClassName(std::string class_name);
 
 private:
 	MonoMethod* GetFunction(const char* functionName, int parameters);
 	void CallFunction(MonoMethod* function, void** parameter);
 	void ConvertMonoType(MonoType* type, ScriptField& script_field);
-	void RegisterLibrary();
+	void RegisterAPI();
+
+	static void SetGameObjectName(MonoString* name);
+	static void CreateGameObject();
+	static void SetSelf();
 
 	void Save(Data& data) const;
 	bool Load(Data& data);
@@ -69,6 +77,21 @@ private:
 	MonoClass* mono_class;
 	MonoImage* mono_image;
 	MonoObject* mono_object;
+	static GameObject* attached_gameobject;
+	std::string name_space;
+	std::string class_name;
+	uint32_t handle;
+
+	MonoMethod* init;
+	MonoMethod* start;
+	MonoMethod* update;
+	MonoMethod* on_collision_enter;
+	MonoMethod* on_collision_stay;
+	MonoMethod* on_collision_exit;
+	MonoMethod* on_enable;
+	MonoMethod* on_disable;
+
+	static GameObject* active_object;
 
 	std::vector<ScriptField*> script_fields;
 };

@@ -11,13 +11,12 @@ public:
 	ComponentScript(GameObject* attached_gameobject);
 	~ComponentScript();
 
-	void InitScript(std::string script_path);
+	void InitScript();
+	void StartScript();
+	void UpdateScript();
 
-	void SetScriptName(std::string name);
-	void SetScriptPath(std::string path);
 	void SetScript(Script* script);
 	std::string GetScriptName() const;
-	std::string GetScriptPath() const;
 	Script* GetScript() const;
 	std::vector<ScriptField*> GetScriptFields() const;
 	void UpdateScriptFields();
@@ -26,9 +25,7 @@ public:
 	void Load(Data& data);
 
 private:
-	std::string script_name;
 	Script* script;
-	std::string script_path;
 	std::vector<ScriptField*> script_fields;
 };
 
