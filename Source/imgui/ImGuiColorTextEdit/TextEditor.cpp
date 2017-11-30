@@ -601,7 +601,7 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 					{
 						ImVec2 cstart(lineStartScreenPos.x + mCharAdvance.x * (cx + cTextStart), lineStartScreenPos.y);
 						ImVec2 cend(lineStartScreenPos.x + mCharAdvance.x * (cx + cTextStart) + (mOverwrite ? mCharAdvance.x : 1.0f), lineStartScreenPos.y + mCharAdvance.y);
-						drawList->AddRectFilled(cstart, cend, 0xffe0e0e0);
+						drawList->AddRectFilled(cstart, cend, 0xffe0e0e0); //CURSOR
 						if (elapsed > 800)
 							timeStart = timeEnd;
 					}

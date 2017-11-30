@@ -12,6 +12,7 @@
 #include "CSScript.h"
 #include "LuaScript.h"
 #include "ModuleScriptImporter.h"
+#include "TextEditorWindow.h"
 
 AssetsWindow::AssetsWindow()
 {
@@ -260,6 +261,14 @@ void AssetsWindow::DrawWindow()
 						std::string file_name = App->file_system->GetFileNameWithoutExtension(selected_file_path);
 						Prefab* prefab = App->resources->GetPrefab(file_name);
 						App->scene->LoadPrefab(prefab);
+					}
+				}
+
+				if (extension == ".cs")
+				{
+					if (ImGui::MenuItem("Edit")) {
+						App->editor->text_editor_window->SetPath(selected_file_path);
+						App->editor->text_editor_window->SetActive(true);
 					}
 				}
 

@@ -6,7 +6,7 @@
 
 TextEditorWindow::TextEditorWindow()
 {
-	active = true;
+	active = false;
 	window_name = "TextEditor";
 
 	editor.SetLanguageDefinition(TextEditor::LanguageDefinition::CSharp());
@@ -23,14 +23,20 @@ void TextEditorWindow::DrawWindow()
 
 	if (ImGui::BeginDock(window_name.c_str(), false, false, false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar))
 	{
+		ImGui::BeginMenuBar();
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("Save"))
 			{
 				std::string text_to_save = editor.GetText();
 				/// save text in t....
+				std::ofstream ofs;
+				ofs.open(path, std::ofstream::out | std::ofstream::trunc);
+
+				ofs << text_to_save;
+				ofs.close();
 			}
-			if (ImGui::MenuItem("Quit", "Alt-F4"))
+			if (ImGui::MenuItem("Quit"))
 				this->active = false;
 			ImGui::EndMenu();
 		}
@@ -41,20 +47,20 @@ void TextEditorWindow::DrawWindow()
 				editor.SetReadOnly(ro);
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Undo", "ALT-Backspace", nullptr, !ro && editor.CanUndo()))
+			if (ImGui::MenuItem("Undo", nullptr, !ro && editor.CanUndo()))
 				editor.Undo();
-			if (ImGui::MenuItem("Redo", "Ctrl-Y", nullptr, !ro && editor.CanRedo()))
+			if (ImGui::MenuItem("Redo", nullptr, !ro && editor.CanRedo()))
 				editor.Redo();
 
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Copy", "Ctrl-C", nullptr, editor.HasSelection()))
+			if (ImGui::MenuItem("Copy", nullptr, editor.HasSelection()))
 				editor.Copy();
-			if (ImGui::MenuItem("Cut", "Ctrl-X", nullptr, !ro && editor.HasSelection()))
+			if (ImGui::MenuItem("Cut", nullptr, !ro && editor.HasSelection()))
 				editor.Cut();
-			if (ImGui::MenuItem("Delete", "Del", nullptr, !ro && editor.HasSelection()))
+			if (ImGui::MenuItem("Delete", nullptr, !ro && editor.HasSelection()))
 				editor.Delete();
-			if (ImGui::MenuItem("Paste", "Ctrl-V", nullptr, !ro && ImGui::GetClipboardText() != nullptr))
+			if (ImGui::MenuItem("Paste", nullptr, !ro && ImGui::GetClipboardText() != nullptr))
 				editor.Paste();
 
 			ImGui::Separator();
@@ -72,8 +78,6 @@ void TextEditorWindow::DrawWindow()
 			editor.GetLanguageDefinition().mName.c_str(), path.c_str());
 
 		editor.Render("TextEditor");
-
-		ImGui::EndChild();
 	}
 	ImGui::EndDock();
 }
@@ -83,4 +87,5 @@ void TextEditorWindow::SetPath(std::string string)
 	std::ifstream t(string.c_str());
 	std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 	editor.SetText(str);
+	path = string;
 }
