@@ -3,6 +3,8 @@
 #include <streambuf>
 #include <dinput.h>
 #include <tchar.h>
+#include "Application.h"
+#include "ModuleScriptImporter.h"
 
 TextEditorWindow::TextEditorWindow()
 {
@@ -32,9 +34,9 @@ void TextEditorWindow::DrawWindow()
 				/// save text in t....
 				std::ofstream ofs;
 				ofs.open(path, std::ofstream::out | std::ofstream::trunc);
-
 				ofs << text_to_save;
 				ofs.close();
+				if(editor.CanUndo()) App->script_importer->CompileScript(path);
 			}
 			if (ImGui::MenuItem("Quit"))
 				this->active = false;

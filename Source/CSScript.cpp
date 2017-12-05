@@ -7,11 +7,16 @@
 #include <ctime>
 #include "ModuleScene.h"
 #include "ModuleResources.h"
+#include <mono/metadata/reflection.h>
+#include <mono/metadata/attrdefs.h>
+#include <mono/metadata/exception.h>
 
-#pragma comment (lib, "mono/lib/mono-2.0-sgen.lib")
+#pragma comment (lib, "../EngineResources/mono/lib/mono-2.0-sgen.lib")
 
 GameObject* CSScript::attached_gameobject = nullptr;
-GameObject* CSScript::active_object = nullptr;
+GameObject* CSScript::active_gameobject = nullptr;
+std::map<MonoObject*, GameObject*> CSScript::created_gameobjects;
+bool CSScript::inside_function = false;
 
 CSScript::CSScript()
 {
@@ -62,7 +67,6 @@ bool CSScript::LoadScript(std::string script_path)
 		ret = true;
 	}
 	
-	RegisterAPI();
 	return ret;
 }
 
@@ -76,6 +80,7 @@ void CSScript::InitScript()
 	if (init != nullptr)
 	{
 		CallFunction(init, nullptr);
+		inside_function = false;
 	}
 }
 
@@ -84,6 +89,7 @@ void CSScript::StartScript()
 	if (start != nullptr)
 	{
 		CallFunction(start, nullptr);
+		inside_function = false;
 	}
 }
 
@@ -92,6 +98,7 @@ void CSScript::UpdateScript()
 	if (update != nullptr)
 	{
 		CallFunction(update, nullptr);
+		inside_function = false;
 	}
 }
 
@@ -100,6 +107,7 @@ void CSScript::OnCollisionEnter()
 	if (on_collision_enter != nullptr)
 	{
 		CallFunction(on_collision_enter, nullptr); //nullptr should be the collision
+		inside_function = false;
 	}
 }
 
@@ -108,6 +116,7 @@ void CSScript::OnCollisionStay()
 	if (on_collision_stay != nullptr)
 	{
 		CallFunction(on_collision_stay, nullptr); //nullptr should be the collision
+		inside_function = false;
 	}
 }
 
@@ -116,6 +125,7 @@ void CSScript::OnCollisionExit()
 	if (on_collision_exit != nullptr)
 	{
 		CallFunction(on_collision_exit, nullptr); //nullptr should be the collision
+		inside_function = false;
 	}
 }
 
@@ -124,6 +134,7 @@ void CSScript::OnEnable()
 	if (on_enable != nullptr)
 	{
 		CallFunction(on_enable, nullptr);
+		inside_function = false;
 	}
 }
 
@@ -132,6 +143,7 @@ void CSScript::OnDisable()
 	if (on_disable != nullptr)
 	{
 		CallFunction(on_disable, nullptr);
+		inside_function = false;
 	}
 }
 
@@ -521,11 +533,14 @@ MonoMethod * CSScript::GetFunction(const char * functionName, int parameters_cou
 
 void CSScript::CallFunction(MonoMethod * function, void ** parameter)
 {
+	inside_function = true;
 	MonoObject* exception = nullptr;
+
 	MonoObject* obj = mono_runtime_invoke(function, mono_object, parameter, &exception);
 
 	if (exception)
 	{
+		
 		mono_print_unhandled_exception(exception);
 	}
 }
@@ -549,7 +564,7 @@ void CSScript::ConvertMonoType(MonoType * type, ScriptField& script_field)
 		script_field.propertyType = ScriptField::String;
 		break;
 	case MONO_TYPE_CLASS:
-		if(name == "GameObject") script_field.propertyType = ScriptField::GameObject;
+		if(name == "TheEngine.TheGameObject") script_field.propertyType = ScriptField::GameObject;
 		else if (name == "Texture") script_field.propertyType = ScriptField::Texture;
 		else if (name == "Animation") script_field.propertyType = ScriptField::Animation;
 		else if (name == "Audio") script_field.propertyType = ScriptField::Audio;
@@ -581,30 +596,83 @@ void CSScript::ConvertMonoType(MonoType * type, ScriptField& script_field)
 	}
 }
 
-void CSScript::RegisterAPI()
-{
-	//GAMEOBJECT
-	mono_add_internal_call("TheEngine.TheGameObject::SetName(string)", (const void*)SetGameObjectName);
-	mono_add_internal_call("TheEngine.TheGameObject::CreateNewGameObject", (const void*)CreateGameObject);
-	mono_add_internal_call("TheEngine.TheGameObject::get_Self", (const void*)SetSelf);
-}
-
-void CSScript::SetGameObjectName(MonoString* name)
-{
-	char* new_name = mono_string_to_utf8(name);
-	attached_gameobject->SetName(new_name);
-	mono_free(new_name);
-}
-
-void CSScript::CreateGameObject()
-{
-	GameObject* gameobject = App->scene->CreateGameObject();
-}
-
-void CSScript::SetSelf()
-{
-	active_object = attached_gameobject;
-}
+//void CSScript::SetGameObjectName(MonoObject * object, MonoString* name)
+//{
+//	if (object != nullptr)
+//	{
+//		attached_gameobject = created_gameobjects[object];
+//	}
+//	if (name != nullptr)
+//	{
+//		const char* new_name = mono_string_to_utf8(name);
+//		attached_gameobject->SetName(new_name);
+//	}
+//}
+//
+//void CSScript::CreateGameObject(MonoObject * object)
+//{
+//	if (!inside_function)
+//	{
+//		CONSOLE_ERROR("Can't create new GameObjects outside a function.");
+//		return;
+//	}
+//	GameObject* gameobject = App->scene->CreateGameObject();
+//	MonoClass* _class = mono_object_get_class(object);
+//	MonoMethod* field = mono_class_get_method_from_name(_class, ".ctor", 0);
+//	const char* bla = mono_method_get_name(field);
+//	//SetGameObjectProperty(gameobject->GetName().c_str(), gameobject);
+//	created_gameobjects[object] = gameobject;
+//}
+//
+//void CSScript::SetSelf()
+//{
+//	active_object = attached_gameobject;
+//}
+//
+//void CSScript::Log(MonoObject * object)
+//{
+//	MonoObject* exception = nullptr;
+//	MonoString* str2 = mono_object_to_string(object, &exception);
+//	if (exception)
+//	{
+//		mono_print_unhandled_exception(exception);
+//	}
+//	else
+//	{
+//		const char* message = mono_string_to_utf8(str2);
+//		CONSOLE_LOG("%s", message);
+//	}
+//}
+//
+//void CSScript::Warning(MonoObject * object)
+//{
+//	MonoObject* exception = nullptr;
+//	MonoString* str2 = mono_object_to_string(object, &exception);
+//	if (exception)
+//	{
+//		mono_print_unhandled_exception(exception);
+//	}
+//	else
+//	{
+//		const char* message = mono_string_to_utf8(str2);
+//		CONSOLE_WARNING("%s", message);
+//	}
+//}
+//
+//void CSScript::Error(MonoObject * object)
+//{
+//	MonoObject* exception = nullptr;
+//	MonoString* str2 = mono_object_to_string(object, &exception);
+//	if (exception)
+//	{
+//		mono_print_unhandled_exception(exception);
+//	}
+//	else
+//	{
+//		const char* message = mono_string_to_utf8(str2);
+//		CONSOLE_ERROR("%s", message);
+//	}
+//}
 
 void CSScript::Save(Data & data) const
 {

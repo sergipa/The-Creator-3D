@@ -475,6 +475,12 @@ void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 			}
 				break;
 			case ScriptField::GameObject:
+			{
+				GameObject* gameobject = comp_script->GetScript()->GetGameObjectProperty((*it)->fieldName.c_str());
+				if (ImGui::InputResourceGameObject((" " + (*it)->fieldName).c_str(), &gameobject)) {
+					comp_script->GetScript()->SetGameObjectProperty((*it)->fieldName.c_str(), gameobject);
+				}
+			}
 				break;
 			case ScriptField::Animation:
 				break;

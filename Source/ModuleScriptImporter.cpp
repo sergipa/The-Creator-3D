@@ -2,9 +2,15 @@
 #include "Script.h"
 #include "Application.h"
 #include "ModuleFileSystem.h"
-#include "mono/include/utils/mono-logger.h"
-#include "mono/include/metadata/metadata.h"
+#include <mono/utils/mono-logger.h>
+#include <mono/metadata/metadata.h>
 #include "CSScript.h"
+#include "GameObject.h"
+#include <csignal>
+#include <cstdlib>
+
+CSScript* ModuleScriptImporter::current_script = nullptr;
+bool ModuleScriptImporter::inside_function = false;
 
 ModuleScriptImporter::ModuleScriptImporter(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -48,11 +54,13 @@ bool ModuleScriptImporter::Init(Data * editor_config)
 	mono_trace_set_print_handler(MonoInternalPrint);
 	mono_trace_set_printerr_handler(MonoInternalPrint);
 
-	mono_path = App->file_system->GetFileDirectory(__FILE__) + "\\mono\\";
+	mono_path = App->file_system->GetFullPath("Mono/");
 
 	mono_set_dirs((mono_path + "lib").c_str(), (mono_path + "etc").c_str());
 
 	mono_domain = mono_jit_init("TheCreator");
+
+	RegisterAPI();
 
 	/*bool recompile_scripts = false;
 
@@ -77,9 +85,8 @@ std::string ModuleScriptImporter::ImportScript(std::string path)
 
 	std::string library_folder = LIBRARY_SCRIPTS_FOLDER;
 	std::string script_name = App->file_system->GetFileNameWithoutExtension(path);
-	std::string library_path = library_folder + script_name + ".dll";
 	
-	if (CompileScript(path, library_path) != 0)
+	if (CompileScript(path) != 0)
 	{
 		CONSOLE_ERROR("Can't compile %s", path.c_str());
 	}
@@ -140,9 +147,11 @@ MonoImage * ModuleScriptImporter::GetImage() const
 	return mono_image;
 }
 
-int ModuleScriptImporter::CompileScript(std::string assets_path, std::string library_path)
+int ModuleScriptImporter::CompileScript(std::string assets_path)
 {
-	std::string compile_command = mono_path + "bin\\mcs -target:library " + assets_path + " -out:" + library_path + " ";
+	if (!App->file_system->DirectoryExist(LIBRARY_SCRIPTS_FOLDER_PATH) != App->file_system->Create_Directory(LIBRARY_SCRIPTS_FOLDER_PATH));
+	std::string script_name = App->file_system->GetFileNameWithoutExtension(assets_path);
+	std::string compile_command = mono_path + "bin\\mcs -target:library " + assets_path + " -out:" + LIBRARY_SCRIPTS_FOLDER + script_name + ".dll" + " ";
 	std::string folder = REFERENCE_ASSEMBLIES_FOLDER;
 	std::vector<std::string> assemblies = App->file_system->GetFilesInDirectory(folder);
 	for (std::vector<std::string>::iterator it = assemblies.begin(); it != assemblies.end(); it++)
@@ -200,4 +209,57 @@ MonoClass* ModuleScriptImporter::DumpClassInfo(MonoImage * image, std::string& c
 	}
 
 	return mono_class;
+}
+
+void ModuleScriptImporter::RegisterAPI()
+{
+	//GAMEOBJECT
+	mono_add_internal_call("TheEngine.TheGameObject::SetName", (const void*)SetGameObjectName);
+	mono_add_internal_call("TheEngine.TheGameObject::CreateNewGameObject", (const void*)CreateGameObject);
+	mono_add_internal_call("TheEngine.TheGameObject::get_Self", (const void*)SetSelf);
+	mono_add_internal_call("TheEngine.Console.Console::Log", (const void*)Log);
+	mono_add_internal_call("TheEngine.Console.Console::Warning", (const void*)Warning);
+	mono_add_internal_call("TheEngine.Console.Console::Error", (const void*)Error);
+}
+
+void ModuleScriptImporter::SetGameObjectName(MonoObject * object, MonoString * name)
+{
+	if (object != nullptr)
+	{
+		current_script->active_gameobject = current_script->created_gameobjects[object];
+	}
+	else
+	{
+		CONSOLE_ERROR("Nullptr");
+	}
+	if (name != nullptr)
+	{
+		const char* new_name = mono_string_to_utf8(name);
+		current_script->active_gameobject->SetName(new_name);
+	}
+}
+
+void ModuleScriptImporter::CreateGameObject(MonoObject * object, MonoObject * object2)
+{
+	MonoClass* _class = mono_object_get_class(object2);
+	MonoClass* _class2 = mono_object_get_class(object);
+	const char* b = mono_class_get_name(_class);
+	const char* b2 = mono_class_get_name(_class2);
+	int i = 0;
+}
+
+void ModuleScriptImporter::SetSelf()
+{
+}
+
+void ModuleScriptImporter::Log(MonoObject * object)
+{
+}
+
+void ModuleScriptImporter::Warning(MonoObject * object)
+{
+}
+
+void ModuleScriptImporter::Error(MonoObject * object)
+{
 }

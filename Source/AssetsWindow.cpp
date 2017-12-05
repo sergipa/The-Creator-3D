@@ -208,27 +208,31 @@ void AssetsWindow::DrawWindow()
 						}
 					}
 
-					if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && !asset_hovered)
+					if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && ImGui::IsItemRectHovered())
 					{
 						selected = false;
 						selected_file_path = "";
-						show_files_window_options = false;
-						show_file_options = false;
-						show_folder_options = false;
 					}
 				}
+			}
+
+			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(1) && !asset_hovered && !show_file_options)
+			{
+				show_files_window_options = true;
+				show_file_options = false;
+				show_folder_options = false;
+			}
+
+			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && !asset_hovered)
+			{
+				show_files_window_options = false;
+				show_file_options = false;
+				show_folder_options = false;
 			}
 
 			if (ImGui::IsMouseHoveringWindow() && !ImGui::IsAnyItemHovered())
 			{
 				asset_hovered = false;
-			}
-
-			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(1) && !asset_hovered)
-			{
-				show_files_window_options = true;
-				show_file_options = false;
-				show_folder_options = false;
 			}
 
 			if (show_file_options)

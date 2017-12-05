@@ -221,6 +221,13 @@ std::string ModuleFileSystem::ChangeFileExtension(std::string file_path, std::st
 	return file.string();
 }
 
+std::string ModuleFileSystem::GetFullPath(std::string file_name)
+{
+	fs::path path(file_name);
+	fs::path full_path = fs::system_complete(path);
+	return full_path.string();
+}
+
 std::string ModuleFileSystem::StringToPathFormat(std::string path)
 {
 	fs::path new_path(path);

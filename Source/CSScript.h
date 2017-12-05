@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Script.h"
-#include "mono/include/jit/jit.h"
-#include "mono/include/metadata/assembly.h"
-#include "mono/include/metadata/attrdefs.h"
+#include <map>
+#include <mono/metadata/metadata.h>
+#include <mono/metadata/object.h>
 
 class Data;
+class GameObject;
 
 class CSScript :
 	public Script
@@ -59,11 +60,6 @@ private:
 	MonoMethod* GetFunction(const char* functionName, int parameters);
 	void CallFunction(MonoMethod* function, void** parameter);
 	void ConvertMonoType(MonoType* type, ScriptField& script_field);
-	void RegisterAPI();
-
-	static void SetGameObjectName(MonoString* name);
-	static void CreateGameObject();
-	static void SetSelf();
 
 	void Save(Data& data) const;
 	bool Load(Data& data);
@@ -91,8 +87,11 @@ private:
 	MonoMethod* on_enable;
 	MonoMethod* on_disable;
 
-	static GameObject* active_object;
-
 	std::vector<ScriptField*> script_fields;
+
+public:
+	static std::map<MonoObject*, GameObject*> created_gameobjects;
+	static GameObject* active_gameobject;
+	static bool inside_function;
 };
 

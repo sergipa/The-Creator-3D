@@ -2,10 +2,8 @@
 
 namespace TheEngine.Console
 {
-    public class Console
+    public class TheConsole
     {
-        public Console() { }
-
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void Log(object message);
 

@@ -59,11 +59,13 @@
       <LanguageStandard>
       </LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)EngineResources\mono\include\mono-2.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -200,36 +202,6 @@
     <ClInclude Include="ModuleScriptImporter.h" />
     <ClInclude Include="ModuleTextureImporter.h" />
     <ClInclude Include="ModuleTime.h" />
-    <ClInclude Include="mono\include\jit\jit.h" />
-    <ClInclude Include="mono\include\metadata\appdomain.h" />
-    <ClInclude Include="mono\include\metadata\assembly.h" />
-    <ClInclude Include="mono\include\metadata\attrdefs.h" />
-    <ClInclude Include="mono\include\metadata\blob.h" />
-    <ClInclude Include="mono\include\metadata\class.h" />
-    <ClInclude Include="mono\include\metadata\debug-helpers.h" />
-    <ClInclude Include="mono\include\metadata\debug-mono-symfile.h" />
-    <ClInclude Include="mono\include\metadata\environment.h" />
-    <ClInclude Include="mono\include\metadata\exception.h" />
-    <ClInclude Include="mono\include\metadata\image.h" />
-    <ClInclude Include="mono\include\metadata\loader.h" />
-    <ClInclude Include="mono\include\metadata\metadata.h" />
-    <ClInclude Include="mono\include\metadata\mono-config.h" />
-    <ClInclude Include="mono\include\metadata\mono-debug.h" />
-    <ClInclude Include="mono\include\metadata\mono-gc.h" />
-    <ClInclude Include="mono\include\metadata\object.h" />
-    <ClInclude Include="mono\include\metadata\opcodes.h" />
-    <ClInclude Include="mono\include\metadata\profiler.h" />
-    <ClInclude Include="mono\include\metadata\reflection.h" />
-    <ClInclude Include="mono\include\metadata\row-indexes.h" />
-    <ClInclude Include="mono\include\metadata\sgen-bridge.h" />
-    <ClInclude Include="mono\include\metadata\threads.h" />
-    <ClInclude Include="mono\include\metadata\tokentype.h" />
-    <ClInclude Include="mono\include\metadata\verify.h" />
-    <ClInclude Include="mono\include\utils\mono-counters.h" />
-    <ClInclude Include="mono\include\utils\mono-dl-fallback.h" />
-    <ClInclude Include="mono\include\utils\mono-error.h" />
-    <ClInclude Include="mono\include\utils\mono-logger.h" />
-    <ClInclude Include="mono\include\utils\mono-publib.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="OpenGL.h" />
     <ClInclude Include="Module.h" />

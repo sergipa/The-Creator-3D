@@ -55,9 +55,6 @@
     <Filter Include="Sources\3d Party\imGui\ImGuiTextEditor">
       <UniqueIdentifier>{85858fa6-7434-4fea-978f-5e30f618d536}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\3d Party\Mono">
-      <UniqueIdentifier>{c312dbee-4890-49a8-bac6-a941f6971020}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -488,96 +485,6 @@
     </ClInclude>
     <ClInclude Include="LuaScript.h">
       <Filter>Sources\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\appdomain.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\assembly.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\attrdefs.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\blob.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\class.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\debug-helpers.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\debug-mono-symfile.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\environment.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\exception.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\image.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\jit\jit.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\loader.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\metadata.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\mono-config.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\utils\mono-counters.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\mono-debug.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\utils\mono-dl-fallback.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\utils\mono-error.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\mono-gc.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\utils\mono-logger.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\utils\mono-publib.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\object.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\opcodes.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\profiler.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\reflection.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\row-indexes.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\sgen-bridge.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\threads.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\tokentype.h">
-      <Filter>Sources\3d Party\Mono</Filter>
-    </ClInclude>
-    <ClInclude Include="mono\include\metadata\verify.h">
-      <Filter>Sources\3d Party\Mono</Filter>
     </ClInclude>
     <ClInclude Include="TextEditorWindow.h">
       <Filter>Sources\EditorUI</Filter>

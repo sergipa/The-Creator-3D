@@ -34,6 +34,7 @@ public:
 	std::vector<std::string> GetAllFilesRecursively(std::string directory_path);
 	bool FileExistInDirectory(std::string file_name, std::string directory_path, bool search_subdirectories);
 	std::string ChangeFileExtension(std::string file_path, std::string new_extension);
+	std::string GetFullPath(std::string file_name);
 
 	std::string StringToPathFormat(std::string path);
 };
