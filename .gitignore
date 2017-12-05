@@ -24,6 +24,7 @@ bld/
 EngineResources/Project/Library/
 EngineResources/Logs/
 EngineResources/Tmp/
+!EngineResources/mono/
 
 # Visual Studio 2015 cache/options directory
 .vs/
