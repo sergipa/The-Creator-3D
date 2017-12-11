@@ -11,14 +11,9 @@
 #include <mono/metadata/attrdefs.h>
 #include <mono/metadata/exception.h>
 #include "ComponentTransform.h"
+#include "ModuleInput.h"
 
 #pragma comment (lib, "../EngineResources/mono/lib/mono-2.0-sgen.lib")
-
-//GameObject* CSScript::attached_gameobject = nullptr;
-//GameObject* CSScript::active_gameobject = nullptr;
-//std::map<MonoObject*, GameObject*> CSScript::created_gameobjects;
-//bool CSScript::inside_function = false;
-//bool CSScript::modifying_self = false;
 
 CSScript::CSScript()
 {
@@ -549,7 +544,6 @@ void CSScript::CallFunction(MonoMethod * function, void ** parameter)
 
 	if (exception)
 	{
-		
 		mono_print_unhandled_exception(exception);
 	}
 }
@@ -856,6 +850,102 @@ MonoObject* CSScript::GetPosition(MonoObject * object)
 		}
 	}
 	return nullptr;
+}
+
+mono_bool CSScript::IsKeyDown(MonoString * key_name)
+{
+	bool ret = false;
+	const char* key = mono_string_to_utf8(key_name);
+	SDL_Keycode code = App->input->StringToKey(key);
+	if (code != SDL_SCANCODE_UNKNOWN)
+	{
+		if (App->input->GetKey(App->input->StringToKey(key) == KEY_REPEAT)) ret = true;
+	}
+	else
+	{
+		CONSOLE_WARNING("'%s' is not a key! Returned false by default", key);
+	}
+
+	return ret;
+}
+
+mono_bool CSScript::IsKeyUp(MonoString * key_name)
+{
+	bool ret = false;
+	const char* key = mono_string_to_utf8(key_name);
+	SDL_Keycode code = App->input->StringToKey(key);
+	if (code != SDL_SCANCODE_UNKNOWN)
+	{
+		if (App->input->GetKey(App->input->StringToKey(key) == KEY_REPEAT)) ret = true;
+	}
+	else
+	{
+		CONSOLE_WARNING("'%s' is not a key! Returned false by default", key);
+	}
+
+	return ret;
+}
+
+mono_bool CSScript::IsKeyRepeat(MonoString * key_name)
+{
+	bool ret = false;
+	const char* key = mono_string_to_utf8(key_name);
+	SDL_Keycode code = App->input->StringToKey(key);
+	if (code != SDL_SCANCODE_UNKNOWN)
+	{
+		if (App->input->GetKey(App->input->StringToKey(key) == KEY_REPEAT)) ret = true;
+	}
+	else
+	{
+		CONSOLE_WARNING("'%s' is not a key! Returned false by default", key);
+	}
+	
+	return ret;
+}
+
+mono_bool CSScript::IsMouseDown(int mouse_button)
+{
+	bool ret = false;
+	if (mouse_button >= 0 && mouse_button < 4)
+	{
+		if (App->input->GetMouseButton(mouse_button) == KEY_DOWN) ret = true;
+	}
+	else
+	{
+		CONSOLE_WARNING("%d is not a valid mouse button! Returned false by default");
+	}
+
+	return ret;
+}
+
+mono_bool CSScript::IsMouseUp(int mouse_button)
+{
+	bool ret = false;
+	if (mouse_button >= 0 && mouse_button < 4)
+	{
+		if (App->input->GetMouseButton(mouse_button) == KEY_UP) ret = true;
+	}
+	else
+	{
+		CONSOLE_WARNING("%d is not a valid mouse button! Returned false by default");
+	}
+
+	return ret;
+}
+
+mono_bool CSScript::IsMouseRepeat(int mouse_button)
+{
+	bool ret = false;
+	if (mouse_button >= 0 && mouse_button < 4)
+	{
+		if (App->input->GetMouseButton(mouse_button) == KEY_REPEAT) ret = true;
+	}
+	else
+	{
+		CONSOLE_WARNING("%d is not a valid mouse button! Returned false by default");
+	}
+
+	return ret;
 }
 
 void CSScript::CreateGameObject(MonoObject * object)

@@ -226,6 +226,14 @@ void ModuleScriptImporter::RegisterAPI()
 	mono_add_internal_call("TheEngine.TheTransform::SetPosition", (const void*)SetPosition);
 	mono_add_internal_call("TheEngine.TheTransform::GetPosition", (const void*)GetPosition);
 
+	//INPUT
+	mono_add_internal_call("TheEngine.TheInput::IsKeyDown", (const void*)IsKeyDown);
+	mono_add_internal_call("TheEngine.TheInput::IsKeyUp", (const void*)IsKeyUp);
+	mono_add_internal_call("TheEngine.TheInput::IsKeyRepeat", (const void*)IsKeyRepeat);
+	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonDown", (const void*)IsMouseDown);
+	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonUp", (const void*)IsMouseUp);
+	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonRepeat", (const void*)IsMouseRepeat);
+
 	//CONSOLE
 	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Log", (const void*)Log);
 	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Warning", (const void*)Warning);
@@ -310,6 +318,36 @@ void ModuleScriptImporter::SetPosition(MonoObject * object, MonoObject * vector3
 MonoObject* ModuleScriptImporter::GetPosition(MonoObject * object)
 {
 	return current_script->GetPosition(object);
+}
+
+mono_bool ModuleScriptImporter::IsKeyDown(MonoString * key_name)
+{
+	return current_script->IsKeyDown(key_name);
+}
+
+mono_bool ModuleScriptImporter::IsKeyUp(MonoString * key_name)
+{
+	return current_script->IsKeyUp(key_name);
+}
+
+mono_bool ModuleScriptImporter::IsKeyRepeat(MonoString * key_name)
+{
+	return current_script->IsKeyRepeat(key_name);
+}
+
+mono_bool ModuleScriptImporter::IsMouseDown(int mouse_button)
+{
+	return current_script->IsMouseDown(mouse_button);
+}
+
+mono_bool ModuleScriptImporter::IsMouseUp(int mouse_button)
+{
+	return current_script->IsMouseUp(mouse_button);
+}
+
+mono_bool ModuleScriptImporter::IsMouseRepeat(int mouse_button)
+{
+	return current_script->IsMouseRepeat(mouse_button);
 }
 
 void ModuleScriptImporter::Log(MonoObject * object)

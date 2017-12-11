@@ -8,7 +8,7 @@ using TheEngine.TheConsole;
 		//TheGameObject go = new TheGameObject();
 		void Start ()
 		{
-			TheGameObject go2 = null;
+			TheGameObject go2 = new TheGameObject();
 			//GameObject go = null;
 			go2.SetName("Hi!");
 			//TheConsole.Log(go2.AddComponent<TheTransform>().Position = new TheVector3( 30,0,0));
@@ -32,6 +32,14 @@ using TheEngine.TheConsole;
 			go2.AddComponent<TheTransform>().Position = new TheVector3( 30,10,0);
 			TheConsole.Log(go2.GetComponent<TheTransform>().Position);
 			TheConsole.Log(TheGameObject.Self.GetComponent<TheTransform>().Position);
+			if(TheInput.IsMouseButtonDown(0))
+			{
+				TheConsole.Log("Button 0");
+			}
+			if(TheInput.IsKeyDown("a"))
+			{
+				TheConsole.Log("key a");
+			}
 		}
 		
 		// Update is called once per frame

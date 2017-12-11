@@ -76,6 +76,14 @@ public:
 	void SetPosition(MonoObject * object, MonoObject * vector3);
 	MonoObject* GetPosition(MonoObject* object);
 
+	//INPUT
+	mono_bool IsKeyDown(MonoString* key_name);
+	mono_bool IsKeyUp(MonoString* key_name);
+	mono_bool IsKeyRepeat(MonoString* key_name);
+	mono_bool IsMouseDown(int mouse_button);
+	mono_bool IsMouseUp(int mouse_button);
+	mono_bool IsMouseRepeat(int mouse_button);
+
 private:
 	MonoMethod* GetFunction(const char* functionName, int parameters);
 	void CallFunction(MonoMethod* function, void** parameter);

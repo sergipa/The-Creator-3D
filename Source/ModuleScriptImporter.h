@@ -52,6 +52,14 @@ private:
 	static void SetPosition(MonoObject * object, MonoObject * object2);
 	static MonoObject* GetPosition(MonoObject* object);
 
+	//INPUT
+	static mono_bool IsKeyDown(MonoString * key_name);
+	static mono_bool IsKeyUp(MonoString* key_name);
+	static mono_bool IsKeyRepeat(MonoString* key_name);
+	static mono_bool IsMouseDown(int mouse_button);
+	static mono_bool IsMouseUp(int mouse_button);
+	static mono_bool IsMouseRepeat(int mouse_button);
+
 	//CONSOLE
 	static void Log(MonoObject* object);
 	static void Warning(MonoObject* object);
