@@ -81,7 +81,7 @@ Application::~Application()
 
 	while (item != list_modules.end())
 	{
-		delete *item;
+		RELEASE(*item);
 		++item;
 	}
 

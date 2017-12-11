@@ -1,7 +1,7 @@
 ﻿
 namespace TheEngine
 {
-    public class Component
+    public class TheComponent
     {
 
     }

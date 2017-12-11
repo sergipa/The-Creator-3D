@@ -192,7 +192,7 @@ update_status ModuleScene::Update(float dt)
 				}
 				App->renderer3D->AddMeshToDraw(mesh_renderer);
 			}
-			if (camera != nullptr && camera->IsActive() && (*it)->IsSelected())
+			if (camera != nullptr && camera->IsActive())
 			{
 				if (App->renderer3D->game_camera == nullptr && (*it)->GetTag() == "Main Camera")
 				{

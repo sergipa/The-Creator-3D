@@ -56,10 +56,31 @@ public:
 	void SetNameSpace(std::string name_space);
 	void SetClassName(std::string class_name);
 
+	//GAMEOBJECT
+	void CreateGameObject(MonoObject * object);
+	void SetGameObjectName(MonoObject * object, MonoString* name);
+	MonoString* GetGameObjectName(MonoObject* object);
+	MonoObject* SetSelfGameObject();
+	void SetGameObjectActive(MonoObject* object, mono_bool active);
+	bool GetGameObjectActive(MonoObject* object);
+	void SetGameObjectTag(MonoObject * object, MonoString* tag);
+	MonoString* GetGameObjectTag(MonoObject* object);
+	void SetGameObjectLayer(MonoObject * object, MonoString* layer);
+	MonoString* GetGameObjectLayer(MonoObject* object);
+	void SetGameObjectStatic(MonoObject * object, mono_bool value);
+	mono_bool GameObjectIsStatic(MonoObject* object);
+	MonoObject* AddComponent(MonoObject* object, MonoReflectionType* type);
+	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
+
+	//TRANSFORM
+	void SetPosition(MonoObject * object, MonoObject * vector3);
+	MonoObject* GetPosition(MonoObject* object);
+
 private:
 	MonoMethod* GetFunction(const char* functionName, int parameters);
 	void CallFunction(MonoMethod* function, void** parameter);
 	void ConvertMonoType(MonoType* type, ScriptField& script_field);
+	void CreateSelfGameObject();
 
 	void Save(Data& data) const;
 	bool Load(Data& data);
@@ -67,13 +88,17 @@ private:
 	void LoadToMemory();
 	void UnloadFromMemory();
 
+	bool GameObjectIsValid();
+	bool MonoObjectIsValid(MonoObject* object);
+
 private:
 	MonoDomain* mono_domain;
 	MonoAssembly* mono_assembly;
 	MonoClass* mono_class;
 	MonoImage* mono_image;
 	MonoObject* mono_object;
-	static GameObject* attached_gameobject;
+	MonoObject* mono_self_object;
+	GameObject* attached_gameobject;
 	std::string name_space;
 	std::string class_name;
 	uint32_t handle;
@@ -88,10 +113,10 @@ private:
 	MonoMethod* on_disable;
 
 	std::vector<ScriptField*> script_fields;
+	bool modifying_self;
+	std::map<MonoObject*, GameObject*> created_gameobjects;
+	GameObject* active_gameobject;
+	bool inside_function;
 
-public:
-	static std::map<MonoObject*, GameObject*> created_gameobjects;
-	static GameObject* active_gameobject;
-	static bool inside_function;
 };
 

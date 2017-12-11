@@ -6,8 +6,7 @@
 #include <mono/metadata/metadata.h>
 #include "CSScript.h"
 #include "GameObject.h"
-#include <csignal>
-#include <cstdlib>
+#include "ModuleScene.h"
 
 CSScript* ModuleScriptImporter::current_script = nullptr;
 bool ModuleScriptImporter::inside_function = false;
@@ -16,16 +15,21 @@ ModuleScriptImporter::ModuleScriptImporter(Application* app, bool start_enabled,
 {
 	name = "Script_Importer";
 	mono_domain = nullptr;
-	mono_image = nullptr;
+	mono_engine_image = nullptr;
 }
 
 ModuleScriptImporter::~ModuleScriptImporter()
 {
 }
 
-void MonoInternalPrint(const char * string, mono_bool is_stdout)
+void MonoInternalWarning(const char * string, mono_bool is_stdout)
 {
 	CONSOLE_WARNING("%s", string);
+}
+
+void MonoInternalError(const char * string, mono_bool is_stdout)
+{
+	CONSOLE_ERROR("%s", string);
 }
 
 void MonoLogToLog(const char * log_domain, const char * log_level, const char * message, mono_bool fatal, void * user_data)
@@ -50,31 +54,27 @@ void MonoLogToLog(const char * log_domain, const char * log_level, const char * 
 
 bool ModuleScriptImporter::Init(Data * editor_config)
 {
-	mono_trace_set_log_handler(MonoLogToLog, nullptr);
-	mono_trace_set_print_handler(MonoInternalPrint);
-	mono_trace_set_printerr_handler(MonoInternalPrint);
+	mono_trace_set_log_handler(MonoLogToLog, this);
+	mono_trace_set_print_handler(MonoInternalWarning);
+	mono_trace_set_printerr_handler(MonoInternalError);
 
-	mono_path = App->file_system->GetFullPath("Mono/");
+	mono_path = App->file_system->GetFullPath("mono/");
 
 	mono_set_dirs((mono_path + "lib").c_str(), (mono_path + "etc").c_str());
 
 	mono_domain = mono_jit_init("TheCreator");
 
-	RegisterAPI();
-
-	/*bool recompile_scripts = false;
-
-	if (App->file_system->DirectoryExist(LIBRARY_SCRIPTS_FOLDER_PATH))
+	MonoAssembly* engine_assembly = mono_domain_assembly_open(mono_domain, REFERENCE_ASSEMBLIES_FOLDER"TheEngine.dll");
+	if (engine_assembly)
 	{
-		if (App->file_system->FileExist(LIBRARY_SCRIPTS_FOLDER"Assembly-CSharp.dll"))
-		{
-			MonoAssembly* assembly = mono_domain_assembly_open(mono_domain, LIBRARY_SCRIPTS_FOLDER"Assembly-CSharp.dll");
-			if (assembly)
-			{
-				DumpAssemblyInfo(assembly);
-			}
-		}
-	}*/
+		mono_engine_image = mono_assembly_get_image(engine_assembly);
+		RegisterAPI();
+	}
+	else
+	{
+		CONSOLE_ERROR("Can't load 'TheEngine.dll'!");
+		return false;
+	}
 
 	return true;
 }
@@ -82,8 +82,6 @@ bool ModuleScriptImporter::Init(Data * editor_config)
 std::string ModuleScriptImporter::ImportScript(std::string path)
 {
 	std::string ret = "";
-
-	std::string library_folder = LIBRARY_SCRIPTS_FOLDER;
 	std::string script_name = App->file_system->GetFileNameWithoutExtension(path);
 	
 	if (CompileScript(path) != 0)
@@ -92,30 +90,16 @@ std::string ModuleScriptImporter::ImportScript(std::string path)
 	}
 	else
 	{
-		ret = library_folder + script_name + ".dll";
+		if (App->file_system->FileExist(TMP_FOLDER + script_name + ".dll"))
+		{
+			if (App->file_system->Copy_File(TMP_FOLDER + script_name + ".dll", LIBRARY_SCRIPTS_FOLDER + script_name + ".dll"))
+			{
+				App->file_system->Delete_File(TMP_FOLDER + script_name + ".dll");
+				ret = LIBRARY_SCRIPTS_FOLDER + script_name + ".dll";
+			}
+		}
 	}
 
-	/*std::string merge_command = mono_path + "bin\\ILMerge.exe -target:library -allowDup:.dll -out:" + library_folder + "Assembly-CSharp.dll ";
-	
-	std::vector<std::string> files = App->file_system->GetFilesInDirectory(LIBRARY_SCRIPTS_FOLDER_PATH);
-	for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); it++)
-	{
-		if (App->file_system->GetFileExtension(*it) != ".dll") continue;
-		merge_command += *it + " ";
-	}*/
-
-	//merge_command += library_folder + "*.dll -target:library";
-	//system(merge_command.c_str());
-	//App->file_system->Delete_File(ret);
-
-	/*std::string script_name = App->file_system->GetFileNameWithoutExtension(path);
-
-	for (std::vector<MonoClass*>::iterator it = loaded_scripts.begin(); it != loaded_scripts.end(); it++)
-	{
-		if (script_name != mono_class_get_name(*it)) compile_scripts = true;
-	}
-
-	ret = LIBRARY_SCRIPTS_FOLDER"Assembly-CSharp.dll";*/
 	return ret;
 }
 
@@ -142,31 +126,46 @@ MonoDomain * ModuleScriptImporter::GetDomain() const
 	return mono_domain;
 }
 
-MonoImage * ModuleScriptImporter::GetImage() const
+MonoImage * ModuleScriptImporter::GetEngineImage() const
 {
-	return mono_image;
+	return mono_engine_image;
 }
 
 int ModuleScriptImporter::CompileScript(std::string assets_path)
 {
-	if (!App->file_system->DirectoryExist(LIBRARY_SCRIPTS_FOLDER_PATH) != App->file_system->Create_Directory(LIBRARY_SCRIPTS_FOLDER_PATH));
+	if (!App->file_system->DirectoryExist(TMP_FOLDER_PATH)) App->file_system->Create_Directory(TMP_FOLDER_PATH);
 	std::string script_name = App->file_system->GetFileNameWithoutExtension(assets_path);
-	std::string compile_command = mono_path + "bin\\mcs -target:library " + assets_path + " -out:" + LIBRARY_SCRIPTS_FOLDER + script_name + ".dll" + " ";
-	std::string folder = REFERENCE_ASSEMBLIES_FOLDER;
-	std::vector<std::string> assemblies = App->file_system->GetFilesInDirectory(folder);
+	std::string compile_command = mono_path + "compiler\\mcs -debug -target:library -out:" + TMP_FOLDER + script_name + ".dll" + " ";
+	std::string assemblies_folder_full_path = App->file_system->GetFullPath("Editor_Settings/Reference_Assemblies/");
+	std::vector<std::string> assemblies = App->file_system->GetFilesInDirectory(assemblies_folder_full_path);
 	for (std::vector<std::string>::iterator it = assemblies.begin(); it != assemblies.end(); it++)
 	{
 		if (App->file_system->GetFileExtension(*it) == ".dll")
 		{
-			compile_command += "/reference:" + folder + App->file_system->GetFileName(*it) + " ";
+			compile_command += "-r:" + assemblies_folder_full_path + App->file_system->GetFileName(*it) + " ";
 		}
 	}
+	for (std::vector<std::string>::iterator it = assemblies.begin(); it != assemblies.end(); it++)
+	{
+		if (App->file_system->GetFileExtension(*it) == ".dll")
+		{
+			compile_command += "-lib:" + assemblies_folder_full_path + App->file_system->GetFileName(*it) + " ";
+		}
+	}
+
+	std::string d = App->file_system->GetFullPath(assets_path);
+	compile_command += assets_path;
 	return system(compile_command.c_str());
+}
+
+void ModuleScriptImporter::SetCurrentScript(CSScript * script)
+{
+	current_script = script;
 }
 
 CSScript* ModuleScriptImporter::DumpAssemblyInfo(MonoAssembly * assembly)
 {
-	mono_image = mono_assembly_get_image(assembly);
+	MonoImage* mono_image = mono_assembly_get_image(assembly);
 	if (mono_image)
 	{
 		std::string class_name;
@@ -215,51 +214,145 @@ void ModuleScriptImporter::RegisterAPI()
 {
 	//GAMEOBJECT
 	mono_add_internal_call("TheEngine.TheGameObject::SetName", (const void*)SetGameObjectName);
+	mono_add_internal_call("TheEngine.TheGameObject::GetName", (const void*)GetGameObjectName);
+	mono_add_internal_call("TheEngine.TheGameObject::SetActive", (const void*)SetGameObjectActive);
+	mono_add_internal_call("TheEngine.TheGameObject::IsActive", (const void*)GetGameObjectIsActive);
 	mono_add_internal_call("TheEngine.TheGameObject::CreateNewGameObject", (const void*)CreateGameObject);
-	mono_add_internal_call("TheEngine.TheGameObject::get_Self", (const void*)SetSelf);
-	mono_add_internal_call("TheEngine.Console.Console::Log", (const void*)Log);
-	mono_add_internal_call("TheEngine.Console.Console::Warning", (const void*)Warning);
-	mono_add_internal_call("TheEngine.Console.Console::Error", (const void*)Error);
+	mono_add_internal_call("TheEngine.TheGameObject::GetSelf", (const void*)SetSelfGameObject);
+	mono_add_internal_call("TheEngine.TheGameObject::AddComponent", (const void*)AddComponent);
+	mono_add_internal_call("TheEngine.TheGameObject::GetComponent", (const void*)GetComponent);
+
+	//TRANSFORM
+	mono_add_internal_call("TheEngine.TheTransform::SetPosition", (const void*)SetPosition);
+	mono_add_internal_call("TheEngine.TheTransform::GetPosition", (const void*)GetPosition);
+
+	//CONSOLE
+	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Log", (const void*)Log);
+	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Warning", (const void*)Warning);
+	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Error", (const void*)Error);
 }
 
-void ModuleScriptImporter::SetGameObjectName(MonoObject * object, MonoString * name)
+void ModuleScriptImporter::SetGameObjectName(MonoObject * object, MonoString * name, MonoObject * object2)
 {
-	if (object != nullptr)
-	{
-		current_script->active_gameobject = current_script->created_gameobjects[object];
-	}
-	else
-	{
-		CONSOLE_ERROR("Nullptr");
-	}
-	if (name != nullptr)
-	{
-		const char* new_name = mono_string_to_utf8(name);
-		current_script->active_gameobject->SetName(new_name);
-	}
+	current_script->SetGameObjectName(object, name);
 }
 
-void ModuleScriptImporter::CreateGameObject(MonoObject * object, MonoObject * object2)
+MonoString* ModuleScriptImporter::GetGameObjectName(MonoObject * object)
 {
-	MonoClass* _class = mono_object_get_class(object2);
-	MonoClass* _class2 = mono_object_get_class(object);
-	const char* b = mono_class_get_name(_class);
-	const char* b2 = mono_class_get_name(_class2);
-	int i = 0;
+	return current_script->GetGameObjectName(object);
 }
 
-void ModuleScriptImporter::SetSelf()
+void ModuleScriptImporter::SetGameObjectActive(MonoObject * object, mono_bool active)
 {
+	current_script->SetGameObjectActive(object, active);
+}
+
+mono_bool ModuleScriptImporter::GetGameObjectIsActive(MonoObject * object)
+{
+	return current_script->GetGameObjectActive(object);
+}
+
+void ModuleScriptImporter::CreateGameObject(MonoObject * object)
+{
+	current_script->CreateGameObject(object);
+}
+
+MonoObject* ModuleScriptImporter::SetSelfGameObject()
+{
+	return current_script->SetSelfGameObject();
+}
+
+void ModuleScriptImporter::SetGameObjectTag(MonoObject * object, MonoString * name)
+{
+	current_script->SetGameObjectTag(object, name);
+}
+
+MonoString* ModuleScriptImporter::GetGameObjectTag(MonoObject * object)
+{
+	return current_script->GetGameObjectTag(object);
+}
+
+void ModuleScriptImporter::SetGameObjectLayer(MonoObject * object, MonoString * layer)
+{
+	current_script->SetGameObjectLayer(object, layer);
+}
+
+MonoString * ModuleScriptImporter::GetGameObjectLayerName(MonoObject * object)
+{
+	return current_script->GetGameObjectLayer(object);
+}
+
+void ModuleScriptImporter::SetGameObjectStatic(MonoObject * object, mono_bool value)
+{
+	current_script->SetGameObjectStatic(object, value);
+}
+
+mono_bool ModuleScriptImporter::GameObjectIsStatic(MonoObject * object)
+{
+	return current_script->GameObjectIsStatic(object);
+}
+
+MonoObject* ModuleScriptImporter::AddComponent(MonoObject * object, MonoReflectionType* type)
+{
+	return current_script->AddComponent(object, type);
+}
+
+MonoObject* ModuleScriptImporter::GetComponent(MonoObject * object, MonoReflectionType * type)
+{
+	return current_script->GetComponent(object, type);
+}
+
+void ModuleScriptImporter::SetPosition(MonoObject * object, MonoObject * vector3)
+{
+	current_script->SetPosition(object, vector3);
+}
+
+MonoObject* ModuleScriptImporter::GetPosition(MonoObject * object)
+{
+	return current_script->GetPosition(object);
 }
 
 void ModuleScriptImporter::Log(MonoObject * object)
 {
+	MonoObject* exception = nullptr;
+	MonoString* str = mono_object_to_string(object, &exception);
+	if (exception)
+	{
+		mono_print_unhandled_exception(exception);
+	}
+	else
+	{
+		const char* message = mono_string_to_utf8(str);
+		CONSOLE_LOG("%s", message);
+	}
 }
 
 void ModuleScriptImporter::Warning(MonoObject * object)
 {
+	MonoObject* exception = nullptr;
+	MonoString* str = mono_object_to_string(object, &exception);
+	if (exception)
+	{
+		mono_print_unhandled_exception(exception);
+	}
+	else
+	{
+		const char* message = mono_string_to_utf8(str);
+		CONSOLE_WARNING("%s", message);
+	}
 }
 
 void ModuleScriptImporter::Error(MonoObject * object)
 {
+	MonoObject* exception = nullptr;
+	MonoString* str2 = mono_object_to_string(object, &exception);
+	if (exception)
+	{
+		mono_print_unhandled_exception(exception);
+	}
+	else
+	{
+		const char* message = mono_string_to_utf8(str2);
+		CONSOLE_ERROR("%s", message);
+	}
 }

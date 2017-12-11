@@ -54,12 +54,15 @@ ComponentCamera::~ComponentCamera()
 
 	if (GetGameObject() != nullptr)
 	{
-		if (std::find(App->renderer3D->rendering_cameras.begin(), App->renderer3D->rendering_cameras.end(), this) != App->renderer3D->rendering_cameras.end())
+		if (App->renderer3D->rendering_cameras.size() != 3722304989)
 		{
-			App->renderer3D->rendering_cameras.remove(this);
-			if (GetGameObject()->GetTag() == "Main Camera")
+			if (std::find(App->renderer3D->rendering_cameras.begin(), App->renderer3D->rendering_cameras.end(), this) != App->renderer3D->rendering_cameras.end())
 			{
-				App->renderer3D->game_camera = nullptr;
+				App->renderer3D->rendering_cameras.remove(this);
+				if (GetGameObject()->GetTag() == "Main Camera")
+				{
+					App->renderer3D->game_camera = nullptr;
+				}
 			}
 		}
 	}
@@ -230,6 +233,7 @@ void ComponentCamera::Save(Data & data) const
 	rect_to_float.w = camera_viewport.bottom;
 	data.AddVector4("viewport_rect", rect_to_float);
 	data.AddInt("render_order", render_order);
+
 }
 
 void ComponentCamera::Load(Data & data)

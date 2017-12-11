@@ -10,13 +10,15 @@
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/attrdefs.h>
 #include <mono/metadata/exception.h>
+#include "ComponentTransform.h"
 
 #pragma comment (lib, "../EngineResources/mono/lib/mono-2.0-sgen.lib")
 
-GameObject* CSScript::attached_gameobject = nullptr;
-GameObject* CSScript::active_gameobject = nullptr;
-std::map<MonoObject*, GameObject*> CSScript::created_gameobjects;
-bool CSScript::inside_function = false;
+//GameObject* CSScript::attached_gameobject = nullptr;
+//GameObject* CSScript::active_gameobject = nullptr;
+//std::map<MonoObject*, GameObject*> CSScript::created_gameobjects;
+//bool CSScript::inside_function = false;
+//bool CSScript::modifying_self = false;
 
 CSScript::CSScript()
 {
@@ -33,6 +35,11 @@ CSScript::CSScript()
 	on_collision_exit = nullptr;
 	on_enable = nullptr;
 	on_disable = nullptr;
+
+	active_gameobject = nullptr;
+	attached_gameobject = nullptr;
+	inside_function = false;
+	modifying_self = false;
 
 	SetType(Resource::ScriptResource);
 	SetScriptType(ScriptType::CsScript);
@@ -73,6 +80,7 @@ bool CSScript::LoadScript(std::string script_path)
 void CSScript::SetAttachedGameObject(GameObject * gameobject)
 {
 	attached_gameobject = gameobject;
+	CreateSelfGameObject();
 }
 
 void CSScript::InitScript()
@@ -313,10 +321,10 @@ GameObject * CSScript::GetGameObjectProperty(const char * propertyName)
 	return gameobject;*/
 
 	GameObject* value = nullptr;
-	MonoClassField* Field = mono_class_get_field_from_name(mono_class, propertyName);
-	if (Field)
+	MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
+	if (field)
 	{
-		mono_field_get_value(mono_object, Field, &value);
+		mono_field_get_value(mono_object, field, &value);
 	}
 
 	return value;
@@ -535,6 +543,7 @@ void CSScript::CallFunction(MonoMethod * function, void ** parameter)
 {
 	inside_function = true;
 	MonoObject* exception = nullptr;
+	MonoMarshalSpec* spec;
 
 	MonoObject* obj = mono_runtime_invoke(function, mono_object, parameter, &exception);
 
@@ -565,9 +574,9 @@ void CSScript::ConvertMonoType(MonoType * type, ScriptField& script_field)
 		break;
 	case MONO_TYPE_CLASS:
 		if(name == "TheEngine.TheGameObject") script_field.propertyType = ScriptField::GameObject;
-		else if (name == "Texture") script_field.propertyType = ScriptField::Texture;
-		else if (name == "Animation") script_field.propertyType = ScriptField::Animation;
-		else if (name == "Audio") script_field.propertyType = ScriptField::Audio;
+		else if (name == "TheEngine.Texture") script_field.propertyType = ScriptField::Texture;
+		else if (name == "TheEngine.Animation") script_field.propertyType = ScriptField::Animation;
+		else if (name == "TheEngine.Audio") script_field.propertyType = ScriptField::Audio;
 		break;
 	case MONO_TYPE_SZARRAY:
 		break;
@@ -596,83 +605,312 @@ void CSScript::ConvertMonoType(MonoType * type, ScriptField& script_field)
 	}
 }
 
-//void CSScript::SetGameObjectName(MonoObject * object, MonoString* name)
-//{
-//	if (object != nullptr)
-//	{
-//		attached_gameobject = created_gameobjects[object];
-//	}
-//	if (name != nullptr)
-//	{
-//		const char* new_name = mono_string_to_utf8(name);
-//		attached_gameobject->SetName(new_name);
-//	}
-//}
-//
-//void CSScript::CreateGameObject(MonoObject * object)
-//{
-//	if (!inside_function)
-//	{
-//		CONSOLE_ERROR("Can't create new GameObjects outside a function.");
-//		return;
-//	}
-//	GameObject* gameobject = App->scene->CreateGameObject();
-//	MonoClass* _class = mono_object_get_class(object);
-//	MonoMethod* field = mono_class_get_method_from_name(_class, ".ctor", 0);
-//	const char* bla = mono_method_get_name(field);
-//	//SetGameObjectProperty(gameobject->GetName().c_str(), gameobject);
-//	created_gameobjects[object] = gameobject;
-//}
-//
-//void CSScript::SetSelf()
-//{
-//	active_object = attached_gameobject;
-//}
-//
-//void CSScript::Log(MonoObject * object)
-//{
-//	MonoObject* exception = nullptr;
-//	MonoString* str2 = mono_object_to_string(object, &exception);
-//	if (exception)
-//	{
-//		mono_print_unhandled_exception(exception);
-//	}
-//	else
-//	{
-//		const char* message = mono_string_to_utf8(str2);
-//		CONSOLE_LOG("%s", message);
-//	}
-//}
-//
-//void CSScript::Warning(MonoObject * object)
-//{
-//	MonoObject* exception = nullptr;
-//	MonoString* str2 = mono_object_to_string(object, &exception);
-//	if (exception)
-//	{
-//		mono_print_unhandled_exception(exception);
-//	}
-//	else
-//	{
-//		const char* message = mono_string_to_utf8(str2);
-//		CONSOLE_WARNING("%s", message);
-//	}
-//}
-//
-//void CSScript::Error(MonoObject * object)
-//{
-//	MonoObject* exception = nullptr;
-//	MonoString* str2 = mono_object_to_string(object, &exception);
-//	if (exception)
-//	{
-//		mono_print_unhandled_exception(exception);
-//	}
-//	else
-//	{
-//		const char* message = mono_string_to_utf8(str2);
-//		CONSOLE_ERROR("%s", message);
-//	}
-//}
+void CSScript::CreateSelfGameObject()
+{
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheGameObject");
+	if (c)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, c);
+		if (new_object)
+		{
+			mono_self_object = new_object;
+			created_gameobjects[mono_self_object] = attached_gameobject;
+		}
+	}
+}
+
+void CSScript::SetGameObjectName(MonoObject * object, MonoString* name)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+
+	if (name != nullptr)
+	{
+		const char* new_name = mono_string_to_utf8(name);
+		active_gameobject->SetName(new_name);
+	}
+}
+
+MonoString* CSScript::GetGameObjectName(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+	return mono_string_new(mono_domain, active_gameobject->GetName().c_str());
+}
+
+void CSScript::SetGameObjectTag(MonoObject * object, MonoString * tag)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+	if (tag != nullptr)
+	{
+		const char* new_tag = mono_string_to_utf8(tag);
+		active_gameobject->SetName(new_tag);
+	}
+}
+
+MonoString * CSScript::GetGameObjectTag(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+	return mono_string_new(mono_domain, active_gameobject->GetTag().c_str());
+}
+
+void CSScript::SetGameObjectLayer(MonoObject * object, MonoString * layer)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+	if (layer != nullptr)
+	{
+		const char* new_layer = mono_string_to_utf8(layer);
+		active_gameobject->SetLayer(new_layer);
+	}
+}
+
+MonoString * CSScript::GetGameObjectLayer(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+	return mono_string_new(mono_domain, active_gameobject->GetLayer().c_str());
+}
+
+void CSScript::SetGameObjectStatic(MonoObject * object, mono_bool value)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+	active_gameobject->SetStatic(value);
+}
+
+mono_bool CSScript::GameObjectIsStatic(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return false;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return false;
+	}
+	return active_gameobject->IsStatic();
+}
+
+MonoObject* CSScript::AddComponent(MonoObject * object, MonoReflectionType * type)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+
+	MonoType* t = mono_reflection_type_get_type(type);
+	std::string name = mono_type_get_name(t);
+
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheTransform");
+	if (c)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, c);
+		if (new_object)
+		{
+			return new_object;
+		}
+	}
+	return nullptr;
+
+	Component::ComponentType comp_type = Component::CompUnknown;
+	if (name == "TheEngine.TheTransform") CONSOLE_ERROR("Can't add Transform component to %s. GameObjects cannot have more than 1 transform.", active_gameobject->GetName().c_str());
+	//else if (name == )
+
+	if (comp_type != Component::CompUnknown)
+	{
+		active_gameobject->AddComponent(comp_type);
+	}
+}
+
+MonoObject* CSScript::GetComponent(MonoObject * object, MonoReflectionType * type)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+
+	MonoType* t = mono_reflection_type_get_type(type);
+	std::string name = mono_type_get_name(t);
+
+	if (name == "TheEngine.TheTransform")
+	{
+		MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheTransform");
+		if (c)
+		{
+			MonoObject* new_object = mono_object_new(mono_domain, c);
+			if (new_object)
+			{
+				return new_object;
+			}
+		}
+		return nullptr;
+	}
+}
+
+void CSScript::SetPosition(MonoObject * object, MonoObject * vector3)
+{
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+	MonoClass* c = mono_object_get_class(vector3);
+	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+	MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+	float3 new_pos;
+
+	if (x_field) mono_field_get_value(vector3, x_field, &new_pos.x);
+	if (y_field) mono_field_get_value(vector3, y_field, &new_pos.y);
+	if (z_field) mono_field_get_value(vector3, z_field, &new_pos.z);
+
+	ComponentTransform* transform = (ComponentTransform*)active_gameobject->GetComponent(Component::CompTransform);
+	transform->SetPosition(new_pos);
+}
+
+MonoObject* CSScript::GetPosition(MonoObject * object)
+{
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+	MonoString* str = mono_object_to_string(object, nullptr);
+	const char* message = mono_string_to_utf8(str);
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheVector3");
+	if (c)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, c);
+		if (new_object)
+		{
+			MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+			MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+			MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+			ComponentTransform* transform = (ComponentTransform*)active_gameobject->GetComponent(Component::CompTransform);
+			float3 new_pos = transform->GetGlobalPosition();
+
+			if (x_field) mono_field_set_value(new_object, x_field, &new_pos.x);
+			if (y_field) mono_field_set_value(new_object, y_field, &new_pos.y);
+			if (z_field) mono_field_set_value(new_object, z_field, &new_pos.z);
+
+			return new_object;
+		}
+	}
+	return nullptr;
+}
+
+void CSScript::CreateGameObject(MonoObject * object)
+{
+	if (!inside_function)
+	{
+		CONSOLE_ERROR("Can't create new GameObjects outside a function.");
+		return;
+	}
+	GameObject* gameobject = App->scene->CreateGameObject();
+	created_gameobjects[object] = gameobject;
+}
+
+MonoObject* CSScript::SetSelfGameObject()
+{
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+	else
+	{
+		if (mono_self_object != nullptr)
+		{
+			return mono_self_object;
+		}
+	}
+}
+
+void CSScript::SetGameObjectActive(MonoObject * object, mono_bool active)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+	active_gameobject->SetActive(active);
+}
+
+bool CSScript::GetGameObjectActive(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return false;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return false;
+	}
+	return active_gameobject->IsActive();
+}
 
 void CSScript::Save(Data & data) const
 {
@@ -734,4 +972,26 @@ void CSScript::LoadToMemory()
 
 void CSScript::UnloadFromMemory()
 {
+}
+
+bool CSScript::MonoObjectIsValid(MonoObject* object)
+{
+	if (object != nullptr)
+	{
+		/*if (!modifying_self) 
+		else modifying_self = false;*/
+		active_gameobject = created_gameobjects[object];
+		return true;
+	}
+	return false;
+}
+
+bool CSScript::GameObjectIsValid()
+{
+	if (active_gameobject == nullptr)
+	{
+		CONSOLE_ERROR("You are trying to modify a null GameObject")
+			return false;
+	}
+	return true;
 }

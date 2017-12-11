@@ -36,7 +36,7 @@ void TextEditorWindow::DrawWindow()
 				ofs.open(path, std::ofstream::out | std::ofstream::trunc);
 				ofs << text_to_save;
 				ofs.close();
-				if(editor.CanUndo()) App->script_importer->CompileScript(path);
+				if(editor.CanUndo()) App->script_importer->ImportScript(path);
 			}
 			if (ImGui::MenuItem("Quit"))
 				this->active = false;

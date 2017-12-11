@@ -408,7 +408,7 @@ bool ModuleRenderer3D::CleanUp()
 {
 	CONSOLE_DEBUG("Destroying 3D Renderer");
 	SDL_GL_DeleteContext(context);
-
+	rendering_cameras.clear();
 	return true;
 }
 

@@ -102,14 +102,14 @@ bool ModuleFileSystem::FileExist(std::string file_path)
 	return fs::exists(file_path);
 }
 
-void ModuleFileSystem::Delete_File(std::string file_path)
+bool ModuleFileSystem::Delete_File(std::string file_path)
 {
-	fs::remove(file_path);
+	return fs::remove(file_path);
 }
 
-void ModuleFileSystem::Copy_File(std::string old_path, std::string new_path)
+bool ModuleFileSystem::Copy_File(std::string old_path, std::string new_path)
 {
-	fs::copy_file(old_path, new_path, fs::copy_options::overwrite_existing);
+	return fs::copy_file(old_path, new_path, fs::copy_options::overwrite_existing);
 }
 
 std::string ModuleFileSystem::GetFileName(std::string file_path)

@@ -2,6 +2,7 @@
 #include "CSScript.h"
 #include "ModuleResources.h"
 #include "Application.h"
+#include "ModuleScriptImporter.h"
 
 ComponentScript::ComponentScript(GameObject* attached_gameobject)
 {
@@ -18,16 +19,19 @@ ComponentScript::~ComponentScript()
 
 void ComponentScript::InitScript()
 {
+	App->script_importer->SetCurrentScript((CSScript*)script);
 	script->InitScript();
 }
 
 void ComponentScript::StartScript()
 {
+	App->script_importer->SetCurrentScript((CSScript*)script);
 	script->StartScript();
 }
 
 void ComponentScript::UpdateScript()
 {
+	App->script_importer->SetCurrentScript((CSScript*)script);
 	script->UpdateScript();
 }
 

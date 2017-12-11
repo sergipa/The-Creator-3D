@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace TheEngine.Console
+namespace TheEngine.TheConsole
 {
     public class TheConsole
     {
