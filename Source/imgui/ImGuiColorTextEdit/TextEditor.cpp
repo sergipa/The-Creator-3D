@@ -387,7 +387,7 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 	mWithinRender = true;
 
 	ImGuiIO& io = ImGui::GetIO();
-	auto xadv = (io.Fonts->Fonts[0]->IndexXAdvance['X']);
+	auto xadv = (io.Fonts->Fonts[0]->Glyphs[0].XAdvance/*XAdnvance['X']*/);
 	mCharAdvance = ImVec2(xadv, io.Fonts->Fonts[0]->FontSize + mLineSpacing);
 
 	ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImGui::GetStyle().Colors[ImGuiCol_FrameBg]);
@@ -583,8 +583,8 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 
 				if (!HasSelection())
 				{
-					auto start = ImVec2(lineStartScreenPos.x + scrollX, lineStartScreenPos.y);
-					auto end = ImVec2(start.x + contentSize.x + scrollX, start.y + mCharAdvance.y);
+					auto start = ImVec2(lineStartScreenPos.x + scrollX, lineStartScreenPos.y + 2);
+					auto end = ImVec2(start.x + contentSize.x + scrollX, start.y + mCharAdvance.y + 2);
 					drawList->AddRectFilled(start, end, focused ? 0x40000000 : 0x40808080);
 					drawList->AddRect(start, end, 0x40a0a0a0, 1.0f);
 				}
@@ -599,8 +599,8 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 					auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
 					if (elapsed > 400)
 					{
-						ImVec2 cstart(lineStartScreenPos.x + mCharAdvance.x * (cx + cTextStart), lineStartScreenPos.y);
-						ImVec2 cend(lineStartScreenPos.x + mCharAdvance.x * (cx + cTextStart) + (mOverwrite ? mCharAdvance.x : 1.0f), lineStartScreenPos.y + mCharAdvance.y);
+						ImVec2 cstart(lineStartScreenPos.x + mCharAdvance.x * (cx + cTextStart), lineStartScreenPos.y + 3);
+						ImVec2 cend(lineStartScreenPos.x + mCharAdvance.x * (cx + cTextStart) + (mOverwrite ? mCharAdvance.x : 1.0f), lineStartScreenPos.y + mCharAdvance.y + 3);
 						drawList->AddRectFilled(cstart, cend, 0xffe0e0e0); //CURSOR
 						if (elapsed > 800)
 							timeStart = timeEnd;
