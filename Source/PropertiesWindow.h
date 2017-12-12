@@ -8,6 +8,8 @@ class ComponentTransform;
 class ComponentCamera;
 class Component;
 class ComponentScript;
+class ComponentFactory;
+class GameObject;
 
 class PropertiesWindow :
 	public Window
@@ -22,5 +24,6 @@ public:
 	void DrawMeshRendererPanel(ComponentMeshRenderer* spriteRenderer);
 	void DrawCameraPanel(ComponentCamera* camera);
 	void DrawScriptPanel(ComponentScript* script);
+	void DrawFactoryPanel(ComponentFactory* factory);
 };
 

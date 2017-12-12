@@ -763,7 +763,7 @@ MonoObject* CSScript::AddComponent(MonoObject * object, MonoReflectionType * typ
 	}
 	else if (name == "TheEngine.TheFactory") comp_type = Component::CompTransform;
 
-	if (comp_type != Component::CompUnknown)
+	if (comp_type != Component::CompUnknown){}
 	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", comp_name);
 	if (c)
 	{

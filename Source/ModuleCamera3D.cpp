@@ -274,21 +274,26 @@ void ModuleCamera3D::MousePickRay(int mouse_x, int mouse_y)
 		}
 		if (closest_object != nullptr)
 		{
-			App->scene->selected_gameobjects.clear();
-			for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+			if (App->editor->scene_window->IsWindowFocused())
 			{
-				(*it)->SetSelected(false);
+				App->scene->selected_gameobjects.clear();
+				for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+				{
+					(*it)->SetSelected(false);
+				}
+				closest_object->SetSelected(true);
+				App->scene->selected_gameobjects.push_back(closest_object);
 			}
-			closest_object->SetSelected(true);
-			App->scene->selected_gameobjects.push_back(closest_object);
-
 		}
 		else//If clicks but doesn't intersect an object, remove selected objects
 		{
-			App->scene->selected_gameobjects.clear();
-			for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+			if (App->editor->scene_window->IsWindowFocused())
 			{
-				(*it)->SetSelected(false);
+				App->scene->selected_gameobjects.clear();
+				for (std::list<GameObject*>::iterator it = App->scene->scene_gameobjects.begin(); it != App->scene->scene_gameobjects.end(); it++)
+				{
+					(*it)->SetSelected(false);
+				}
 			}
 		}
 	}

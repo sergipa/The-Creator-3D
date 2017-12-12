@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "ModuleResources.h"
 #include "ComponentScript.h"
+#include "ComponentFactory.h"
 
 GameObject::GameObject(GameObject* parent)
 {
@@ -73,6 +74,9 @@ Component * GameObject::AddComponent(Component::ComponentType component_type)
 		components_list.push_back(component = new ComponentScript(this));
 		break;
 	case Component::CompParticleSystem:
+		break;
+	case Component::CompFactory:
+		components_list.push_back(component = new ComponentFactory(this));
 		break;
 	default:
 		break;

@@ -21,6 +21,10 @@ ComponentFactory::ComponentFactory(GameObject* attached_gameobject)
 			original_position = transform->GetGlobalPosition();
 		}
 	}
+
+	object_to_spawn = nullptr;
+	object_count = 0;
+	life_time = 0;
 }
 
 ComponentFactory::~ComponentFactory()
@@ -42,12 +46,6 @@ void ComponentFactory::SetFactoryObject(Prefab * gameobject)
 void ComponentFactory::SetObjectCount(int count)
 {
 	object_count = count;
-}
-
-void ComponentFactory::SetSpawnInterval(float interval)
-{
-	spawn_interval = interval;
-	spawn_timer = interval;
 }
 
 void ComponentFactory::SetSpawnPos(float3 position)
@@ -72,32 +70,25 @@ void ComponentFactory::SetLifeTime(float life_time)
 
 void ComponentFactory::Spawn()
 {
-	if (spawn_timer <= 0)
+	GameObject* go = spawn_objects_list.front()->GetRootGameObject();
+	if (go != nullptr)
 	{
-		GameObject* go = spawn_objects_list.front()->GetRootGameObject();
-		if (go != nullptr)
+		ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::CompTransform);
+		if (transform)
 		{
-			ComponentTransform* transform = (ComponentTransform*)go->GetComponent(Component::CompTransform);
-			if (transform)
-			{
-				transform->SetPosition(spawn_position);
-				transform->SetRotation(spawn_rotation);
-				transform->SetScale(spawn_scale);
-				go->SetActive(true);
-				spawned_objects[spawn_objects_list.front()] = life_time;
-			}
-			spawn_timer = spawn_interval;
-		}
-		else
-		{
-			CONSOLE_ERROR("Spawned GameObject from Factory component in %s", GetGameObject()->GetName());
+			transform->SetPosition(spawn_position);
+			transform->SetRotation(spawn_rotation);
+			transform->SetScale(spawn_scale);
+			go->SetActive(true);
+			spawned_objects[spawn_objects_list.front()] = life_time;
 		}
 	}
 	else
 	{
-		spawn_timer -= App->time->GetGameDt();
-		CheckLifeTimes();
+		CONSOLE_ERROR("Spawned GameObject from Factory component in %s", GetGameObject()->GetName());
 	}
+
+	CheckLifeTimes();
 }
 
 int ComponentFactory::GetCurrentCount() const
@@ -110,12 +101,7 @@ float ComponentFactory::GetLifeTime() const
 	return life_time;
 }
 
-float ComponentFactory::GetSpawnInterval() const
-{
-	return spawn_interval;
-}
-
-Prefab * ComponentFactory::GetObjectToSpawn() const
+Prefab * ComponentFactory::GetFactoryObject() const
 {
 	return object_to_spawn;
 }
@@ -138,11 +124,6 @@ float3 ComponentFactory::GetSpawnRotation() const
 float3 ComponentFactory::GetSpawnScale() const
 {
 	return spawn_scale;
-}
-
-float ComponentFactory::GetCurrentSpawnTimer() const
-{
-	return spawn_timer;
 }
 
 void ComponentFactory::StartFactory()
@@ -191,7 +172,6 @@ void ComponentFactory::Save(Data & data) const
 	data.AddVector3("Spawn_position", spawn_position);
 	data.AddVector3("Spawn_rotation", spawn_rotation);
 	data.AddVector3("Spawn_scale", spawn_scale);
-	data.AddInt("Spawn_interval", spawn_interval);
 	data.AddFloat("Life_time", life_time);
 	int object_uid = 0;
 	if (object_to_spawn)
@@ -207,7 +187,6 @@ void ComponentFactory::Load(Data & data)
 	spawn_position = data.GetVector3("Spawn_position");
 	spawn_rotation = data.GetVector3("Spawn_rotation");
 	spawn_scale = data.GetVector3("Spawn_scale");
-	spawn_interval = data.GetInt("Spawn_interval");
 	life_time = data.GetFloat("Life_time");
 	object_to_spawn = App->resources->GetPrefab(data.GetInt("Prefab_UID"));
 	if (!object_to_spawn)

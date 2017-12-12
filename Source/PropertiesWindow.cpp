@@ -17,6 +17,7 @@
 #include "Script.h"
 #include "CSScript.h"
 #include "ModuleResources.h"
+#include "ComponentFactory.h"
 
 PropertiesWindow::PropertiesWindow()
 {
@@ -105,6 +106,7 @@ void PropertiesWindow::DrawWindow()
 			if (ImGui::Button("Add Component")) {
 				ImGui::OpenPopup("Components");
 			}
+
 			if (ImGui::BeginPopup("Components"))
 			{
 				if (ImGui::MenuItem("Mesh Renderer")) {
@@ -150,19 +152,6 @@ void PropertiesWindow::DrawWindow()
 						}
 						ImGui::EndMenu();
 					}
-					/*else if (ImGui::MenuItem("Lua"))
-					{
-						for (std::map<uint, Script*>::iterator it = scripts.begin(); it != scripts.end(); it++)
-						{
-							if (it->second->GetScriptType() == Script::CsScript)
-							{
-								if (ImGui::MenuItem(it->second->GetName().c_str()))
-								{
-									script = it->second;
-								}
-							}
-						}
-					}*/
 
 					if (script != nullptr)
 					{
@@ -175,6 +164,19 @@ void PropertiesWindow::DrawWindow()
 					}
 					ImGui::EndMenu();
 				}
+
+				if (ImGui::BeginMenu("New Factory")) {
+					static char input_text[30];
+					ImGui::InputText("Factory Name", input_text, 30);
+					ImGui::Spacing();
+					if (ImGui::Button("Create"))
+					{
+						ComponentFactory* factory = (ComponentFactory*)selected_gameobject->AddComponent(Component::CompFactory);
+						if (factory) factory->SetName(input_text);
+					}
+					ImGui::EndMenu();
+				}
+
 				ImGui::EndPopup();
 			}
 		}
@@ -210,6 +212,9 @@ void PropertiesWindow::DrawComponent(Component * component)
 		DrawScriptPanel((ComponentScript*)component);
 		break;
 	case Component::CompParticleSystem:
+		break;
+	case Component::CompFactory:
+		DrawFactoryPanel((ComponentFactory*)component);
 		break;
 	default:
 		break;
@@ -519,6 +524,24 @@ void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 			case ScriptField::Audio:
 				break;
 			}
+		}
+	}
+}
+
+void PropertiesWindow::DrawFactoryPanel(ComponentFactory * factory)
+{
+	if (ImGui::CollapsingHeader(factory->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		Prefab* prefab = factory->GetFactoryObject();
+		if(ImGui::InputResourcePrefab("Factory Object", &prefab))
+		{
+			factory->SetFactoryObject(prefab);
+		}
+
+		int count = factory->GetObjectCount();
+		if (ImGui::InputInt("Object Count", &count))
+		{
+			factory->SetObjectCount(count);
 		}
 	}
 }
