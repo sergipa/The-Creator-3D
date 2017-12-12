@@ -74,12 +74,10 @@ void TextEditorWindow::DrawWindow()
 		}
 		ImGui::EndMenuBar();
 
-		ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, editor.GetTotalLines(),
-			editor.IsOverwrite() ? "Ovr" : "Ins",
-			editor.CanUndo() ? "*" : " ",
-			editor.GetLanguageDefinition().mName.c_str(), path.c_str());
-
-		editor.Render("TextEditor");
+		ImGuiIO& io = ImGui::GetIO();
+		ImGui::PushFont(io.Fonts->Fonts[1]);
+		editor.Render("Render...");
+		ImGui::PopFont();
 	}
 	ImGui::EndDock();
 }
