@@ -495,6 +495,7 @@
     <ClInclude Include="ModuleScriptImporter.h">
       <Filter>Sources\Modules\Importers</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -815,6 +816,7 @@
     <ClCompile Include="ModuleScriptImporter.cpp">
       <Filter>Sources\Modules\Importers</Filter>
     </ClCompile>
+    <ClCompile Include="ComponentFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MathGeoLib\Geometry\KDTree.inl">

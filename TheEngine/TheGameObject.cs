@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace TheEngine
 {
@@ -52,23 +51,16 @@ namespace TheEngine
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern TheGameObject Duplicate(TheGameObject original);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void Destroy(TheGameObject target);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetParent(TheGameObject new_parent);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern TheGameObject GetSelf();
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern TheComponent GetComponent(Type type);
-
-        public T GetComponent<T>() where T : TheComponent
-        {
-            return GetComponent(typeof(T)) as T;
-        }
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern TheComponent AddComponent(Type type);
-
-        public T AddComponent<T>() where T : TheComponent
-        {
-            return AddComponent(typeof(T)) as T;
-        }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern TheGameObject GetChild(int index);

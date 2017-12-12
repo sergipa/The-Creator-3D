@@ -749,7 +749,22 @@ MonoObject* CSScript::AddComponent(MonoObject * object, MonoReflectionType * typ
 	MonoType* t = mono_reflection_type_get_type(type);
 	std::string name = mono_type_get_name(t);
 
-	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheTransform");
+	const char* comp_name = "";
+
+	if (name == "TheEngine.TheTransform")
+	{
+		comp_name = "TheTransform";
+	}
+
+	Component::ComponentType comp_type = Component::CompUnknown;
+	if (name == "TheEngine.TheTransform")
+	{
+		CONSOLE_ERROR("Can't add Transform component to %s. GameObjects cannot have more than 1 transform.", active_gameobject->GetName().c_str());
+	}
+	else if (name == "TheEngine.TheFactory") comp_type = Component::CompTransform;
+
+	if (comp_type != Component::CompUnknown)
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", comp_name);
 	if (c)
 	{
 		MonoObject* new_object = mono_object_new(mono_domain, c);
@@ -758,11 +773,8 @@ MonoObject* CSScript::AddComponent(MonoObject * object, MonoReflectionType * typ
 			return new_object;
 		}
 	}
-	return nullptr;
 
-	Component::ComponentType comp_type = Component::CompUnknown;
-	if (name == "TheEngine.TheTransform") CONSOLE_ERROR("Can't add Transform component to %s. GameObjects cannot have more than 1 transform.", active_gameobject->GetName().c_str());
-	//else if (name == )
+	
 
 	if (comp_type != Component::CompUnknown)
 	{
@@ -785,19 +797,23 @@ MonoObject* CSScript::GetComponent(MonoObject * object, MonoReflectionType * typ
 	MonoType* t = mono_reflection_type_get_type(type);
 	std::string name = mono_type_get_name(t);
 
+	const char* comp_name = "";
+
 	if (name == "TheEngine.TheTransform")
 	{
-		MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheTransform");
-		if (c)
-		{
-			MonoObject* new_object = mono_object_new(mono_domain, c);
-			if (new_object)
-			{
-				return new_object;
-			}
-		}
-		return nullptr;
+		comp_name = "TheTransform";
 	}
+
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", comp_name);
+	if (c)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, c);
+		if (new_object)
+		{
+			return new_object;
+		}
+	}
+	return nullptr;
 }
 
 void CSScript::SetPosition(MonoObject * object, MonoObject * vector3)
