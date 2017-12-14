@@ -45,9 +45,6 @@ void TextEditorWindow::DrawWindow()
 		if (ImGui::BeginMenu("Edit"))
 		{
 			bool ro = editor.IsReadOnly();
-			if (ImGui::MenuItem("Read-only mode", nullptr, &ro))
-				editor.SetReadOnly(ro);
-			ImGui::Separator();
 
 			if (ImGui::MenuItem("Undo", nullptr, !ro && editor.CanUndo()))
 				editor.Undo();

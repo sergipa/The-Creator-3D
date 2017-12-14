@@ -462,18 +462,33 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 
 			if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_DOWN)
 			{
-				Undo(1);
+				Undo();
 			}
 
 			if (App->input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
 			{
-				Redo(1);
+				Redo();
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
+			{
+				SetSelection(Coordinates(),Coordinates(GetTotalLines(), 0));
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_HOME) == KEY_DOWN)
+			{
+				MoveTop(shift);
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_END) == KEY_DOWN)
+			{
+				MoveBottom(shift);
 			}
 		}
 		//Delete + Backspace
 		if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 		{
-			BackSpace();
+			Delete();
 		}
 		if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
 		{
@@ -483,27 +498,54 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 		//Arrows
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 		{
-			MoveRight(1);
+			MoveRight();
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 		{
-			MoveLeft(1);
+			MoveLeft();
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 		{
-			MoveUp(1);
+			MoveUp();
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 		{
-			MoveDown(1);
+			MoveDown();
 		}
-		//
+		//Enter
 		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 		{
 			EnterCharacter('\n');
+		}
+		//
+		//Page,home,etc...
+		if (App->input->GetKey(SDL_SCANCODE_PAGEDOWN) == KEY_DOWN)
+		{
+			MoveDown(GetPageSize() - 4, shift);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_PAGEUP) == KEY_DOWN)
+		{
+			MoveUp(GetPageSize() - 4, shift);
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_HOME) == KEY_DOWN)
+		{
+			MoveHome(shift);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_END) == KEY_DOWN)
+		{
+			MoveEnd(shift);
+		}
+		//
+		if (App->input->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN)
+		{
+			EnterCharacter(' ');
+			EnterCharacter(' ');
+			EnterCharacter(' ');
+			EnterCharacter(' ');
 		}
 		if (!IsReadOnly())
 		{
@@ -519,19 +561,19 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 						EnterCharacter((char)c);
 						if (c == '[')
 						{
-							auto coord = GetActualCursorCoordinates();
+							Coordinates coord = GetActualCursorCoordinates();
 							EnterCharacter(']');
 							mState.mCursorPosition = Coordinates(coord.mLine, coord.mColumn);
 						}
 						if (c == '{')
 						{
-							auto coord = GetActualCursorCoordinates();
+							Coordinates coord = GetActualCursorCoordinates();
 							EnterCharacter('}');
 							mState.mCursorPosition = Coordinates(coord.mLine, coord.mColumn);
 						}
 						if (c == '"')
 						{
-							auto coord = GetActualCursorCoordinates();
+							Coordinates coord = GetActualCursorCoordinates();
 							EnterCharacter('"');
 							mState.mCursorPosition = Coordinates(coord.mLine, coord.mColumn);
 						}
