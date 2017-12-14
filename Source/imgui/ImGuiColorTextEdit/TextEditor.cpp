@@ -501,6 +501,10 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 			MoveDown(1);
 		}
 		//
+		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+		{
+			EnterCharacter('\n');
+		}
 		if (!IsReadOnly())
 		{
 			for (size_t i = 0; i < sizeof(io.InputCharacters) / sizeof(io.InputCharacters[0]); i++)
@@ -1343,6 +1347,8 @@ const TextEditor::Palette & TextEditor::GetDarkPalette()
 		0x40000000, // Current line fill
 		0x40808080, // Current line fill (inactive)
 		0x40a0a0a0, // Current line edge
+		0xff2052ff, // Classes
+
 	};
 	return p;
 }
@@ -1371,6 +1377,7 @@ const TextEditor::Palette & TextEditor::GetLightPalette()
 		0x40000000, // Current line fill
 		0x40808080, // Current line fill (inactive)
 		0x40000000, // Current line edge
+		0xffff0c06, // Classes
 	};
 	return p;
 }
@@ -1443,6 +1450,8 @@ void TextEditor::ColorizeRange(int aFromLine, int aToLine)
 								color = PaletteIndex::KnownIdentifier;
 							else if (mLanguageDefinition.mPreprocIdentifiers.find(id) != mLanguageDefinition.mPreprocIdentifiers.end())
 								color = PaletteIndex::PreprocIdentifier;
+							else if (mLanguageDefinition.mClasses.find(id) != mLanguageDefinition.mClasses.end())
+								color = PaletteIndex::Classes;
 						}
 						else
 						{
@@ -2060,6 +2069,13 @@ TextEditor::LanguageDefinition TextEditor::LanguageDefinition::CSharp()
 			"fixed","float","for","foreach","goto","if","implicit","in","int","interace","internal","is","lock","long","namescape","new","null","object","operator","out","override","params","private","protected","public",
 			"readonly","ref","return","sbyte","sealed","short","sizeof","stackalloc","static","string","struct","switch","this","throw","true","try","typeof","uint","ulong","unchecked","unsafe","ushort","using","using static","virtual","void","volatile","while"
 		};
+
+		static const char* const csharpClasses[] = {
+			"Math","TheComponent","TheConsole","TheFactory","TheGameObject","TheInput","TheQuaternion","TheTransform","TheVector3",
+		};
+		for (auto& k : csharpClasses)
+			langDef.mClasses.insert(k);
+
 		for (auto& k : csharpKeywords)
 			langDef.mKeywords.insert(k);
 

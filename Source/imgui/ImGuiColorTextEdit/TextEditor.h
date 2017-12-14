@@ -36,6 +36,7 @@ public:
 		CurrentLineFill,
 		CurrentLineFillInactive,
 		CurrentLineEdge,
+		Classes,
 		Max
 	};
 
@@ -114,6 +115,7 @@ public:
 	typedef std::string String;
 	typedef std::unordered_map<std::string, Identifier> Identifiers;
 	typedef std::unordered_set<std::string> Keywords;
+	typedef std::unordered_set<std::string> Classes;
 	typedef std::map<int, std::string> ErrorMarkers;
 	typedef std::unordered_set<int> Breakpoints;
 	typedef std::array<ImU32, (unsigned)PaletteIndex::Max> Palette;
@@ -140,6 +142,7 @@ public:
 		Keywords mKeywords;
 		Identifiers mIdentifiers;
 		Identifiers mPreprocIdentifiers;
+		Classes mClasses;
 		std::string mCommentStart, mCommentEnd;
 
 		TokenRegexStrings mTokenRegexStrings;
