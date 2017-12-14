@@ -395,7 +395,6 @@ void ModuleRenderer3D::DrawMesh(ComponentMeshRenderer * mesh)
 
 	glEnable(GL_COLOR_MATERIAL);
 
-	mesh->GetGameObject()->UpdateGlobalMatrix();
 }
 
 void ModuleRenderer3D::AddMeshToDraw(ComponentMeshRenderer * mesh)

@@ -213,18 +213,34 @@ MonoClass* ModuleScriptImporter::DumpClassInfo(MonoImage * image, std::string& c
 void ModuleScriptImporter::RegisterAPI()
 {
 	//GAMEOBJECT
+	mono_add_internal_call("TheEngine.TheGameObject::CreateNewGameObject", (const void*)CreateGameObject);
 	mono_add_internal_call("TheEngine.TheGameObject::SetName", (const void*)SetGameObjectName);
 	mono_add_internal_call("TheEngine.TheGameObject::GetName", (const void*)GetGameObjectName);
 	mono_add_internal_call("TheEngine.TheGameObject::SetActive", (const void*)SetGameObjectActive);
 	mono_add_internal_call("TheEngine.TheGameObject::IsActive", (const void*)GetGameObjectIsActive);
-	mono_add_internal_call("TheEngine.TheGameObject::CreateNewGameObject", (const void*)CreateGameObject);
-	mono_add_internal_call("TheEngine.TheGameObject::GetSelf", (const void*)SetSelfGameObject);
+	mono_add_internal_call("TheEngine.TheGameObject::SetTag", (const void*)SetGameObjectTag);
+	mono_add_internal_call("TheEngine.TheGameObject::GetTag", (const void*)GetGameObjectTag);
+	mono_add_internal_call("TheEngine.TheGameObject::SetLayer", (const void*)SetGameObjectLayer);
+	mono_add_internal_call("TheEngine.TheGameObject::GetLayer", (const void*)GetGameObjectLayer);
+	mono_add_internal_call("TheEngine.TheGameObject::SetStatic", (const void*)SetGameObjectStatic);
+	mono_add_internal_call("TheEngine.TheGameObject::IsStatic", (const void*)GameObjectIsStatic);
+	mono_add_internal_call("TheEngine.TheGameObject::Duplicate", (const void*)DuplicateGameObject);
+	mono_add_internal_call("TheEngine.TheGameObject::SetParent", (const void*)SetGameObjectParent);
+	mono_add_internal_call("TheEngine.TheGameObject::GetSelf", (const void*)GetSelfGameObject);
+	mono_add_internal_call("TheEngine.TheGameObject::GetChild(int)", (const void*)GetGameObjectChild);
+	mono_add_internal_call("TheEngine.TheGameObject::GetChild(string)", (const void*)GetGameObjectChildString);
+	mono_add_internal_call("TheEngine.TheGameObject::GetChildCount", (const void*)GetGameObjectChildCount);
 	mono_add_internal_call("TheEngine.TheGameObject::AddComponent", (const void*)AddComponent);
 	mono_add_internal_call("TheEngine.TheGameObject::GetComponent", (const void*)GetComponent);
 
 	//TRANSFORM
 	mono_add_internal_call("TheEngine.TheTransform::SetPosition", (const void*)SetPosition);
 	mono_add_internal_call("TheEngine.TheTransform::GetPosition", (const void*)GetPosition);
+	mono_add_internal_call("TheEngine.TheTransform::SetRotation", (const void*)SetRotation);
+	mono_add_internal_call("TheEngine.TheTransform::GetRotation", (const void*)GetRotation);
+	mono_add_internal_call("TheEngine.TheTransform::SetScale", (const void*)SetScale);
+	mono_add_internal_call("TheEngine.TheTransform::GetScale", (const void*)GetScale);
+	mono_add_internal_call("TheEngine.TheTransform::LookAt", (const void*)LookAt);
 
 	//INPUT
 	mono_add_internal_call("TheEngine.TheInput::IsKeyDown", (const void*)IsKeyDown);
@@ -233,6 +249,7 @@ void ModuleScriptImporter::RegisterAPI()
 	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonDown", (const void*)IsMouseDown);
 	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonUp", (const void*)IsMouseUp);
 	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonRepeat", (const void*)IsMouseRepeat);
+	mono_add_internal_call("TheEngine.TheInput::GetMousePosition", (const void*)GetMousePosition);
 
 	//CONSOLE
 	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Log", (const void*)Log);
@@ -240,7 +257,7 @@ void ModuleScriptImporter::RegisterAPI()
 	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Error", (const void*)Error);
 }
 
-void ModuleScriptImporter::SetGameObjectName(MonoObject * object, MonoString * name, MonoObject * object2)
+void ModuleScriptImporter::SetGameObjectName(MonoObject * object, MonoString * name)
 {
 	current_script->SetGameObjectName(object, name);
 }
@@ -257,7 +274,7 @@ void ModuleScriptImporter::SetGameObjectActive(MonoObject * object, mono_bool ac
 
 mono_bool ModuleScriptImporter::GetGameObjectIsActive(MonoObject * object)
 {
-	return current_script->GetGameObjectActive(object);
+	return current_script->GetGameObjectIsActive(object);
 }
 
 void ModuleScriptImporter::CreateGameObject(MonoObject * object)
@@ -265,9 +282,9 @@ void ModuleScriptImporter::CreateGameObject(MonoObject * object)
 	current_script->CreateGameObject(object);
 }
 
-MonoObject* ModuleScriptImporter::SetSelfGameObject()
+MonoObject* ModuleScriptImporter::GetSelfGameObject()
 {
-	return current_script->SetSelfGameObject();
+	return current_script->GetSelfGameObject();
 }
 
 void ModuleScriptImporter::SetGameObjectTag(MonoObject * object, MonoString * name)
@@ -285,7 +302,7 @@ void ModuleScriptImporter::SetGameObjectLayer(MonoObject * object, MonoString * 
 	current_script->SetGameObjectLayer(object, layer);
 }
 
-MonoString * ModuleScriptImporter::GetGameObjectLayerName(MonoObject * object)
+MonoString * ModuleScriptImporter::GetGameObjectLayer(MonoObject * object)
 {
 	return current_script->GetGameObjectLayer(object);
 }
@@ -298,6 +315,31 @@ void ModuleScriptImporter::SetGameObjectStatic(MonoObject * object, mono_bool va
 mono_bool ModuleScriptImporter::GameObjectIsStatic(MonoObject * object)
 {
 	return current_script->GameObjectIsStatic(object);
+}
+
+MonoObject * ModuleScriptImporter::DuplicateGameObject(MonoObject * object)
+{
+	return current_script->DuplicateGameObject(object);
+}
+
+void ModuleScriptImporter::SetGameObjectParent(MonoObject * object, MonoObject * parent)
+{
+	current_script->SetGameObjectParent(object, parent);
+}
+
+MonoObject * ModuleScriptImporter::GetGameObjectChild(MonoObject * object, int index)
+{
+	return current_script->GetGameObjectChild(object, index);
+}
+
+MonoObject * ModuleScriptImporter::GetGameObjectChildString(MonoObject * object, MonoString * name)
+{
+	return current_script->GetGameObjectChildString(object, name);
+}
+
+int ModuleScriptImporter::GetGameObjectChildCount(MonoObject * object)
+{
+	return current_script->GetGameObjectChildCount(object);
 }
 
 MonoObject* ModuleScriptImporter::AddComponent(MonoObject * object, MonoReflectionType* type)
@@ -315,9 +357,34 @@ void ModuleScriptImporter::SetPosition(MonoObject * object, MonoObject * vector3
 	current_script->SetPosition(object, vector3);
 }
 
-MonoObject* ModuleScriptImporter::GetPosition(MonoObject * object)
+MonoObject* ModuleScriptImporter::GetPosition(MonoObject * object, mono_bool is_global)
 {
-	return current_script->GetPosition(object);
+	return current_script->GetPosition(object, is_global);
+}
+
+void ModuleScriptImporter::SetRotation(MonoObject * object, MonoObject * vector)
+{
+	current_script->SetRotation(object, vector);
+}
+
+MonoObject * ModuleScriptImporter::GetRotation(MonoObject * object, mono_bool is_global)
+{
+	return current_script->GetRotation(object, is_global);
+}
+
+void ModuleScriptImporter::SetScale(MonoObject * object, MonoObject * vector)
+{
+	current_script->SetScale(object, vector);
+}
+
+MonoObject * ModuleScriptImporter::GetScale(MonoObject * object, mono_bool is_global)
+{
+	return current_script->GetScale(object, is_global);
+}
+
+void ModuleScriptImporter::LookAt(MonoObject * object, MonoObject * vector)
+{
+	current_script->LookAt(object, vector);
 }
 
 mono_bool ModuleScriptImporter::IsKeyDown(MonoString * key_name)
@@ -348,6 +415,11 @@ mono_bool ModuleScriptImporter::IsMouseUp(int mouse_button)
 mono_bool ModuleScriptImporter::IsMouseRepeat(int mouse_button)
 {
 	return current_script->IsMouseRepeat(mouse_button);
+}
+
+MonoObject * ModuleScriptImporter::GetMousePosition()
+{
+	return current_script->GetMousePosition();
 }
 
 void ModuleScriptImporter::Log(MonoObject * object)

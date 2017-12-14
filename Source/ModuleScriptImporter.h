@@ -33,24 +33,36 @@ private:
 	void RegisterAPI();
 
 	//GAMEOBJECT
-	static void SetGameObjectName(MonoObject * object, MonoString* name, MonoObject * object2);
+	static void SetGameObjectName(MonoObject * object, MonoString* name);
 	static MonoString* GetGameObjectName(MonoObject* object);
 	static void CreateGameObject(MonoObject * object);
-	static MonoObject* SetSelfGameObject();
+	static MonoObject* GetSelfGameObject();
 	static void SetGameObjectActive(MonoObject * object, mono_bool active);
 	static mono_bool GetGameObjectIsActive(MonoObject* object);
 	static void SetGameObjectTag(MonoObject * object, MonoString* tag);
 	static MonoString* GetGameObjectTag(MonoObject* object);
 	static void SetGameObjectLayer(MonoObject * object, MonoString* layer);
-	static MonoString* GetGameObjectLayerName(MonoObject* object);
+	static MonoString* GetGameObjectLayer(MonoObject* object);
 	static void SetGameObjectStatic(MonoObject * object, mono_bool value);
 	static mono_bool GameObjectIsStatic(MonoObject* object);
+	static MonoObject* DuplicateGameObject(MonoObject* object);
+	static void SetGameObjectParent(MonoObject* object, MonoObject* parent);
+	static MonoObject* GetGameObjectChild(MonoObject* object, int index);
+	static MonoObject* GetGameObjectChildString(MonoObject* object, MonoString* name);
+	static int GetGameObjectChildCount(MonoObject* object);
+
+	//COMPONENT
 	static MonoObject* AddComponent(MonoObject* object, MonoReflectionType* type);
 	static MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 
 	//TRANSFORM
-	static void SetPosition(MonoObject * object, MonoObject * object2);
-	static MonoObject* GetPosition(MonoObject* object);
+	static void SetPosition(MonoObject * object, MonoObject * vector);
+	static MonoObject* GetPosition(MonoObject* object, mono_bool is_global);
+	static void SetRotation(MonoObject * object, MonoObject * vector);
+	static MonoObject* GetRotation(MonoObject* object, mono_bool is_global);
+	static void SetScale(MonoObject * object, MonoObject * vector);
+	static MonoObject* GetScale(MonoObject* object, mono_bool is_global);
+	static void LookAt(MonoObject * object, MonoObject * vector);
 
 	//INPUT
 	static mono_bool IsKeyDown(MonoString * key_name);
@@ -59,6 +71,7 @@ private:
 	static mono_bool IsMouseDown(int mouse_button);
 	static mono_bool IsMouseUp(int mouse_button);
 	static mono_bool IsMouseRepeat(int mouse_button);
+	static MonoObject* GetMousePosition();
 
 	//CONSOLE
 	static void Log(MonoObject* object);

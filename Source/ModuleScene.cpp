@@ -170,6 +170,15 @@ update_status ModuleScene::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
+update_status ModuleScene::PostUpdate(float dt)
+{
+	for (std::list<GameObject*>::iterator it = scene_gameobjects.begin(); it != scene_gameobjects.end(); it++)
+	{
+		(*it)->UpdateGlobalMatrix();
+	}
+	return UPDATE_CONTINUE;
+}
+
 // Update
 update_status ModuleScene::Update(float dt)
 {

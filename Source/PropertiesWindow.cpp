@@ -414,13 +414,7 @@ void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 			App->scene->selected_gameobjects.front()->DestroyComponent(comp_script);
 		}
 
-		Script* script = comp_script->GetScript();
-		if (ImGui::InputResourceScript("Script", &script))
-		{
-			comp_script->SetScript(script);
-		}
-
-		std::vector<ScriptField*> script_fields = script->GetScriptFields();
+		std::vector<ScriptField*> script_fields = comp_script->GetScriptFields();
 
 		for (std::vector<ScriptField*>::iterator it = script_fields.begin(); it != script_fields.end(); it++)
 		{
@@ -542,6 +536,12 @@ void PropertiesWindow::DrawFactoryPanel(ComponentFactory * factory)
 		if (ImGui::InputInt("Object Count", &count))
 		{
 			factory->SetObjectCount(count);
+		}
+
+		float life_time = factory->GetLifeTime();
+		if (ImGui::DragFloat("Life Time", &life_time, true, 0.025f, 0))
+		{
+			factory->SetLifeTime(life_time);
 		}
 	}
 }

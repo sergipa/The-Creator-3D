@@ -285,8 +285,14 @@ void CSScript::SetGameObjectProperty(const char * propertyName, GameObject * val
 	MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
 	if (field)
 	{
-		void* params = &value;
+		MonoClass* gameobject = mono_type_get_class(mono_field_get_type(field));
+		MonoObject* object;
+		MonoReflectionField* o = mono_field_get_object(mono_domain, gameobject, field);
+		
+		//MonoObject* new_object = mono_object_new(mono_domain, gameobject);
+		void* params = value;
 		mono_field_set_value(mono_object, field, params);
+		//created_gameobjects[new_object] = value;
 	}
 }
 
@@ -628,6 +634,7 @@ void CSScript::SetGameObjectName(MonoObject * object, MonoString* name)
 	{
 		const char* new_name = mono_string_to_utf8(name);
 		active_gameobject->SetName(new_name);
+		App->scene->RenameDuplicatedGameObject(active_gameobject);
 	}
 }
 
@@ -734,6 +741,140 @@ mono_bool CSScript::GameObjectIsStatic(MonoObject * object)
 	return active_gameobject->IsStatic();
 }
 
+MonoObject * CSScript::DuplicateGameObject(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+	GameObject* duplicated = App->scene->DuplicateGameObject(active_gameobject);
+	if (duplicated)
+	{
+		MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheGameObject");
+		if (c)
+		{
+			MonoObject* new_object = mono_object_new(mono_domain, c);
+			if (new_object)
+			{
+				created_gameobjects[new_object] = duplicated;
+				return new_object;
+			}
+		}
+	}
+	
+	return nullptr;
+}
+
+void CSScript::SetGameObjectParent(MonoObject * object, MonoObject * parent)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+
+	GameObject* go_parent = created_gameobjects[parent];
+	if (go_parent != nullptr)
+	{
+		active_gameobject->SetParent(go_parent);
+	}
+}
+
+MonoObject * CSScript::GetGameObjectChild(MonoObject * object, int index)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+
+	if (index >= 0 && index < active_gameobject->childs.size())
+	{
+		std::list<GameObject*>::iterator it = std::next(active_gameobject->childs.begin(), index);
+		if (*it)
+		{
+			MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheGameObject");
+			if (c)
+			{
+				MonoObject* new_object = mono_object_new(mono_domain, c);
+				if (new_object)
+				{
+					created_gameobjects[new_object] = *it;
+					return new_object;
+				}
+			}
+		}
+	}
+	else
+	{
+		mono_raise_exception(mono_get_exception_argument_out_of_range(NULL));
+	}
+	
+	return nullptr;
+}
+
+MonoObject * CSScript::GetGameObjectChildString(MonoObject * object, MonoString * name)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+
+	const char* s_name = mono_string_to_utf8(name);
+
+	for (std::list<GameObject*>::iterator it = active_gameobject->childs.begin(); it != active_gameobject->childs.end(); it++)
+	{
+		if (*it != nullptr && (*it)->GetName() == s_name)
+		{
+			MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheGameObject");
+			if (c)
+			{
+				MonoObject* new_object = mono_object_new(mono_domain, c);
+				if (new_object)
+				{
+					created_gameobjects[new_object] = *it;
+					return new_object;
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+int CSScript::GetGameObjectChildCount(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return -1;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return -1;
+	}
+
+	return active_gameobject->childs.size();
+}
+
 MonoObject* CSScript::AddComponent(MonoObject * object, MonoReflectionType * type)
 {
 	if (!MonoObjectIsValid(object))
@@ -763,22 +904,19 @@ MonoObject* CSScript::AddComponent(MonoObject * object, MonoReflectionType * typ
 	}
 	else if (name == "TheEngine.TheFactory") comp_type = Component::CompTransform;
 
-	if (comp_type != Component::CompUnknown){}
-	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", comp_name);
-	if (c)
-	{
-		MonoObject* new_object = mono_object_new(mono_domain, c);
-		if (new_object)
-		{
-			return new_object;
-		}
-	}
-
-	
-
 	if (comp_type != Component::CompUnknown)
 	{
 		active_gameobject->AddComponent(comp_type);
+
+		MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", comp_name);
+		if (c)
+		{
+			MonoObject* new_object = mono_object_new(mono_domain, c);
+			if (new_object)
+			{
+				return new_object;
+			}
+		}
 	}
 }
 
@@ -837,14 +975,13 @@ void CSScript::SetPosition(MonoObject * object, MonoObject * vector3)
 	transform->SetPosition(new_pos);
 }
 
-MonoObject* CSScript::GetPosition(MonoObject * object)
+MonoObject* CSScript::GetPosition(MonoObject * object, mono_bool is_global)
 {
 	if (!GameObjectIsValid())
 	{
 		return nullptr;
 	}
-	MonoString* str = mono_object_to_string(object, nullptr);
-	const char* message = mono_string_to_utf8(str);
+
 	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheVector3");
 	if (c)
 	{
@@ -856,7 +993,15 @@ MonoObject* CSScript::GetPosition(MonoObject * object)
 			MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
 
 			ComponentTransform* transform = (ComponentTransform*)active_gameobject->GetComponent(Component::CompTransform);
-			float3 new_pos = transform->GetGlobalPosition();
+			float3 new_pos;
+			if (is_global)
+			{
+				new_pos = transform->GetGlobalPosition();
+			}
+			else
+			{
+				new_pos = transform->GetLocalPosition();
+			}
 
 			if (x_field) mono_field_set_value(new_object, x_field, &new_pos.x);
 			if (y_field) mono_field_set_value(new_object, y_field, &new_pos.y);
@@ -868,6 +1013,128 @@ MonoObject* CSScript::GetPosition(MonoObject * object)
 	return nullptr;
 }
 
+void CSScript::SetRotation(MonoObject * object, MonoObject * vector3)
+{
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+	MonoClass* c = mono_object_get_class(vector3);
+	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+	MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+	float3 new_rot;
+
+	if (x_field) mono_field_get_value(vector3, x_field, &new_rot.x);
+	if (y_field) mono_field_get_value(vector3, y_field, &new_rot.y);
+	if (z_field) mono_field_get_value(vector3, z_field, &new_rot.z);
+
+	ComponentTransform* transform = (ComponentTransform*)active_gameobject->GetComponent(Component::CompTransform);
+	transform->SetRotation(new_rot);
+}
+
+MonoObject * CSScript::GetRotation(MonoObject * object, mono_bool is_global)
+{
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheVector3");
+	if (c)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, c);
+		if (new_object)
+		{
+			MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+			MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+			MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+			ComponentTransform* transform = (ComponentTransform*)active_gameobject->GetComponent(Component::CompTransform);
+			float3 new_rot;
+			if (is_global)
+			{
+				new_rot = transform->GetGlobalPosition();
+			}
+			else
+			{
+				new_rot = transform->GetLocalPosition();
+			}
+
+			if (x_field) mono_field_set_value(new_object, x_field, &new_rot.x);
+			if (y_field) mono_field_set_value(new_object, y_field, &new_rot.y);
+			if (z_field) mono_field_set_value(new_object, z_field, &new_rot.z);
+
+			return new_object;
+		}
+	}
+	return nullptr;
+}
+
+void CSScript::SetScale(MonoObject * object, MonoObject * vector3)
+{
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+	MonoClass* c = mono_object_get_class(vector3);
+	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+	MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+	float3 new_scale;
+
+	if (x_field) mono_field_get_value(vector3, x_field, &new_scale.x);
+	if (y_field) mono_field_get_value(vector3, y_field, &new_scale.y);
+	if (z_field) mono_field_get_value(vector3, z_field, &new_scale.z);
+
+	ComponentTransform* transform = (ComponentTransform*)active_gameobject->GetComponent(Component::CompTransform);
+	transform->SetScale(new_scale);
+}
+
+MonoObject * CSScript::GetScale(MonoObject * object, mono_bool is_global)
+{
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheVector3");
+	if (c)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, c);
+		if (new_object)
+		{
+			MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+			MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+			MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+			ComponentTransform* transform = (ComponentTransform*)active_gameobject->GetComponent(Component::CompTransform);
+			float3 new_scale;
+			if (is_global)
+			{
+				new_scale = transform->GetGlobalPosition();
+			}
+			else
+			{
+				new_scale = transform->GetLocalPosition();
+			}
+
+			if (x_field) mono_field_set_value(new_object, x_field, &new_scale.x);
+			if (y_field) mono_field_set_value(new_object, y_field, &new_scale.y);
+			if (z_field) mono_field_set_value(new_object, z_field, &new_scale.z);
+
+			return new_object;
+		}
+	}
+	return nullptr;
+}
+
+void CSScript::LookAt(MonoObject * object, MonoObject * vector)
+{
+}
+
 mono_bool CSScript::IsKeyDown(MonoString * key_name)
 {
 	bool ret = false;
@@ -875,7 +1142,7 @@ mono_bool CSScript::IsKeyDown(MonoString * key_name)
 	SDL_Keycode code = App->input->StringToKey(key);
 	if (code != SDL_SCANCODE_UNKNOWN)
 	{
-		if (App->input->GetKey(App->input->StringToKey(key) == KEY_REPEAT)) ret = true;
+		if (App->input->GetKey(code) == KEY_DOWN) ret = true;
 	}
 	else
 	{
@@ -892,7 +1159,7 @@ mono_bool CSScript::IsKeyUp(MonoString * key_name)
 	SDL_Keycode code = App->input->StringToKey(key);
 	if (code != SDL_SCANCODE_UNKNOWN)
 	{
-		if (App->input->GetKey(App->input->StringToKey(key) == KEY_REPEAT)) ret = true;
+		if (App->input->GetKey(code) == KEY_UP) ret = true;
 	}
 	else
 	{
@@ -909,7 +1176,7 @@ mono_bool CSScript::IsKeyRepeat(MonoString * key_name)
 	SDL_Keycode code = App->input->StringToKey(key);
 	if (code != SDL_SCANCODE_UNKNOWN)
 	{
-		if (App->input->GetKey(App->input->StringToKey(key) == KEY_REPEAT)) ret = true;
+		if (App->input->GetKey(code) == KEY_REPEAT) ret = true;
 	}
 	else
 	{
@@ -922,7 +1189,7 @@ mono_bool CSScript::IsKeyRepeat(MonoString * key_name)
 mono_bool CSScript::IsMouseDown(int mouse_button)
 {
 	bool ret = false;
-	if (mouse_button >= 0 && mouse_button < 4)
+	if (mouse_button > 0 && mouse_button < 4)
 	{
 		if (App->input->GetMouseButton(mouse_button) == KEY_DOWN) ret = true;
 	}
@@ -964,6 +1231,31 @@ mono_bool CSScript::IsMouseRepeat(int mouse_button)
 	return ret;
 }
 
+MonoObject * CSScript::GetMousePosition()
+{
+	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheVector3");
+	if (c)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, c);
+		if (new_object)
+		{
+			MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+			MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+			MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+			float mouse_x = App->input->GetMouseX();
+			float mouse_y = App->input->GetMouseY();
+
+			if (x_field) mono_field_set_value(new_object, x_field, &mouse_x);
+			if (y_field) mono_field_set_value(new_object, y_field, &mouse_y);
+			if (z_field) mono_field_set_value(new_object, z_field, 0);
+
+			return new_object;
+		}
+	}
+	return nullptr;
+}
+
 void CSScript::CreateGameObject(MonoObject * object)
 {
 	if (!inside_function)
@@ -975,7 +1267,7 @@ void CSScript::CreateGameObject(MonoObject * object)
 	created_gameobjects[object] = gameobject;
 }
 
-MonoObject* CSScript::SetSelfGameObject()
+MonoObject* CSScript::GetSelfGameObject()
 {
 	if (!GameObjectIsValid())
 	{
@@ -1004,7 +1296,7 @@ void CSScript::SetGameObjectActive(MonoObject * object, mono_bool active)
 	active_gameobject->SetActive(active);
 }
 
-bool CSScript::GetGameObjectActive(MonoObject * object)
+mono_bool CSScript::GetGameObjectIsActive(MonoObject * object)
 {
 	if (!MonoObjectIsValid(object))
 	{
@@ -1084,8 +1376,6 @@ bool CSScript::MonoObjectIsValid(MonoObject* object)
 {
 	if (object != nullptr)
 	{
-		/*if (!modifying_self) 
-		else modifying_self = false;*/
 		active_gameobject = created_gameobjects[object];
 		return true;
 	}

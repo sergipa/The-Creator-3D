@@ -4,11 +4,11 @@ namespace TheEngine
 {
     public class TheTransform : TheComponent
     {
-        public TheVector3 Position
+        public TheVector3 LocalPosition
         {
             get
             {
-                return GetPosition();
+                return GetPosition(false);
             }
             set
             {
@@ -16,52 +16,86 @@ namespace TheEngine
             }
         }
 
-        public TheQuaternion Rotation
+        public TheVector3 LocalRotation
         {
             get
             {
-                GetRotation(out TheQuaternion ret);
-                return ret;
+                return GetRotation(false);
             }
             set
             {
-                SetRotation(ref value);
+                SetRotation(value);
             }
         }
 
-        public TheVector3 Scale
+        public TheVector3 LocalScale
         {
             get
             {
-                GetScale(out TheVector3 ret);
-                return ret;
+                return GetScale(false);
             }
             set
             {
-                SetScale(ref value);
+                SetScale(value);
+            }
+        }
+
+        public TheVector3 GlobalPosition
+        {
+            get
+            {
+                return GetPosition(true);
+            }
+            set
+            {
+                SetPosition(value);
+            }
+        }
+
+        public TheVector3 GlobalRotation
+        {
+            get
+            {
+                return GetRotation(true);
+            }
+            set
+            {
+                SetRotation(value);
+            }
+        }
+
+        public TheVector3 GlobalScale
+        {
+            get
+            {
+                return GetScale(true);
+            }
+            set
+            {
+                SetScale(value);
             }
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern TheVector3 GetPosition();
+        private extern TheVector3 GetPosition(bool is_global);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void SetPosition(TheVector3 value);
+        private extern void SetPosition(TheVector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern void GetRotation(out TheQuaternion value);
+        private extern TheVector3 GetRotation(bool is_global);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern void SetRotation(ref TheQuaternion value);
+        private extern void SetRotation(TheVector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern void GetScale(out TheVector3 value);
+        private extern TheVector3 GetScale(bool is_global);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        private extern void SetScale(ref TheVector3 value);
+        private extern void SetScale(TheVector3 value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void LookAt(ref TheVector3 value);
+        public extern void LookAt(TheVector3 value);
 
     }
 }

@@ -52,7 +52,7 @@ Script * ComponentScript::GetScript() const
 
 std::vector<ScriptField*> ComponentScript::GetScriptFields() const
 {
-	return script_fields;
+	return script->GetScriptFields();
 }
 
 void ComponentScript::UpdateScriptFields()

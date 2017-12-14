@@ -57,32 +57,45 @@ public:
 	void SetClassName(std::string class_name);
 
 	//GAMEOBJECT
-	void CreateGameObject(MonoObject * object);
 	void SetGameObjectName(MonoObject * object, MonoString* name);
 	MonoString* GetGameObjectName(MonoObject* object);
-	MonoObject* SetSelfGameObject();
-	void SetGameObjectActive(MonoObject* object, mono_bool active);
-	bool GetGameObjectActive(MonoObject* object);
+	void CreateGameObject(MonoObject * object);
+	MonoObject* GetSelfGameObject();
+	void SetGameObjectActive(MonoObject * object, mono_bool active);
+	mono_bool GetGameObjectIsActive(MonoObject* object);
 	void SetGameObjectTag(MonoObject * object, MonoString* tag);
 	MonoString* GetGameObjectTag(MonoObject* object);
 	void SetGameObjectLayer(MonoObject * object, MonoString* layer);
 	MonoString* GetGameObjectLayer(MonoObject* object);
 	void SetGameObjectStatic(MonoObject * object, mono_bool value);
 	mono_bool GameObjectIsStatic(MonoObject* object);
+	MonoObject* DuplicateGameObject(MonoObject* object);
+	void SetGameObjectParent(MonoObject* object, MonoObject* parent);
+	MonoObject* GetGameObjectChild(MonoObject* object, int index);
+	MonoObject* GetGameObjectChildString(MonoObject* object, MonoString* name);
+	int GetGameObjectChildCount(MonoObject* object);
+
+	//COMPONENT
 	MonoObject* AddComponent(MonoObject* object, MonoReflectionType* type);
 	MonoObject* GetComponent(MonoObject* object, MonoReflectionType* type);
 
 	//TRANSFORM
 	void SetPosition(MonoObject * object, MonoObject * vector3);
-	MonoObject* GetPosition(MonoObject* object);
+	MonoObject* GetPosition(MonoObject* object, mono_bool is_global);
+	void SetRotation(MonoObject * object, MonoObject * vector3);
+	MonoObject* GetRotation(MonoObject* object, mono_bool is_global);
+	void SetScale(MonoObject * object, MonoObject * vector3);
+	MonoObject* GetScale(MonoObject* object, mono_bool is_global);
+	void LookAt(MonoObject * object, MonoObject * vector3);
 
 	//INPUT
-	mono_bool IsKeyDown(MonoString* key_name);
+	mono_bool IsKeyDown(MonoString * key_name);
 	mono_bool IsKeyUp(MonoString* key_name);
 	mono_bool IsKeyRepeat(MonoString* key_name);
 	mono_bool IsMouseDown(int mouse_button);
 	mono_bool IsMouseUp(int mouse_button);
 	mono_bool IsMouseRepeat(int mouse_button);
+	MonoObject* GetMousePosition();
 
 private:
 	MonoMethod* GetFunction(const char* functionName, int parameters);

@@ -68,7 +68,7 @@ void ComponentFactory::SetLifeTime(float life_time)
 	this->life_time = life_time;
 }
 
-void ComponentFactory::Spawn()
+GameObject* ComponentFactory::Spawn()
 {
 	GameObject* go = spawn_objects_list.front()->GetRootGameObject();
 	if (go != nullptr)
@@ -85,10 +85,12 @@ void ComponentFactory::Spawn()
 	}
 	else
 	{
-		CONSOLE_ERROR("Spawned GameObject from Factory component in %s", GetGameObject()->GetName());
+		CONSOLE_ERROR("Spawned GameObject from Factory component in %s is null", GetGameObject()->GetName());
 	}
 
 	CheckLifeTimes();
+
+	return go;
 }
 
 int ComponentFactory::GetCurrentCount() const

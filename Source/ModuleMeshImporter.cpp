@@ -128,13 +128,23 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 	}
 	else
 	{
+		/*for (int i = node->mNumMeshes; i > 0; i--)
+		{
+			node->mMeshes[i]
+			for (int i = node->mNumMeshes; i > 0; i--)
+			{
+
+			}
+		}*/
 		for (int i = 0; i < node->mNumMeshes; i++)
 		{
 			bool mesh_created = true; //If node have more than 1 mesh and last mesh returned false, we need to reset the return for the new mesh.
 
 			aiMesh* ai_mesh = scene.mMeshes[node->mMeshes[i]];
 			Mesh* mesh = new Mesh();
-			mesh->SetName((std::string)node->mName.C_Str());
+			std::string mesh_name = (std::string)node->mName.C_Str();
+			if (i > 0) mesh_name += "_" + std::to_string(i);
+			mesh->SetName(mesh_name);
 			mesh->num_vertices = ai_mesh->mNumVertices;
 			mesh->vertices = new float[mesh->num_vertices * 3];
 			memcpy(mesh->vertices, ai_mesh->mVertices, sizeof(float) * mesh->num_vertices * 3);

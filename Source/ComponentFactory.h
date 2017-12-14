@@ -20,7 +20,7 @@ public:
 	void SetSpawnRotation(float3 rotation);
 	void SetSpawnScale(float3 scale);
 	void SetLifeTime(float life_time);
-	void Spawn();
+	GameObject* Spawn();
 	int GetCurrentCount() const;
 	float GetLifeTime() const;
 	Prefab* GetFactoryObject() const;
