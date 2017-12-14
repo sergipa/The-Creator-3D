@@ -517,6 +517,24 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 						if (c == '\r')
 							c = '\n';
 						EnterCharacter((char)c);
+						if (c == '[')
+						{
+							auto coord = GetActualCursorCoordinates();
+							EnterCharacter(']');
+							mState.mCursorPosition = Coordinates(coord.mLine, coord.mColumn);
+						}
+						if (c == '{')
+						{
+							auto coord = GetActualCursorCoordinates();
+							EnterCharacter('}');
+							mState.mCursorPosition = Coordinates(coord.mLine, coord.mColumn);
+						}
+						if (c == '"')
+						{
+							auto coord = GetActualCursorCoordinates();
+							EnterCharacter('"');
+							mState.mCursorPosition = Coordinates(coord.mLine, coord.mColumn);
+						}
 					}
 				}
 			}
@@ -1326,10 +1344,10 @@ void TextEditor::Redo(int aSteps)
 const TextEditor::Palette & TextEditor::GetDarkPalette()
 {
 	static Palette p = {
-		0xffffffff,	// None
+		0xffffffff,	// Default
 		0xffd69c56,	// Keyword	
 		0xff00ff00,	// Number
-		0xff7070e0,	// String
+		0xff2092dd,	// String
 		0xff70a0e0, // Char literal
 		0xffffffff, // Punctuation
 		0xff409090,	// Preprocessor
@@ -1347,7 +1365,7 @@ const TextEditor::Palette & TextEditor::GetDarkPalette()
 		0x40000000, // Current line fill
 		0x40808080, // Current line fill (inactive)
 		0x40a0a0a0, // Current line edge
-		0xff2052ff, // Classes
+		0xffaabb00, // Classes
 
 	};
 	return p;
@@ -1356,10 +1374,10 @@ const TextEditor::Palette & TextEditor::GetDarkPalette()
 const TextEditor::Palette & TextEditor::GetLightPalette()
 {
 	static Palette p = {
-		0xff000000,	// None
+		0xff000000,	// Default
 		0xffff0c06,	// Keyword	
-		0xff008000,	// Number
-		0xff2020a0,	// String
+		0xff000000,	// Number
+		0xff2092dd,	// String
 		0xff304070, // Char literal
 		0xff000000, // Punctuation
 		0xff409090,	// Preprocessor
@@ -1377,7 +1395,7 @@ const TextEditor::Palette & TextEditor::GetLightPalette()
 		0x40000000, // Current line fill
 		0x40808080, // Current line fill (inactive)
 		0x40000000, // Current line edge
-		0xffff0c06, // Classes
+		0xffaabb00, // Classes
 	};
 	return p;
 }
