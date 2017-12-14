@@ -128,7 +128,7 @@ void ModuleResources::ImportFile(std::string path)
 			exist = true;
 			break;
 		}
-		App->file_system->Copy_File(path, ASSETS_TEXTURES_FOLDER + file_name);
+		App->file_system->Copy(path, ASSETS_TEXTURES_FOLDER + file_name);
 		path = ASSETS_TEXTURES_FOLDER + file_name;
 		break;
 	case Resource::MeshResource:
@@ -138,7 +138,7 @@ void ModuleResources::ImportFile(std::string path)
 			exist = true;
 			break;
 		}
-		App->file_system->Copy_File(path, ASSETS_FBX_FOLDER + file_name);
+		App->file_system->Copy(path, ASSETS_FBX_FOLDER + file_name);
 		path = ASSETS_FBX_FOLDER + file_name;
 		break;
 	case Resource::SceneResource:
@@ -152,7 +152,7 @@ void ModuleResources::ImportFile(std::string path)
 			exist = true;
 			break;
 		}
-		App->file_system->Copy_File(path, ASSETS_PREFABS_FOLDER + file_name);
+		App->file_system->Copy(path, ASSETS_PREFABS_FOLDER + file_name);
 		path = ASSETS_PREFABS_FOLDER + file_name;
 		break;
 	case Resource::ScriptResource:
@@ -639,6 +639,7 @@ void ModuleResources::CreateResource(std::string file_path)
 	std::string library_path;
 	if (AssetExtensionToResourceType(extension) == Resource::ResourceType::Unknown) return;
 	Resource* resource = nullptr;
+
 	if (HasMetaFile(file_path))
 	{
 		Data data;
@@ -651,6 +652,16 @@ void ModuleResources::CreateResource(std::string file_path)
 				if (extension == ".fbx" || extension == ".FBX") type = Resource::MeshResource;
 				library_path = CreateLibraryFile(type, file_path);
 			}
+			else
+			{
+				if (extension == ".cs")
+				{
+					if (App->file_system->CompareFilesTime(file_path, library_path))
+					{
+						App->script_importer->ImportScript(file_path);
+					}
+				}
+			}
 			resource = CreateResourceFromLibrary(library_path);
 			if (resource != nullptr)
 			{
@@ -661,6 +672,13 @@ void ModuleResources::CreateResource(std::string file_path)
 	else if (GetLibraryFile(file_path) != "")
 	{
 		std::string path = GetLibraryFile(file_path);
+		if (extension == ".cs")
+		{
+			if (App->file_system->CompareFilesTime(file_path, library_path))
+			{
+				App->script_importer->ImportScript(file_path);
+			}
+		}
 		resource = CreateResourceFromLibrary(path);
 		if (resource != nullptr)
 		{

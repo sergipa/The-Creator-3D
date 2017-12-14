@@ -2,6 +2,8 @@
 #include "Module.h"
 #include <string>
 #include <vector>
+#include <experimental\filesystem>
+namespace fs = std::experimental::filesystem;
 
 class ModuleFileSystem :
 	public Module
@@ -24,7 +26,7 @@ public:
 
 	bool FileExist(std::string file_path);
 	bool Delete_File(std::string file_path);
-	bool Copy_File(std::string old_path, std::string new_path);
+	void Copy(std::string old_path, std::string new_path);
 	std::string GetFileName(std::string file_path);
 	std::string GetFileNameWithoutExtension(std::string file_path);
 	std::string GetFileExtension(std::string file_path);
@@ -35,6 +37,9 @@ public:
 	bool FileExistInDirectory(std::string file_name, std::string directory_path, bool search_subdirectories);
 	std::string ChangeFileExtension(std::string file_path, std::string new_extension);
 	std::string GetFullPath(std::string file_name);
+	//Returns true if file1 time is greater than file2 time
+	bool CompareFilesTime(std::string file1_path, std::string file2_path);
+	fs::file_time_type GetModifiedTime(std::string file_path);
 
 	std::string StringToPathFormat(std::string path);
 };

@@ -60,13 +60,7 @@ void AssetsWindow::DrawWindow()
 
 		if (ImGui::IsMouseClicked(1) && ImGui::IsMouseHoveringWindow()) {
 			ImGui::SetNextWindowPos(ImGui::GetMousePos());
-			show_folder_options = true;
-			show_file_options = false;
-			show_files_window_options = false;
-		}
-
-		if (show_folder_options)
-		{
+			ImGui::CloseCurrentPopup();
 			ImGui::OpenPopup("Folder Options");
 		}
 
@@ -202,9 +196,6 @@ void AssetsWindow::DrawWindow()
 									ImGui::SetNextWindowPos(ImGui::GetMousePos());
 									ImGui::CloseCurrentPopup();
 									ImGui::OpenPopup("File Options");
-									show_file_options = true;
-									show_files_window_options = false;
-									show_folder_options = false;
 								}
 							}
 						}
@@ -218,11 +209,10 @@ void AssetsWindow::DrawWindow()
 				}
 			}
 
-			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(1) && !asset_hovered && !show_file_options)
+			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(1) && !asset_hovered)
 			{
-				show_files_window_options = true;
-				show_file_options = false;
-				show_folder_options = false;
+				ImGui::CloseCurrentPopup();
+				ImGui::OpenPopup("Files Window Options");
 			}
 
 			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && !asset_hovered)
@@ -235,16 +225,6 @@ void AssetsWindow::DrawWindow()
 			if (ImGui::IsMouseHoveringWindow() && !ImGui::IsAnyItemHovered())
 			{
 				asset_hovered = false;
-			}
-
-			/*if (show_file_options)
-			{
-				ImGui::OpenPopup("File Options");
-			}*/
-
-			if (show_files_window_options)
-			{
-				ImGui::OpenPopup("Files Window Options");
 			}
 
 			if (ImGui::BeginPopup("File Options"))

@@ -92,11 +92,9 @@ std::string ModuleScriptImporter::ImportScript(std::string path)
 	{
 		if (App->file_system->FileExist(TMP_FOLDER + script_name + ".dll"))
 		{
-			if (App->file_system->Copy_File(TMP_FOLDER + script_name + ".dll", LIBRARY_SCRIPTS_FOLDER + script_name + ".dll"))
-			{
-				App->file_system->Delete_File(TMP_FOLDER + script_name + ".dll");
-				ret = LIBRARY_SCRIPTS_FOLDER + script_name + ".dll";
-			}
+			App->file_system->Copy(TMP_FOLDER + script_name + ".dll", LIBRARY_SCRIPTS_FOLDER + script_name + ".dll");
+			App->file_system->Delete_File(TMP_FOLDER + script_name + ".dll");
+			ret = LIBRARY_SCRIPTS_FOLDER + script_name + ".dll";
 		}
 	}
 

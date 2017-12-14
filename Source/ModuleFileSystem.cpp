@@ -1,6 +1,4 @@
 #include "ModuleFileSystem.h"
-#include <experimental\filesystem>
-namespace fs = std::experimental::filesystem;
 
 #include "Resource.h"
 
@@ -107,9 +105,9 @@ bool ModuleFileSystem::Delete_File(std::string file_path)
 	return fs::remove(file_path);
 }
 
-bool ModuleFileSystem::Copy_File(std::string old_path, std::string new_path)
+void ModuleFileSystem::Copy(std::string old_path, std::string new_path)
 {
-	return fs::copy_file(old_path, new_path, fs::copy_options::overwrite_existing);
+	fs::copy(old_path, new_path, fs::copy_options::overwrite_existing);
 }
 
 std::string ModuleFileSystem::GetFileName(std::string file_path)
@@ -226,6 +224,18 @@ std::string ModuleFileSystem::GetFullPath(std::string file_name)
 	fs::path path(file_name);
 	fs::path full_path = fs::system_complete(path);
 	return full_path.string();
+}
+
+bool ModuleFileSystem::CompareFilesTime(std::string file1_path, std::string file2_path)
+{
+	if (GetModifiedTime(file1_path) > GetModifiedTime(file2_path)) return true;
+	return false;
+}
+
+fs::file_time_type ModuleFileSystem::GetModifiedTime(std::string file_path)
+{
+	fs::file_time_type time = fs::last_write_time(file_path);
+	return time;
 }
 
 std::string ModuleFileSystem::StringToPathFormat(std::string path)
