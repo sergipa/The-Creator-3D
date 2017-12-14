@@ -200,6 +200,8 @@ void AssetsWindow::DrawWindow()
 								App->scene->selected_gameobjects.clear();
 								if (ImGui::IsMouseClicked(1)) {
 									ImGui::SetNextWindowPos(ImGui::GetMousePos());
+									ImGui::CloseCurrentPopup();
+									ImGui::OpenPopup("File Options");
 									show_file_options = true;
 									show_files_window_options = false;
 									show_folder_options = false;
@@ -235,10 +237,10 @@ void AssetsWindow::DrawWindow()
 				asset_hovered = false;
 			}
 
-			if (show_file_options)
+			/*if (show_file_options)
 			{
 				ImGui::OpenPopup("File Options");
-			}
+			}*/
 
 			if (show_files_window_options)
 			{

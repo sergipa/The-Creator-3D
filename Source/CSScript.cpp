@@ -265,62 +265,24 @@ std::string CSScript::GetStringProperty(const char * propertyName)
 
 void CSScript::SetGameObjectProperty(const char * propertyName, GameObject * value)
 {
-	/*MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
-	
-	if (field)
-	{
-		MonoClass* gameobject = mono_type_get_class(mono_field_get_type(field));
-		MonoObject* new_object = mono_object_new(domain, gameobject);
-		MonoClassField* this_field = mono_class_get_field_from_name(gameobject, "this");
-		
-		if (this_field)
-		{
-			void* params = value;
-			mono_field_set_value(new_object, this_field, params);
-
-			mono_field_set_value(object, field, new_object);
-		}
-	}*/
-
 	MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
 	if (field)
 	{
-		MonoClass* gameobject = mono_type_get_class(mono_field_get_type(field));
-		MonoObject* object;
-		MonoReflectionField* o = mono_field_get_object(mono_domain, gameobject, field);
-		
-		//MonoObject* new_object = mono_object_new(mono_domain, gameobject);
+		MonoObject* last_object = mono_field_get_value_object(mono_domain, field, mono_object);
+		if (last_object)
+		{
+			std::map<MonoObject*, GameObject*>::iterator it = created_gameobjects.find(last_object);
+			created_gameobjects.erase(it);
+		}
 		void* params = value;
 		mono_field_set_value(mono_object, field, params);
-		//created_gameobjects[new_object] = value;
+		MonoObject* object = mono_field_get_value_object(mono_domain, field, mono_object);
+		created_gameobjects[object] = value;
 	}
 }
 
 GameObject * CSScript::GetGameObjectProperty(const char * propertyName)
 {
-	/*GameObject* gameobject = nullptr;
-
-	MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
-
-	if (field)
-	{
-		MonoObject* mono_object = nullptr;
-		mono_field_get_value(object, field, &mono_object);
-		
-		if (mono_object != nullptr)
-		{
-			MonoClass* object_class = mono_object_get_class(mono_object);
-			field = mono_class_get_field_from_name(object_class, "this");
-			
-			if (field)
-			{
-				mono_field_get_value(mono_object, field, &gameobject);
-			}
-		}
-	}
-
-	return gameobject;*/
-
 	GameObject* value = nullptr;
 	MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
 	if (field)
