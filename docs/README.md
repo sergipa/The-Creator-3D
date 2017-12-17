@@ -10,7 +10,7 @@ Sergi Pérez:
 
 ## Engine Core
 
-Docking UI: The UI is structured in docks, the user may change the layout by dragging each window.
+* Docking UI: The UI is structured in docks, the user may change the layout by dragging each window.
 
 * Gameobject+Component structure: GameObjects follow a hierarchical structure, inheriting the transform matrix of their parent. To add functionality to this GameObjects, components are used. As an example: A GameObject needs a MeshRenderer component, in order to be rendered, or a Camera component, if we want the object to be a camera.
 
@@ -41,7 +41,7 @@ Script Example on Scene:
 ![SceneGif](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/SceneGif.gif)
 
 ## Download & Repository
-Here you can find a link to the latest release [here](https://github.com/sergipa/The-Creator-3D/releases)
+[Here](https://github.com/sergipa/The-Creator-3D/releases) you can find a link to the latest release 
 
 You can check the repository [here](https://github.com/sergipa/The-Creator-3D/)
 
