@@ -34,6 +34,11 @@ To implement scripting with C# in our engine we are using Mono. To make the scri
 
 We also implemented a TextEditor, so the user is able to edit and create scripts within the editor.
 
+TextEditor:
+![TextEditor](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/EditorGif.gif)
+
+Script Example on Scene:
+![SceneGif](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/SceneGif.gif)
 
 ## Download & Repository
 Here you can find a link to the latest release [here](https://github.com/sergipa/The-Creator-3D/releases)
