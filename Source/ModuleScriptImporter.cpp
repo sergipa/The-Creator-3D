@@ -86,7 +86,7 @@ std::string ModuleScriptImporter::ImportScript(std::string path)
 	
 	if (CompileScript(path) != 0)
 	{
-		CONSOLE_ERROR("Can't compile %s", path.c_str());
+		CONSOLE_ERROR("Can't compile %s. Please check for code errors.", path.c_str());
 	}
 
 	return ret;

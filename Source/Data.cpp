@@ -257,6 +257,18 @@ void Data::ClearData()
 {
 	data_names.clear();
 	data_values.clear();
+
+	in_section_names.clear();
+	in_section_names.clear();
+	sections_open = 0;
+	current_index = 0;
+	last_index.clear();
+	last_index_name.clear();
+
+	out_section_names.clear();
+	out_section_values.clear();
+
+	getting_from_section = false;
 }
 
 void Data::CreateSection(std::string sectionName)

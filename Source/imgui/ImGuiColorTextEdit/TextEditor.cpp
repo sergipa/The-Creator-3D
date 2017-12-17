@@ -540,7 +540,7 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 			MoveEnd(shift);
 		}
 		//
-		if (App->input->GetKey(SDL_SCANCODE_TAB) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN)
 		{
 			EnterCharacter(' ');
 			EnterCharacter(' ');

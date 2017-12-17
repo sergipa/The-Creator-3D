@@ -421,6 +421,17 @@ void ModuleScene::LoadScene(std::string path)
 				}
 			}
 		}
+		data.ClearData();
+		if (data.LoadBinary(path)) {
+			std::list<GameObject*>::iterator it = scene_gameobjects.begin();
+			for (int i = 0; i < gameObjectsCount; i++) {
+				data.EnterSection("GameObject_" + std::to_string(i));
+				GameObject* game_object = *it;
+				game_object->Load(data);
+				data.LeaveSection();
+				it++;
+			}
+		}
 		saving_index = 0;
 	}
 	else
