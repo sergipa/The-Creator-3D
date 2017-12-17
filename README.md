@@ -5,16 +5,9 @@
 The Creator 3D is a 3D engine made for educational purposes. This is an early version of the engine, the engine is subject to change.
 
 ## Usage
+At this point, the usage of the engine is pretty intuitive. 
 
-Download the latest release available, which may be found here: https://github.com/sergipa/The-Creator-3D/releases
-
-Execute the engine, there is no formal installation process.
-
-The engine contains FBX files and textures for testing purposes. To open an FBX you have to search it in the assets folder(bottom left), right click and press Load to scene.
-
-You can rotate the camera by holding Mouse-Right Click, you may use W A S D to move it. While holding Shift the camera will move faster. The camera controls can be remapped.
-
-On the top bar of the engine you will find different options to check the Performance, check system information, or change some of the settings of the engine (Window size, rendering options, editor style...)
+The controls try to mimic the ones of Unity. 
 
 ## License
 
