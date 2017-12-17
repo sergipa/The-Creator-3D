@@ -1844,7 +1844,7 @@ bool CSScript::Load(Data & data)
 		}
 		data.LeaveSection();
 	}
-
+	GetScriptFields();
 	return ret;
 }
 

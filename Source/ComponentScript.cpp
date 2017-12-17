@@ -95,6 +95,7 @@ void ComponentScript::Save(Data & data) const
 	data.CreateSection("Script");
 	if (script)
 	{
+		GetScriptFields();
 		script->FillSavingData();
 		script->Save(data);
 	}
