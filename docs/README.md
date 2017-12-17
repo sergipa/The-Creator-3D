@@ -4,9 +4,9 @@ The Creator 3D is a 3D engine. It's been created for educational purposes by vid
 
 ![TeamImage](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/FotoGrup.png)
 
-Adrià Martín:
+Adrià Martín: Adrià has worked on: Console, Editor, Data(JSON, Binary), Hardware Window, Improvements on many Windows, GameObjects + Components structure, Rendering(A lot of work here), Resource Management(Assets, scenes, etc...), Editor and Game Camera, Play/Pause/Stop, Skybox, Mono implementation, Scripting, Bugfixing.
 
-Sergi Pérez:
+Sergi Pérez: Sergi has worked on: First implementation of ImGui, Appveyor, Performance Window, Config Window, Primitives, Importing information, Control remapping, Transformation Component, GameTimer(Independent dt for game modules, etc...), Guizmo, Mouse Picking, Engine Text/Script editor implementation, Website, Bugfixing.
 
 ## Engine Core
 
