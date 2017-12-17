@@ -2,7 +2,7 @@
 #include "Light.h"
 #include "OpenGL.h"
 
-Light::Light() : ref(-1), on(false), position(0.0f, 0.0f, 0.0f)
+Light::Light() : ref(-1), on(false), position(0.0f, 0.0f, 0.0f, 0.0f)
 {}
 
 void Light::Init()
@@ -17,13 +17,14 @@ void Light::SetPos(float x, float y, float z, float w)
 	position.x = x;
 	position.y = y;
 	position.z = z;
+	position.w = w;
 }
 
 void Light::Render()
 {
 	if(on)
 	{
-		float pos[] = {position.x, position.y, position.z, 0.0f};
+		float pos[] = {position.x, position.y, position.z, position.w};
 		glLightfv(ref, GL_POSITION, pos);
 	}
 }

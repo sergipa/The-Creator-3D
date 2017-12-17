@@ -6,7 +6,6 @@
 #include "Prefab.h"
 #include "ModuleResources.h"
 #include "ModuleScene.h"
-#include "OpenGL.h"
 
 ComponentFactory::ComponentFactory(GameObject* attached_gameobject)
 {
