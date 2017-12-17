@@ -674,7 +674,7 @@ void ModuleResources::CreateResource(std::string file_path)
 		std::string path = GetLibraryFile(file_path);
 		if (extension == ".cs")
 		{
-			if (App->file_system->CompareFilesTime(file_path, library_path))
+			if (App->file_system->CompareFilesTime(file_path, path))
 			{
 				App->script_importer->ImportScript(file_path);
 			}

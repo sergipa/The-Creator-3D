@@ -1,4 +1,5 @@
-﻿
+﻿using System.Runtime.CompilerServices;
+
 namespace TheEngine
 {
     public class TheQuaternion
@@ -167,6 +168,15 @@ namespace TheEngine
             angle *= 2;
         }
 
+        public static TheQuaternion LookRotation(TheVector3 direction)
+        {
+            TheVector3 up = TheVector3.Up;
+            return lookRotation(direction, up);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        private static extern TheQuaternion lookRotation(TheVector3 direction, TheVector3 up);
+
         public float Length
         {
             get
@@ -239,16 +249,49 @@ namespace TheEngine
         public static TheQuaternion operator *(TheQuaternion a, TheQuaternion b)
         {
             return new TheQuaternion(
-                a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,
-                a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
-                a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x,
-                a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w
+                a.x * b.w + a.y * b.z - a.z * b.y + a.w * b.x,
+                a.x * b.z + a.y * b.w + a.z * b.x + a.w * b.y,
+                a.x * b.y - a.y * b.x + a.z * b.w + a.w * b.z,
+                a.x * b.x - a.y * b.y - a.z * b.z + a.w * b.w
             );
         }
 
         public static TheQuaternion operator *(TheQuaternion a, float value)
         {
             return new TheQuaternion(a.x * value, a.y * value, a.z * value, a.w * value);
+        }
+
+        public static TheVector3 operator *(TheQuaternion rotation, TheVector3 point)
+        {
+            //float num = rotation.x * 2f;
+            //float num2 = rotation.y * 2f;
+            //float num3 = rotation.z * 2f;
+            //float num4 = rotation.x * num;
+            //float num5 = rotation.y * num2;
+            //float num6 = rotation.z * num3;
+            //float num7 = rotation.x * num2;
+            //float num8 = rotation.x * num3;
+            //float num9 = rotation.y * num3;
+            //float num10 = rotation.w * num;
+            //float num11 = rotation.w * num2;
+            //float num12 = rotation.w * num3;
+            //TheVector3 result = new TheVector3();
+            //result.x = (1f - (num5 + num6)) * point.x + (num7 - num12) * point.y + (num8 + num11) * point.z;
+            //result.y = (num7 + num12) * point.x + (1f - (num4 + num6)) * point.y + (num9 - num10) * point.z;
+            //result.z = (num8 - num11) * point.x + (num9 + num10) * point.y + (1f - (num4 + num5)) * point.z;
+            //return result;
+            // Extract the vector part of the quaternion
+            TheVector3 u = new TheVector3(rotation.x, rotation.y, rotation.z);
+
+            // Extract the scalar part of the quaternion
+            float s = rotation.w;
+
+            // Do the math
+            TheVector3 vprime = 2.0f * TheVector3.DotProduct(u, point) * u
+                  + (s * s - TheVector3.DotProduct(u, u)) * point
+                  + 2.0f * s * TheVector3.CrossProduct(u, point);
+
+            return vprime;
         }
 
         public static TheQuaternion operator /(TheQuaternion a, float value)

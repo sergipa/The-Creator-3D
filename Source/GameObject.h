@@ -54,6 +54,8 @@ public:
 	void StartScripts();
 	void UpdateScripts();
 
+	void UpdateFactory();
+
 	void Destroy();
 	void OnDestroy();
 
@@ -68,6 +70,7 @@ public:
 	std::list<GameObject*> childs;
 	std::list<Component*> components_list;
 	bool is_on_destroy;
+	bool used_in_scene;
 
 private:
 	bool active;

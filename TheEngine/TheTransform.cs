@@ -76,6 +76,14 @@ namespace TheEngine
             }
         }
 
+        public TheVector3 ForwardDirection
+        {
+            get
+            {
+                return GlobalRotation.ToQuaternion() * TheVector3.Forward;
+            }
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall)]
         private extern TheVector3 GetPosition(bool is_global);
 

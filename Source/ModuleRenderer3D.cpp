@@ -402,6 +402,13 @@ void ModuleRenderer3D::AddMeshToDraw(ComponentMeshRenderer * mesh)
 	dynamic_mesh_to_draw.push_back(mesh);
 }
 
+void ModuleRenderer3D::ResetRender()
+{
+	dynamic_mesh_to_draw.clear();
+	debug_primitive_to_draw.clear();
+	rendering_cameras.clear();
+}
+
 // Called before quitting
 bool ModuleRenderer3D::CleanUp()
 {

@@ -50,6 +50,7 @@ void HierarchyWindow::DrawWindow()
 					if (ImGui::MenuItem("Rename")) {
 						show_rename_window = true;
 						gameobject_to_rename = App->scene->selected_gameobjects.front();
+						rename_window_y = ImGui::GetMousePos().y;
 					}
 					if (ImGui::MenuItem("Create Child")) {
 						GameObject* parent = nullptr;
@@ -116,6 +117,16 @@ void HierarchyWindow::DrawWindow()
 		for (std::list<GameObject*>::iterator it = App->scene->root_gameobjects.begin(); it != App->scene->root_gameobjects.end(); it++) {
 			DrawSceneGameObjects(*it);
 		}
+
+		if (ImGui::IsMouseReleased(0) && ImGui::IsMouseHoveringWindow() && !ImGui::IsAnyItemHovered() && App->editor->drag_data->hasData && 
+			App->editor->drag_data->fromPanel == "Hierarchy")
+		{
+			GameObject* go = (GameObject*)App->editor->drag_data->resource;
+			if (go)
+			{
+				go->SetParent(nullptr);
+			}
+		}
 	}
 
 	ImGui::EndDock();
@@ -160,7 +171,7 @@ void HierarchyWindow::DrawSceneGameObjects(GameObject * gameObject)
 void HierarchyWindow::IsMouseOver(GameObject * gameObject)
 {
 	if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)) {
-		if (ImGui::IsItemHoveredRect())
+		if (ImGui::IsItemRectHovered())
 		{
 			std::list<GameObject*>::iterator it;
 
@@ -192,17 +203,38 @@ void HierarchyWindow::IsMouseOver(GameObject * gameObject)
 	{
 		if (ImGui::IsItemHoveredRect())
 		{
-			if (!show_rename_error) {
-				show_rename_error = true;
+			if (!show_rename_window) {
+				show_rename_window = true;
 				rename_window_y = ImGui::GetMousePos().y;
 			}
 		}
 	}
 
-	if (ImGui::IsMouseDragging() && App->scene->selected_gameobjects.size() == 1 && ImGui::IsItemHoveredRect())
+	if (App->input->IsMouseDragging(SDL_BUTTON_LEFT) && App->scene->selected_gameobjects.size() == 1 && ImGui::IsItemHoveredRect() && !App->editor->drag_data->hasData)
 	{
 		App->editor->drag_data->fromPanel = "Hierarchy";
 		App->editor->drag_data->hasData = true;
-		App->editor->drag_data->resource = (Resource*)App->scene->selected_gameobjects.front();
+		App->editor->drag_data->resource = (Resource*)gameObject;
+	}
+
+	if (App->editor->drag_data->hasData && ImGui::IsItemHoveredRect())
+	{
+		if (App->editor->drag_data->fromPanel == "Hierarchy")
+		{
+			if (ImGui::IsMouseReleased(0))
+			{
+				GameObject* go = (GameObject*)App->editor->drag_data->resource;
+				if (go != nullptr && go != gameObject)
+				{
+					go->SetParent(gameObject);
+				}
+				App->editor->drag_data->clearData();
+				App->SetCustomCursor(App->ENGINE_CURSOR_ARROW);
+			}
+			else
+			{
+				App->SetCustomCursor(App->ENGINE_CURSOR_ADD);
+			}
+		}
 	}
 }

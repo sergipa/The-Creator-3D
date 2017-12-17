@@ -486,47 +486,47 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 			}
 		}
 		//Delete + Backspace
-		if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_REPEAT)
 		{
 			Delete();
 		}
-		if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_REPEAT)
 		{
 			BackSpace();
 		}
 		//
 		//Arrows
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		{
 			MoveRight();
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 		{
 			MoveLeft();
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		{
 			MoveUp();
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		{
 			MoveDown();
 		}
 		//Enter
-		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_REPEAT)
 		{
 			EnterCharacter('\n');
 		}
 		//
 		//Page,home,etc...
-		if (App->input->GetKey(SDL_SCANCODE_PAGEDOWN) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_PAGEDOWN) == KEY_REPEAT)
 		{
 			MoveDown(GetPageSize() - 4, shift);
 		}
-		if (App->input->GetKey(SDL_SCANCODE_PAGEUP) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_PAGEUP) == KEY_REPEAT)
 		{
 			MoveUp(GetPageSize() - 4, shift);
 		}
@@ -540,7 +540,7 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 			MoveEnd(shift);
 		}
 		//
-		if (App->input->GetKey(SDL_SCANCODE_TAB) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_TAB) == KEY_REPEAT)
 		{
 			EnterCharacter(' ');
 			EnterCharacter(' ');
@@ -2131,7 +2131,7 @@ TextEditor::LanguageDefinition TextEditor::LanguageDefinition::CSharp()
 		};
 
 		static const char* const csharpClasses[] = {
-			"Math","TheComponent","TheConsole","TheFactory","TheGameObject","TheInput","TheQuaternion","TheTransform","TheVector3",
+			"Math","TheComponent","TheConsole","TheFactory","TheGameObject","TheInput","TheQuaternion","TheTransform","TheVector3","Time",
 		};
 		for (auto& k : csharpClasses)
 			langDef.mClasses.insert(k);

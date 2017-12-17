@@ -2,7 +2,7 @@
 
 namespace TheEngine
 {
-    class TheFactory : TheComponent
+    public class TheFactory : TheComponent
     {
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void StartFactory();
@@ -14,7 +14,7 @@ namespace TheEngine
         public extern void SetSpawnPosition(TheVector3 position);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void SetRotationPosition(TheVector3 rotation);
+        public extern void SetSpawnRotation(TheVector3 rotation);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern void SetSpawnScale(TheVector3 scale);

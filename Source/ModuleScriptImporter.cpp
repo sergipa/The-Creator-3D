@@ -88,15 +88,6 @@ std::string ModuleScriptImporter::ImportScript(std::string path)
 	{
 		CONSOLE_ERROR("Can't compile %s", path.c_str());
 	}
-	else
-	{
-		if (App->file_system->FileExist(TMP_FOLDER + script_name + ".dll"))
-		{
-			App->file_system->Copy(TMP_FOLDER + script_name + ".dll", LIBRARY_SCRIPTS_FOLDER + script_name + ".dll");
-			App->file_system->Delete_File(TMP_FOLDER + script_name + ".dll");
-			ret = LIBRARY_SCRIPTS_FOLDER + script_name + ".dll";
-		}
-	}
 
 	return ret;
 }
@@ -131,9 +122,8 @@ MonoImage * ModuleScriptImporter::GetEngineImage() const
 
 int ModuleScriptImporter::CompileScript(std::string assets_path)
 {
-	if (!App->file_system->DirectoryExist(TMP_FOLDER_PATH)) App->file_system->Create_Directory(TMP_FOLDER_PATH);
 	std::string script_name = App->file_system->GetFileNameWithoutExtension(assets_path);
-	std::string compile_command = mono_path + "compiler\\mcs -debug -target:library -out:" + TMP_FOLDER + script_name + ".dll" + " ";
+	std::string compile_command = mono_path + "compiler\\mcs -target:library -out:" + LIBRARY_SCRIPTS_FOLDER + script_name + ".dll" + " ";
 	std::string assemblies_folder_full_path = App->file_system->GetFullPath("Editor_Settings/Reference_Assemblies/");
 	std::vector<std::string> assemblies = App->file_system->GetFilesInDirectory(assemblies_folder_full_path);
 	for (std::vector<std::string>::iterator it = assemblies.begin(); it != assemblies.end(); it++)
@@ -240,6 +230,20 @@ void ModuleScriptImporter::RegisterAPI()
 	mono_add_internal_call("TheEngine.TheTransform::GetScale", (const void*)GetScale);
 	mono_add_internal_call("TheEngine.TheTransform::LookAt", (const void*)LookAt);
 
+	//FACTORY
+	mono_add_internal_call("TheEngine.TheFactory::StartFactory", (const void*)StartFactory);
+	mono_add_internal_call("TheEngine.TheFactory::Spawn", (const void*)Spawn);
+	mono_add_internal_call("TheEngine.TheFactory::SetSpawnPosition", (const void*)SetSpawnPosition);
+	mono_add_internal_call("TheEngine.TheFactory::SetSpawnRotation", (const void*)SetSpawnRotation);
+	mono_add_internal_call("TheEngine.TheFactory::SetSpawnScale", (const void*)SetSpawnScale);
+
+	mono_add_internal_call("TheEngine.TheVector3::ToQuaternion", (const void*)ToQuaternion);
+
+	//TIME
+	mono_add_internal_call("TheEngine.Time::SetTimeScale", (const void*)SetTimeScale);
+	mono_add_internal_call("TheEngine.Time::GetTimeScale", (const void*)GetTimeScale);
+	mono_add_internal_call("TheEngine.Time::GetDeltaTime", (const void*)GetDeltaTime);
+
 	//INPUT
 	mono_add_internal_call("TheEngine.TheInput::IsKeyDown", (const void*)IsKeyDown);
 	mono_add_internal_call("TheEngine.TheInput::IsKeyUp", (const void*)IsKeyUp);
@@ -248,6 +252,8 @@ void ModuleScriptImporter::RegisterAPI()
 	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonUp", (const void*)IsMouseUp);
 	mono_add_internal_call("TheEngine.TheInput::IsMouseButtonRepeat", (const void*)IsMouseRepeat);
 	mono_add_internal_call("TheEngine.TheInput::GetMousePosition", (const void*)GetMousePosition);
+	mono_add_internal_call("TheEngine.TheInput::GetMouseXMotion", (const void*)GetMouseXMotion);
+	mono_add_internal_call("TheEngine.TheInput::GetMouseYMotion", (const void*)GetMouseYMotion);
 
 	//CONSOLE
 	mono_add_internal_call("TheEngine.TheConsole.TheConsole::Log", (const void*)Log);
@@ -385,6 +391,51 @@ void ModuleScriptImporter::LookAt(MonoObject * object, MonoObject * vector)
 	current_script->LookAt(object, vector);
 }
 
+void ModuleScriptImporter::StartFactory(MonoObject * object)
+{
+	current_script->StartFactory(object);
+}
+
+MonoObject * ModuleScriptImporter::Spawn(MonoObject * object)
+{
+	return current_script->Spawn(object);
+}
+
+void ModuleScriptImporter::SetSpawnPosition(MonoObject * object, MonoObject * vector3)
+{
+	current_script->SetSpawnPosition(object, vector3);
+}
+
+void ModuleScriptImporter::SetSpawnRotation(MonoObject * object, MonoObject * vector3)
+{
+	current_script->SetSpawnRotation(object, vector3);
+}
+
+void ModuleScriptImporter::SetSpawnScale(MonoObject * object, MonoObject * vector3)
+{
+	current_script->SetSpawnScale(object, vector3);
+}
+
+MonoObject * ModuleScriptImporter::ToQuaternion(MonoObject * object)
+{
+	return current_script->ToQuaternion(object);
+}
+
+void ModuleScriptImporter::SetTimeScale(MonoObject * object, float scale)
+{
+	current_script->SetTimeScale(object, scale);
+}
+
+float ModuleScriptImporter::GetTimeScale()
+{
+	return current_script->GetTimeScale();
+}
+
+float ModuleScriptImporter::GetDeltaTime()
+{
+	return current_script->GetDeltaTime();
+}
+
 mono_bool ModuleScriptImporter::IsKeyDown(MonoString * key_name)
 {
 	return current_script->IsKeyDown(key_name);
@@ -418,6 +469,16 @@ mono_bool ModuleScriptImporter::IsMouseRepeat(int mouse_button)
 MonoObject * ModuleScriptImporter::GetMousePosition()
 {
 	return current_script->GetMousePosition();
+}
+
+int ModuleScriptImporter::GetMouseXMotion()
+{
+	return current_script->GetMouseXMotion();
+}
+
+int ModuleScriptImporter::GetMouseYMotion()
+{
+	return current_script->GetMouseYMotion();
 }
 
 void ModuleScriptImporter::Log(MonoObject * object)

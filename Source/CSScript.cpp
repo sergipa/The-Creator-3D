@@ -12,6 +12,9 @@
 #include <mono/metadata/exception.h>
 #include "ComponentTransform.h"
 #include "ModuleInput.h"
+#include "ModuleTime.h"
+#include "ModuleScene.h"
+#include "ComponentFactory.h"
 
 #pragma comment (lib, "../EngineResources/mono/lib/mono-2.0-sgen.lib")
 
@@ -38,6 +41,7 @@ CSScript::CSScript()
 
 	SetType(Resource::ScriptResource);
 	SetScriptType(ScriptType::CsScript);
+	SetName("No Script");
 }
 
 CSScript::~CSScript()
@@ -152,7 +156,13 @@ void CSScript::OnDisable()
 
 void CSScript::SetIntProperty(const char * propertyName, int value)
 {
-	SetFloatProperty(propertyName, (float)value);
+	MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
+
+	if (field)
+	{
+		void* params = &value;
+		mono_field_set_value(mono_object, field, params);
+	}
 }
 
 int CSScript::GetIntProperty(const char * propertyName)
@@ -171,7 +181,13 @@ int CSScript::GetIntProperty(const char * propertyName)
 
 void CSScript::SetDoubleProperty(const char * propertyName, double value)
 {
-	SetFloatProperty(propertyName, (double)value);
+	MonoClassField* field = mono_class_get_field_from_name(mono_class, propertyName);
+
+	if (field)
+	{
+		void* params = &value;
+		mono_field_set_value(mono_object, field, params);
+	}
 }
 
 double CSScript::GetDoubleProperty(const char * propertyName)
@@ -903,6 +919,10 @@ MonoObject* CSScript::GetComponent(MonoObject * object, MonoReflectionType * typ
 	{
 		comp_name = "TheTransform";
 	}
+	else if (name == "TheEngine.TheFactory")
+	{
+		comp_name = "TheFactory";
+	}
 
 	MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", comp_name);
 	if (c)
@@ -910,6 +930,7 @@ MonoObject* CSScript::GetComponent(MonoObject * object, MonoReflectionType * typ
 		MonoObject* new_object = mono_object_new(mono_domain, c);
 		if (new_object)
 		{
+			created_gameobjects[new_object] = active_gameobject;
 			return new_object;
 		}
 	}
@@ -918,10 +939,16 @@ MonoObject* CSScript::GetComponent(MonoObject * object, MonoReflectionType * typ
 
 void CSScript::SetPosition(MonoObject * object, MonoObject * vector3)
 {
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
 	if (!GameObjectIsValid())
 	{
 		return;
 	}
+
 	MonoClass* c = mono_object_get_class(vector3);
 	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
 	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
@@ -939,6 +966,11 @@ void CSScript::SetPosition(MonoObject * object, MonoObject * vector3)
 
 MonoObject* CSScript::GetPosition(MonoObject * object, mono_bool is_global)
 {
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
 	if (!GameObjectIsValid())
 	{
 		return nullptr;
@@ -977,6 +1009,11 @@ MonoObject* CSScript::GetPosition(MonoObject * object, mono_bool is_global)
 
 void CSScript::SetRotation(MonoObject * object, MonoObject * vector3)
 {
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
 	if (!GameObjectIsValid())
 	{
 		return;
@@ -998,6 +1035,11 @@ void CSScript::SetRotation(MonoObject * object, MonoObject * vector3)
 
 MonoObject * CSScript::GetRotation(MonoObject * object, mono_bool is_global)
 {
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
 	if (!GameObjectIsValid())
 	{
 		return nullptr;
@@ -1017,11 +1059,11 @@ MonoObject * CSScript::GetRotation(MonoObject * object, mono_bool is_global)
 			float3 new_rot;
 			if (is_global)
 			{
-				new_rot = transform->GetGlobalPosition();
+				new_rot = transform->GetGlobalRotation();
 			}
 			else
 			{
-				new_rot = transform->GetLocalPosition();
+				new_rot = transform->GetLocalRotation();
 			}
 
 			if (x_field) mono_field_set_value(new_object, x_field, &new_rot.x);
@@ -1036,6 +1078,11 @@ MonoObject * CSScript::GetRotation(MonoObject * object, mono_bool is_global)
 
 void CSScript::SetScale(MonoObject * object, MonoObject * vector3)
 {
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
 	if (!GameObjectIsValid())
 	{
 		return;
@@ -1057,6 +1104,11 @@ void CSScript::SetScale(MonoObject * object, MonoObject * vector3)
 
 MonoObject * CSScript::GetScale(MonoObject * object, mono_bool is_global)
 {
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
 	if (!GameObjectIsValid())
 	{
 		return nullptr;
@@ -1076,11 +1128,11 @@ MonoObject * CSScript::GetScale(MonoObject * object, mono_bool is_global)
 			float3 new_scale;
 			if (is_global)
 			{
-				new_scale = transform->GetGlobalPosition();
+				new_scale = transform->GetGlobalScale();
 			}
 			else
 			{
-				new_scale = transform->GetLocalPosition();
+				new_scale = transform->GetLocalScale();
 			}
 
 			if (x_field) mono_field_set_value(new_object, x_field, &new_scale.x);
@@ -1095,6 +1147,195 @@ MonoObject * CSScript::GetScale(MonoObject * object, mono_bool is_global)
 
 void CSScript::LookAt(MonoObject * object, MonoObject * vector)
 {
+}
+
+void CSScript::StartFactory(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+
+	ComponentFactory* factory = (ComponentFactory*)active_gameobject->GetComponent(Component::CompFactory);
+	if(factory) factory->StartFactory();
+}
+
+MonoObject * CSScript::Spawn(MonoObject * object)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return nullptr;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return nullptr;
+	}
+
+	ComponentFactory* factory = (ComponentFactory*)active_gameobject->GetComponent(Component::CompFactory);
+	GameObject* go = nullptr;
+	if (factory)
+	{
+		go = factory->Spawn();
+	}
+
+	if (go)
+	{
+		MonoClass* c = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheGameObject");
+		if (c)
+		{
+			MonoObject* new_object = mono_object_new(mono_domain, c);
+			if (new_object)
+			{
+				created_gameobjects[new_object] = go;
+				return new_object;
+			}
+		}
+	}
+	return nullptr;
+}
+
+void CSScript::SetSpawnPosition(MonoObject * object, MonoObject * vector3)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+
+	MonoClass* c = mono_object_get_class(vector3);
+	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+	MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+	float3 new_pos;
+
+	if (x_field) mono_field_get_value(vector3, x_field, &new_pos.x);
+	if (y_field) mono_field_get_value(vector3, y_field, &new_pos.y);
+	if (z_field) mono_field_get_value(vector3, z_field, &new_pos.z);
+
+	ComponentFactory* factory = (ComponentFactory*)active_gameobject->GetComponent(Component::CompFactory);
+	if(factory) factory->SetSpawnPos(new_pos);
+}
+
+void CSScript::SetSpawnRotation(MonoObject * object, MonoObject * vector3)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+
+	MonoClass* c = mono_object_get_class(vector3);
+	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+	MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+	float3 new_rot;
+
+	if (x_field) mono_field_get_value(vector3, x_field, &new_rot.x);
+	if (y_field) mono_field_get_value(vector3, y_field, &new_rot.y);
+	if (z_field) mono_field_get_value(vector3, z_field, &new_rot.z);
+
+	ComponentFactory* factory = (ComponentFactory*)active_gameobject->GetComponent(Component::CompFactory);
+	if (factory) factory->SetSpawnRotation(new_rot);
+}
+
+void CSScript::SetSpawnScale(MonoObject * object, MonoObject * vector3)
+{
+	if (!MonoObjectIsValid(object))
+	{
+		return;
+	}
+
+	if (!GameObjectIsValid())
+	{
+		return;
+	}
+
+	MonoClass* c = mono_object_get_class(vector3);
+	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+	MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+	float3 new_scale;
+
+	if (x_field) mono_field_get_value(vector3, x_field, &new_scale.x);
+	if (y_field) mono_field_get_value(vector3, y_field, &new_scale.y);
+	if (z_field) mono_field_get_value(vector3, z_field, &new_scale.z);
+
+	ComponentFactory* factory = (ComponentFactory*)active_gameobject->GetComponent(Component::CompFactory);
+	if (factory) factory->SetSpawnScale(new_scale);
+}
+
+MonoObject * CSScript::ToQuaternion(MonoObject * object)
+{
+	if (!object)
+	{
+		return nullptr;
+	}
+
+	MonoClass* c = mono_object_get_class(object);
+	MonoClassField* x_field = mono_class_get_field_from_name(c, "x");
+	MonoClassField* y_field = mono_class_get_field_from_name(c, "y");
+	MonoClassField* z_field = mono_class_get_field_from_name(c, "z");
+
+	float3 rotation;
+
+	if (x_field) mono_field_get_value(object, x_field, &rotation.x);
+	if (y_field) mono_field_get_value(object, y_field, &rotation.y);
+	if (z_field) mono_field_get_value(object, z_field, &rotation.z);
+
+	math::Quat quat = math::Quat::FromEulerXYZ(rotation.x * DEGTORAD, rotation.y * DEGTORAD, rotation.z * DEGTORAD);
+
+	MonoClass* quaternion = mono_class_from_name(App->script_importer->GetEngineImage(), "TheEngine", "TheQuaternion");
+	if (quaternion)
+	{
+		MonoObject* new_object = mono_object_new(mono_domain, quaternion);
+		if (new_object)
+		{
+			MonoClassField* x_field = mono_class_get_field_from_name(quaternion, "x");
+			MonoClassField* y_field = mono_class_get_field_from_name(quaternion, "y");
+			MonoClassField* z_field = mono_class_get_field_from_name(quaternion, "z");
+			MonoClassField* w_field = mono_class_get_field_from_name(quaternion, "w");
+
+			if (x_field) mono_field_set_value(new_object, x_field, &quat.x);
+			if (y_field) mono_field_set_value(new_object, y_field, &quat.y);
+			if (z_field) mono_field_set_value(new_object, z_field, &quat.z);
+			if (w_field) mono_field_set_value(new_object, w_field, &quat.w);
+
+			return new_object;
+		}
+	}
+	return nullptr;
+}
+
+void CSScript::SetTimeScale(MonoObject * object, float scale)
+{
+	App->time->time_scale = scale;
+}
+
+float CSScript::GetTimeScale()
+{
+	return App->time->time_scale;
+}
+
+float CSScript::GetDeltaTime()
+{
+	return App->time->GetGameDt();
 }
 
 mono_bool CSScript::IsKeyDown(MonoString * key_name)
@@ -1166,7 +1407,7 @@ mono_bool CSScript::IsMouseDown(int mouse_button)
 mono_bool CSScript::IsMouseUp(int mouse_button)
 {
 	bool ret = false;
-	if (mouse_button >= 0 && mouse_button < 4)
+	if (mouse_button > 0 && mouse_button < 4)
 	{
 		if (App->input->GetMouseButton(mouse_button) == KEY_UP) ret = true;
 	}
@@ -1181,7 +1422,7 @@ mono_bool CSScript::IsMouseUp(int mouse_button)
 mono_bool CSScript::IsMouseRepeat(int mouse_button)
 {
 	bool ret = false;
-	if (mouse_button >= 0 && mouse_button < 4)
+	if (mouse_button > 0 && mouse_button < 4)
 	{
 		if (App->input->GetMouseButton(mouse_button) == KEY_REPEAT) ret = true;
 	}
@@ -1218,6 +1459,16 @@ MonoObject * CSScript::GetMousePosition()
 	return nullptr;
 }
 
+int CSScript::GetMouseXMotion()
+{
+	return App->input->GetMouseXMotion();
+}
+
+int CSScript::GetMouseYMotion()
+{
+	return App->input->GetMouseYMotion();
+}
+
 void CSScript::CreateGameObject(MonoObject * object)
 {
 	if (!inside_function)
@@ -1231,7 +1482,7 @@ void CSScript::CreateGameObject(MonoObject * object)
 
 MonoObject* CSScript::GetSelfGameObject()
 {
-	if (!GameObjectIsValid())
+	if (!attached_gameobject)
 	{
 		return nullptr;
 	}
@@ -1272,12 +1523,183 @@ mono_bool CSScript::GetGameObjectIsActive(MonoObject * object)
 	return active_gameobject->IsActive();
 }
 
+void CSScript::FillSavingData()
+{
+	for (std::vector<ScriptField*>::const_iterator it = script_fields.begin(); it != script_fields.end(); it++)
+	{
+		switch ((*it)->propertyType)
+		{
+		case ScriptField::Integer:
+		{
+			int_fields[(*it)->fieldName] = GetIntProperty((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::Decimal:
+		{
+			double_fields[(*it)->fieldName] = GetDoubleProperty((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::Float:
+		{
+			float_fields[(*it)->fieldName] = GetFloatProperty((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::Bool:
+		{
+			bool_fields[(*it)->fieldName] = GetBoolProperty((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::String:
+		{
+			string_fields[(*it)->fieldName] = GetStringProperty((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::GameObject:
+		{
+			gameobject_fields[(*it)->fieldName] = GetGameObjectProperty((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::Animation:
+			break;
+		case ScriptField::Vector2:
+		{
+			vec2_fields[(*it)->fieldName] = GetVec2Property((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::Vector3:
+		{
+			vec3_fields[(*it)->fieldName] = GetVec3Property((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::Vector4:
+		{
+			vec4_fields[(*it)->fieldName] = GetVec4Property((*it)->fieldName.c_str());
+		}
+		break;
+		case ScriptField::Texture:
+			break;
+		case ScriptField::Audio:
+			break;
+		}
+	}
+}
+
 void CSScript::Save(Data & data) const
 {
 	data.AddString("library_path", GetLibraryPath());
 	data.AddString("assets_path", GetAssetsPath());
 	data.AddString("script_name", GetName());
 	data.AddUInt("UUID", GetUID());
+
+	data.AddInt("int_fields_count", int_fields.size());
+	data.AddInt("double_fields_count", double_fields.size());
+	data.AddInt("float_fields_count", float_fields.size());
+	data.AddInt("bool_fields_count", bool_fields.size());
+	data.AddInt("string_fields_count", string_fields.size());
+	data.AddInt("gameobject_fields_count", gameobject_fields.size());
+	data.AddInt("vec2_fields_count", vec2_fields.size());
+	data.AddInt("vec3_fields_count", vec3_fields.size());
+	data.AddInt("vec4_fields_count", vec4_fields.size());
+
+	data.CreateSection("int_fields");
+	int i = 0;
+	for (std::map<std::string, int>::const_iterator it = int_fields.begin(); it != int_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddInt("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("double_fields");
+	i = 0;
+	for (std::map<std::string, double>::const_iterator it = double_fields.begin(); it != double_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddDouble("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("float_fields");
+	i = 0;
+	for (std::map<std::string, float>::const_iterator it = float_fields.begin(); it != float_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddFloat("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("bool_fields");
+	i = 0;
+	for (std::map<std::string, bool>::const_iterator it = bool_fields.begin(); it != bool_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddBool("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("string_fields");
+	i = 0;
+	for (std::map<std::string, std::string>::const_iterator it = string_fields.begin(); it != string_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddString("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("gameobject_fields");
+	i = 0;
+	for (std::map<std::string, GameObject*>::const_iterator it = gameobject_fields.begin(); it != gameobject_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddInt("field_value", it->second ? it->second->GetUID() : 0);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("vec2_fields");
+	i = 0;
+	for (std::map<std::string, float2>::const_iterator it = vec2_fields.begin(); it != vec2_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddVector2("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("vec3_fields");
+	i = 0;
+	for (std::map<std::string, float3>::const_iterator it = vec3_fields.begin(); it != vec3_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddVector3("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
+	data.CreateSection("vec4_fields");
+	i = 0;
+	for (std::map<std::string, float4>::const_iterator it = vec4_fields.begin(); it != vec4_fields.end(); it++)
+	{
+		data.CreateSection("field_" + std::to_string(i));
+		data.AddString("field_name", it->first);
+		data.AddVector4("field_value", it->second);
+		data.CloseSection();
+		i++;
+	}
+	data.CloseSection();
 }
 
 bool CSScript::Load(Data & data)
@@ -1285,7 +1707,7 @@ bool CSScript::Load(Data & data)
 	bool ret = true;
 	std::string library_path = data.GetString("library_path");
 
-	Script* text = App->script_importer->LoadScriptFromLibrary(library_path);
+	CSScript* text = (CSScript*)App->script_importer->LoadScriptFromLibrary(library_path);
 	if (!text)
 	{
 		std::string assets_path = data.GetString("assets_path");
@@ -1308,6 +1730,119 @@ bool CSScript::Load(Data & data)
 		SetLibraryPath(data.GetString("library_path"));
 		SetName(data.GetString("script_name"));
 		SetUID(data.GetUInt("UUID"));
+		mono_domain = text->mono_domain;
+		mono_class = text->mono_class;
+		mono_image = text->mono_image;
+		mono_object = text->mono_object;
+		init = text->init;
+		start = text->start;
+		update = text->update;
+		on_collision_enter = text->on_collision_enter;
+		on_collision_stay = text->on_collision_stay;
+		on_collision_exit = text->on_collision_exit;
+		on_enable = text->on_enable;
+		on_disable = text->on_disable;
+
+		int fields_count = data.GetInt("int_fields_count");
+		data.EnterSection("int_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			int field_value = data.GetInt("field_value");
+			data.LeaveSection();
+			SetIntProperty(field_name.c_str(), field_value);
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("double_fields_count");
+		data.EnterSection("double_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			double field_value = data.GetDouble("field_value");
+			data.LeaveSection();
+			SetDoubleProperty(field_name.c_str(), field_value);
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("float_fields_count");
+		data.EnterSection("float_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			float field_value = data.GetFloat("field_value");
+			data.LeaveSection();
+			SetFloatProperty(field_name.c_str(), field_value);
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("bool_fields_count");
+		data.EnterSection("bool_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			bool field_value = data.GetBool("field_value");
+			data.LeaveSection();
+			SetBoolProperty(field_name.c_str(), field_value);
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("string_fields_count");
+		data.EnterSection("string_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			std::string field_value = data.GetString("field_value");
+			data.LeaveSection();
+			SetStringProperty(field_name.c_str(), field_value.c_str());
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("gameobject_fields_count");
+		data.EnterSection("gameobject_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			uint field_value = data.GetInt("field_value");
+			GameObject* go = App->scene->FindGameObject(field_value);
+			data.LeaveSection();
+			SetGameObjectProperty(field_name.c_str(), go);
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("vec2_fields_count");
+		data.EnterSection("vec2_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			float2 field_value = data.GetVector2("field_value");
+			data.LeaveSection();
+			SetVec2Property(field_name.c_str(), field_value);
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("vec3_fields_count");
+		data.EnterSection("vec3_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			float3 field_value = data.GetVector3("field_value");
+			data.LeaveSection();
+			SetVec3Property(field_name.c_str(), field_value);
+		}
+		data.LeaveSection();
+		fields_count = data.GetInt("vec4_fields_count");
+		data.EnterSection("vec4_fields");
+		for (int i = 0; i < fields_count; i++)
+		{
+			data.EnterSection("field_" + std::to_string(i));
+			std::string field_name = data.GetString("field_name");
+			float4 field_value = data.GetVector4("field_value");
+			data.LeaveSection();
+			SetVec4Property(field_name.c_str(), field_value);
+		}
+		data.LeaveSection();
 	}
 
 	return ret;
@@ -1348,8 +1883,8 @@ bool CSScript::GameObjectIsValid()
 {
 	if (active_gameobject == nullptr)
 	{
-		CONSOLE_ERROR("You are trying to modify a null GameObject")
-			return false;
+		CONSOLE_ERROR("You are trying to modify a null GameObject");
+		return false;
 	}
 	return true;
 }

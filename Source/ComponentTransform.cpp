@@ -12,6 +12,9 @@ ComponentTransform::ComponentTransform(GameObject* attached_gameobject)
 	shown_rotation = float3(0.f, 0.f, 0.f);
 	rotation = Quat(0.f, 0.f, 0.f, 0.f);
 	scale = float3(1.f, 1.f, 1.f);
+	global_pos = float3(0.f, 0.f, 0.f);
+	global_rot = float3(0.f, 0.f, 0.f);
+	global_scale = float3(1.f, 1.f, 1.f);
 	transform_matrix.SetIdentity();
 }
 
@@ -27,20 +30,17 @@ void ComponentTransform::SetPosition(float3 position)
 
 float3 ComponentTransform::GetGlobalPosition() const
 {
-	if (this->GetGameObject()->IsRoot())
-	{
-		return position;
-	}
-	else
-	{
-		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
-		return (position + parent_transform->position);
-	}
+	return global_pos;
 }
 
 float3 ComponentTransform::GetLocalPosition() const
 {
-		return position;
+	/*if (GetGameObject()->GetParent() != nullptr)
+	{
+		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
+		return GetGlobalPosition() - parent_transform->GetGlobalPosition();
+	}*/
+	return position; //If it's the parent. local position = global position
 }
 
 void ComponentTransform::SetRotation(float3 rotation)
@@ -52,17 +52,17 @@ void ComponentTransform::SetRotation(float3 rotation)
 
 float3 ComponentTransform::GetGlobalRotation() const
 {
-	if (GetGameObject()->GetParent() != nullptr)
-	{
-		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
-		return GetLocalRotation() + parent_transform->GetLocalRotation();
-	}
-	return GetLocalRotation(); //If it's the parent. local rotation = global rotation
+	return global_rot;
 }
 
 float3 ComponentTransform::GetLocalRotation() const
 {
-	return shown_rotation;
+	/*if (GetGameObject()->GetParent() != nullptr)
+	{
+		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
+		return GetGlobalRotation() - parent_transform->GetGlobalRotation();
+	}*/
+	return shown_rotation; //If it's the parent. local rotation = global rotation
 }
 
 void ComponentTransform::SetScale(float3 scale)
@@ -73,20 +73,17 @@ void ComponentTransform::SetScale(float3 scale)
 
 float3 ComponentTransform::GetGlobalScale() const
 {
-	if (this->GetGameObject()->IsRoot())
-	{
-		return scale;
-	}
-	else
-	{
-		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
-		return (scale + parent_transform->scale);
-	}
+	return global_scale;
 }
 
 float3 ComponentTransform::GetLocalScale() const
 {
-	return scale;
+	/*if (GetGameObject()->GetParent() != nullptr)
+	{
+		ComponentTransform* parent_transform = (ComponentTransform*)GetGameObject()->GetParent()->GetComponent(ComponentType::CompTransform);
+		return GetGlobalScale() - parent_transform->GetGlobalScale();
+	}*/
+	return scale; //If it's the parent. local scale = global scale
 }
 
 void ComponentTransform::UpdateGlobalMatrix()
@@ -98,6 +95,13 @@ void ComponentTransform::UpdateGlobalMatrix()
 
 		transform_matrix = transform_matrix.FromTRS(position, rotation, scale);
 		transform_matrix = parent_transform->transform_matrix * transform_matrix;
+
+		float3 _pos, _scale;
+		Quat _rot;
+		transform_matrix.Decompose(_pos, _rot, _scale);
+		global_pos = _pos;
+		global_rot = _rot.ToEulerXYZ() * RADTODEG;
+		global_scale = _scale;
 	}
 	else
 	{
@@ -107,6 +111,10 @@ void ComponentTransform::UpdateGlobalMatrix()
 			ComponentTransform* child_transform = (ComponentTransform*)(*it)->GetComponent(Component::CompTransform);
 			child_transform->UpdateGlobalMatrix();
 		}
+
+		global_pos = position;
+		global_rot = shown_rotation;
+		global_scale = scale;
 	}
 
 	GetGameObject()->UpdateBoundingBox();
@@ -127,24 +135,6 @@ const float * ComponentTransform::GetOpenGLMatrix() const
 void ComponentTransform::SetMatrix(const float4x4 & matrix)
 {
 	transform_matrix = matrix;
-
-	//transform_matrix.Decompose(position, rotation, scale);
-	//
-	//float3 position, scale,float_rot;
-	//Quat rotation;
-	//matrix.Decompose(position, rotation, scale);
-	//
-	//float_rot = rotation.ToEulerXYZ();
-	//SetPosition(position);
-	//shown_rotation = float_rot;
-	//SetRotation(shown_rotation);
-	//SetScale(scale);
-
-	//this->position = position;
-	//this->rotation = rotation;
-	//this->scale = scale;
-
-
 
 	if (this->GetGameObject()->IsRoot())
 	{

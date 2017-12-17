@@ -29,12 +29,10 @@ public:
 	float3 GetSpawnRotation() const;
 	float3 GetSpawnScale() const;
 	void StartFactory();
+	void CheckLifeTimes();
 
 	void Save(Data& data) const;
 	void Load(Data& data);
-
-private:
-	void CheckLifeTimes();
 
 private:
 	Prefab* object_to_spawn;
@@ -44,8 +42,14 @@ private:
 	float3 spawn_scale;
 	float life_time;
 	float3 original_position;
+	float3 original_rotation;
+	float3 original_scale;
 
-	std::list<Prefab*> spawn_objects_list;
-	std::map<Prefab*, float> spawned_objects;
+	bool changed_position;
+	bool changed_rotation;
+	bool changed_scale;
+
+	std::list<GameObject*> spawn_objects_list;
+	std::map<GameObject*, float> spawned_objects;
 };
 

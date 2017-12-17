@@ -24,9 +24,7 @@ AssetsWindow::AssetsWindow()
 	texture_icon = nullptr;
 	show_delete_window = false;
 	show_new_script_window = false;
-	show_file_options = false;
-	show_files_window_options = false;
-	show_folder_options = false;
+	options_is_open = false;
 	asset_hovered = false;
 
 	mesh_icon = App->texture_importer->LoadTextureFromLibrary(EDITOR_IMAGES_FOLDER"mesh_icon.png");
@@ -189,37 +187,53 @@ void AssetsWindow::DrawWindow()
 						}
 						else
 						{
-							if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)) {
+							if (!options_is_open && (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1))) {
 								selected_file_path = *it;
 								App->scene->selected_gameobjects.clear();
 								if (ImGui::IsMouseClicked(1)) {
 									ImGui::SetNextWindowPos(ImGui::GetMousePos());
 									ImGui::CloseCurrentPopup();
 									ImGui::OpenPopup("File Options");
+									options_is_open = true;
 								}
 							}
 						}
 					}
-
-					if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && ImGui::IsItemRectHovered())
+					else
 					{
-						selected = false;
-						selected_file_path = "";
+						if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && !asset_hovered)
+						{
+							selected = false;
+							selected_file_path = "";
+							options_is_open = false;
+						}
 					}
 				}
+			}
+
+			if (!ImGui::IsMouseHoveringWindow() && (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1)))
+			{
+				options_is_open = false;
 			}
 
 			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(1) && !asset_hovered)
 			{
 				ImGui::CloseCurrentPopup();
+				ImGui::SetNextWindowPos(ImGui::GetMousePos());
 				ImGui::OpenPopup("Files Window Options");
 			}
 
-			if (ImGui::IsMouseHoveringWindow() && ImGui::IsMouseReleased(0) && !asset_hovered)
+			if (ImGui::BeginPopup("Files Window Options"))
 			{
-				show_files_window_options = false;
-				show_file_options = false;
-				show_folder_options = false;
+				if (ImGui::MenuItem("Create C# Script"))
+				{
+					show_new_script_window = true;
+					show_delete_window = false;
+					show_new_folder_window = false;
+					options_is_open = false;
+				}
+
+				ImGui::EndPopup();
 			}
 
 			if (ImGui::IsMouseHoveringWindow() && !ImGui::IsAnyItemHovered())
@@ -232,12 +246,14 @@ void AssetsWindow::DrawWindow()
 				if (ImGui::MenuItem("Rename")) {
 					show_new_folder_window = false;
 					show_new_script_window = false;
+					options_is_open = false;
 				}
 				if (ImGui::MenuItem("Delete")) {
 					delete_path = selected_file_path;
 					show_delete_window = true;
 					show_new_folder_window = false;
 					show_new_script_window = false;
+					options_is_open = false;
 				}
 
 				std::string extension = App->file_system->GetFileExtension(selected_file_path);
@@ -247,6 +263,7 @@ void AssetsWindow::DrawWindow()
 						std::string file_name = App->file_system->GetFileNameWithoutExtension(selected_file_path);
 						Prefab* prefab = App->resources->GetPrefab(file_name);
 						App->scene->LoadPrefab(prefab);
+						options_is_open = false;
 					}
 				}
 
@@ -255,19 +272,16 @@ void AssetsWindow::DrawWindow()
 					if (ImGui::MenuItem("Edit")) {
 						App->editor->text_editor_window->SetPath(selected_file_path);
 						App->editor->text_editor_window->SetActive(true);
+						options_is_open = false;
 					}
 				}
 
-				ImGui::EndPopup();
-			}
-
-			if (ImGui::BeginPopup("Files Window Options"))
-			{
-				if (ImGui::MenuItem("Create C# Script"))
+				if (extension == ".scene")
 				{
-					show_new_script_window = true;
-					show_delete_window = false;
-					show_new_folder_window = false;
+					if (ImGui::MenuItem("Load")) {
+						App->scene->LoadScene(selected_file_path);
+						options_is_open = false;
+					}
 				}
 
 				ImGui::EndPopup();

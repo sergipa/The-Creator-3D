@@ -65,7 +65,7 @@ public:
 	SDL_Keycode StringToKey(std::string key);
 	std::string KeyToString(SDL_Keycode key);
 
-
+	bool IsMouseDragging(int mouse_button);
 
 private:
 	KEY_STATE* keyboard;

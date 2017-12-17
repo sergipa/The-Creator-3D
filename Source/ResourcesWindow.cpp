@@ -6,6 +6,8 @@
 #include "Prefab.h"
 #include "Material.h"
 #include "GameObject.h"
+#include "ModuleScene.h"
+#include "Script.h"
 
 ResourcesWindow::ResourcesWindow()
 {
@@ -105,16 +107,16 @@ void ResourcesWindow::DrawWindow()
 		scripts_list = App->resources->GetScriptsList();
 		if (ImGui::Selectable("None##script"))
 		{
-			prefab_to_return = nullptr;
-			prefab_changed = true;
+			script_to_return = nullptr;
+			script_changed = true;
 			break;
 		}
-		for (std::map<uint, Prefab*>::const_iterator it = prefabs_list.begin(); it != prefabs_list.end(); it++)
+		for (std::map<uint, Script*>::const_iterator it = scripts_list.begin(); it != scripts_list.end(); it++)
 		{
 			if (ImGui::Selectable(it->second->GetName().c_str()))
 			{
-				prefab_to_return = it->second;
-				prefab_changed = true;
+				script_to_return = it->second;
+				script_changed = true;
 				break;
 			}
 		}
@@ -128,18 +130,18 @@ void ResourcesWindow::DrawWindow()
 	case Resource::RenderTextureResource:
 		break;
 	case Resource::GameObjectResource:
-		gameobjects_list = App->resources->GetGameobjectsList();
+		gameobjects_list = App->scene->scene_gameobjects;
 		if (ImGui::Selectable("None##gameobject"))
 		{
 			gameobject_to_return = nullptr;
 			gameobject_changed = true;
 			break;
 		}
-		for (std::map<uint, GameObject*>::const_iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); it++)
+		for (std::list<GameObject*>::const_iterator it = gameobjects_list.begin(); it != gameobjects_list.end(); it++)
 		{
-			if (ImGui::Selectable(it->second->GetName().c_str()))
+			if (ImGui::Selectable((*it)->GetName().c_str()))
 			{
-				gameobject_to_return = it->second;
+				gameobject_to_return = *it;
 				gameobject_changed = true;
 				break;
 			}

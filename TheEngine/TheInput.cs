@@ -24,5 +24,11 @@ namespace TheEngine
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern TheVector3 GetMousePosition();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetMouseXMotion();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern int GetMouseYMotion();
     }
 }

@@ -54,7 +54,7 @@ ComponentCamera::~ComponentCamera()
 
 	if (GetGameObject() != nullptr)
 	{
-		if (App->renderer3D->rendering_cameras.size() != 3722304989)
+		if (App->renderer3D)
 		{
 			if (std::find(App->renderer3D->rendering_cameras.begin(), App->renderer3D->rendering_cameras.end(), this) != App->renderer3D->rendering_cameras.end())
 			{
@@ -97,8 +97,8 @@ bool ComponentCamera::ContainsGameObjectAABB(AABB& gameobject_bounding_box)
 void ComponentCamera::UpdatePosition()
 {
 	camera_frustum.pos = GetGameObject()->GetGlobalTransfomMatrix().TranslatePart();
-	camera_frustum.front = GetGameObject()->GetGlobalTransfomMatrix().WorldZ();
-	camera_frustum.up = GetGameObject()->GetGlobalTransfomMatrix().WorldY();
+	camera_frustum.front = GetGameObject()->GetGlobalTransfomMatrix().WorldZ().Normalized();
+	camera_frustum.up = GetGameObject()->GetGlobalTransfomMatrix().WorldY().Normalized();
 }
 
 void ComponentCamera::UpdateProjection()

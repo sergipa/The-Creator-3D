@@ -1,4 +1,5 @@
-﻿
+﻿using System.Runtime.CompilerServices;
+
 namespace TheEngine
 {
     public class TheVector3
@@ -211,6 +212,21 @@ namespace TheEngine
             return -2f * DotProduct(normal, direction) * normal + direction;
         }
 
+        public static TheVector3 Scale(TheVector3 a, TheVector3 b)
+        {
+            return new TheVector3(a.x * b.x, a.y * b.y, a.z * b.z);
+        }
+
+        public void Scale(TheVector3 scale)
+        {
+            x *= scale.x;
+            y *= scale.y;
+            z *= scale.z;
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern TheQuaternion ToQuaternion();
+
         public static TheVector3 operator +(TheVector3 a, TheVector3 b)
         {
             return new TheVector3(a.x + b.x, a.y + b.y, a.z + b.z);
@@ -234,6 +250,11 @@ namespace TheEngine
         public static TheVector3 operator *(float value, TheVector3 a)
         {
             return new TheVector3(a.x * value, a.y * value, a.z * value);
+        }
+
+        public static TheVector3 operator *(TheVector3 a, TheVector3 b)
+        {
+            return Scale(a, b);
         }
 
         public static TheVector3 operator /(TheVector3 a, float value)

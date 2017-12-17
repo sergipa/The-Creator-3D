@@ -12,7 +12,6 @@ class ModuleAudio;
 class ModuleScene;
 class ModuleRenderer3D;
 class ModuleCamera3D;
-class ModulePhysics3D;
 class ModuleEditor;
 class ModuleResources;
 class ModuleTime;
@@ -24,11 +23,17 @@ class ModuleTextureImporter;
 class ModulePrefabImporter;
 class ModuleMaterialImporter;
 class ModuleScriptImporter;
+struct SDL_Surface;
 
 class Application
 {
 
 public:
+
+	enum EnGineCursors
+	{
+		ENGINE_CURSOR_ADD, ENGINE_CURSOR_ARROW, ENGINE_CURSOR_IBEAM, ENGINE_CURSOR_WAIT, ENGINE_CURSOR_WAITARROW, ENGINE_CURSOR_HAND, ENGINE_CURSOR_NO
+	};
 
 	Application();
 	~Application();
@@ -38,7 +43,7 @@ public:
 	bool CleanUp();
 	LCG& RandomNumber();
 	void CapFPS(int max_fps);
-	void SetCursor(SDL_SystemCursor id);
+	void SetCustomCursor(EnGineCursors cursor_type);
 	void CreateEngineData(Data* data);
 	void UpdateStep();
 
@@ -67,7 +72,6 @@ public:
 	ModuleScene* scene;
 	ModuleRenderer3D* renderer3D;
 	ModuleCamera3D* camera;
-	ModulePhysics3D* physics;
 	ModuleEditor* editor;
 	ModuleResources* resources;
 	ModuleTime* time;
@@ -96,6 +100,8 @@ private:
 	int capped_ms;
 	SDL_Cursor* cursor;
 	EngineState state = EngineState::OnStop;
+
+	SDL_Surface* cursor_add;
 
 };
 

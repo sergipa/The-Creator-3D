@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Resource.h"
 #include <map>
+#include <list>
 
 class Texture;
 class Mesh;
@@ -32,7 +33,7 @@ private:
 	std::map<uint, Texture*> textures_list;
 	std::map<uint, Mesh*> meshes_list;
 	std::map<uint, Prefab*> prefabs_list;
-	std::map<uint, GameObject*> gameobjects_list;
+	std::list<GameObject*> gameobjects_list;
 	std::map<uint, Material*> materials_list;
 	std::map<uint, Script*> scripts_list;
 

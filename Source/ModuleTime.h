@@ -13,6 +13,7 @@ public:
 
 	float GetGameDt() const;
 	Uint32 GetTime();
+
 public:
 	float time_scale;
 private:

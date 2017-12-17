@@ -19,20 +19,29 @@ ComponentScript::~ComponentScript()
 
 void ComponentScript::InitScript()
 {
-	App->script_importer->SetCurrentScript((CSScript*)script);
-	script->InitScript();
+	if (script)
+	{
+		App->script_importer->SetCurrentScript((CSScript*)script);
+		script->InitScript();
+	}
 }
 
 void ComponentScript::StartScript()
 {
-	App->script_importer->SetCurrentScript((CSScript*)script);
-	script->StartScript();
+	if (script)
+	{
+		App->script_importer->SetCurrentScript((CSScript*)script);
+		script->StartScript();
+	}
 }
 
 void ComponentScript::UpdateScript()
 {
-	App->script_importer->SetCurrentScript((CSScript*)script);
-	script->UpdateScript();
+	if (script)
+	{
+		App->script_importer->SetCurrentScript((CSScript*)script);
+		script->UpdateScript();
+	}
 }
 
 void ComponentScript::SetScript(Script * script)
@@ -42,7 +51,16 @@ void ComponentScript::SetScript(Script * script)
 
 std::string ComponentScript::GetScriptName() const
 {
-	return script->GetName();
+	std::string name;
+	if (script)
+	{
+		name = script->GetName();
+	}
+	else
+	{
+		name = "No Script";
+	}
+	return name;
 }
 
 Script * ComponentScript::GetScript() const
@@ -52,12 +70,21 @@ Script * ComponentScript::GetScript() const
 
 std::vector<ScriptField*> ComponentScript::GetScriptFields() const
 {
-	return script->GetScriptFields();
+	std::vector<ScriptField*> fields;
+	if (script)
+	{
+		fields = script->GetScriptFields();
+	}
+
+	return fields;
 }
 
 void ComponentScript::UpdateScriptFields()
 {
-	script_fields = script->GetScriptFields();
+	if (script)
+	{
+		script_fields = script->GetScriptFields();
+	}
 }
 
 void ComponentScript::Save(Data & data) const
@@ -66,7 +93,11 @@ void ComponentScript::Save(Data & data) const
 	data.AddBool("Active", IsActive());
 	data.AddUInt("UUID", GetUID());
 	data.CreateSection("Script");
-	if(script)script->Save(data);
+	if (script)
+	{
+		script->FillSavingData();
+		script->Save(data);
+	}
 	data.CloseSection();
 }
 
@@ -76,15 +107,16 @@ void ComponentScript::Load(Data & data)
 	SetActive(data.GetBool("Active"));
 	SetUID(data.GetUInt("UUID"));
 	data.EnterSection("Script");
-	uint script_uid = data.GetUInt("UUID");
-	if (script_uid != 0)
+	std::string script_name = data.GetString("script_name");
+	script = new CSScript();
+	if (!script->Load(data))
 	{
-		script = App->resources->GetScript(script_uid);
-		if (!script)
-		{
-			script = new CSScript();
-			script->Load(data);
-		}
+		CONSOLE_ERROR("Cannot find %s. Script not loaded", script_name.c_str());
+		RELEASE(script);
+	}
+	else
+	{
+		script->SetAttachedGameObject(GetGameObject());
 	}
 	data.LeaveSection();
 }

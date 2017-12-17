@@ -4,6 +4,7 @@
 #include "MathGeoLib\Math\float2.h"
 #include "MathGeoLib\Math\float4.h"
 #include <vector>
+#include <map>
 
 class Texture;
 class GameObject;
@@ -68,6 +69,19 @@ public:
 	void Save(Data& data) const = 0;
 	bool Load(Data& data) = 0;
 	void CreateMeta() const = 0;
+	virtual void FillSavingData() = 0;
+
+public:
+	//Saving Data
+	std::map<std::string, int> int_fields;
+	std::map<std::string, double> double_fields;
+	std::map<std::string, float> float_fields;
+	std::map<std::string, bool> bool_fields;
+	std::map<std::string, std::string> string_fields;
+	std::map<std::string, GameObject*> gameobject_fields;
+	std::map<std::string, float2> vec2_fields;
+	std::map<std::string, float3> vec3_fields;
+	std::map<std::string, float4> vec4_fields;
 	
 private:
 	ScriptType script_type;

@@ -405,7 +405,7 @@ namespace ImGui
 		}
 		else
 		{
-			buf_display = "None(Texture)";
+			buf_display = "None(Script)";
 		}
 		window->DrawList->AddText(g.Font, g.FontSize, window->DC.CursorPos, GetColorU32(ImGuiCol_Text), buf_display.c_str());
 
@@ -422,7 +422,7 @@ namespace ImGui
 
 		Script* new_script = nullptr;
 
-		if (App->editor->resources_window->active && App->editor->resources_window->texture_changed)
+		if (App->editor->resources_window->active && App->editor->resources_window->script_changed)
 		{
 			new_script = App->editor->resources_window->GetScript();
 			if (new_script != tmp_script)

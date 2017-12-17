@@ -106,7 +106,7 @@ update_status ModuleEditor::Update(float deltaTime)
 
 			if (ImGui::MenuItem("New Scene"))
 			{
-				App->scene->NewScene();
+				App->scene->NewScene(false);
 			}
 			if (ImGui::MenuItem("Load Scene"))
 			{
@@ -121,7 +121,7 @@ update_status ModuleEditor::Update(float deltaTime)
 				char const * lFilterPatterns[1] = { "*.scene" };
 				const char* path = tinyfd_saveFileDialog("Save Scene...", (App->scene->scene_name + ".scene").c_str(), 1, lFilterPatterns, NULL);
 				if (path != NULL) {
-					std::string new_scene_name = App->file_system->GetFileName(path);
+					std::string new_scene_name = App->file_system->GetFileNameWithoutExtension(path);
 					App->scene->scene_name = new_scene_name;
 					App->window->SetTitle((SCENE_TITLE_PREFIX + new_scene_name).c_str());
 					std::string s_path;
@@ -249,7 +249,11 @@ update_status ModuleEditor::Update(float deltaTime)
 	ImGui::EndDockspace();
 	ImGui::End();
 	ImGui::PopFont();
-	if (ImGui::IsMouseReleased(0) && drag_data->hasData) drag_data->clearData();
+	if (ImGui::IsMouseReleased(0) && drag_data->hasData)
+	{
+		drag_data->clearData();
+		App->SetCustomCursor(App->ENGINE_CURSOR_ARROW);
+	}
 	performance_window->AddModuleData(this->name, ms_timer.ReadMs());
 	return UPDATE_CONTINUE;
 }

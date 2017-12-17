@@ -23,6 +23,8 @@ PropertiesWindow::PropertiesWindow()
 {
 	active = true;
 	window_name = "Properties";
+	scripts_count = 0;
+	factories_count = 0;
 }
 
 PropertiesWindow::~PropertiesWindow()
@@ -241,7 +243,7 @@ void PropertiesWindow::DrawTransformPanel(ComponentTransform * transform)
 		if (ImGui::DragFloat3("Position", (float*)&position, is_static, 0.25f)) {
 			transform->SetPosition(position);
 		}
-		if (ImGui::DragFloat3("Rotation", (float*)&rotation, is_static, 0.25f, -360, 360)) {
+		if (ImGui::DragFloat3("Rotation", (float*)&rotation, is_static, 0.25f)) {
 			transform->SetRotation(rotation);
 		}
 		if (ImGui::DragFloat3("Scale", (float*)&scale, is_static, 0.25f)) {
@@ -402,9 +404,11 @@ void PropertiesWindow::DrawCameraPanel(ComponentCamera * comp_camera)
 
 void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 {
-	if (ImGui::CollapsingHeader(comp_script->GetScriptName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+	scripts_count++;
+	if (ImGui::CollapsingHeader((comp_script->GetScriptName() + "##" + std::to_string(scripts_count)).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		bool is_active = comp_script->IsActive();
-		if (ImGui::Checkbox(("Active##Script_" + comp_script->GetScript()->GetName()).c_str(), &is_active))
+		std::string script_name = comp_script->GetScript() ? comp_script->GetScript()->GetName() : "0";
+		if (ImGui::Checkbox(("Active##Script_" + script_name).c_str(), &is_active))
 		{
 			comp_script->SetActive(is_active);
 		}
@@ -413,6 +417,13 @@ void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 		{
 			App->scene->selected_gameobjects.front()->DestroyComponent(comp_script);
 		}
+
+		Script* script = comp_script->GetScript();
+		if (ImGui::InputResourceScript("Script", &script))
+		{
+			comp_script->SetScript(script);
+		}
+		ImGui::Spacing();
 
 		std::vector<ScriptField*> script_fields = comp_script->GetScriptFields();
 
@@ -445,7 +456,7 @@ void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 				float f = comp_script->GetScript()->GetFloatProperty((*it)->fieldName.c_str());
 				ImGui::Text(" %s", (*it)->fieldName.c_str());
 				ImGui::SameLine();
-				if (ImGui::InputFloat(("##" + (*it)->fieldName).c_str(), &f, 0.001f, 0.01f, 3)) {
+				if (ImGui::InputFloat(("##" + (*it)->fieldName).c_str(), &f, 0.01f, 0.1f, 3)) {
 					comp_script->GetScript()->SetFloatProperty((*it)->fieldName.c_str(), f);
 				}
 			}
@@ -524,7 +535,8 @@ void PropertiesWindow::DrawScriptPanel(ComponentScript * comp_script)
 
 void PropertiesWindow::DrawFactoryPanel(ComponentFactory * factory)
 {
-	if (ImGui::CollapsingHeader(factory->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+	factories_count++;
+	if (ImGui::CollapsingHeader((factory->GetName() + "##" + std::to_string(factories_count)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		Prefab* prefab = factory->GetFactoryObject();
 		if(ImGui::InputResourcePrefab("Factory Object", &prefab))

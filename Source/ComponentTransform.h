@@ -32,6 +32,10 @@ private:
 	float3 shown_rotation;
 	float3 scale;
 
+	float3 global_pos;
+	float3 global_rot;
+	float3 global_scale;
+
 	float4x4 transform_matrix;
 };
 

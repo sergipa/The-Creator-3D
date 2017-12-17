@@ -29,7 +29,7 @@ GameObject::GameObject(GameObject* parent)
 	is_static = false;
 	is_used_in_prefab = false;
 	AddComponent(Component::CompTransform);
-
+	used_in_scene = false;
 	uuid = App->RandomNumber().Int();
 }
 
@@ -211,12 +211,23 @@ void GameObject::SetParent(GameObject * parent)
 	}
 
 	this->parent = parent;
-	this->parent->childs.push_back(this);
+	if (this->parent != nullptr)
+	{
+		this->parent->childs.push_back(this);
+	}
 
 	if (is_root)
 	{
 		is_root = false;
 		App->scene->root_gameobjects.remove(this);
+	}
+	else
+	{
+		if (this->parent == nullptr)
+		{
+			is_root = true;
+			App->scene->root_gameobjects.push_back(this);
+		}
 	}
 }
 
@@ -369,6 +380,17 @@ void GameObject::UpdateScripts()
 		if ((*it)->GetType() == Component::CompScript) {
 			comp_script = (ComponentScript*)*it;
 			comp_script->UpdateScript();
+		}
+	}
+}
+
+void GameObject::UpdateFactory()
+{
+	ComponentFactory* comp_factory = nullptr;
+	for (std::list<Component*>::iterator it = components_list.begin(); it != components_list.end(); it++) {
+		if ((*it)->GetType() == Component::CompFactory) {
+			comp_factory = (ComponentFactory*)*it;
+			comp_factory->CheckLifeTimes();
 		}
 	}
 }

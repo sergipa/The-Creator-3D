@@ -53,6 +53,7 @@
     <Compile Include="TheConsole.cs" />
     <Compile Include="TheTransform.cs" />
     <Compile Include="TheVector3.cs" />
+    <Compile Include="Time.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

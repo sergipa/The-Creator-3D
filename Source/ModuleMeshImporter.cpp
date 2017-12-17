@@ -83,7 +83,6 @@ std::string ModuleMeshImporter::ImportMesh(std::string path)
 GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node, const aiScene & scene, const char * path)
 {
 	GameObject* ret = nullptr;
-
 	GameObject* root = nullptr;
 
 	if (node->mNumMeshes < 1)
@@ -112,30 +111,29 @@ GameObject* ModuleMeshImporter::LoadMeshNode(GameObject * parent, aiNode * node,
 
 		std::string root_go_name;
 		(s_node_name.find("RootNode") != std::string::npos) ? root_go_name = App->file_system->GetFileNameWithoutExtension(path) : root_go_name = node->mName.C_Str();
-		root = new GameObject(parent);
-		root->SetName(root_go_name);
-		ComponentTransform* transform = (ComponentTransform*)root->GetComponent(Component::CompTransform);
-		math::Quat math_quat(quat.x, quat.y, quat.z, quat.w);
-		float3 rotation = math::RadToDeg(math_quat.ToEulerXYZ());
-		transform->SetPosition({ pos.x, pos.y, pos.z });
-		transform->SetRotation(rotation);
-		transform->SetScale({ scale.x, scale.y, scale.z });
-		if (!node->mParent)
+		if (parent && root_go_name == parent->GetName())
 		{
-			root->SetRoot(true);
-			ret = root;
+			root = parent;
+		}
+		else
+		{
+			root = new GameObject(parent);
+			root->SetName(root_go_name);
+			ComponentTransform* transform = (ComponentTransform*)root->GetComponent(Component::CompTransform);
+			math::Quat math_quat(quat.x, quat.y, quat.z, quat.w);
+			float3 rotation = math::RadToDeg(math_quat.ToEulerXYZ());
+			transform->SetPosition({ pos.x, pos.y, pos.z });
+			transform->SetRotation(rotation);
+			transform->SetScale({ scale.x, scale.y, scale.z });
+			if (!node->mParent)
+			{
+				root->SetRoot(true);
+				ret = root;
+			}
 		}
 	}
 	else
 	{
-		/*for (int i = node->mNumMeshes; i > 0; i--)
-		{
-			node->mMeshes[i]
-			for (int i = node->mNumMeshes; i > 0; i--)
-			{
-
-			}
-		}*/
 		for (int i = 0; i < node->mNumMeshes; i++)
 		{
 			bool mesh_created = true; //If node have more than 1 mesh and last mesh returned false, we need to reset the return for the new mesh.

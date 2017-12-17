@@ -22,6 +22,7 @@
 #include "CubeMap.h"
 #include "SkyDome.h"
 #include "ComponentScript.h";
+#include "GameWindow.h"
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled, bool is_game) : Module(app, start_enabled, is_game)
 {
@@ -56,17 +57,7 @@ bool ModuleScene::Start()
 	mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	mCurrentGizmoMode = ImGuizmo::LOCAL;
 
-	main_camera = new GameObject();
-	main_camera->SetName("Main Camera");
-	ComponentTransform* transform = (ComponentTransform*)main_camera->GetComponent(Component::CompTransform);
-	transform->SetPosition({ 0,1,-10 });
-	ComponentCamera* camera = (ComponentCamera*)main_camera->AddComponent(Component::CompCamera);
-	main_camera->SetTag("Main Camera");
-	scene_gameobjects.push_back(main_camera);
-	root_gameobjects.push_back(main_camera);
-	scene_cameras.push_back(camera);
-	App->resources->AddGameObject(main_camera);
-	App->renderer3D->game_camera = camera;
+	CreateMainCamera();
 
 	skybox = new CubeMap(500);
 	skybox->SetCubeMapTopTexture(EDITOR_SKYBOX_FOLDER"top.bmp");
@@ -80,10 +71,29 @@ bool ModuleScene::Start()
 	return ret;
 }
 
+
+void ModuleScene::CreateMainCamera()
+{
+	main_camera = new GameObject();
+	main_camera->SetName("Main Camera");
+	ComponentTransform* transform = (ComponentTransform*)main_camera->GetComponent(Component::CompTransform);
+	transform->SetPosition({ 0,1,-10 });
+	ComponentCamera* camera = (ComponentCamera*)main_camera->AddComponent(Component::CompCamera);
+	main_camera->SetTag("Main Camera");
+	scene_gameobjects.push_back(main_camera);
+	root_gameobjects.push_back(main_camera);
+	scene_cameras.push_back(camera);
+	App->resources->AddGameObject(main_camera);
+	App->renderer3D->game_camera = camera;
+	App->renderer3D->OnResize(App->editor->game_window->game_scene_width, App->editor->game_window->game_scene_height, App->renderer3D->game_camera);
+}
+
 // Load assets
 bool ModuleScene::CleanUp()
 {
 	CONSOLE_DEBUG("Unloading Scene");
+
+
 
 	return true;
 }
@@ -206,11 +216,13 @@ update_status ModuleScene::Update(float dt)
 				if (App->renderer3D->game_camera == nullptr && (*it)->GetTag() == "Main Camera")
 				{
 					App->renderer3D->game_camera = camera;
+					App->renderer3D->OnResize(App->editor->game_window->game_scene_width, App->editor->game_window->game_scene_height, App->renderer3D->game_camera);
 				}
 			}
 			if (App->IsPlaying())
 			{
 				(*it)->UpdateScripts();
+				(*it)->UpdateFactory();
 			}
 		}
 	}
@@ -353,9 +365,15 @@ void ModuleScene::GetOctreeIntersects(std::list<ComponentMeshRenderer*>& list, A
 	return octree.CollectIntersections(list, &box);
 }
 
-void ModuleScene::NewScene()
+void ModuleScene::NewScene(bool loading_scene)
 {
-	gameobjects_to_destroy = root_gameobjects;
+	//gameobjects_to_destroy = root_gameobjects;
+	for (std::list<GameObject*>::iterator it = root_gameobjects.begin(); it != root_gameobjects.end();)
+	{
+		RELEASE(*it);
+		it = root_gameobjects.erase(it);
+	}
+	App->renderer3D->ResetRender();
 	scene_gameobjects.clear();
 	scene_gameobjects_name_counter.clear();
 	root_gameobjects.clear();
@@ -367,13 +385,17 @@ void ModuleScene::NewScene()
 	octree.Clear();
 	octree.Create(float3::zero, float3::zero);
 	octree.update_tree = true;
+	if (!loading_scene)
+	{
+		CreateMainCamera();
+	}
 }
 
 void ModuleScene::LoadScene(std::string path)
 {
 	Data data;
 	if (data.LoadBinary(path)) {
-		NewScene();
+		NewScene(true);
 		scene_name = data.GetString("Scene Name");
 		App->window->SetTitle((SCENE_TITLE_PREFIX + scene_name).c_str());
 		int gameObjectsCount = data.GetInt("GameObjects_Count");
@@ -392,7 +414,11 @@ void ModuleScene::LoadScene(std::string path)
 			ComponentCamera* camera = (ComponentCamera*)game_object->GetComponent(Component::CompCamera);
 			if (camera)
 			{
-				if (game_object->GetTag() == "Main Camera") App->renderer3D->game_camera = camera;
+				if (game_object->GetTag() == "Main Camera")
+				{
+					App->renderer3D->game_camera = camera;
+					App->renderer3D->OnResize(App->editor->game_window->game_scene_width, App->editor->game_window->game_scene_height, App->renderer3D->game_camera);
+				}
 			}
 		}
 		saving_index = 0;

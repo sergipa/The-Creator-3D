@@ -88,6 +88,20 @@ public:
 	MonoObject* GetScale(MonoObject* object, mono_bool is_global);
 	void LookAt(MonoObject * object, MonoObject * vector3);
 
+	//FACTORY
+	void StartFactory(MonoObject * object);
+	MonoObject* Spawn(MonoObject* object);
+	void SetSpawnPosition(MonoObject * object, MonoObject * vector3);
+	void SetSpawnRotation(MonoObject * object, MonoObject * vector3);
+	void SetSpawnScale(MonoObject * object, MonoObject * vector3);
+
+	MonoObject* ToQuaternion(MonoObject * object);
+
+	//TIME
+	void SetTimeScale(MonoObject* object, float scale);
+	float GetTimeScale();
+	float GetDeltaTime();
+
 	//INPUT
 	mono_bool IsKeyDown(MonoString * key_name);
 	mono_bool IsKeyUp(MonoString* key_name);
@@ -96,12 +110,16 @@ public:
 	mono_bool IsMouseUp(int mouse_button);
 	mono_bool IsMouseRepeat(int mouse_button);
 	MonoObject* GetMousePosition();
+	int GetMouseXMotion();
+	int GetMouseYMotion();
 
 private:
 	MonoMethod* GetFunction(const char* functionName, int parameters);
 	void CallFunction(MonoMethod* function, void** parameter);
 	void ConvertMonoType(MonoType* type, ScriptField& script_field);
 	void CreateSelfGameObject();
+
+	void FillSavingData();
 
 	void Save(Data& data) const;
 	bool Load(Data& data);

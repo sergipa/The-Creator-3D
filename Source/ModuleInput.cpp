@@ -299,3 +299,9 @@ std::string ModuleInput::KeyToString(SDL_Keycode key)
 		if (it->second == key)
 			return it->first;
 }
+
+bool ModuleInput::IsMouseDragging(int mouse_button)
+{
+	if (App->input->GetMouseButton(mouse_button) == KEY_REPEAT && (App->input->GetMouseXMotion() != 0 || App->input->GetMouseYMotion() != 0)) return true;
+	return false;
+}

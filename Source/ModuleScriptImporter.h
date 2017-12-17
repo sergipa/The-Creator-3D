@@ -64,6 +64,20 @@ private:
 	static MonoObject* GetScale(MonoObject* object, mono_bool is_global);
 	static void LookAt(MonoObject * object, MonoObject * vector);
 
+	//FACTORY
+	static void StartFactory(MonoObject * object);
+	static MonoObject* Spawn(MonoObject* object);
+	static void SetSpawnPosition(MonoObject * object, MonoObject * vector3);
+	static void SetSpawnRotation(MonoObject * object, MonoObject * vector3);
+	static void SetSpawnScale(MonoObject * object, MonoObject * vector3);
+
+	static MonoObject* ToQuaternion(MonoObject * object);
+
+	//TIME
+	static void SetTimeScale(MonoObject* object, float scale);
+	static float GetTimeScale();
+	static float GetDeltaTime();
+
 	//INPUT
 	static mono_bool IsKeyDown(MonoString * key_name);
 	static mono_bool IsKeyUp(MonoString* key_name);
@@ -72,6 +86,8 @@ private:
 	static mono_bool IsMouseUp(int mouse_button);
 	static mono_bool IsMouseRepeat(int mouse_button);
 	static MonoObject* GetMousePosition();
+	static int GetMouseXMotion();
+	static int GetMouseYMotion();
 
 	//CONSOLE
 	static void Log(MonoObject* object);

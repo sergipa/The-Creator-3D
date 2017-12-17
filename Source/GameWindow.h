@@ -11,7 +11,7 @@ public:
 
 	void DrawWindow();
 
-private:
+public:
 	float game_scene_width;
 	float game_scene_height;
 };

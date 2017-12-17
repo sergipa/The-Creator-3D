@@ -61,7 +61,7 @@ bool Prefab::Load(Data & data)
 		AddGameObject(go);
 		App->resources->AddGameObject(go);
 		go->SetIsUsedInPrefab(true);
-		if (go->IsRoot()) root_gameobject = go;
+		if (i == 0) root_gameobject = go;
 	}
 	SetUID(data.GetUInt("UUID"));
 	SetAssetsPath(data.GetString("assets_path"));

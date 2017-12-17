@@ -29,9 +29,7 @@ private:
 	bool show_delete_window;
 	bool show_new_script_window;
 
-	bool show_file_options;
-	bool show_files_window_options;
-	bool show_folder_options;
+	bool options_is_open;
 
 	bool asset_hovered;
 

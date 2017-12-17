@@ -22,6 +22,8 @@ public:
 	ModuleScene(Application* app, bool start_enabled = true, bool is_game = false);
 	~ModuleScene();
 
+	void CreateMainCamera();
+
 	bool Start();
 	update_status Update(float dt);
 	update_status PreUpdate(float dt);
@@ -47,7 +49,7 @@ public:
 	void EraseGoInOctree(ComponentMeshRenderer* mesh);
 	void GetOctreeIntersects(std::list<ComponentMeshRenderer*>& list, AABB& box);
 
-	void NewScene();
+	void NewScene(bool loading_scene);
 	void LoadScene(std::string path);
 	void SaveScene(std::string path) const;
 

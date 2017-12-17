@@ -25,5 +25,9 @@ public:
 	void DrawCameraPanel(ComponentCamera* camera);
 	void DrawScriptPanel(ComponentScript* script);
 	void DrawFactoryPanel(ComponentFactory* factory);
+
+private:
+	int scripts_count;
+	int factories_count;
 };
 

@@ -47,6 +47,7 @@ public:
 	bool IsUsingSkybox()const;
 
 	void AddMeshToDraw(ComponentMeshRenderer* mesh);
+	void ResetRender();
 
 private:
 	void DrawSceneGameObjects(ComponentCamera* active_camera, bool is_editor_camera);

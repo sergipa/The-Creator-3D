@@ -7,7 +7,6 @@
 #include "ModuleScene.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
-#include "ModulePhysics3D.h"
 #include "ModuleEditor.h"
 #include "ModuleResources.h"
 #include "ModuleTime.h"
@@ -34,7 +33,6 @@ Application::Application()
 	scene = new ModuleScene(this);
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
-	//physics = new ModulePhysics3D(this);
 	editor = new ModuleEditor(this);
 	resources = new ModuleResources(this);
 	time = new ModuleTime(this);
@@ -67,16 +65,33 @@ Application::Application()
 	//TIME
 	AddModule(time);
 	//Game Modules
-	//AddModule(physics);
 
 	random = new math::LCG();
 	cursor = nullptr;
+	cursor_add = SDL_LoadBMP(EDITOR_IMAGES_FOLDER"PlusArrow.bmp");
 
 	tags_and_layers = new TagsAndLayers();
 }
 
 Application::~Application()
 {
+	window = nullptr;
+	input = nullptr;
+	audio = nullptr;
+	scene = nullptr;
+	renderer3D = nullptr;
+	camera = nullptr;
+	editor = nullptr;
+	resources = nullptr;
+	time = nullptr;
+	tags_and_layers = nullptr;
+	file_system = nullptr;
+	mesh_importer = nullptr;
+	texture_importer = nullptr;
+	prefab_importer = nullptr;
+	material_importer = nullptr;
+	script_importer = nullptr;
+
 	std::list<Module*>::iterator item = list_modules.begin();
 
 	while (item != list_modules.end())
@@ -236,9 +251,35 @@ void Application::CapFPS(int max_fps)
 		
 }
 
-void Application::SetCursor(SDL_SystemCursor id)
+void Application::SetCustomCursor(EnGineCursors cursor_type)
 {
-	cursor = SDL_CreateSystemCursor(id);
+	switch (cursor_type)
+	{
+	case Application::ENGINE_CURSOR_ADD:
+		cursor = SDL_CreateColorCursor(cursor_add,0,0);
+		break;
+	case Application::ENGINE_CURSOR_ARROW:
+		cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+		break;
+	case Application::ENGINE_CURSOR_IBEAM:
+		cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+		break;
+	case Application::ENGINE_CURSOR_WAIT:
+		cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
+		break;
+	case Application::ENGINE_CURSOR_WAITARROW:
+		cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAITARROW);
+		break;
+	case Application::ENGINE_CURSOR_HAND:
+		cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+		break;
+	case Application::ENGINE_CURSOR_NO:
+		cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+		break;
+	default:
+		break;
+	}
+	
 	SDL_SetCursor(cursor);
 }
 
