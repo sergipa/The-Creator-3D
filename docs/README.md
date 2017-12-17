@@ -1,10 +1,8 @@
-# The Creator 3D	
-
 The Creator 3D is a 3D engine. It's been created for educational purposes by videogame development students studying at CITM. We've used Unity as a reference to create our engine.
 
 ## TEAM
 
-![alt text](team_image_path)
+![TeamImage](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/FotoGrup.png)
 
 Adria Martin:
 
@@ -38,19 +36,19 @@ We also implemented a TextEditor, so the user is able to edit and create scripts
 
 
 ## Download & Repository
-Here you can find a link to the latest release: (link)
+Here you can find a link to the latest release [here](https://github.com/sergipa/The-Creator-3D/releases)
 
-You can check the repository here: (link)
+You can check the repository [here](https://github.com/sergipa/The-Creator-3D/)
 
-If you find any issues you can report them here: (link)
+If you find any issues you can report them [here](https://github.com/sergipa/The-Creator-3D/issues)
 
 ## Credits
 
 The engine has been developed by:
 
-Adrià Martín: https://github.com/TinoTano
+Adrià Martín: [Adrià's Github](https://github.com/TinoTano)
 
-Sergi Pérez: https://github.com/sergipa
+Sergi Pérez: [Sergi's Github](https://github.com/sergipa)
 
 ## License
 
