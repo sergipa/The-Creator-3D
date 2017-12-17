@@ -40,6 +40,11 @@ TextEditor:
 Script Example on Scene:
 ![SceneGif](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/SceneGif.gif)
 
+
+## Video Example
+
+[![Video Example](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/ScriptExampleLink.png)](https://www.youtube.com/watch?v=4h1NqJywh80&feature=youtu.be "Scripting Demo")
+
 ## Download & Repository
 [Here](https://github.com/sergipa/The-Creator-3D/releases) you can find a link to the latest release 
 
