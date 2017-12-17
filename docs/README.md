@@ -4,7 +4,7 @@ The Creator 3D is a 3D engine. It's been created for educational purposes by vid
 
 ![TeamImage](https://raw.githubusercontent.com/sergipa/The-Creator-3D/master/docs/FotoGrup.png)
 
-Adria Martin:
+Adrià Martín:
 
 Sergi Pérez:
 
@@ -12,15 +12,15 @@ Sergi Pérez:
 
 Docking UI: The UI is structured in docks, the user may change the layout by dragging each window.
 
-Gameobject+Component structure: GameObjects follow a hierarchical structure, inheriting the transform matrix of their parent. To add functionality to this GameObjects, components are used. As an example: A GameObject needs a MeshRenderer component, in order to be rendered, or a Camera component, if we want the object to be a camera.
+* Gameobject+Component structure: GameObjects follow a hierarchical structure, inheriting the transform matrix of their parent. To add functionality to this GameObjects, components are used. As an example: A GameObject needs a MeshRenderer component, in order to be rendered, or a Camera component, if we want the object to be a camera.
 
-Resource Management: The engine has a resource management window, where the user can manage different types of files. From here, the user can Rename, load, delete, edit various files.
+* Resource Management: The engine has a resource management window, where the user can manage different types of files. From here, the user can Rename, load, delete, edit various files.
 
-Input: Input keys can be configured through one of the options menu. The engine allows mouse picking for GameObjects that are in the scene, when one object is clicked, a gizmo will appear to help position, rotate or scale the object.
+* Input: Input keys can be configured through one of the options menu. The engine allows mouse picking for GameObjects that are in the scene, when one object is clicked, a gizmo will appear to help position, rotate or scale the object.
 
-Scenes: The engine allows the user to save "scenes". Scenes are the group of game objects that are currently active at the moment of saving. When saving a scene, all the game objects will also save their respective components. 
+* Scenes: The engine allows the user to save "scenes". Scenes are the group of game objects that are currently active at the moment of saving. When saving a scene, all the game objects will also save their respective components. 
 
-Play/Stop/Pause/Step: The engine executes scripts in the scene when the play button is pressed, pressing the play button will save the state of the scene, so if something changes while running, when the stop button is pressed, the scene will go back to its previous state. Pausing the scene allows the user to step, which updates all the gameobjects and their components once.
+* Play/Stop/Pause/Step: The engine executes scripts in the scene when the play button is pressed, pressing the play button will save the state of the scene, so if something changes while running, when the stop button is pressed, the scene will go back to its previous state. Pausing the scene allows the user to step, which updates all the gameobjects and their components once.
 
 There are more systems in the engine, including a lot of debug information that might help you understand how the engine works. Feel free to check the code, fork it, or ask us anything you want.
 
