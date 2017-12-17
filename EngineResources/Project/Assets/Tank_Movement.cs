@@ -11,19 +11,19 @@ public class Tank_Movement {
 	}
 	
 	void Update () {
-		if(TheInput.IsKeyRepeat("UP_ARROW"))
+		if(TheInput.IsKeyRepeat("UP_ARROW") || TheInput.IsKeyRepeat("w"))
         {
             Move(tank.GetComponent<TheTransform>().ForwardDirection);
         }
-        else if (TheInput.IsKeyRepeat("DOWN_ARROW"))
+        else if (TheInput.IsKeyRepeat("DOWN_ARROW") || TheInput.IsKeyRepeat("s"))
         {
             Move(tank.GetComponent<TheTransform>().ForwardDirection * -1);
         }
-        if (TheInput.IsKeyRepeat("LEFT_ARROW"))
+        if (TheInput.IsKeyRepeat("LEFT_ARROW") || TheInput.IsKeyRepeat("a"))
         {
             Rotate(TheVector3.Up);
         }
-        else if (TheInput.IsKeyRepeat("RIGHT_ARROW"))
+        else if (TheInput.IsKeyRepeat("RIGHT_ARROW") || TheInput.IsKeyRepeat("d"))
         {
             Rotate(TheVector3.Down);
         }

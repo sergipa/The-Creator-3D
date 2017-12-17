@@ -486,47 +486,47 @@ void TextEditor::Render(const char* aTitle, const ImVec2& aSize, bool aBorder)
 			}
 		}
 		//Delete + Backspace
-		if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 		{
 			Delete();
 		}
-		if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN)
 		{
 			BackSpace();
 		}
 		//
 		//Arrows
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 		{
 			MoveRight();
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
 		{
 			MoveLeft();
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 		{
 			MoveUp();
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 		{
 			MoveDown();
 		}
 		//Enter
-		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 		{
 			EnterCharacter('\n');
 		}
 		//
 		//Page,home,etc...
-		if (App->input->GetKey(SDL_SCANCODE_PAGEDOWN) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_PAGEDOWN) == KEY_DOWN)
 		{
 			MoveDown(GetPageSize() - 4, shift);
 		}
-		if (App->input->GetKey(SDL_SCANCODE_PAGEUP) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_PAGEUP) == KEY_DOWN)
 		{
 			MoveUp(GetPageSize() - 4, shift);
 		}

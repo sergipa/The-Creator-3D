@@ -79,7 +79,7 @@ GameObject* ComponentFactory::Spawn()
 	}
 	else
 	{
-		CONSOLE_ERROR("Spawned GameObject from Factory component in %s is null", GetGameObject()->GetName());
+		CONSOLE_ERROR("Factory component in %s is empty. Wait for more GameObjects", GetGameObject()->GetName().c_str());
 	}
 
 	return go;
